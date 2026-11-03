@@ -1,3 +1,24 @@
+# CHAT D – Java-Properties-Zeilentrennung für verlässliche Gradle-Uploads (03.11.2026)
+
+- **Ausgangs-main-SHA:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`
+- **Branch:** `fix/chat-d/gradle-properties-physical-lines-20261103`
+- **Eigener Fach-/Testcommit:** `ab0a8c8827dbfc092d53ca048be24e13c1b23a64`
+- **PR:** [#528](https://github.com/ManuEtt/Dnd/pull/528) (Draft bis vollständiger, finaler CI)
+- **Ausgangsproblem:** `str.splitlines()` teilt auch an Unicode-Zeichen, die Java `Properties.load` als normale Zeichen innerhalb von Kommentaren/Werten behandelt. Ein scheinbar vorhandener `distributionUrl`-/SHA-Wert war damit nicht zwingend im tatsächlichen Gradle-Properties-Parser vorhanden.
+- **Erwartetes Verhalten:** Exakt CR/LF/CRLF bilden physische Zeilen; Unicode-Kommentare dürfen weder Pflichtwerte vortäuschen noch fälschliche Duplikate erzeugen. Normale Gradle-Konfigurationen bleiben akzeptiert.
+- **IMPLEMENTIERT:** `_gradle_logical_lines` nutzt `re.split(r'\r\n|\r|\n', text)` statt `splitlines()` ohne sonstige Parseränderungen.
+- **Tests ergänzt:** `scripts/tests/test_verify_project.py` mit vier Unicode-Separatortypen (NEL, VT, U+2028, U+2029), positivem Kommentarfall und drei gültigen physischen Zeilentrennungen.
+- **GETESTET:** GitHub-Actions [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451) auf ursprünglichem PR-HEAD `1e04364c63bf1890c716adae2fe7b76dad356f6a` vollständig erfolgreich: Python-/Domain-/SRD-Skripte, Backend, Flutter, Android-Debug-/Alpha-APK, native Backuptests und Quellcode-Checkpoint. Eine neue gemeinsame CI für den Integrations-HEAD ist gesondert erforderlich.
+- **NICHT GETESTET:** Finale kombinierte CI des Integrationscommits, reales Android-Gerät und Altspielstand-Upgrade.
+- **BLOCKIERT:** DNS-Zugriff des lokalen Git-Containers verhindert Checkout; Flutter-/Dart-SDK fehlt.
+- **Geänderte Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migrationen:** Keine; SQLite, JSON 1, bestehende Spielstände, Backups, App-Version und Lizenzdaten unverändert.
+- **Weitere Fehler:** Keine weiteren Fehler in diesem Paket nachgewiesen; vollständige Regression bleibt CI-pflichtig.
+- **Nächster konkreter Schritt:** Auf finalem #528-HEAD komplette GitHub Actions inklusive Python-Unittests, Backend, Flutter und Android-APK prüfen, erst bei Grün Review/Integration.
+
+
+---
+
 # CHAT D – UTF-8-Byteobergrenze für JSON-Spielstandimport (02.11.2026)
 
 - **Ausgangs-main-SHA:** `84437e4e92d735e179bb2585427b46a10451951d`.

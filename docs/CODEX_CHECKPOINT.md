@@ -1,3 +1,24 @@
+## Chat D – Gradle-Properties-Parser: Unicode-Scheinzeilen verhindern (03.11.2026)
+
+- **Main-Basis:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.
+- **Eigener Branch:** `fix/chat-d/gradle-properties-physical-lines-20261103`.
+- **Code- und Testcommit:** `ab0a8c8827dbfc092d53ca048be24e13c1b23a64` (Dokumentations-HEAD in PR #528 prüfen).
+- **Pull Request:** [#528](https://github.com/ManuEtt/Dnd/pull/528), Draft.
+- **Problem:** Python-`str.splitlines()` trennt zusätzlich an U+0085, VT, U+2028/U+2029. Java Properties sieht dort keine physischen Zeilenenden. Ein Kommentar konnte nach dem Unicode-Zeichen einen scheinbar aktiven Wrapper-URL-/Checksum-Eintrag enthalten.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` verwendet `re.split(r'\r\n|\r|\n', text)` für nur CR, LF und CRLF; übriges Java-Properties-Key-/Continuation-Verhalten unverändert.
+- **Regressionen:** `scripts/tests/test_verify_project.py`: (1) falsche Pflichtwerte aus Kommentaren abweisen, (2) gültige kommentierte Unicode-Sequenzen ohne fälschliche Duplikate akzeptieren, (3) CR-/LF-/CRLF-Eingaben weiter akzeptieren.
+- **GETESTET:** GitHub-Actions [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451) auf ursprünglichem PR-HEAD `1e04364c63bf1890c716adae2fe7b76dad356f6a` vollständig erfolgreich: Python-/Domain-/SRD-Skripte, Backend, Flutter, Android-Debug-/Alpha-APK, native Backuptests und Quellcode-Checkpoint. Eine neue gemeinsame CI für den Integrations-HEAD ist gesondert erforderlich.
+- **NICHT GETESTET:** Finale kombinierte CI des Integrationscommits, reales Android-Gerät und Altspielstand-Upgrade.
+- **BLOCKIERT:** Kein GitHub-Clone per lokalem Netz-DNS; kein Flutter-/Dart-SDK in dieser Ausführungsumgebung. CI muss den finalen Commit prüfen.
+- **Auswirkungen:** Vorhandene SQLite-/JSON-Spielstände, Android-Backupformat, Rule-/Storymodule, App-Version und Migrationen unberührt.
+- **Betroffene Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktabgrenzung:** Keine der beim Arbeitsbeginn offenen A/B/C/D-PRs ändert die beiden Python-Fachdateien; Dokumentationskonsolidierung beim späteren Merge ausschließlich additiv.
+- **NOCH NICHT IMPLEMENTIERT:** CI-Abnahme und reguläre Integration dieses Draft-PRs. Keine Branchbereinigung.
+- **Nächster Schritt (DoD):** Den *finalen* PR-HEAD von #528 in GitHub Actions mit erfolgreicher Python-/Backend-/Flutter-/Android-CI belegen; bei Fehlern auf diesem Branch korrigieren und erneut testen.
+
+
+---
+
 ## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
 
 - **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.
