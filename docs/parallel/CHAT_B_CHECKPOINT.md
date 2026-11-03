@@ -505,3 +505,22 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **BLOCKIERT:** Lokale Flutter-Ausführung; CI-Auswertung ist gesondert erforderlich.
 - **Migrationen:** keine. SQLite/JSON-Schema, Spielstände, Regeln, Provider und App-Version unverändert; story_api.dart bewusst unangetastet, da PR #459 dort arbeitet.
 - **Nächster Schritt:** Finale CI des Draft-PR prüfen und Fehler ggf. im selben Branch korrigieren. Danach eine API-/UI-Anbindung der Ortsübersicht erst konfliktfrei mit PR #459 abstimmen.
+
+---
+
+## 03.11.2026 – Chat B: sichere bestätigte NPC-Wiederaufnahme (PR #519)
+
+- **Ausgangs-Main-SHA:** `a786ad61c508da1a9ec1a24f85100a4a994182c8`.
+- **Eigener Branch:** `feat/chat-b/npc-resume-invisible-marks-20261103`.
+- **Pull Request:** [#519](https://github.com/ManuEtt/Dnd/pull/519), Draft. Der endgültige PR-HEAD muss nach Dokumentationscommits separat kontrolliert werden.
+- **Code-/Test-Commits:** `651d9f0f490a1beafe417a83371dd92b0b0f792c`, `1e6e8ba6bff323789821101e9fe7d5d08c0c1634`, `0ea9af27610aa92c244065448840fe32de37dd40` (Testlabel).
+- **Ausgangsproblem:** Die bestätigte, read-only NPC-Auswahl ließ U+00AD/U+034F/U+180E/U+206A–U+206F in alten Namen, Beziehungen und Notiztexten stehen; solche Zeichen sind optisch schwer erkennbar und wurden im Spieler-Rückblick nicht normalisiert.
+- **IMPLEMENTIERT:** `ConfirmedNpcResumeSelector._formatMarks` filtert diese neun weiteren unsichtbaren Formatzeichen. Bei NPC-Namen werden sie entfernt, bei Beziehung/Notiz zu einem einzelnen sichtbaren Wortabstand normalisiert. Auswahl, bestätigte NPC-ID, Revisions-Snapshot und vollständiger Rohdatenstempel bleiben erhalten.
+- **Geänderte Dateien:** `app/lib/story/confirmed_npc_resume_selection.dart`; neue Datei `app/test/confirmed_npc_resume_invisible_marks_test.dart`; additive Einträge in `README.md`, `docs/CODEX_CHECKPOINT.md` und diesem Checkpoint.
+- **Akzeptanz/Regression:** Drei deterministische Tests prüfen alle neun verborgenen Zeichen in allen drei Anzeigefeldern, korrekte NPC-ID und Ausschluss unbestätigter Szenen, legitimes Deutsch/Akzente/Emoji-Variation-Selector, Ausgabelimit, JSON-Roundtrip ohne Umschreiben sowie Ablehnung derselben Revision mit veränderter Originalquelle.
+- **GETESTET:** GitHub-Dateistruktur und offener PR-Dateipfadabgleich vor Branchstart; neue Testfälle und Code auf Branch gesichert. Keine lokale Flutter-Ausführung behauptet.
+- **NICHT GETESTET:** Vollständige Flutter-/Dart-/Python-/Backend-/Android-Gates auf **finalem** PR-HEAD, APK, Realgerät und produktiver KI-Anbieter.
+- **BLOCKIERT:** Flutter/Dart sind in der lokalen Laufzeit nicht installiert; vollständige Abnahme über GitHub Actions erforderlich. Ältere andere Chat-B- und Chat-D-PRs dürfen nicht ungeprüft zusammengemergt werden.
+- **Migrationen:** Keine. Persistierte JSON- und SQLite-Rohdaten, Schema, Spielregeln, Backendprotokoll, Controller und Version bleiben unverändert.
+- **Konflikte:** Geprüfte offene PRs ändern keine der beiden neuen Fach-/Testdateipfade. README und zentraler Checkpoint überschneiden sich dokumentarisch und müssen bei Integration durch Chat D additiv konsolidiert werden. PR #516 arbeitet getrennt in `npc_identity_memory.dart`.
+- **Nächster konkreter Schritt:** GitHub-CI des finalen PR-HEAD abnehmen; falls rot, denselben Branch reparieren. Anschließend die unabhängige Orts-/NPC-Wiederaufnahme gemeinsam mit Chat D erst nach bestehenden Drafts integrieren.
