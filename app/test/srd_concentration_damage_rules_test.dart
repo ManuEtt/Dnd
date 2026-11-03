@@ -231,10 +231,9 @@ void main() {
         reason: 'U+${codePoint.toRadixString(16)} in a single source',
       );
       expect(
-        () => _resolve(
-          _hero(hitPoints: 0),
-          [_damage('arrow$invisible', 5, die: null, modifier: null)],
-        ),
+        () => _resolve(_hero(hitPoints: 0), [
+          _damage('arrow$invisible', 5, die: null, modifier: null),
+        ]),
         throwsFormatException,
         reason: 'U+${codePoint.toRadixString(16)} before automatic ending',
       );
@@ -249,10 +248,10 @@ void main() {
       _damage('Pfeil-α', 1, die: 10),
       _damage('Schlag zwei', 2, die: 10),
     ]);
-    expect(
-      result.checks.map((check) => check.sourceId).toList(),
-      ['Pfeil-α', 'Schlag zwei'],
-    );
+    expect(result.checks.map((check) => check.sourceId).toList(), [
+      'Pfeil-α',
+      'Schlag zwei',
+    ]);
     expect(result.checks.every((check) => check.succeeded), isTrue);
     expect(result.maintained, isTrue);
     expect(jsonEncode(hero.toJson()), original);
