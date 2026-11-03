@@ -751,3 +751,19 @@ Datensätze, Legacy-JSON und SQLite-Neustart. Keine Änderung an Regeln,
 Spielständen, Schema, `story_api.dart` (offener PR #459) oder App-Version.
 Lokale Flutter-/Android-Prüfungen stehen mangels SDK aus; vollständige CI
 auf finalem PR-HEAD und Geräteabnahme sind separat nachzuweisen.
+
+---
+
+## Chat B – Bestätigter NPC-Rückblick ohne ältere Unicode-Formatmarken (03.11.2026)
+
+[PR #519](https://github.com/ManuEtt/Dnd/pull/519) erweitert in
+`app/lib/story/confirmed_npc_resume_selection.dart` ausschließlich die
+schreibgeschützte Normalisierung bereits gespeicherter NPC-Überblicke:
+U+00AD, U+034F, U+180E sowie U+206A–U+206F werden nicht mehr unsichtbar
+an Spieler weitergegeben. Die angezeigte NPC-ID bleibt erhalten; originale
+Kampagnendaten, JSON/SQLite, Regelzustand und App-Version bleiben unverändert.
+Drei neue deterministische Flutter-Tests prüfen betroffene Zeichen in Namen,
+Beziehungen und Notizen, zulässige Akzente und Emoji-Varianten sowie JSON-
+Wiederaufnahme mit unverändertem Rohzustand und Revisionsprüfung.
+Die vollständige CI auf dem finalen PR-HEAD und ein reales Android-Gerät
+müssen noch gesondert abgenommen werden; der PR ist bis dahin Draft.
