@@ -66,9 +66,7 @@ void main() {
     // narrower reader must also reject an in-memory legacy campaign before
     // its maxNotes preview can conceal the older conflicting ID.
     expect(
-      () => Campaign.fromJson(
-        jsonDecode(originalJson) as Map<String, dynamic>,
-      ),
+      () => Campaign.fromJson(jsonDecode(originalJson) as Map<String, dynamic>),
       throwsFormatException,
     );
     expect(() => _read(campaign, maxNotes: 1), throwsFormatException);
@@ -147,53 +145,56 @@ void main() {
     expect(jsonEncode(campaign.toJson()), before);
   });
 
-  test('SQLite rejects duplicate note IDs without changing saved data', () async {
-    final directory = await Directory.systemTemp.createTemp('npc-id-');
-    final dbPath = paths.join(directory.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: dbPath,
-    );
-    try {
-      final original = _campaign(
-        revision: 0,
-        notes: [
-          _note('fresh', 'mira', 'Neue Notiz.'),
-          _note('older', 'mira', 'Alte Notiz.', daysAgo: 4),
-        ],
-      );
-      final before = jsonEncode(original.toJson());
-      await repository.saveCampaign(original);
-
-      // Persistence validates the full campaign via Campaign.fromJson before
-      // writing. A corrupted later snapshot must not replace the good one.
-      final corrupted = original.copyWith(
-        npcRelationshipNotes: [
-          ...original.npcRelationshipNotes,
-          _note('fresh', 'mira', 'Widerspruechliche Kopie.', daysAgo: 20),
-        ],
-      );
-      await expectLater(
-        repository.saveCampaign(corrupted),
-        throwsFormatException,
-      );
-
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+  test(
+    'SQLite rejects duplicate note IDs without changing saved data',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('npc-id-');
+      final dbPath = paths.join(directory.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: dbPath,
       );
-      final saved = (await repository.getCampaign(original.id))!;
-      expect(saved.npcRelationshipNotes, hasLength(2));
-      expect(_read(saved).notes.single.id, 'fresh');
-      expect(saved.hero.toJson(), original.hero.toJson());
-      expect(saved.revision, 0);
-      expect(jsonEncode(saved.toJson()), before);
-    } finally {
-      await repository.close();
-      await directory.delete(recursive: true);
-    }
-  });
+      try {
+        final original = _campaign(
+          revision: 0,
+          notes: [
+            _note('fresh', 'mira', 'Neue Notiz.'),
+            _note('older', 'mira', 'Alte Notiz.', daysAgo: 4),
+          ],
+        );
+        final before = jsonEncode(original.toJson());
+        await repository.saveCampaign(original);
+
+        // Persistence validates the full campaign via Campaign.fromJson before
+        // writing. A corrupted later snapshot must not replace the good one.
+        final corrupted = original.copyWith(
+          npcRelationshipNotes: [
+            ...original.npcRelationshipNotes,
+            _note('fresh', 'mira', 'Widerspruechliche Kopie.', daysAgo: 20),
+          ],
+        );
+        await expectLater(
+          repository.saveCampaign(corrupted),
+          throwsFormatException,
+        );
+
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: dbPath,
+        );
+        final saved = (await repository.getCampaign(original.id))!;
+        expect(saved.npcRelationshipNotes, hasLength(2));
+        expect(_read(saved).notes.single.id, 'fresh');
+        expect(saved.hero.toJson(), original.hero.toJson());
+        expect(saved.revision, 0);
+        expect(jsonEncode(saved.toJson()), before);
+      } finally {
+        await repository.close();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 
   test('valid stable IDs work after JSON restore with hidden unique notes', () {
     final original = _campaign(
