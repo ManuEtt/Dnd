@@ -1209,3 +1209,9 @@ prüfen alle Zeichen, normale Akzente/Emoji und das Wiederöffnen einer SQLite-
 Kampagne. Alte gespeicherte Originale, JSON/SQLite, Regelwerte, Backend,
 Version 0.8.49+99 und vorhandene NPC-Auswahl bleiben unverändert.
 Finale GitHub-CI und reale Geräteabnahme getrennt nachweisen; kein Auto-Merge.
+
+---
+
+## Chat D – vier Quellpakete koordiniert integriert (03.11.2026)
+
+[Draft-PR #533](https://github.com/ManuEtt/Dnd/pull/533) bündelt die vier erfolgreich einzeln geprüften PRs #528–#531 als einen 14-Dateien-Integrationsstand auf Basis `main@fad366d7`. Der technische Integrationscommit vor diesem Nachtrag ist `9b759cd3`; Quell-Git-Blobs und Original-Historien sind erhalten, gemeinsame Checkpoints ausschließlich additiv konsolidiert. Die vollständige gemeinsame GitHub-CI auf dem **finalen** PR-HEAD und danach die neue Main-CI sind separate Freigaben, noch nicht als bestanden behauptet. Kein SQLite-/JSON-/Versionswechsel. Sichere Branch-Bereinigung erst nach geprüfter Main-Integration.

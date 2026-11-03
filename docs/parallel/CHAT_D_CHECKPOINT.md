@@ -1687,3 +1687,13 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Gemeinsame Dokumentation:** README und zentraler CODEX-Checkpoint aus #528 (mit allen aktuellen Main-Einträgen) mit den ausschließlich additiven Abschnitten von #529–#531 ergänzt; individuelle Chat-A-/B-/C-Checkpoints erhalten ihre jeweiligen additiven Quellnachträge. Chat-D-Checkpoint erhält diesen Integrationsnachtrag. Originalquell-HEADs sollen als zusätzliche Commit-Eltern erhalten bleiben.
 - **Freigabegates:** Neue vollständige kombinierte CI auf dem exakten Integrations-HEAD, danach aktueller Main-/PR-/Konfliktvergleich, normaler Merge und erfolgreiche Main-CI. Erst danach Altbranches nach SHA-Archivierung und Main-Ancestry löschen. Quell-PRs nicht vorzeitig schließen oder verändern.
 - **Kompatibilität:** Keine absichtliche SQLite-/Kampagnen-JSON-/App-Versionänderung; echte Android-/TalkBack-/Altupgrade-Abnahme weiterhin separat offen.
+
+---
+
+### Chat D – konkreter Folge-Integrations-PR #533 (03.11.2026)
+
+- **Branch:** `chore/chat-d/integrate-nov03-regression-batch-20261103`; **PR:** [#533](https://github.com/ManuEtt/Dnd/pull/533).
+- **Main-Start:** `fad366d778de1ab69984dfcae1c139d72f976e77`; **technischer Integrationscommit vor diesem Nachtrag:** `9b759cd3f8ae66055e527cc4002ec2d6e3e18648`.
+- **Dateien:** acht technische Quell-/Testdateien und README, zentraler CODEX-Checkpoint, Checkpoints A/B/C/D. Fach-Git-Blobs aus den vier final vollständig erfolgreich geprüften Quellheads #528–#531 unverändert; nur gemeinsame Dokumentation additiv integriert. Alle Quellheads sind zusätzliche Eltern des Git-Commits.
+- **Tests:** Die vier **Einzel-Quell-CIs** sind `completed/success`. Die neue **kombinierte** GitHub-CI auf dem finalen Stand ist nach diesem Dokumentationscommit neu nachzuweisen, nicht vorzeitig als erfolgreich melden.
+- **Nächster Schritt:** Exakten finalen CI-HEAD und aktuelle Main-/PR-Konflikte abnehmen, regulär mergen, neue Main-CI prüfen und erst danach sichere, SHA-geprüfte Bereinigung. Kein Realgerätetest.

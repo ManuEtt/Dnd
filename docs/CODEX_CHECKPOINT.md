@@ -1840,3 +1840,16 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **BLOCKIERT:** Endgültige GitHub-CI/Review; Integration der gestapelten Chat-D-PRs vor dieser eigenen Freigabe.
 - **Dateien:** Excerpt-Storymodul, neuer Regressionstest, additiv README und beide Checkpoints. Keine JSON-/SQLite-Migration, Modell-, Controller-, Backend-, Rule- oder Versionänderung. Keine kostenpflichtigen KI-Aufrufe.
 - **Nächster Schritt:** Finalen GitHub-Workflow dieses PRs prüfen, Fehler auf demselben Branch korrigieren und nur bei grünen Tests konfliktfreie Übernahme durch Chat D vorbereiten.
+
+---
+
+## 03.11.2026 – Chat D: Integrations-PR #533 (vier unabhängig CI-geprüfte Fixes)
+
+- **Main-Basis:** `fad366d778de1ab69984dfcae1c139d72f976e77`.
+- **Branch:** `chore/chat-d/integrate-nov03-regression-batch-20261103`.
+- **PR:** [#533](https://github.com/ManuEtt/Dnd/pull/533) (Draft bis zur kombinierten CI).
+- **Technischer Integrationscommit vor diesem Dokumentationsnachtrag:** `9b759cd3f8ae66055e527cc4002ec2d6e3e18648`.
+- **Quellen:** #528 Python-Gradle-Properties-Verifikation, #529 Porträt-Android-Accessibility, #530 Konzentrationsschaden-Unicode, #531 bestätigte NPC-Kurzchronik-Unicode. Alle vier Quellheads auf vollständiger GitHub-CI erfolgreich; eigene vollständige kombinierte CI auf finalem Branch gesondert abzunehmen.
+- **Inhalt:** acht unveränderte technische Quell-/Test-Git-Blobs, sechs gemeinsame Dokumentationsdateien additiv vereinigt, alle vier Quellheads als zusätzliche Commit-Eltern. Originalquellbranches bis zur erfolgreichen Main-CI geschützt.
+- **OFFEN:** Finale kombinierte CI, Main-/PR-Konfliktprüfung, regulärer Merge, grüne Main-CI, dann sichere Archivierung/Bereinigung. Reales Androidgerät/TalkBack/Update nicht geprüft.
+- **Kompatibilität:** SQLite3, äußeres JSON1, alte Spielstände und App-Version unverändert.
