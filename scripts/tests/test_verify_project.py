@@ -563,6 +563,42 @@ class VerifyProjectTests(unittest.TestCase):
         self.assertTrue(any('HTTPS-Distribution' in error for error in errors))
         self.assertTrue(any('prüfsumme' in error for error in errors))
 
+    def test_unicode_separators_in_comments_cannot_supply_gradle_properties(self):
+        # Java Properties treats NEL, VT and U+2028/U+2029 as characters,
+        # whereas Python str.splitlines() incorrectly promoted comment text
+        # after them into effective keys.
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        for separator in ('\u0085', '\u000b', '\u2028', '\u2029'):
+            with self.subTest(separator=repr(separator)):
+                properties.write_text(
+                    '# ignored' + separator +
+                    'distributionUrl=https://services.gradle.org/distributions/gradle-8.13-bin.zip\n'
+                    '! ignored' + separator +
+                    'distributionSha256Sum=' + 'a' * 64 + '\n',
+                    encoding='utf-8',
+                )
+                errors = verify_project(self.root)
+                self.assertTrue(any('HTTPS-Distribution' in error for error in errors))
+                self.assertTrue(any('prüfsumme' in error for error in errors))
+
+    def test_unicode_separators_in_comments_do_not_create_false_duplicates(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        original = properties.read_text(encoding='utf-8')
+        properties.write_text(
+            original + '# ignored\u2028distributionUrl=http://untrusted.invalid/gradle-8.13-bin.zip\n'
+            + '! ignored\u0085distributionSha256Sum=not-a-checksum\n',
+            encoding='utf-8',
+        )
+        self.assertEqual([], verify_project(self.root))
+
+    def test_gradle_properties_cr_lf_and_crlf_are_still_physical_lines(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        original = properties.read_text(encoding='utf-8')
+        for newline in ('\r', '\n', '\r\n'):
+            with self.subTest(newline=repr(newline)):
+                properties.write_bytes(original.replace('\n', newline).encode('utf-8'))
+                self.assertEqual([], verify_project(self.root))
+
     def test_comments_do_not_count_as_duplicate_gradle_properties(self):
         path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
         path.write_text(path.read_text() +

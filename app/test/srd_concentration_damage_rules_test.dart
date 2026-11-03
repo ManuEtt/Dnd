@@ -200,6 +200,63 @@ void main() {
     );
   });
 
+  test('invisible legacy Unicode cannot forge a second damage source', () {
+    final hero = _hero();
+    final original = jsonEncode(hero.toJson());
+    // U+206A..U+206F are deprecated invisible format controls;
+    // U+FFF9..U+FFFB are interlinear annotation controls.
+    for (final codePoint in <int>[
+      0x206a,
+      0x206b,
+      0x206c,
+      0x206d,
+      0x206e,
+      0x206f,
+      0xfff9,
+      0xfffa,
+      0xfffb,
+    ]) {
+      final invisible = String.fromCharCode(codePoint);
+      expect(
+        () => _resolve(hero, [
+          _damage('arrow', 40, die: 1),
+          _damage('arrow$invisible', 5),
+        ]),
+        throwsFormatException,
+        reason: 'U+${codePoint.toRadixString(16)} after a failed first save',
+      );
+      expect(
+        () => _resolve(hero, [_damage('arrow${invisible}later', 5)]),
+        throwsFormatException,
+        reason: 'U+${codePoint.toRadixString(16)} in a single source',
+      );
+      expect(
+        () => _resolve(_hero(hitPoints: 0), [
+          _damage('arrow$invisible', 5, die: null, modifier: null),
+        ]),
+        throwsFormatException,
+        reason: 'U+${codePoint.toRadixString(16)} before automatic ending',
+      );
+    }
+    expect(jsonEncode(hero.toJson()), original);
+  });
+
+  test('distinct ordinary and international damage IDs remain valid', () {
+    final hero = _hero();
+    final original = jsonEncode(hero.toJson());
+    final result = _resolve(hero, [
+      _damage('Pfeil-α', 1, die: 10),
+      _damage('Schlag zwei', 2, die: 10),
+    ]);
+    expect(result.checks.map((check) => check.sourceId).toList(), [
+      'Pfeil-α',
+      'Schlag zwei',
+    ]);
+    expect(result.checks.every((check) => check.succeeded), isTrue);
+    expect(result.maintained, isTrue);
+    expect(jsonEncode(hero.toJson()), original);
+  });
+
   test('incapacity and zero hit points end concentration without a roll', () {
     for (final hero in [
       _hero(hitPoints: 0),

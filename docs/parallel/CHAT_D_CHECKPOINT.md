@@ -1,3 +1,24 @@
+# CHAT D – Java-Properties-Zeilentrennung für verlässliche Gradle-Uploads (03.11.2026)
+
+- **Ausgangs-main-SHA:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`
+- **Branch:** `fix/chat-d/gradle-properties-physical-lines-20261103`
+- **Eigener Fach-/Testcommit:** `ab0a8c8827dbfc092d53ca048be24e13c1b23a64`
+- **PR:** [#528](https://github.com/ManuEtt/Dnd/pull/528) (Draft bis vollständiger, finaler CI)
+- **Ausgangsproblem:** `str.splitlines()` teilt auch an Unicode-Zeichen, die Java `Properties.load` als normale Zeichen innerhalb von Kommentaren/Werten behandelt. Ein scheinbar vorhandener `distributionUrl`-/SHA-Wert war damit nicht zwingend im tatsächlichen Gradle-Properties-Parser vorhanden.
+- **Erwartetes Verhalten:** Exakt CR/LF/CRLF bilden physische Zeilen; Unicode-Kommentare dürfen weder Pflichtwerte vortäuschen noch fälschliche Duplikate erzeugen. Normale Gradle-Konfigurationen bleiben akzeptiert.
+- **IMPLEMENTIERT:** `_gradle_logical_lines` nutzt `re.split(r'\r\n|\r|\n', text)` statt `splitlines()` ohne sonstige Parseränderungen.
+- **Tests ergänzt:** `scripts/tests/test_verify_project.py` mit vier Unicode-Separatortypen (NEL, VT, U+2028, U+2029), positivem Kommentarfall und drei gültigen physischen Zeilentrennungen.
+- **GETESTET:** GitHub-Actions [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451) auf ursprünglichem PR-HEAD `1e04364c63bf1890c716adae2fe7b76dad356f6a` vollständig erfolgreich: Python-/Domain-/SRD-Skripte, Backend, Flutter, Android-Debug-/Alpha-APK, native Backuptests und Quellcode-Checkpoint. Eine neue gemeinsame CI für den Integrations-HEAD ist gesondert erforderlich.
+- **NICHT GETESTET:** Finale kombinierte CI des Integrationscommits, reales Android-Gerät und Altspielstand-Upgrade.
+- **BLOCKIERT:** DNS-Zugriff des lokalen Git-Containers verhindert Checkout; Flutter-/Dart-SDK fehlt.
+- **Geänderte Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migrationen:** Keine; SQLite, JSON 1, bestehende Spielstände, Backups, App-Version und Lizenzdaten unverändert.
+- **Weitere Fehler:** Keine weiteren Fehler in diesem Paket nachgewiesen; vollständige Regression bleibt CI-pflichtig.
+- **Nächster konkreter Schritt:** Auf finalem #528-HEAD komplette GitHub Actions inklusive Python-Unittests, Backend, Flutter und Android-APK prüfen, erst bei Grün Review/Integration.
+
+
+---
+
 # CHAT D – UTF-8-Byteobergrenze für JSON-Spielstandimport (02.11.2026)
 
 - **Ausgangs-main-SHA:** `84437e4e92d735e179bb2585427b46a10451951d`.
@@ -1652,3 +1673,17 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Historie:** Alle vier ursprünglichen Quellheads (#516, #484 und die zwei verwaisten Chat-C-Branches) als zusätzliche Git-Commit-Eltern gesichert. Somit können die Branches nach einer tatsächlich erfolgreichen, geordneten Main-Integration und Main-CI als exakte Main-Ancestors sicher archiviert/gelöscht werden. Keine direkte Main-Bearbeitung und keine vorzeitige Löschung.
 - **Gemeinsame Dokumentation:** README, CODEX und Chat-B-Checkpoint mit den fehlenden additiven #516/#484-Abschnitten erweitert. Keine andere Fachdatei oder App-Version geändert.
 - **Noch offen:** Neue vollständige kombinierte CI auf exaktem Folge-HEAD, vollständige Main-Integration aller Vorgänger-PRs in Reihenfolge, grüne Main-CI, SHA-gesicherte Bereinigung, reale Android-/Upgrade-/TalkBack-Prüfung.
+
+---
+
+## Chat D – vier neue Sicherheits-/UI-Pakete koordiniert integrieren (03.11.2026)
+
+- **Produkt-main-Basis:** `fad366d778de1ab69984dfcae1c139d72f976e77` (Gesamtmerge #527); vollständige Main-CI [41715899159](https://github.com/ManuEtt/Dnd/actions/runs/41715899159) `completed/success` und sichere automatische Bereinigung [41718580714](https://github.com/ManuEtt/Dnd/actions/runs/41718580714) `completed/success`.
+- **Quell-PR #528:** `9aae43cedb654e9ff80cff3876d2118b652e3743`; Java-Properties-Zeilenenden gegen Unicode-Scheinumbrüche. Vollständige [Push-CI #41717031644](https://github.com/ManuEtt/Dnd/actions/runs/41717031644) erfolgreich auf genau diesem Commit; separater PR-Lauf #41717039953 beim letzten Abgleich noch in Arbeit.
+- **Quell-PR #529:** `b672c1dbfc66fd5d2dd5cdb0bb586460a6fcda56`; Android-Porträtaktionen bei großer Schrift/IME; vollständige [Quell-CI 41716033182](https://github.com/ManuEtt/Dnd/actions/runs/41716033182) erfolgreich.
+- **Quell-PR #530:** `76a848c9bcad79597ef80ef3d1e6c7c4096d7a29`; unsichtbare Unicode-Zeichen in bestätigten Konzentrationsschadensquellen; vollständige [Quell-CI 41715127740](https://github.com/ManuEtt/Dnd/actions/runs/41715127740) erfolgreich.
+- **Quell-PR #531:** `055e780f48d4b015ea3a558ac5ac738cd1e29b1c`; Legacy-Formatzeichen nur in der bestätigten NPC-Kurzchronik-Darstellung bereinigen; vollständige [Quell-CI 41714679161](https://github.com/ManuEtt/Dnd/actions/runs/41714679161) erfolgreich.
+- **Technische Konfliktprüfung:** Zwei Python-Fach-/Testdateien von #528 sind auf der aktuellen Main-Basis seit Erstellung unverändert. Je zwei unabhängige technische Fach-/Testdateien aus #529, #530 und #531 wurden gegen den letzten gemeinsamen Vorfahren `7be2135f` geprüft und sind auf aktuellem `main` bytegleich bzw. neue, bisher fehlende Testdateien. Die acht Quell-Git-Blobs werden bytegleich beibehalten.
+- **Gemeinsame Dokumentation:** README und zentraler CODEX-Checkpoint aus #528 (mit allen aktuellen Main-Einträgen) mit den ausschließlich additiven Abschnitten von #529–#531 ergänzt; individuelle Chat-A-/B-/C-Checkpoints erhalten ihre jeweiligen additiven Quellnachträge. Chat-D-Checkpoint erhält diesen Integrationsnachtrag. Originalquell-HEADs sollen als zusätzliche Commit-Eltern erhalten bleiben.
+- **Freigabegates:** Neue vollständige kombinierte CI auf dem exakten Integrations-HEAD, danach aktueller Main-/PR-/Konfliktvergleich, normaler Merge und erfolgreiche Main-CI. Erst danach Altbranches nach SHA-Archivierung und Main-Ancestry löschen. Quell-PRs nicht vorzeitig schließen oder verändern.
+- **Kompatibilität:** Keine absichtliche SQLite-/Kampagnen-JSON-/App-Versionänderung; echte Android-/TalkBack-/Altupgrade-Abnahme weiterhin separat offen.

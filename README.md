@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Korrekte Java-Properties-Zeilentrennung bei Gradle-Uploadprüfung (03.11.2026)
+
+Die Python-Übertragungsprüfung `scripts/verify_project.py` wertet physische Zeilen der Gradle-Wrapper-Konfiguration nun wie Java Properties ausschließlich an CR/LF/CRLF aus. Unicode-Zeichen U+0085, vertikaler Tab und U+2028/U+2029 innerhalb eines Kommentars erzeugen keine vorgetäuschten gültigen `distributionUrl`- oder `distributionSha256Sum`-Einträge und keine fälschlichen Doppelbelegungen mehr. Drei Regressionstest-Gruppen in `scripts/tests/test_verify_project.py` decken fehlende Pflichtwerte, erlaubte Kommentarinhalte und echte Zeilenenden ab. Separater Draft-[PR #528](https://github.com/ManuEtt/Dnd/pull/528), Basis `7be2135`, Fachcommit `ab0a8c8`. **Vollständige CI auf ursprünglichem PR-HEAD `1e04364` erfolgreich:** [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451). Auf dem konsolidierten Integrations-HEAD ist erneut eine vollständige CI erforderlich. Keine SQLite-/JSON-/Versionsmigration.
+
+
+---
+
 ## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
 
 [PR #502](https://github.com/ManuEtt/Dnd/pull/502) prüft in der bestehenden
@@ -1157,3 +1164,48 @@ Sechs neue Tests prüfen JSON, SQLite-Neustart, Negativfälle, Revisionsschutz
 und reguläre positive Erinnerungen. Nur lesende Story-Projektion; keine
 Kampagnen-, Regel-, SQLite-/JSON-Schema-, Wire- oder Versionsänderung.
 **CI/Android-Abnahme auf dem finalen PR-HEAD steht noch aus.**
+
+
+---
+
+## Chat C – Porträtauswahl für 200 % Schrift (03.11.2026)
+
+[Draft-PR #529](https://github.com/ManuEtt/Dnd/pull/529) korrigiert die
+untere Android-Aktionsleiste der Charakterporträt-Auswahl: Bei 200 %
+Schriftgröße oder extrem schmalen Ansichten stehen „Abbrechen“ und
+„Übernehmen“ jeweils über die volle Breite untereinander. Bei normaler
+Schrift bleiben sie nebeneinander. Vier neue Flutter-Widgettests prüfen
+320/360 dp mit simulierter IME, Touch-Erreichbarkeit, Auswahl-Semantik,
+Abbruch ohne Rückgabe, bewusste Übernahme und den normalen Layoutpfad.
+Regeln, Story, Spielstände, SQLite/JSON, Bilder, App-Version unverändert.
+Vollständige CI auf finalem PR-HEAD und reale Android-/TalkBack-Abnahme
+noch ausstehend; kein Auto-Merge.
+
+---
+
+
+---
+
+
+
+### Regelengine: Unicode-Validierung von Konzentrations-Schadensquellen (CHAT A, 03.11.2026)
+
+Im [Draft-PR #530](https://github.com/ManuEtt/Dnd/pull/530) erweitert CHAT A ausschließlich die Quell-ID-Validierung in `app/lib/domain/srd_concentration_damage_rules.dart`: U+206A–U+206F und U+FFF9–U+FFFB können nicht mehr als unsichtbare Bestandteile bestätigter Konzentrationsschadensquellen verwendet werden. Zwei neue deterministische Testgruppen prüfen Fehl- und Gutfälle in `app/test/srd_concentration_damage_rules_test.dart`. Flutter-/Android-CI auf dem finalen PR-HEAD noch separat nachzuweisen; keine Datenmigration. Fachquelle: [D&D SRD 5.2.1, Concentration](https://www.dndbeyond.com/srd) (CC BY 4.0).
+
+
+---
+
+
+---
+
+## Chat B – NPC-Kurzchronik gegen ältere unsichtbare Unicode-Zeichen (03.11.2026)
+
+[Draft-PR #531](https://github.com/ManuEtt/Dnd/pull/531) sichert die
+schreibgeschützte bestätigte NPC-Kontinuitätsansicht gegen U+00AD, U+034F,
+U+180E und U+206A–U+206F ab. Die Darstellung trennt oder vereinigt
+unsichtbare Formatzeichen nach Feldtyp, nennt die gespeicherte NPC-ID und
+übernimmt keine unbestätigte KI-Erzählung. Drei neue Flutter-Regressionstests
+prüfen alle Zeichen, normale Akzente/Emoji und das Wiederöffnen einer SQLite-
+Kampagne. Alte gespeicherte Originale, JSON/SQLite, Regelwerte, Backend,
+Version 0.8.49+99 und vorhandene NPC-Auswahl bleiben unverändert.
+Finale GitHub-CI und reale Geräteabnahme getrennt nachweisen; kein Auto-Merge.
