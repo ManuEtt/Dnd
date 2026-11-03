@@ -1,3 +1,13 @@
+## CHAT A · 03.11.2026 · Konzentrationsschadensquellen-IDs
+
+- **PR:** [#530](https://github.com/ManuEtt/Dnd/pull/530) (Draft), **Branch:** `fix/chat-a/concentration-damage-source-id-unicode-20261103`, **Basis-main:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.
+- **Fach-/Testcommit vor Dokumentation:** `f9bdb9b687c2144bb45c3f8227900048fd2a0249`.
+- **Problem:** In `SrdConcentrationDamageRules.resolve` konnten U+206A–U+206F und U+FFF9–U+FFFB in auditierbaren Schadensquellen-IDs unbemerkt unterschiedliche Schlüssel für optisch gleiche Quellen bilden.
+- **Umsetzung:** Neun weitere unsichtbare Legacy-Formatzeichen in der bestehenden Fail-Closed-Validierung gesperrt; zwei deterministische Testgruppen prüfen verworfene Einzelschlüssel, fingierte Zweitquelle nach gescheitertem Rettungswurf, die automatische Beendigung ohne Wurf sowie weiterhin zulässige internationale IDs. Keine Änderungen an Modellen, Spielständen oder Aktionsökonomie.
+- **Tests:** `app/test/srd_concentration_damage_rules_test.dart` erweitert; Flutter/Dart nicht im ausführenden Container installiert, GitHub-Actions-Lauf auf finalem PR-HEAD gesondert prüfen. Keine lokale Testausführung oder grüne CI behauptet.
+- **Quelle:** D&D SRD 5.2.1, Concentration / Taking Damage, CC BY 4.0: https://www.dndbeyond.com/srd.
+- **Nächster unabhängiger Schritt:** Einen weiteren spezialisierten Quellen-/ID-Validator ausschließlich nach erneuter PR-Dateiprüfung auf bestätigte externe Dateneingaben testen.
+
 ## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
 
 - **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.
