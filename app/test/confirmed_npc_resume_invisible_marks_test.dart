@@ -104,10 +104,7 @@ void main() {
         WorldNpc(id: 'mira', name: 'Mira', relationship: 'hilfsbereit'),
       ],
     );
-    expect(
-      () => selection.requireCurrent(changed),
-      throwsFormatException,
-    );
+    expect(() => selection.requireCurrent(changed), throwsFormatException);
     expect(jsonEncode(restored.toJson()), saved);
     expect(restored.hero.hitPoints, 17);
   });
