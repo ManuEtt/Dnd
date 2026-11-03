@@ -1589,3 +1589,14 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Übernahme:** Drei unveränderte Original-Git-Blobs (zwei Fachdateien plus neuer Regressionstest) und Regelreferenz-Dokumentation. Beide existierenden Fach-Blobs auf Stack-Basis identisch mit Quell-Main `a2f22e` geprüft. README, zentraler CODEX und CHAT_A-Checkpoint additiv zusammengeführt, keine vorigen Beiträge gelöscht.
 - **Historie:** finaler Quell-HEAD als zusätzlicher Commit-Elternknoten; kein Force-Push, keine Branch-Löschung.
 - **Freigabe:** vollständig erfolgreiche kombinierte CI auf diesem HEAD, danach geordneter regulärer Merge erst nach früheren Integrations-PRs mit grüner Main-CI. Keine SQLite-/JSON-Schema- oder App-Versionsänderung. Reale Android-/Upgrade-Abnahme offen.
+
+---
+
+## Chat D – NPC-Identität bei Zero-Width-Unicode aus drei Quellen konsolidiert (03.11.2026)
+
+- **Stack-Basis:** `036102c40426b804911470f164dad61f2974ba69` (#518 nach #517/#512/#511/#510/#508/#507).
+- **Quellen:** #464 `f3db51cbae5690be22d93ce427bf6e8a355c1b67`, #470 `5b6aa9fbed930de0ad885c74c240f09255c6a947`, #477 `7f1d9051965c90e102cda16a7785c171f4138432`; exakte Quell-CI jedes HEAD erfolgreich.
+- **Lösung:** Versteckte Zero-Width-/Bidi-/BOM-Zeichen dürfen NPC-Identitäten im narrativen Speicher, strukturierten Story-Payload und Bestätigungsleser weder fälschen noch Eindeutigkeit vortäuschen.
+- **Konfliktfreiheit:** Alle drei Fachmodule auf der Stack-Basis enthielten die ursprünglichen Patch-Kontextstellen exakt jeweils einmal; nach präziser Anwendung aller Hunk-Änderungen entspricht jeder resultierende Git-Blob **bytegenau dem finalen Quellblob**. Keine aktuellen Fremdänderungen überschrieben; zusätzliche drei unveränderte Quell-Testblobs aufgenommen.
+- **Dokumentation:** README, zentralen und CHAT_B-Checkpoint verlustfrei additiv zusammengeführt. Git-Geschichte durch drei zusätzliche finale Quell-HEAD-Eltern bewahrt; kein Force-Push oder Branchlöschen.
+- **Gates:** Vollständige neue CI des endgültigen kombinierten HEADs sowie geordneter Main-Merge nach #518 und erfolgreicher Main-CI. Keine JSON-/SQLite-Migration, keine echte Android-Geräteabnahme.

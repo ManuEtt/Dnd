@@ -1193,3 +1193,102 @@ Ausgangs-main `a2f22eaceb344aaced12d0ad548b813aa44d544f`; Branch `fix/chat-d/alp
 **NÄCHSTER SCHRITT (genau ein unabhängiges Paket):** Den Kurzrast-Null-HD-Übergang über den vorhandenen Controller samt SQLite-Neustart und idempotentem Retry für einen *gültigen* Hexenmeister separat prüfen. Abnahme: ein gespeicherter bestätigter Rast-Event, keine zweite Paktregeneration bei Request-ID-Wiederholung, veraltete Revision wird abgewiesen, keinerlei Reparatur ungültiger Herkunftsdaten; vor Beginn offenen PR-Dateiabgleich wiederholen.
 
 ---
+
+---
+
+## Chat B – unsichtbare NPC-Namenszeichen sicher behandeln (01.11.2026)
+
+- **main-Basis:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `fix/chat-b/npc-zero-width-name-ambiguity-20261101`.
+  **PR:** [#464](https://github.com/ManuEtt/Dnd/pull/464), Draft.
+- **IMPLEMENTIERT:** `NpcNarratorMemory.merge` stuft durch Zero-Width-
+  Spaces/Joiner/Word-Joiner/BOM scheinbar unterscheidbare NPC-Namen als
+  mehrdeutig ein, wenn sie ohne unsichtbare Zeichen gleich aussehen.
+  Ausgehende NPC-Namen und Notiztexte werden sicher ausgegeben; keine
+  Regel-/Story-/Inventar-/HP-Mutation.
+- **Dateien:** `app/lib/story/npc_narrator_memory.dart`,
+  `app/test/npc_zero_width_identity_memory_test.dart`, README und
+  zentrale/persönliche Checkpoints.
+- **GETESTET:** tatsächlicher Main-SHA, vollständiger Masterprompt,
+  offener PR-Dateibestand, Modul-/Testquellen; alte CI nur zur
+  Ausgangsorientierung. **NEUE CI:** GitHub-Actions-Abnahme des finalen
+  PR-HEAD noch offen; keine Behauptung vollständiger Testerfolge.
+- **NICHT GETESTET:** komplette neue Dart-/Flutter-/Backend-/Android-CI
+  und physisches Gerät/TalkBack/Produktiv-KI.
+  **BLOCKIERT:** kein lokales Flutter/Dart-SDK; Testabnahme über GitHub.
+  **Migration:** keine, SQLite 3 / äußeres JSON 1 unverändert.
+- **NOCH NICHT IMPLEMENTIERT:** explizite UI-Auswahl mehrdeutiger Namen
+  im Wiederaufnahme-Kontext; das ist nicht Teil dieses Pakets.
+- **NÄCHSTER SCHRITT:** finale GitHub-CI für #464 vollständig abnehmen;
+  gegebenenfalls nur eigenen Branch korrigieren und alle Tests neu ausführen;
+  anschließend Review und additive Dokumentations-Konsolidierung durch Chat D.
+
+---
+
+## Chat B – strukturierte NPC-Identität: Zero-Width-Schutz (02.11.2026)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `fix/chat-b/structured-npc-zero-width-20261102`.
+  **Draft-PR:** [#470](https://github.com/ManuEtt/Dnd/pull/470).
+- **Problem/IMPLEMENTIERT:** `NpcIdentityStoryPayload.prepare` fasste
+  optisch gleiche Namen bei U+200B–U+200D/U+2060/U+FEFF zuvor nicht
+  gleich; unstrukturierte Spielerprosa konnte daher eine falsche
+  Identitätszuordnung nahelegen. `_fold` beseitigt nur für den Vergleich
+  diese Zeichen, `_validText` verwirft sie dagegen im strukturierten
+  Kontext. Gespeicherte NPCs/Notizen werden nicht heimlich geändert.
+- **Dateien:** `app/lib/story/npc_identity_story_payload.dart`,
+  `app/test/npc_identity_story_zero_width_payload_test.dart`,
+  `README.md`, `docs/CODEX_CHECKPOINT.md`,
+  `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **Positive und negative Tests:** fünf Unicode-Marker, mehrdeutige Namen
+  vs. ausdrücklich gewählte sichere NPC-ID, schädliche Formatzeichen in
+  Namen, Beziehungen/Notizen, Legacy-JSON ohne Notizen, SQLite-Neustart und
+  Rekonstruktionsabgleich, Revisions- und Heldenschutz.
+- **GETESTET:** Quellen, aktueller Main-HEAD und alle offenen PR-Dateipfade
+  geprüft; Dart-3.9.2-Formatter separat auf beide Code-/Testdateien
+  angewandt, Diagnoseworkflow entfernt. **PR #464** (getrennte unstrukturierte
+  NPC-Erinnerungs-API) bereits grün:
+  [CI #41323322514](https://github.com/ManuEtt/Dnd/actions/runs/41323322514).
+  Dies ist **kein** Erfolgsgarant für #470.
+- **NICHT GETESTET:** finale vollständige CI von #470 (noch offen),
+  physisches Android-Gerät/TalkBack, produktive KI. **BLOCKIERT:** lokale
+  Flutter-/Dart-Tools fehlen; GitHub Actions verfügbar.
+- **Migration:** keine, SQLite 3/äußeres JSON 1 unverändert.
+  **Noch nicht implementiert:** produktiver ID-basierter Backend-Vertrag.
+- **Nächster Schritt:** #470-CI auf finalem HEAD auswerten, nötige
+  Korrekturen im eigenen Branch wiederholt testen, Chat D zur
+  kontrollierten additiven Integration übergeben. Kein Auto-Merge.
+
+---
+
+## Chat B – bestätigte NPC-Rückblicke: Zero-Width-Namensschutz (02.11.2026)
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`;
+  **Branch:** `fix/chat-b/npc-continuity-zero-width-20261102`;
+  **Pull Request:** [#477](https://github.com/ManuEtt/Dnd/pull/477), Draft.
+- **Problem:** `NpcContinuityReader._npcNameKey` entfernte Bidi-Marken,
+  aber nicht U+200B–U+200D, U+2060 oder U+FEFF. Zwei sichtbar gleiche
+  NPC-Namen konnten ohne notwendige ID in bestätigten Rückblicken
+  erscheinen; Rückblicktext enthielt zusätzliche unsichtbare Zeichen.
+- **IMPLEMENTIERT:** `_visibleName` entfernt Formatzeichen nur in der
+  Darstellung/Vergleichsprojektion, die sichere gespeicherte NPC-ID
+  disambiguiert Dubletten. `_singleLine` bereinigt auch gespeicherte
+  Beziehungstexte und Notizen auf der Anzeigeoberfläche. Keine Änderung
+  an bestätigtem Kampagnen-/Regelzustand.
+- **Dateien:** `app/lib/story/npc_continuity_reader.dart`,
+  `app/test/npc_continuity_zero_width_test.dart`, README, zentraler
+  und eigener Chat-B-Checkpoint. Fünf positive/negative Testgruppen:
+  sechs Unicode-Marker, Einzel-NPC, unsichere/doppelte ID, Legacy-JSON,
+  SQLite-Neustart und Replay, unveränderte Heldenwerte und bestätigte
+  Notizen.
+- **GETESTET:** GitHub Main/alle offenen PR-Dateipfade/Fachquellen
+  geprüft. **NICHT GETESTET:** vollständige finale Actions-CI,
+  reales Android-Gerät/TalkBack, produktiver KI-Anbieter.
+  **BLOCKIERT:** kein lokales Flutter-/Dart-SDK, Actions verfügbar.
+  **Migrationen:** keine; SQLite 3, äußeres JSON 1 unverändert.
+- **Koordination:** #452/#456/#459/#464/#470 ändern getrennte
+  Storymodule. Gemeinsame README-/Checkpoint-Zusätze bei Integration
+  durch Chat D additiv zusammenführen. Keine direkten Main-Commits.
+- **NÄCHSTER SCHRITT:** vollständige finale CI inkl. neuer Regressionen
+  abnehmen und Fehler im eigenen Branch korrigieren; danach Review
+  durch Chat D, kein automatischer Merge.

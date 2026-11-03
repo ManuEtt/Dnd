@@ -811,3 +811,55 @@ Die Python-Releasevorbereitung prüft vor dem Lesen und nochmals vor dem Kopiere
 ## Chat A – Kurzrast ohne Trefferwürfel: Ressourcen vor Recovery prüfen (02.11.2026)
 
 [PR #515](https://github.com/ManuEtt/Dnd/pull/515) ergänzt den zentralen, **nicht mutierenden Kurzrast-Ressourcencheck** für normale Rasten und beide Sonderpfade ohne Trefferwürfelverbrauch. Ein fingierter Paktplatzverbrauch (etwa bei einem Kämpfer ohne Hexenmeisterstufe) wird vor jeder Regeneration abgewiesen. Fünf neue deterministische Domain-/GameEngine-Regressionen decken gültige und ungültige Fälle, RNG-Freiheit, unverändertes Ursprungs-JSON und Wiederaufnahme ab. **CI auf finalem PR-HEAD ausstehend; keine APK-/Gerätefreigabe.** SQLite 3, JSON 1 und App-Version 0.8.49+99 unverändert; keine Migration. Grundlage: SRD 5.2.1, CC BY 4.0.
+
+---
+
+## Chat B – Zero-Width-Namensschutz für NPC-Erinnerungen (01.11.2026)
+
+[Draft-PR #464](https://github.com/ManuEtt/Dnd/pull/464) verhindert, dass
+Unicode-Zeichen ohne sichtbare Breite (U+200B–U+200D, U+2060, U+FEFF)
+zwei gleich dargestellte NPC-Namen bei freier Spielereingabe fälschlich als
+unterschiedliche Namen erscheinen lassen. Bestätigte NPC-Beziehungsnotizen
+werden bei unklarer Identität nicht geraten oder an den optionalen Erzähler
+weitergereicht. Für eindeutig gespeicherte NPCs bleiben bestätigte Notizen
+nutzbar; unsichtbare Markierungen werden ausschließlich beim Ausgeben
+bereinigt, nicht aus dem gespeicherten Spielstand entfernt. Neue Tests
+umfassen fünf Unicode-Varianten, die positive eindeutige Zuordnung,
+alte JSONs und einen echten SQLite-Neustart. Keine Migration/Versionsänderung.
+Die neue CI ist bei Anlage noch nicht abgenommen.
+
+---
+
+## Chat B – strukturierte NPC-Identitätsübertragung (02.11.2026)
+
+[Draft-PR #470](https://github.com/ManuEtt/Dnd/pull/470) schließt eine
+separate Zero-Width-Lücke in `NpcIdentityStoryPayload`. Visuell gleiche
+NPC-Namen mit U+200B/U+200C/U+200D/U+2060/U+FEFF gelten bei freien
+Spielereingaben als mehrdeutig; eine NPC-ID wird dann **nicht geraten**.
+Strukturierte NPC-Namen, Beziehungen und bestätigte Notizen mit solchen
+unsichtbaren Steuerzeichen gelangen nicht in den geplanten Identity-Wire.
+Eine explizit gewählte, sichere NPC-ID mit bestätigtem Kontext bleibt zulässig.
+Sechs Testgruppen einschließlich älterem JSON, Revisionskontrolle und echtem
+SQLite-Neustart ergänzen den Code. Keine neue API-Anbindung, keine Migration
+(SQLite 3/äußeres JSON 1) oder Änderung an Regelzuständen. Finale CI
+auf dem Dokumentationsstand ist bei Erstellung noch offen.
+
+---
+
+## Chat B – bestätigte NPC-Kontinuität und unsichtbare Namen (02.11.2026)
+
+[Draft-PR #477](https://github.com/ManuEtt/Dnd/pull/477).
+
+Der neue Chat-B-Branch `fix/chat-b/npc-continuity-zero-width-20261102`
+(Basis-main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`) behebt eine
+separate Lücke im schreibgeschützten `NpcContinuityReader`. Unsichtbare
+Zero-Width- und Bidi-Marken in gespeicherten NPC-Namen dürfen die
+Mehrdeutigkeitsprüfung nicht umgehen: visuell gleiche Figuren bekommen
+im bestätigten Rückblick ihre **gespeicherte, sichere NPC-ID** angehängt,
+damit Notizen nicht einer falschen Figur zugeschrieben werden. Der Rückblick
+entfernt unsichtbare Steuerzeichen auch aus Beziehungen und Notizen,
+während ursprüngliches NPC-JSON und SQLite-Daten unverändert bleiben.
+Fünf neue Testgruppen einschließlich Legacy-JSON, unsicherer IDs und
+echtem SQLite-Neustart. Keine neue Provider-Anbindung, keine Mutation von
+Helden-/Quest-/Regelzustand, keine Schema-/Versionsänderung. Vollständige
+CI-Abnahme erst auf dem finalen PR-Commit nachweisen.
