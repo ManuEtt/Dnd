@@ -922,3 +922,376 @@ Abbruchtests. Gemeinsame Modelle erst nach Konfliktabgleich ändern.
 **NÄCHSTER SCHRITT (genau ein unabhängiges Paket):** Den Kurzrast-Null-HD-Übergang über den vorhandenen Controller samt SQLite-Neustart und idempotentem Retry für einen *gültigen* Hexenmeister separat prüfen. Abnahme: ein gespeicherter bestätigter Rast-Event, keine zweite Paktregeneration bei Request-ID-Wiederholung, veraltete Revision wird abgewiesen, keinerlei Reparatur ungültiger Herkunftsdaten; vor Beginn offenen PR-Dateiabgleich wiederholen.
 
 ---
+
+
+---
+
+# Chat A – Unsichtbare Materialstapel-IDs abweisen (03.11.2026)
+
+**Basis-main:** `a786ad61c508da1a9ec1a24f85100a4a994182c8`.
+**Eigener Branch:** `fix/chat-a/spell-material-id-invisible-20261103`.
+**Code-/Test-HEAD vor Dokumentation:** `79a6a0509d393b0681f662e67427f8a951575f90`.
+**Pull Request:** [#520](https://github.com/ManuEtt/Dnd/pull/520) (Draft).
+**App-Version:** `0.8.49+99` unverändert.
+
+### Ausgangslage und Regelgrenze
+
+Die ID-Prüfung für Inventarstapel verhinderte bereits gängige bidi- und
+Zero-Width-Formatzeichen, ließ aber U+206A–U+206F (veraltete
+Richtungsformatierung) und U+FFF9–U+FFFB (Interlinear-Anmerkungen) durch.
+Das betraf sowohl auditierte SRD-Komponentenbindungen als auch die
+bestätigte, atomare Inventar-/Slotbuchung. SRD 5.2.1,
+*Spells / Components* (CC BY 4.0), liefert den fachlichen Kontext;
+die Unicode-Sperre ist eine technische Prüfmaßnahme, keine neue SRD-Wirkung.
+
+### IMPLEMENTIERT
+
+- `app/lib/domain/srd_spell_inventory_id_rules.dart`: die bestehende
+  zentrale Negativliste um exakt neun Formatcodepunkte ergänzt.
+- `app/test/srd_spell_inventory_id_legacy_format_test.dart`: positive
+  internationale ID-Fälle; negative Fälle für alle neun Codepunkte am
+  Ende und in der Mitte; negatives auditiertes Secret-Chest-Material;
+  negative Revivify-Ressourcenbuchung ohne Mutation des ursprünglichen
+  Helden-/Inventar-JSONs; positive gültige Revivify-Buchung.
+- Nicht geändert: `models.dart`, `game_engine.dart`, Controller, Story,
+  Backend, Materialpreise, Inventar-Schema oder andere Chat-Zuständigkeiten.
+
+### GETESTET
+
+- Main-SHA, offene PRs, vollständige Fachpfad-Überschneidungen,
+  bestehende Tests und letzte Main-Actions geprüft.
+- Eigener Branch ab beobachtetem `main` erstellt; die beiden Fachdateien
+  tatsächlich per GitHub geschrieben; Draft-PR #520 eröffnet.
+- Lokale Python-Regulärausdruck-Gegenprüfung bestätigte die bisher
+  fehlende Sperre für U+206A–U+206F und U+FFF9–U+FFFB. Dies ist kein
+  Dart-/Flutter-Test und kein Beleg für lauffähige App oder APK.
+
+### NICHT GETESTET / BLOCKIERT
+
+- `flutter test test/srd_spell_inventory_id_legacy_format_test.dart`,
+  vollständiges `flutter test`, Formatierung, `flutter analyze`, APK-Build,
+  Python-Skripte, Backend-Tests und reale Geräte-/Upgrade-Abnahme.
+- In dieser Laufzeit sind Dart-/Flutter-SDK sowie ein GitHub-Checkout
+  wegen fehlender DNS-Auflösung nicht verfügbar; finale GitHub-CI
+  muss an der endgültigen PR-HEAD-SHA getrennt abgenommen werden.
+
+### KOMPATIBILITÄT / RISIKEN
+
+Keine SQLite-/JSON-Migration, keine Änderung gespeicherter Spielstände,
+kein erzwungenes Umbenennen. Vorhandene historische IDs mit genau diesen
+Formatzeichen werden bei der nächsten regelgeprüften Materialbuchung
+abgewiesen, ohne Bestand oder Ressourcen stillschweigend zu verändern.
+Neue Regelwirkungen, KI-Entscheidungen und Materialwerte werden nicht
+automatisch bestätigt. Änderungen in fremden PRs werden nicht überschrieben.
+
+### NÄCHSTER SCHRITT (ein Paket)
+
+Nach vollständiger CI-Abnahme des finalen PR-HEAD unabhängig prüfen,
+ob eine weiterhin offene klassenbezogene Zaubervorbereitungsgrenze auf
+aktuellem `main` reproduzierbar ist. Akzeptanz: eigener isolierter
+Fachpfad, positive/negative SRD-Regressionsfälle und keine Änderung
+von `models.dart` während #463 offen ist.
+
+---
+
+
+---
+
+# Chat A – Verlässliche SRD-Komponententexte vor Preis-/Verbrauchserkennung (03.11.2026)
+
+**Basis-main:** `bd423f4586e355ef888fe8ede1a0cd13fdc48dd4`.
+**Arbeitsbranch:** `fix/chat-a/spell-component-format-20261103`.
+**Fachcode-/Test-HEAD:** `48cc73d1b466080fd4703413e20a5ed909591942`.
+**PR:** [#523](https://github.com/ManuEtt/Dnd/pull/523) (Draft).
+**App-Version:** `0.8.49+99` unverändert.
+
+## Ausgangsproblem / Nachweis
+
+Vorher ließ `SrdSpellDefinition.validateComponentMetadata` unsichtbare
+Zeichen innerhalb von `M (...)` zu, solange das V/S/M-Grundformat stimmte.
+Ein scheinbar identischer `Revivify`-Text mit U+206A mitten in
+`consumes` besteht die syntaktische Komponentenprüfung, aber die
+separate Consumption-Worterkennung trifft nicht mehr zu.
+Selbst ein direkt konstruiertes `SrdSpellDefinition` konnte die
+Verbrauchsvoraussetzung dadurch falsch klassifizieren.
+
+## IMPLEMENTIERT
+
+- `app/lib/domain/srd_spell_catalog.dart`: unsichtbare C0/C1-Steuerzeichen,
+  Soft-Hyphen, Bidi/Zero-Width, veraltete Formate und Interlinear-Zeichen
+  bereits bei der Komponenten-Metadatenprüfung fail-closed abweisen.
+- `app/test/srd_spell_component_invisible_format_test.dart`: vier
+  Testgruppen für bekannte Katalogmetadaten, legitime internationale
+  Materialbeschreibungen, alle neun U+206A–U+206F/U+FFF9–U+FFFB innerhalb
+  von Verbrauchs- und Preisworten, JSON-Eingabe und unveränderte
+  Helden-/Slotdaten bei fehlgeschlagenem Preflight sowie positiven
+  `Revivify`-Verbrauchsvorbehalt.
+- `README.md`, `docs/CODEX_CHECKPOINT.md` und dieser Checkpoint
+  werden additiv fortgeschrieben; alte Einträge bleiben erhalten.
+
+## GETESTET
+
+- Verfügbaren Main-/PR-/Branch-/Actions-Stand per GitHub geprüft.
+- Reproduzierender JavaScript-Test bestätigte, dass ein unsichtbares
+  Zeichen das Wort `consumes` zerlegt und der bisherige Regex den
+  Materialverbrauch in der manipulierten Textvariante nicht erkennt.
+- Quell- und Teständerungen im eigenen GitHub-Branch gesichert.
+  Vollständige Flutter-/CI-Abnahme ist davon getrennt.
+
+## NICHT GETESTET / BLOCKIERT
+
+- Noch nicht als grün belegt: `flutter analyze`,
+  `dart format --output=none --set-exit-if-changed lib test`,
+  `flutter test test/srd_spell_component_invisible_format_test.dart`,
+  vollständige Flutter-/Python-/Backend-Suite, Android-Debug-APK,
+  tatsächlicher Android-Geräte-/Upgrade-Test.
+- CI darf nur auf finaler Commit-SHA als `completed/success` gelten.
+- Lokale Flutter-Laufzeit/Checkout nicht verfügbar; GitHub Actions
+  liefert den maßgeblichen überprüfbaren Nachweis.
+
+## KOMPATIBILITÄT / KONFLIKTE
+
+- Keine Änderung an gespeicherten Spielständen, SQLite/JSON-Schema,
+  App-Version, bestehenden Zauberressourcen oder der Erzähl-API.
+- Neue Fail-closed-Prüfung kann manipulierte importierte Zauberkatalogwerte
+  ablehnen, führt aber weder heimliche Datenmigration noch Slot-Abzug aus.
+- Offen: #463 (Klassen-Vorbereitungsbeleg), #520 (Materialstapel-IDs),
+  Integrations-PRs von Chat D. Keines dieser Pakete überschreibt
+  `srd_spell_catalog.dart` oder den neuen Testpfad.
+- **Lizenz:** SRD 5.2.1, *Spells / Components*, CC BY 4.0;
+  keine allgemeine SRD-Vollabdeckung oder neue magische Wirkung behauptet.
+
+## NÄCHSTER SCHRITT (genau ein unabhängiges Paket)
+
+Nach erfolgreich abgenommener kombinierter CI den
+klassenbezogenen Vorbereitungspfad gegen aktuelle Main-Integration
+von #463 prüfen; nur bei reproduzierbarer Lücke ein separates
+Positiv-/Negativpaket ohne parallele Änderung an `models.dart` wählen.
+
+---
+
+
+---
+
+# Chat A – Persistenter klassenbezogener Vorbereitungsnachweis (01.11.2026)
+
+**Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868` · **Branch:**
+`feat/chat-a/class-prepared-spell-record-20261101` · **PR:** folgt auf Branch-Sicherung.
+
+**Problem:** Die historische globale Zauberliste hat keine Klassenherkunft.
+Ein boolescher aktueller Nachweis aus dem offenen PR #461 wird nicht dauerhaft
+als eigene Auswahl im bestehenden JSON gespeichert. SRD 5.2.1
+*Multiclassing – Spells Prepared*, S.25, CC BY 4.0.
+
+**IMPLEMENTIERT:** `SrdPreparedSpellRecord` v1 speichert unveränderliche
+per-Klasse-Auswahl und deren Klassen-/Zauberlisten-Snapshot; `confirm`
+prüft ausdrückliche Bestätigung, eigene kanonische SRD-Klassen,
+Katalogklassen/individuelle Klassenstufen, Dubletten und vorhandene Zauber.
+`isPreparedForClass` ist read-only und revalidiert den SRD-Katalog.
+`HeroCharacter` speichert `preparedSpellRecord` optional im bisherigen
+Schema; alte JSONs bleiben identisch, `copyWith` verwirft Nachweise bei
+Klassen-/Stufen-/Zauberlistenänderung; Ressourcenänderungen behalten sie.
+Keine UI-/Controller-/Engineänderung, keine SQLite-Migration, keine
+automatische Ableitung aus KI/Legacytext.
+
+**Dateien:** `app/lib/domain/models.dart`,
+`app/lib/domain/srd_prepared_spell_record.dart`,
+`app/lib/domain/srd_class_prepared_spell_rules.dart`,
+`app/test/srd_class_prepared_spell_record_test.dart`,
+`docs/SRD_CLASS_PREPARED_SPELL_RECORD_20261101.md`,
+README, zentraler sowie persönlicher Checkpoint.
+
+**GETESTET:** neun neue deterministische Testgruppen geschrieben
+einschließlich negativem Import, JSON-Roundtrip, tatsächlichem
+SQLite-Neustart, idempotenter Revision und stale write. Ausführung
+und GitHub-Actions-Status auf finalem Commit nach Veröffentlichung
+verifizieren; keine vorweggenommene grüne CI.
+
+**NICHT GETESTET:** reales Android-Gerät, Upgrade/Store-Signierung.
+**BLOCKIERT:** vollständige Integration in den realen
+Zauberpreflight hängt von der koordinierten Review des
+offenen [PR #461](https://github.com/ManuEtt/Dnd/pull/461) ab;
+dessen Fachdatei bleibt unberührt. Gemeinsame
+Dokumentation bei späterem Merge durch Chat D erhalten.
+SQLite 3, äußeres JSON 1, App-Version unverändert.
+
+**NÄCHSTER SCHRITT:** nach Integration von PR #461
+vorhandene gespeicherte Klasse statt bloßes Bestätigungsflag
+als optionalen starken Nachweis in dessen Vorprüfung
+verwenden, einschließlich falscher Klasse/Alterung/Retry/
+SQLite und eigener Stufenlimits. Vollständige
+Vorbereitungsanzahl bleibt separat.
+
+---
+
+
+---
+
+## 01.11.2026 – Chat A: Klassenprüfung vor Konzentrationswürfen
+
+Entwicklungsstand **0.8.50+100**, Branch
+`fix/chat-a/concentration-class-preflight-20261101`, Code/Test
+`37604994828745ac44e48d8e2f628024f2f355e2`, Basis-Main `5a88834c`.
+Die vorhandene Klassen-/Stufen-/Rettungswurf-Übungsprüfung wird jetzt auch vor
+dem tatsächlichen Konzentrationswurf und vor einer separaten W20-Auflösung
+verwendet. Unbekannte oder widersprüchliche Klassen gewähren keinen Mönchsbonus.
+Der deutsche Schadensdialog zeigt den Fehler ohne Teiländerung; nach expliziter
+Klassenkorrektur bleibt der normale Ablauf ausführbar. Alte Profile bleiben
+lesbar, keine SQLite-/JSON-Migration. SG 10–30 war bereits zuvor umgesetzt.
+
+**GETESTET:** 68 neue Tests (58 Domain, 8 Engine/SQLite, 2 echte UI-Flows) und
+42 bestehende Regressionen: **110 gezielte Tests bestanden**, Analyzer sauber.
+Die neuen Domänentests auf unverändertem Main: 25 bestanden / 33 fehlgeschlagen;
+mit Fix alle 58 bestanden. **Vollständig lokal bestanden:** 2.778 Flutter-,
+262 Python- und 76 Backend-Tests, 579 Dart-Dateien ohne Formatänderung,
+Analyse/Backend-Typecheck/Build/Protokollsmoke. Zusätzlich ARM64-Debug-APK und
+**13 native JUnit-Tests** ohne Fehler oder Skip. Zwei Android-Vorläufe scheiterten
+am vollen Datenträger; nach Bereinigung ausschließlich erzeugter Caches bestand
+die Wiederholung. Quellen, Spielstände und frühere Artefakte blieben erhalten.
+[PR #468](https://github.com/ManuEtt/Dnd/pull/468) ist gesichert; vollständige finale
+GitHub-CI auf seinem aktuellen Head separat abwarten. Kein Main-Merge behauptet.
+**NICHT GETESTET:** echtes Androidgerät/TalkBack, installiertes Upgrade,
+produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** vollständige Konzentrations-
+automation und Klassenprüfung aller allgemeinen Wiederholungswürfe.
+[Fachbericht und Grenzen](CHAT_A_CONCENTRATION_CLASS_PREFLIGHT_20261101.md).
+
+Nächster Schritt nach Abnahme: allgemeine Klassen-Wiederholungen vor Würfel und
+Ressourcenverbrauch auf dieselbe konsistente Klassenherkunft prüfen. Vorher
+aktuelle PRs abgleichen; offene #453/#461/#463/#448 nicht erneut implementieren.
+Die nachfolgenden früheren Entwicklungsstände sind historische Momentaufnahmen.
+
+---
+
+**Quelle/Requirement:** SRD 5.2.1 S.179 und52, CC BY4.0,
+`RULE-SPELLS-CONCENTRATION-SAVING-THROWS` bleibt partial. Gemeinsamer Validator
+unverändert aus vorbereitender Evidenz extrahiert, keine erfundenen Bestätigungen.
+**Dateien:** drei spezialisierte Domainmodule, drei neue Testdateien,
+`app/pubspec.yaml`, konservativer Requirement-Nachweis und Dokumentation.
+Keine Änderungen an models/GameEngine/Controller/SQLite/Story/UI-Quellen.
+**Patchbasis:** vollständiger Main-SHA5a88834c98f5aca40395088c20c7e1dc5b587868.
+**BLOCKIERT:** nur finale GitHub-CI und spätere koordinierte Integration;
+kein SDK-Zugriffsblocker. Echte Geräteabnahme bleibt offen.
+
+---
+
+
+---
+
+## 02.11.2026 – Main2e9 integriert, kombinierte lokale Prüfungen bestanden
+
+Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` aus #471 ist regulär
+in denselben Entwicklungsbranch integriert; ursprüngliche Basis war `5a88834c`.
+Der abschließende Mergecommit ist über [PR #473](https://github.com/ManuEtt/Dnd/pull/473)
+ermittelbar. Keine Quellkonflikte; einziger Markdown-Konflikt im Chat-A-Checkpoint
+additiv gelöst, alle Main-Beiträge erhalten. Die eigenen 51 Guardzeilen und ihr
+Dateihash bleiben unverändert. SQLite3/JSON1 unverändert, keine Migration.
+
+**GETESTET auf dem kombinierten Stand:** **182 gezielte Flutter-Regressionen**
+mit den eigenen UI-/SQLite-Fällen und den neuen Main-Paketen; **275 Pythonfälle**,
+Projekt-/Importgrenzen-/SRD-Prüfung, **582 Dartdateien ohne Formatänderung** und
+saubere Analyse. Neuer **ARM64-Debug-Build und 14 native JUnit-Tests** ohne
+Fehler, Error oder Skip bestanden. Die vollständige lokale frühere Suite
+**2.782 Flutter /262 Python /76 Backend** gehört ausdrücklich zum Vorgänger8dd
+auf Basis5a; sie ist kein behaupteter neuer kombinierter Vollpass.
+
+**OFFEN:** vollständige CI des aktuellen abschließenden Merge-Heads, optimierte
+Alpha und reale Geräte-/TalkBack-/Upgrade-/Produktivsignierungsabnahme.
+[PR-Checks](https://github.com/ManuEtt/Dnd/pull/473/checks) abwarten; PR bleibt
+bis zur tatsächlichen CI-/Artefaktabnahme Draft. Kein Code-/SDK-Blocker bekannt.
+Der aktuelle Quellencheckpoint/Patch wird gegen **Main2e9** erstellt; frühere
+8dd-/5a-Archive bleiben unverändert erhalten. Main nicht direkt verändert.
+Allgemeiner initialer manueller Rettungswurf bleibt das nächste getrennte Paket;
+beide Klassen-Requirements weiterhin partial, Gesamt-SRD/Charakterassistent offen.
+
+**Nachfolgend historische Prüf- und Checkpointstände vor Main2e9:**
+
+## 02.11.2026 – lokale Vollabnahme des Chat-A-Pakets bestanden
+
+**0.8.51+101**, Basis-Main `5a88834c98f5aca40395088c20c7e1dc5b587868`,
+Branch `fix/chat-a/saving-throw-class-preflight-20261102`. Laufzeit-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038`, früher Dokumentationscheckpoint
+`d5cf52f1c27ecdb0f01f0ce461788cde12449310`. Nur Dokumentation folgt danach;
+Laufzeit-/Testcode unverändert. [PR #473](https://github.com/ManuEtt/Dnd/pull/473)
+ist Draft; die **[Checks des finalen aktuellen PR-Heads](https://github.com/ManuEtt/Dnd/pull/473/checks)**
+sind separat abzunehmen. Kein Main-Merge und keine erfolgreiche neue CI behauptet.
+
+**GETESTET:** `bash scripts/check.sh` vollständig mit Exit 0 bestanden:
+**2.782 Flutter / 262 Python / 76 Backend**, 579 Dartdateien ohne Formatänderung,
+Analyse sauber, Backend-Typecheck/Build und tatsächlicher lokaler Protokollsmoke.
+Abschlussmarker `08:15 +2782: All tests passed!`; 72 neue Fälle und 159 gezielte
+Regressionen sind darin keine zusätzliche globale SRD-Abnahme. Lokaler ARM64-
+Debug-Build und **13 native JUnit-Tests** ohne Fehler, Error oder Skip bestanden.
+Der frühzeitige Quellencheckpoint auf d5cf52f1 ist unabhängig geprüft: **1.369
+Dateien**, CRC/Hashes/Größen/Modi, echte Patchanwendung auf Basis5a und isolierte
+Git-Bundle-Wiederherstellung/fsck bestanden. Endcheckpoint und finale CI folgen.
+
+**Koordination:** Vor PR erneut **27 fremde PRs** geprüft: ursprüngliche 23 Heads
+unverändert, neue #469–#472 ohne Überschneidung der Fachdateien; deren CI lief beim
+Audit noch. #468 teilt das Requirement-Register, bearbeitet andere IDs. Bei späterer
+Konsolidierung die neue Version101 gegenüber100 und alle geprüften Belege erhalten.
+
+**OFFEN:** aktuelle finale PR-CI, optimierte Alpha und reale Geräte-/TalkBack-/
+Upgrade-/Produktivsignierungsabnahme. Allgemeiner initialer manueller Rettungswurf
+bleibt das nächste gesonderte Paket; vorher frische PR-/Quellenprüfung. SQLite3/
+JSON1 ohne Migration; beide Klassen-Requirements bleiben partial. Weitere Details
+im Fachbericht `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
+
+**Historischer Frühcheckpoint vor der vollständigen lokalen Abnahme:**
+
+## 02.11.2026 – Chat A: Klassenprüfung vor Rettungswurf-Wiederholungen, 0.8.51+101
+
+**Vorläufiger Quellen-Checkpoint, keine vollständige Abnahme.** Basis-Main
+`5a88834c98f5aca40395088c20c7e1dc5b587868`, Branch
+`fix/chat-a/saving-throw-class-preflight-20261102`. Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038` ist gesichert. Pull Request und finale CI
+folgen nach den erforderlichen Prüfungen. Main bleibt
+unverändert; Issue #425 und alte Branchmigration sind abgeschlossen.
+
+**IMPLEMENTIERT:** Genau 51 zusätzliche Zeilen im bestehenden
+`app/lib/domain/saving_throw_class_actions.dart`: bekannte SRD-Klassen und
+kanonische Aliase, Gesamt-/eigene Klassenstufen, zulässiger Zweitklassensplit und
+eindeutige Rettungswurfübungen vor Klassenbonus, Ressourcenverbrauch und neuem
+W20 prüfen. Die lesende Verfügbarkeitsabfrage liefert für solche ungültigen
+Profile `false`. Berechnungen, Ressourcenregeln und übriger vorhandener Code
+bleiben unverändert. In der bestehenden Engine-Kette erzeugt ein abgewiesener
+Textversuch absichtlich `rules.blocked` und eine Revision; Helden-/Ressourcenwerte
+und RNG ändern sich nicht. Historische Profile werden beim Öffnen nicht repariert.
+
+**GETESTET:** 62 neue Domain-, acht Engine-/SQLite- und zwei tatsächliche App-UI-
+Tests bestanden, zusammen **72 neue Fälle**. **159 gezielte neue und bestehende
+Regressionen** bestanden (157 Domain-/Flowfälle plus zwei UI-Fälle). Lokaler
+ARM64-Debug-APK-Build bestanden. Positivfälle
+für alle zwölf Klassen, gültige Aliase, tatsächliche Kämpfer-Klassenstufe,
+Übung/Erschöpfung einmal sowie negative Klassen-/Stufen-/Übungsdaten. Speicherfälle
+prüfen Ablehnung, einmalige Ressourcenbuchung, Replay, stale Zweitcontroller,
+Neustart, Export/Import und späten SQLite-Rollback. Ein vorher legitimer W20 wird
+bei spätem SQL-Fehler nicht als rückrollbar behauptet.
+
+**NICHT ABGESCHLOSSEN / NICHT GETESTET:** Vollständiges `scripts/check.sh` und
+native Android-Tests laufen zum Frühcheckpoint noch; kein Vollpass behauptet.
+Optimierte Alpha und aktuelle GitHub-CI stehen aus. Geräte-/TalkBack-/Upgrade-
+und produktive Signierungsabnahme fehlen. Kein Legacy-Profil-Korrektur-UI-Flow
+wird behauptet.
+
+**BLOCKIERT:** Kein bekannter fachlicher oder GitHub-Zugriffsblocker; reparierte
+UI-Fixtures haben 2/2 bestanden, vollständige Abnahme läuft. Nur begrenzter
+lokaler Speicherplatz: frühes Quellen-ZIP, Patch und Bundle außerhalb des
+Projekts priorisieren. Keine Quellen, Spielstände, WIP oder alten Artefakte löschen.
+
+**NOCH NICHT IMPLEMENTIERT:** Allgemeiner initialer manueller Rettungswurf ist
+in diesem Paket unverändert. Weitere Rettungswurfquellen, situative Modifikatoren,
+kompletter Charakterassistent und Gesamt-SRD bleiben offen. SQLite **3** / äußeres
+JSON **1**, keine Migration. `CLASS-K-MPFER-9-BASE-INDOMITABLE-0` und
+`CLASS-M-NCH-14-BASE-DISCIPLINED-SURVIVOR-0` nur **partial**; keine globale Abschlussquote.
+
+Vor Beginn 23 offene PRs anhand ihrer Dateilisten geprüft. PR #468 bleibt getrennt
+und auf seinem eigenen Head CI-grün; seine Konzentrationsdateien werden nicht
+verändert. Andere Chat-A-/B-/C-/D-Pakete nicht erneut implementieren oder mergen.
+Gemeinsame README-/Checkpoint-Zusätze konsolidiert Chat D später additiv.
+
+**Genau nächstes unabhängiges Paket:** Allgemeinen initialen manuellen Rettungswurf vor automatisch abgeleiteten Klassenboni und W20 validieren; schreibfreie Charakterbogen-Vorschauen unverändert lassen. Zuerst frische Main-/PR-Dateilisten prüfen. Akzeptanz: unbekannte/inkonsistente Klassen vor Bonus/RNG ablehnen, gültige Aliase und Mehrklassen behalten dieselben Boni, Domain-, SQLite-/Retry- und tatsächliche UI-Regressionen bestehen.
+
+Fachnachweis: `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
+Die darunter bewahrten Berichte gelten jeweils für ihren damaligen Stand.
+
+---

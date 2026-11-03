@@ -1193,3 +1193,576 @@ Ausgangs-main `a2f22eaceb344aaced12d0ad548b813aa44d544f`; Branch `fix/chat-d/alp
 **NÄCHSTER SCHRITT (genau ein unabhängiges Paket):** Den Kurzrast-Null-HD-Übergang über den vorhandenen Controller samt SQLite-Neustart und idempotentem Retry für einen *gültigen* Hexenmeister separat prüfen. Abnahme: ein gespeicherter bestätigter Rast-Event, keine zweite Paktregeneration bei Request-ID-Wiederholung, veraltete Revision wird abgewiesen, keinerlei Reparatur ungültiger Herkunftsdaten; vor Beginn offenen PR-Dateiabgleich wiederholen.
 
 ---
+
+---
+
+## Chat B – unsichtbare NPC-Namenszeichen sicher behandeln (01.11.2026)
+
+- **main-Basis:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `fix/chat-b/npc-zero-width-name-ambiguity-20261101`.
+  **PR:** [#464](https://github.com/ManuEtt/Dnd/pull/464), Draft.
+- **IMPLEMENTIERT:** `NpcNarratorMemory.merge` stuft durch Zero-Width-
+  Spaces/Joiner/Word-Joiner/BOM scheinbar unterscheidbare NPC-Namen als
+  mehrdeutig ein, wenn sie ohne unsichtbare Zeichen gleich aussehen.
+  Ausgehende NPC-Namen und Notiztexte werden sicher ausgegeben; keine
+  Regel-/Story-/Inventar-/HP-Mutation.
+- **Dateien:** `app/lib/story/npc_narrator_memory.dart`,
+  `app/test/npc_zero_width_identity_memory_test.dart`, README und
+  zentrale/persönliche Checkpoints.
+- **GETESTET:** tatsächlicher Main-SHA, vollständiger Masterprompt,
+  offener PR-Dateibestand, Modul-/Testquellen; alte CI nur zur
+  Ausgangsorientierung. **NEUE CI:** GitHub-Actions-Abnahme des finalen
+  PR-HEAD noch offen; keine Behauptung vollständiger Testerfolge.
+- **NICHT GETESTET:** komplette neue Dart-/Flutter-/Backend-/Android-CI
+  und physisches Gerät/TalkBack/Produktiv-KI.
+  **BLOCKIERT:** kein lokales Flutter/Dart-SDK; Testabnahme über GitHub.
+  **Migration:** keine, SQLite 3 / äußeres JSON 1 unverändert.
+- **NOCH NICHT IMPLEMENTIERT:** explizite UI-Auswahl mehrdeutiger Namen
+  im Wiederaufnahme-Kontext; das ist nicht Teil dieses Pakets.
+- **NÄCHSTER SCHRITT:** finale GitHub-CI für #464 vollständig abnehmen;
+  gegebenenfalls nur eigenen Branch korrigieren und alle Tests neu ausführen;
+  anschließend Review und additive Dokumentations-Konsolidierung durch Chat D.
+
+---
+
+## Chat B – strukturierte NPC-Identität: Zero-Width-Schutz (02.11.2026)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `fix/chat-b/structured-npc-zero-width-20261102`.
+  **Draft-PR:** [#470](https://github.com/ManuEtt/Dnd/pull/470).
+- **Problem/IMPLEMENTIERT:** `NpcIdentityStoryPayload.prepare` fasste
+  optisch gleiche Namen bei U+200B–U+200D/U+2060/U+FEFF zuvor nicht
+  gleich; unstrukturierte Spielerprosa konnte daher eine falsche
+  Identitätszuordnung nahelegen. `_fold` beseitigt nur für den Vergleich
+  diese Zeichen, `_validText` verwirft sie dagegen im strukturierten
+  Kontext. Gespeicherte NPCs/Notizen werden nicht heimlich geändert.
+- **Dateien:** `app/lib/story/npc_identity_story_payload.dart`,
+  `app/test/npc_identity_story_zero_width_payload_test.dart`,
+  `README.md`, `docs/CODEX_CHECKPOINT.md`,
+  `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **Positive und negative Tests:** fünf Unicode-Marker, mehrdeutige Namen
+  vs. ausdrücklich gewählte sichere NPC-ID, schädliche Formatzeichen in
+  Namen, Beziehungen/Notizen, Legacy-JSON ohne Notizen, SQLite-Neustart und
+  Rekonstruktionsabgleich, Revisions- und Heldenschutz.
+- **GETESTET:** Quellen, aktueller Main-HEAD und alle offenen PR-Dateipfade
+  geprüft; Dart-3.9.2-Formatter separat auf beide Code-/Testdateien
+  angewandt, Diagnoseworkflow entfernt. **PR #464** (getrennte unstrukturierte
+  NPC-Erinnerungs-API) bereits grün:
+  [CI #41323322514](https://github.com/ManuEtt/Dnd/actions/runs/41323322514).
+  Dies ist **kein** Erfolgsgarant für #470.
+- **NICHT GETESTET:** finale vollständige CI von #470 (noch offen),
+  physisches Android-Gerät/TalkBack, produktive KI. **BLOCKIERT:** lokale
+  Flutter-/Dart-Tools fehlen; GitHub Actions verfügbar.
+- **Migration:** keine, SQLite 3/äußeres JSON 1 unverändert.
+  **Noch nicht implementiert:** produktiver ID-basierter Backend-Vertrag.
+- **Nächster Schritt:** #470-CI auf finalem HEAD auswerten, nötige
+  Korrekturen im eigenen Branch wiederholt testen, Chat D zur
+  kontrollierten additiven Integration übergeben. Kein Auto-Merge.
+
+---
+
+## Chat B – bestätigte NPC-Rückblicke: Zero-Width-Namensschutz (02.11.2026)
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`;
+  **Branch:** `fix/chat-b/npc-continuity-zero-width-20261102`;
+  **Pull Request:** [#477](https://github.com/ManuEtt/Dnd/pull/477), Draft.
+- **Problem:** `NpcContinuityReader._npcNameKey` entfernte Bidi-Marken,
+  aber nicht U+200B–U+200D, U+2060 oder U+FEFF. Zwei sichtbar gleiche
+  NPC-Namen konnten ohne notwendige ID in bestätigten Rückblicken
+  erscheinen; Rückblicktext enthielt zusätzliche unsichtbare Zeichen.
+- **IMPLEMENTIERT:** `_visibleName` entfernt Formatzeichen nur in der
+  Darstellung/Vergleichsprojektion, die sichere gespeicherte NPC-ID
+  disambiguiert Dubletten. `_singleLine` bereinigt auch gespeicherte
+  Beziehungstexte und Notizen auf der Anzeigeoberfläche. Keine Änderung
+  an bestätigtem Kampagnen-/Regelzustand.
+- **Dateien:** `app/lib/story/npc_continuity_reader.dart`,
+  `app/test/npc_continuity_zero_width_test.dart`, README, zentraler
+  und eigener Chat-B-Checkpoint. Fünf positive/negative Testgruppen:
+  sechs Unicode-Marker, Einzel-NPC, unsichere/doppelte ID, Legacy-JSON,
+  SQLite-Neustart und Replay, unveränderte Heldenwerte und bestätigte
+  Notizen.
+- **GETESTET:** GitHub Main/alle offenen PR-Dateipfade/Fachquellen
+  geprüft. **NICHT GETESTET:** vollständige finale Actions-CI,
+  reales Android-Gerät/TalkBack, produktiver KI-Anbieter.
+  **BLOCKIERT:** kein lokales Flutter-/Dart-SDK, Actions verfügbar.
+  **Migrationen:** keine; SQLite 3, äußeres JSON 1 unverändert.
+- **Koordination:** #452/#456/#459/#464/#470 ändern getrennte
+  Storymodule. Gemeinsame README-/Checkpoint-Zusätze bei Integration
+  durch Chat D additiv zusammenführen. Keine direkten Main-Commits.
+- **NÄCHSTER SCHRITT:** vollständige finale CI inkl. neuer Regressionen
+  abnehmen und Fehler im eigenen Branch korrigieren; danach Review
+  durch Chat D, kein automatischer Merge.
+
+
+---
+
+
+---
+
+## Chat B – NPC-Wiederaufnahmerückblick gegen ältere unsichtbare Unicode-Zeichen (03.11.2026)
+
+- **Basis-main:** `a786ad61c508da1a9ec1a24f85100a4a994182c8`.
+- **Branch:** `feat/chat-b/npc-resume-invisible-marks-20261103`.
+- **PR:** [#519](https://github.com/ManuEtt/Dnd/pull/519), Draft.
+- **Problem:** Soft Hyphen (U+00AD), Combining Grapheme Joiner (U+034F), Mongolian Vowel Separator (U+180E) sowie ältere Bidi-Formatzeichen (U+206A–U+206F) blieben in der bestätigten NPC-Rückblickansicht versteckt erhalten.
+- **Implementierung:** Nur `app/lib/story/confirmed_npc_resume_selection.dart` erweitert den vorhandenen `_formatMarks`-Filter; derselbe revisionsgebundene Auswahlvertrag, keine Änderung am gespeicherten Text.
+- **Regression:** Neue `app/test/confirmed_npc_resume_invisible_marks_test.dart` mit drei positiven/negativen Tests für sämtliche neun Zeichen, legitime Unicode-Textformen, Quellenbindung, 2.400-Zeichen-Grenze, unveränderten JSON-Roundtrip und gleichrevisionierte Rohdatendifferenz.
+- **Fach-/Testcommits:** `651d9f0f490a1beafe417a83371dd92b0b0f792c`, `1e6e8ba6bff323789821101e9fe7d5d08c0c1634`, Formatlabel `0ea9af27610aa92c244065448840fe32de37dd40`. Finalen PR-HEAD gesondert prüfen.
+- **Tests:** Nur Code-/Teststruktur statisch geprüft. Lokales Flutter/Dart fehlt, vollständige GitHub-CI und Android-Realgerät nicht als bestanden ausgewiesen.
+- **Abgrenzung:** Keine fremden Story-Fachdateien, keine Regel-, Modell-, Controller-, SQLite- oder Backendänderung; keine Migration, kein Provider-Aufruf, keine Versionsänderung. README/zentraler Checkpoint müssen beim Merge additiv koordiniert werden.
+- **Nächster Schritt:** Finalen CI-Run auf dem dokumentierten PR-HEAD vollständig prüfen und bei roten Schritten den eigenen Branch korrigieren.
+
+
+---
+
+## Chat A – Unicode-Schutz für SRD-Materialbindungen (03.11.2026)
+
+- **Basis-main:** `a786ad61c508da1a9ec1a24f85100a4a994182c8`.
+- **Branch:** `fix/chat-a/spell-material-id-invisible-20261103`.
+- **PR:** [#520](https://github.com/ManuEtt/Dnd/pull/520) (Draft).
+- **Implementierungs-HEAD vor Dokumentation:** `79a6a0509d393b0681f662e67427f8a951575f90`.
+- **IMPLEMENTIERT:** `SrdSpellInventoryIdRules.isSafe` verbietet jetzt
+  zusätzlich U+206A–U+206F und U+FFF9–U+FFFB in Inventarstapel-IDs;
+  bestehende erlaubte internationale Zeichen bleiben zulässig.
+- **REGRESSIONEN ERGÄNZT:**
+  `app/test/srd_spell_inventory_id_legacy_format_test.dart` mit direkten
+  positiven/negativen ID-Fällen, auditiertem Mehrmaterial, nicht erfolgender
+  Cast-/Ressourcenbuchung bei manipulierten IDs und gültiger Buchung.
+- **GETESTET:** Quellcode und Dateipfade auf GitHub gelesen; Branch-/PR-
+  Anlage und Commit-Speicherung bestätigt. Keine Flutter-Ausführung behauptet.
+- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/APK-CI für den
+  endgültigen PR-HEAD; reales Android-Gerät und Altversions-Upgrade.
+- **BLOCKIERT:** Lokale Netzwerkauflösung von github.com und Dart-/Flutter-
+  SDK fehlen; GitHub-PR-CI ist das maßgebliche ausführbare Test-Gate.
+- **KOMPATIBILITÄT:** keine Änderung an SQLite 3, JSON 1, vorhandenen
+  Spielständen, Regeln für Materialwerte, Slots oder App-Version 0.8.49+99.
+- **REGELQUELLE:** SRD 5.2.1 *Spells / Components*, CC BY 4.0;
+  Unicode-Prüfung ist eine technische Integritätsabsicherung, keine neue
+  Zaubermechanik. Bestehende Drittlizenzhinweise bleiben erhalten.
+- **NÄCHSTER SCHRITT:** Auf finalem PR-HEAD gezielten ID-Test und vollständige
+  CI auswerten; erst danach unabhängige, noch ungetestete Zaubervorbereitung
+  auf der aktuellen Main-Basis untersuchen.
+
+---
+
+
+---
+
+## Chat C – Gelegenheitsbewegung barrierefrei bei 200 % / IME (03.11.2026)
+
+[Draft-PR #521](https://github.com/ManuEtt/Dnd/pull/521) auf Basis-main
+`a786ad61c508da1a9ec1a24f85100a4a994182c8`, Branch
+`feat/chat-c/opportunity-movement-ime-accessibility-20261103`.
+Code-/Testcommits `9674fbc4` / `5e1bab84`. Der UI-Dialog nutzt jetzt
+`AlertDialog(scrollable: true)` ohne verschachtelten Scrollbereich,
+verkürzt die sichtbare ausdrückliche Bestätigung bei sehr großer Schrift
+mit ungekürztem TalkBack-Label und kennzeichnet Validierungsfehler als
+Live-Region. Vier neue positive/negative Widgettests prüfen 320/360 dp,
+200 % Schrift, 220 dp IME, Scrollstruktur, Abbruch, bestätigten Trigger
+und Widerruf nach Änderung. Domain, Spielstände, SQLite/JSON, Story
+und App-Version unverändert. Lokale Flutter-/Android-Ausführung mangels
+SDK nicht möglich; vollständige CI auf finalem HEAD und Gerätetest
+noch **nicht** als erfolgreich nachgewiesen. Additive Integration der
+gemeinsamen Dokumentation durch Chat D.
+
+---
+
+
+---
+
+## Chat A – Unsichtbare SRD-Materialzeichen abwehren (03.11.2026)
+
+- **Basis-main:** `bd423f4586e355ef888fe8ede1a0cd13fdc48dd4`.
+- **Branch:** `fix/chat-a/spell-component-format-20261103`.
+- **PR:** [#523](https://github.com/ManuEtt/Dnd/pull/523) (Draft).
+- **Code-/Test-Commit vor Dokumentation:** `48cc73d1b466080fd4703413e20a5ed909591942`.
+- **IMPLEMENTIERT:** `SrdSpellDefinition.validateComponentMetadata` blockiert
+  unsichtbare C0/C1- und Unicode-Formatsteuerzeichen in Materialtexten,
+  bevor `SrdSpellComponentRules` Preis oder Verbrauch ermittelt.
+- **TESTS ERGÄNZT:**
+  `app/test/srd_spell_component_invisible_format_test.dart` prüft den
+  bestehenden Katalog, zulässige internationale Komponenten, neun versteckte
+  Steuerzeichen innerhalb von Preis-/Verbrauchsangaben, direkten Konstruktor,
+  JSON-Import und verweigerte Slot-/Materialvorprüfung ohne Heldenmutation.
+- **GETESTET:** Quell- und Testblobs auf GitHub angelegt, zwei Fachpfade
+  auf eigenem Branch mit Main und offenen PRs verglichen. Ein unabhängiges
+  JavaScript-Reproduktionsbeispiel bestätigte, dass ein Steuerzeichen das
+  Wort `consumes` für den bisherigen regulären Ausdruck zerlegen kann.
+- **NICHT GETESTET:** `flutter test`, `flutter analyze`, Dart-Formatierung,
+  vollständige Python-/Backend-/Android-CI auf finalem Commit und Realgerät.
+  GitHub-Actions-Ergebnisse werden separat auf dem finalen SHA geprüft.
+- **BLOCKIERT:** Kein lokaler Flutter-SDK-/Repository-Checkout für eine
+  reproduzierbare lokale Flutter-Vollsuite. Vor Merge vollständige CI
+  und neuen Main-/PR-Abgleich verlangen.
+- **KOMPATIBILITÄT:** Keine Modell-/JSON-/SQLite-Migration, keine Änderung
+  der App-Version `0.8.49+99`, keine Anpassung an Controller, Story oder
+  KI-Provider, keine eigenmächtigen Spielzustandsänderungen.
+- **SRD-Bezug:** D&D SRD 5.2.1 *Spells / Components*, CC BY 4.0;
+  Technik zur Integritätssicherung, keine neu behauptete Zauberwirkung.
+- **NÄCHSTER SCHRITT:** finalen PR-HEAD durch vollständige CI abnehmen;
+  danach getrennt den offenen klassenbezogenen Vorbereitungspfad
+  nach Integration von #463 auf aktuellem `main` prüfen.
+
+---
+
+
+---
+
+
+## 31.10.2026 – Chat B: allgemeiner Rückblick auf bestätigte Kampagnenfakten
+
+**Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+**Branch:** `feat/chat-b/natural-recap-requests-20261031`.
+**PR:** [#452](https://github.com/ManuEtt/Dnd/pull/452) (Draft).
+**IMPLEMENTIERT:** Eng begrenzte Erkennung natürlicher Rückblickfragen und
+Trennung allgemeiner Rückblicke von thematischem Faktenabruf, ohne freie
+Spielzüge oder NPC-Dialoge umzudeuten. Story-Gedächtnis-Modul und
+`story_recall_intent_test.dart` geändert; positive/negative und
+GameEngine-Ende-zu-Ende-Fälle. **GETESTET:** Main-Baseline
+[41184883579](https://github.com/ManuEtt/Dnd/actions/runs/41184883579)
+war auf `5a88834c` erfolgreich, ist aber **kein Nachweis für #452**.
+**NICHT GETESTET:** Flutter/Android-CI des neuen endgültigen PR-Commits,
+Realgerät und produktiver KI-Anbieter; lokal kein Flutter/Dart-SDK.
+**BLOCKIERT:** lokale Dart-Ausführung ohne SDK; die PR-CI dient als Abnahme.
+**MIGRATION:** keine (SQLite 3, JSON 1, API, Regeln und Buildnummer unverändert).
+**KOORDINATION:** #446 testet separate verspätete SQLite-KI-Antworten;
+geteilte README-/Checkpoint-Ergänzungen vor Merge additiv vereinigen.
+**NÄCHSTER SCHRITT:** finale PR-CI und insbesondere die Story-Regressionen
+prüfen, rote Gates auf demselben Branch korrigieren und erst nach vollständigem
+Grün zur Integration an Chat D geben.
+
+
+---
+
+## Chat B – gespeicherte offene Handlungsnotizen im Sitzungsrückblick (31.10.2026)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/confirmed-resume-leads-20261031`.
+  **PR:** [#456](https://github.com/ManuEtt/Dnd/pull/456), Draft.
+- **IMPLEMENTIERT:** `StoryCampaignEngine.saveSessionRecap` ergänzt bis zu
+  drei bestätigte offene Handlungsnotizen, neuere zuerst. Abgeschlossene,
+  aufgegebene und leere Einträge ausgeschlossen, bestehende Fakten niemals
+  für Zusatztexte gekürzt. Nur lesende Storydaten, keine Erfindung aus
+  Szene/Dialog oder Regelwirkung.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart`,
+  `app/test/story_resume_recap_test.dart`, README sowie persönlicher und
+  zentraler Checkpoint. SQLite/JSON (3/1), APIs, App-Version unverändert.
+- **GETESTET:** Live-Main, offene PR-Dateien und Ausgangs-CI nachgewiesen.
+  **NICHT GETESTET:** neue Dart-/Flutter-/Android-Gates auf finalem PR-HEAD
+  beim Erstellen, Realgerät, produktiver externer KI-Dienst.
+  **BLOCKIERT:** kein lokales Flutter-/Dart-SDK, CI-Abnahme über GitHub.
+- **NOCH NICHT IMPLEMENTIERT:** automatische Wiederaufnahme-UI beim
+  Öffnen einer Kampagne; dieses Paket verbessert den vorhandenen expliziten
+  dauerhaft gespeicherten Rückblick.
+- **NÄCHSTER SCHRITT:** finale CI von #456 inklusive SQLite-Neustart-/Format-
+  Regressionen abnehmen; bei Rot nur eigenen Branch korrigieren, anschließend
+  mit Chat D die additiven README-/Checkpoint-Konflikte abstimmen. Keine
+  automatische Zusammenführung.
+
+
+---
+
+## Chat B – schreibgeschützter Wiederaufnahmekontext (01.11.2026, CET)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+  **Branch:** `feat/chat-b/read-only-resume-context-20261101`.
+  **PR:** [#459](https://github.com/ManuEtt/Dnd/pull/459) (Draft).
+- **IMPLEMENTIERT:** eigene `CampaignResumeReader`-Projektion mit ausdrücklich
+  getrennten Quellen: nicht bestätigte Szene, historischer gespeicherter
+  Rückblick, aktuelle Fakten, aktuell offene Handlungsnotizen.
+  Begrenzt und zeilensicher, nur Lesezugriff; niemals Regeln, Eventjournal,
+  Datenbank oder `storyBible.secret` verändern/übernehmen.
+- **Geändert:** `app/lib/story/campaign_resume_context.dart` (neu),
+  `app/lib/story/story_api.dart` (öffentlicher Export),
+  `app/test/campaign_resume_context_test.dart` (neu), README und
+  Chat-B-/zentraler Checkpoint.
+- **GETESTET:** aktueller main-SHA und PR-Dateipfade geprüft; voriges
+  Chat-B-Paket #456 hat vollständig grüne CI
+  [41246230660](https://github.com/ManuEtt/Dnd/actions/runs/41246230660).
+  Das ist **kein** Nachweis für die neue #459-Änderung.
+- **NICHT GETESTET:** neue Flutter-/Backend-/Python-/Android-GitHub-CI auf dem
+  finalen #459-HEAD, Realgerät/TalkBack, Produktion/KI.
+- **BLOCKIERT:** kein lokales Dart-/Flutter-SDK; Abnahme über GitHub Actions.
+  **NOCH NICHT IMPLEMENTIERT:** UI-Nutzung und KI-Übergabe dieser Projektion.
+  **Migration:** keine (SQLite 3 / äußeres JSON 1).
+- **Nächster konkreter Schritt:** #459-CI vollständig auswerten, rote
+  Prüfungen auf eigenem Branch korrigieren; nur nach Grün für Chat-D-Review
+  freigeben, README-/Checkpoint-Konflikte additiv vereinigen. Kein Auto-Merge.
+
+
+---
+
+# Chat A – Versionierte Zaubervorbereitung pro Klasse (01.11.2026, eigener PR-Branch)
+
+Basis-main `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+Branch `feat/chat-a/class-prepared-spell-record-20261101`.
+SRD 5.2.1 *Multiclassing / Spells Prepared*, S.25, CC BY 4.0.
+
+Neues optionales, unveränderliches `preparedSpellRecord` in
+`HeroCharacter` (interne Nachweisversion 1, unverändertes
+Charakter-/Kampagnen-Schema 1 und SQLite 3), mit explizit
+bestätigter Zuordnung je eigener Zauberklasse. Doppelte,
+unbekannte, nicht gelistete oder für die individuelle
+Klassenstufe zu hohe Zauber werden abgelehnt. Klassen-/
+Stufen-/Listenänderungen invalidieren den Nachweis,
+Ressourcenverbuchung behält ihn. Historische Daten ohne
+Nachweis werden **nicht umgedeutet**; alter JSON-Roundtrip
+bleibt identisch. Neue Domain-/JSON-/SQLite-/Revisions-
+Regressionen im eigenen PR-Branch, tatsächliche CI
+bei dessen Abnahme dokumentieren.
+
+Der bestehende Preflight aus dem offenen PR #461 wird
+**nicht** überschrieben; die direkte Verknüpfung ist ein
+separater Integrationsschritt. Vollständige Präparationsanzahl,
+Feat-/Subclass-Effekte und Android-Editor bleiben offen.
+Kein Merge nach Main, keine Migration; andere PRs/Branches
+unberührt. [Fachnachweis](SRD_CLASS_PREPARED_SPELL_RECORD_20261101.md).
+Gemeinsame Dokumentationszeilen bei Review additiv
+durch Chat D konsolidieren.
+
+**NÄCHSTER SCHRITT:** gespeicherten Klassennachweis nach
+PR-#461-Integration als optionalen preflight input prüfen,
+mit negativem Altspielstand-, SQLite-/Replay- und Stufentest.
+
+---
+
+
+---
+
+# Aktiver Checkpoint – 01.11.2026, UTC, Chat A
+
+## 01.11.2026 – Chat A: Klassenprüfung vor Konzentrationswürfen
+
+Entwicklungsstand **0.8.50+100**, Branch
+`fix/chat-a/concentration-class-preflight-20261101`, Code/Test
+`37604994828745ac44e48d8e2f628024f2f355e2`, Basis-Main `5a88834c`.
+Die vorhandene Klassen-/Stufen-/Rettungswurf-Übungsprüfung wird jetzt auch vor
+dem tatsächlichen Konzentrationswurf und vor einer separaten W20-Auflösung
+verwendet. Unbekannte oder widersprüchliche Klassen gewähren keinen Mönchsbonus.
+Der deutsche Schadensdialog zeigt den Fehler ohne Teiländerung; nach expliziter
+Klassenkorrektur bleibt der normale Ablauf ausführbar. Alte Profile bleiben
+lesbar, keine SQLite-/JSON-Migration. SG 10–30 war bereits zuvor umgesetzt.
+
+**GETESTET:** 68 neue Tests (58 Domain, 8 Engine/SQLite, 2 echte UI-Flows) und
+42 bestehende Regressionen: **110 gezielte Tests bestanden**, Analyzer sauber.
+Die neuen Domänentests auf unverändertem Main: 25 bestanden / 33 fehlgeschlagen;
+mit Fix alle 58 bestanden. **Vollständig lokal bestanden:** 2.778 Flutter-,
+262 Python- und 76 Backend-Tests, 579 Dart-Dateien ohne Formatänderung,
+Analyse/Backend-Typecheck/Build/Protokollsmoke. Zusätzlich ARM64-Debug-APK und
+**13 native JUnit-Tests** ohne Fehler oder Skip. Zwei Android-Vorläufe scheiterten
+am vollen Datenträger; nach Bereinigung ausschließlich erzeugter Caches bestand
+die Wiederholung. Quellen, Spielstände und frühere Artefakte blieben erhalten.
+[PR #468](https://github.com/ManuEtt/Dnd/pull/468) ist gesichert; vollständige finale
+GitHub-CI auf seinem aktuellen Head separat abwarten. Kein Main-Merge behauptet.
+**NICHT GETESTET:** echtes Androidgerät/TalkBack, installiertes Upgrade,
+produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** vollständige Konzentrations-
+automation und Klassenprüfung aller allgemeinen Wiederholungswürfe.
+[Fachbericht und Grenzen](parallel/CHAT_A_CONCENTRATION_CLASS_PREFLIGHT_20261101.md).
+
+Nächster Schritt nach Abnahme: allgemeine Klassen-Wiederholungen vor Würfel und
+Ressourcenverbrauch auf dieselbe konsistente Klassenherkunft prüfen. Vorher
+aktuelle PRs abgleichen; offene #453/#461/#463/#448 nicht erneut implementieren.
+Die nachfolgenden früheren Entwicklungsstände sind historische Momentaufnahmen.
+
+---
+
+**Letzte vollständige Main-Abnahme:**
+[41184883579](https://github.com/ManuEtt/Dnd/actions/runs/41184883579),
+`5a88834c98f5aca40395088c20c7e1dc5b587868`, erfolgreich: 2.710 Flutter,
+262 Python, 76 Backend, Debug/native/drei optimierte ABI-APKs und Quellpakete.
+Diese Baseline beweist nicht die finale CI des neuen Branches.
+
+**BLOCKIERT:** kein Code-/SDK-/GitHub-Blocker; Integration mit parallelen
+README-/Checkpoint-Änderungen durch Chat D. Kein angeschlossenes Testgerät.
+**Sicherung:** vorhandene `scripts/create_checkpoint.py` und History-Bundle
+mit exakter Patchbasis `5a88834c98f5aca40395088c20c7e1dc5b587868` verwenden.
+Lokaler Paketpfad `/workspace/artifacts/concentration-class-preflight-20261101/`.
+Beim Wiederaufnehmen tatsächlichen Main, PR-Head und CI erneut prüfen.
+
+Die Migration zu Issue #425 ist abgeschlossen: 54 abgeschlossene Branches
+archiviert/entfernt, Issue geschlossen. Nicht erneut als offene Migration starten.
+Aktuell laufen neue unabhängige Entwicklungs-PRs. Historischer Übergabestand folgt.
+
+---
+
+
+---
+
+## 02.11.2026 – Main2e9 integriert, kombinierte lokale Prüfungen bestanden
+
+Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` aus #471 ist regulär
+in denselben Entwicklungsbranch integriert; ursprüngliche Basis war `5a88834c`.
+Der abschließende Mergecommit ist über [PR #473](https://github.com/ManuEtt/Dnd/pull/473)
+ermittelbar. Keine Quellkonflikte; einziger Markdown-Konflikt im Chat-A-Checkpoint
+additiv gelöst, alle Main-Beiträge erhalten. Die eigenen 51 Guardzeilen und ihr
+Dateihash bleiben unverändert. SQLite3/JSON1 unverändert, keine Migration.
+
+**GETESTET auf dem kombinierten Stand:** **182 gezielte Flutter-Regressionen**
+mit den eigenen UI-/SQLite-Fällen und den neuen Main-Paketen; **275 Pythonfälle**,
+Projekt-/Importgrenzen-/SRD-Prüfung, **582 Dartdateien ohne Formatänderung** und
+saubere Analyse. Neuer **ARM64-Debug-Build und 14 native JUnit-Tests** ohne
+Fehler, Error oder Skip bestanden. Die vollständige lokale frühere Suite
+**2.782 Flutter /262 Python /76 Backend** gehört ausdrücklich zum Vorgänger8dd
+auf Basis5a; sie ist kein behaupteter neuer kombinierter Vollpass.
+
+**OFFEN:** vollständige CI des aktuellen abschließenden Merge-Heads, optimierte
+Alpha und reale Geräte-/TalkBack-/Upgrade-/Produktivsignierungsabnahme.
+[PR-Checks](https://github.com/ManuEtt/Dnd/pull/473/checks) abwarten; PR bleibt
+bis zur tatsächlichen CI-/Artefaktabnahme Draft. Kein Code-/SDK-Blocker bekannt.
+Der aktuelle Quellencheckpoint/Patch wird gegen **Main2e9** erstellt; frühere
+8dd-/5a-Archive bleiben unverändert erhalten. Main nicht direkt verändert.
+Allgemeiner initialer manueller Rettungswurf bleibt das nächste getrennte Paket;
+beide Klassen-Requirements weiterhin partial, Gesamt-SRD/Charakterassistent offen.
+
+**Nachfolgend historische Prüf- und Checkpointstände vor Main2e9:**
+
+## 02.11.2026 – lokale Vollabnahme des Chat-A-Pakets bestanden
+
+**0.8.51+101**, Basis-Main `5a88834c98f5aca40395088c20c7e1dc5b587868`,
+Branch `fix/chat-a/saving-throw-class-preflight-20261102`. Laufzeit-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038`, früher Dokumentationscheckpoint
+`d5cf52f1c27ecdb0f01f0ce461788cde12449310`. Nur Dokumentation folgt danach;
+Laufzeit-/Testcode unverändert. [PR #473](https://github.com/ManuEtt/Dnd/pull/473)
+ist Draft; die **[Checks des finalen aktuellen PR-Heads](https://github.com/ManuEtt/Dnd/pull/473/checks)**
+sind separat abzunehmen. Kein Main-Merge und keine erfolgreiche neue CI behauptet.
+
+**GETESTET:** `bash scripts/check.sh` vollständig mit Exit 0 bestanden:
+**2.782 Flutter / 262 Python / 76 Backend**, 579 Dartdateien ohne Formatänderung,
+Analyse sauber, Backend-Typecheck/Build und tatsächlicher lokaler Protokollsmoke.
+Abschlussmarker `08:15 +2782: All tests passed!`; 72 neue Fälle und 159 gezielte
+Regressionen sind darin keine zusätzliche globale SRD-Abnahme. Lokaler ARM64-
+Debug-Build und **13 native JUnit-Tests** ohne Fehler, Error oder Skip bestanden.
+Der frühzeitige Quellencheckpoint auf d5cf52f1 ist unabhängig geprüft: **1.369
+Dateien**, CRC/Hashes/Größen/Modi, echte Patchanwendung auf Basis5a und isolierte
+Git-Bundle-Wiederherstellung/fsck bestanden. Endcheckpoint und finale CI folgen.
+
+**Koordination:** Vor PR erneut **27 fremde PRs** geprüft: ursprüngliche 23 Heads
+unverändert, neue #469–#472 ohne Überschneidung der Fachdateien; deren CI lief beim
+Audit noch. #468 teilt das Requirement-Register, bearbeitet andere IDs. Bei späterer
+Konsolidierung die neue Version101 gegenüber100 und alle geprüften Belege erhalten.
+
+**OFFEN:** aktuelle finale PR-CI, optimierte Alpha und reale Geräte-/TalkBack-/
+Upgrade-/Produktivsignierungsabnahme. Allgemeiner initialer manueller Rettungswurf
+bleibt das nächste gesonderte Paket; vorher frische PR-/Quellenprüfung. SQLite3/
+JSON1 ohne Migration; beide Klassen-Requirements bleiben partial. Weitere Details
+im Fachbericht `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
+
+**Historischer Frühcheckpoint vor der vollständigen lokalen Abnahme:**
+
+## 02.11.2026 – Chat A: Klassenprüfung vor Rettungswurf-Wiederholungen, 0.8.51+101
+
+**Vorläufiger Quellen-Checkpoint, keine vollständige Abnahme.** Basis-Main
+`5a88834c98f5aca40395088c20c7e1dc5b587868`, Branch
+`fix/chat-a/saving-throw-class-preflight-20261102`. Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038` ist gesichert. Pull Request und finale CI
+folgen nach den erforderlichen Prüfungen. Main bleibt
+unverändert; Issue #425 und alte Branchmigration sind abgeschlossen.
+
+**IMPLEMENTIERT:** Genau 51 zusätzliche Zeilen im bestehenden
+`app/lib/domain/saving_throw_class_actions.dart`: bekannte SRD-Klassen und
+kanonische Aliase, Gesamt-/eigene Klassenstufen, zulässiger Zweitklassensplit und
+eindeutige Rettungswurfübungen vor Klassenbonus, Ressourcenverbrauch und neuem
+W20 prüfen. Die lesende Verfügbarkeitsabfrage liefert für solche ungültigen
+Profile `false`. Berechnungen, Ressourcenregeln und übriger vorhandener Code
+bleiben unverändert. In der bestehenden Engine-Kette erzeugt ein abgewiesener
+Textversuch absichtlich `rules.blocked` und eine Revision; Helden-/Ressourcenwerte
+und RNG ändern sich nicht. Historische Profile werden beim Öffnen nicht repariert.
+
+**GETESTET:** 62 neue Domain-, acht Engine-/SQLite- und zwei tatsächliche App-UI-
+Tests bestanden, zusammen **72 neue Fälle**. **159 gezielte neue und bestehende
+Regressionen** bestanden (157 Domain-/Flowfälle plus zwei UI-Fälle). Lokaler
+ARM64-Debug-APK-Build bestanden. Positivfälle
+für alle zwölf Klassen, gültige Aliase, tatsächliche Kämpfer-Klassenstufe,
+Übung/Erschöpfung einmal sowie negative Klassen-/Stufen-/Übungsdaten. Speicherfälle
+prüfen Ablehnung, einmalige Ressourcenbuchung, Replay, stale Zweitcontroller,
+Neustart, Export/Import und späten SQLite-Rollback. Ein vorher legitimer W20 wird
+bei spätem SQL-Fehler nicht als rückrollbar behauptet.
+
+**NICHT ABGESCHLOSSEN / NICHT GETESTET:** Vollständiges `scripts/check.sh` und
+native Android-Tests laufen zum Frühcheckpoint noch; kein Vollpass behauptet.
+Optimierte Alpha und aktuelle GitHub-CI stehen aus. Geräte-/TalkBack-/Upgrade-
+und produktive Signierungsabnahme fehlen. Kein Legacy-Profil-Korrektur-UI-Flow
+wird behauptet.
+
+**BLOCKIERT:** Kein bekannter fachlicher oder GitHub-Zugriffsblocker; reparierte
+UI-Fixtures haben 2/2 bestanden, vollständige Abnahme läuft. Nur begrenzter
+lokaler Speicherplatz: frühes Quellen-ZIP, Patch und Bundle außerhalb des
+Projekts priorisieren. Keine Quellen, Spielstände, WIP oder alten Artefakte löschen.
+
+**NOCH NICHT IMPLEMENTIERT:** Allgemeiner initialer manueller Rettungswurf ist
+in diesem Paket unverändert. Weitere Rettungswurfquellen, situative Modifikatoren,
+kompletter Charakterassistent und Gesamt-SRD bleiben offen. SQLite **3** / äußeres
+JSON **1**, keine Migration. `CLASS-K-MPFER-9-BASE-INDOMITABLE-0` und
+`CLASS-M-NCH-14-BASE-DISCIPLINED-SURVIVOR-0` nur **partial**; keine globale Abschlussquote.
+
+Vor Beginn 23 offene PRs anhand ihrer Dateilisten geprüft. PR #468 bleibt getrennt
+und auf seinem eigenen Head CI-grün; seine Konzentrationsdateien werden nicht
+verändert. Andere Chat-A-/B-/C-/D-Pakete nicht erneut implementieren oder mergen.
+Gemeinsame README-/Checkpoint-Zusätze konsolidiert Chat D später additiv.
+
+**Genau nächstes unabhängiges Paket:** Allgemeinen initialen manuellen Rettungswurf vor automatisch abgeleiteten Klassenboni und W20 validieren; schreibfreie Charakterbogen-Vorschauen unverändert lassen. Zuerst frische Main-/PR-Dateilisten prüfen. Akzeptanz: unbekannte/inkonsistente Klassen vor Bonus/RNG ablehnen, gültige Aliase und Mehrklassen behalten dieselben Boni, Domain-, SQLite-/Retry- und tatsächliche UI-Regressionen bestehen.
+
+Fachnachweis: `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
+Die darunter bewahrten Berichte gelten jeweils für ihren damaligen Stand.
+
+---
+
+
+---
+
+
+
+---
+
+## Chat B – versteckte NPC-Notizkollisionen fail-closed (03.11.2026)
+
+- **Basis-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f`.
+- **Branch:** `feat/chat-b/confirmed-npc-note-id-integrity-20261103`.
+- **Pull Request:** [#516](https://github.com/ManuEtt/Dnd/pull/516) (Draft).
+- **Ausgangsproblem:** `NpcIdentityMemory.read` akzeptierte in gespeicherten Altverläufen doppelte und ungültige Notiz-IDs; `maxNotes` konnte den älteren konflikthaften Eintrag aus der Vorschau verbergen.
+- **Implementiert:** Gesamte Historie **nur des ausgewählten NPCs** auf gültige IDs mit `^[a-zA-Z0-9_-]{1,64}$` und Dubletten prüfen, bevor ein bestätigter Kontext erzeugt wird. Unabhängige NPC-Chroniken werden nicht durch eine fremde Unstimmigkeit blockiert. `requireCurrent` prüft bei unveränderter Revision ebenfalls neu einfügte verdeckte Duplikate.
+- **Fachdateien:** `app/lib/story/npc_identity_memory.dart`, `app/test/npc_identity_note_id_integrity_test.dart`.
+- **Regressionen:** 6 Tests inklusive alter JSON-Snapshots, SQLite-Neustart, ungültiger/unsichtbarer IDs, gleicher Revision, anderer NPCs und unverändertem Heldenzustand.
+- **Bisher GETESTET:** Vorhandene Fachtests, persistente Modelle und sämtliche offenen PR-Fachpfade im aktuellen Repository gesichtet; Code und Tests committet. Die vorangehende [Story-Unicode-PR #513](https://github.com/ManuEtt/Dnd/pull/513) hat zwei vollständige erfolgreiche CIs auf `775bb246`, dies ist kein Testbeleg für PR #516.
+- **NICHT GETESTET:** vollständiger finaler CI-Lauf, Android-APK/-Native, reales Gerät, Altversion-Upgrade und produktiver KI-Provider für PR #516 bis zum jeweiligen Nachweis.
+- **Kompatibilität:** Keine Datenmigration, keine Schreibpfade oder Regelveränderung. JSON 1, SQLite 3, App-Version, Backend-Wire-Vertrag unverändert.
+- **Nächster Schritt:** vollständige CI auf finalem PR-HEAD prüfen, etwaige Fehler im eigenen Branch beheben, anschließend Chat D für koordinierte Integration bereitstellen.
+
+
+---
+
+## Chat B – sicher begrenzte NPC-Kurzfassung (02.11.2026)
+
+- **Basis-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+  **Branch:** `feat/chat-b/bounded-confirmed-npc-excerpt-20261102`.
+  **PR:** Draft gegen main (Nummer in PR-Beschreibung).
+- **Problem:** `NpcContinuityReader.confirmedContext` kann aus
+  importierten, beliebig langen NPC-Namen und Notizen sehr große Texte
+  erzeugen. Eine begrenzte Story-Kurzfassung fehlte.
+- **IMPLEMENTIERT:** neues reines Storymodul
+  `app/lib/story/confirmed_npc_continuity_excerpt.dart` mit
+  `ConfirmedNpcContinuityExcerpt.read`: genau gespeicherte NPC-ID
+  (ASCII 1–64) in der Überschrift, maximal drei neueste bestätigte
+  Notizen, Grenzen je Feld und insgesamt 1.800 UTF-16-Einheiten,
+  Steuerzeichen-Bereinigung, rune-sicheres Abschneiden von Emoji.
+  Keine KI-Antwort als Fakt und keine Schreiboperation.
+- **Regressionen:** `app/test/confirmed_npc_continuity_excerpt_test.dart`
+  mit sechs Gruppen: Quellen-/NPC-Trennung, Überlänge und Unicode,
+  Zeilen-/Bidi-Spoofing, doppelte/unsichere IDs und Grenzwerte,
+  alte JSON ohne Notizen und echte SQLite-Neuöffnung/Rekonstruktion.
+- **Geänderte Dateien:** beide neuen Fachdateien sowie additive
+  `README.md`, `docs/CODEX_CHECKPOINT.md` und
+  `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** tatsächlicher Main-SHA, alle offenen PRs/Fachdateien
+  und verbindliche Architektur/Tests geprüft.
+  **NICHT GETESTET:** finale vollständige CI derzeit offen; reales
+  Android-Gerät, TalkBack, produktiver KI-Dienst.
+  **BLOCKIERT:** lokales Flutter-/Dart-SDK fehlt, GitHub Actions nutzbar.
+  **Migration:** keine, SQLite 3 / äußeres JSON 1 unverändert.
+  **Koordination:** #477 verändert bestehenden Reader, daher neue
+  separate Datei statt Paralleländerung; README/Checkpoints von Chat D
+  bei Integration additiv konsolidieren. Keine Branch-/Main-Änderungen
+  außerhalb dieser Arbeit.
+- **NÄCHSTER SCHRITT:** vollständige CI des eigenen finalen PR-HEAD
+  abnehmen und Fehler auf eigenem Branch korrigieren; danach Integration
+  durch Chat D prüfen, ohne automatischen Merge.

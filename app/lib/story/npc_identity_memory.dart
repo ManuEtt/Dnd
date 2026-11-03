@@ -95,6 +95,19 @@ class NpcIdentityMemory {
         if (campaign.npcRelationshipNotes[i].npcId == npcId)
           (note: campaign.npcRelationshipNotes[i], order: i),
     ];
+    // Legacy JSON can contain duplicate or malformed note IDs. A preview
+    // limited to maxNotes must not hide an identity collision in older notes.
+    // Check the *entire selected NPC history*, not unrelated NPC histories.
+    final noteIds = <String>{};
+    final safeNoteId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
+    for (final entry in history) {
+      final id = entry.note.id;
+      if (!safeNoteId.hasMatch(id) || !noteIds.add(id)) {
+        throw const FormatException(
+          'Mehrdeutige oder ungültige bestätigte NPC-Notiz-ID.',
+        );
+      }
+    }
     history.sort((a, b) {
       final dateOrder = b.note.recordedAt.compareTo(a.note.recordedAt);
       return dateOrder != 0 ? dateOrder : b.order.compareTo(a.order);

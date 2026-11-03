@@ -811,3 +811,349 @@ Die Python-Releasevorbereitung prüft vor dem Lesen und nochmals vor dem Kopiere
 ## Chat A – Kurzrast ohne Trefferwürfel: Ressourcen vor Recovery prüfen (02.11.2026)
 
 [PR #515](https://github.com/ManuEtt/Dnd/pull/515) ergänzt den zentralen, **nicht mutierenden Kurzrast-Ressourcencheck** für normale Rasten und beide Sonderpfade ohne Trefferwürfelverbrauch. Ein fingierter Paktplatzverbrauch (etwa bei einem Kämpfer ohne Hexenmeisterstufe) wird vor jeder Regeneration abgewiesen. Fünf neue deterministische Domain-/GameEngine-Regressionen decken gültige und ungültige Fälle, RNG-Freiheit, unverändertes Ursprungs-JSON und Wiederaufnahme ab. **CI auf finalem PR-HEAD ausstehend; keine APK-/Gerätefreigabe.** SQLite 3, JSON 1 und App-Version 0.8.49+99 unverändert; keine Migration. Grundlage: SRD 5.2.1, CC BY 4.0.
+
+---
+
+## Chat B – Zero-Width-Namensschutz für NPC-Erinnerungen (01.11.2026)
+
+[Draft-PR #464](https://github.com/ManuEtt/Dnd/pull/464) verhindert, dass
+Unicode-Zeichen ohne sichtbare Breite (U+200B–U+200D, U+2060, U+FEFF)
+zwei gleich dargestellte NPC-Namen bei freier Spielereingabe fälschlich als
+unterschiedliche Namen erscheinen lassen. Bestätigte NPC-Beziehungsnotizen
+werden bei unklarer Identität nicht geraten oder an den optionalen Erzähler
+weitergereicht. Für eindeutig gespeicherte NPCs bleiben bestätigte Notizen
+nutzbar; unsichtbare Markierungen werden ausschließlich beim Ausgeben
+bereinigt, nicht aus dem gespeicherten Spielstand entfernt. Neue Tests
+umfassen fünf Unicode-Varianten, die positive eindeutige Zuordnung,
+alte JSONs und einen echten SQLite-Neustart. Keine Migration/Versionsänderung.
+Die neue CI ist bei Anlage noch nicht abgenommen.
+
+---
+
+## Chat B – strukturierte NPC-Identitätsübertragung (02.11.2026)
+
+[Draft-PR #470](https://github.com/ManuEtt/Dnd/pull/470) schließt eine
+separate Zero-Width-Lücke in `NpcIdentityStoryPayload`. Visuell gleiche
+NPC-Namen mit U+200B/U+200C/U+200D/U+2060/U+FEFF gelten bei freien
+Spielereingaben als mehrdeutig; eine NPC-ID wird dann **nicht geraten**.
+Strukturierte NPC-Namen, Beziehungen und bestätigte Notizen mit solchen
+unsichtbaren Steuerzeichen gelangen nicht in den geplanten Identity-Wire.
+Eine explizit gewählte, sichere NPC-ID mit bestätigtem Kontext bleibt zulässig.
+Sechs Testgruppen einschließlich älterem JSON, Revisionskontrolle und echtem
+SQLite-Neustart ergänzen den Code. Keine neue API-Anbindung, keine Migration
+(SQLite 3/äußeres JSON 1) oder Änderung an Regelzuständen. Finale CI
+auf dem Dokumentationsstand ist bei Erstellung noch offen.
+
+---
+
+## Chat B – bestätigte NPC-Kontinuität und unsichtbare Namen (02.11.2026)
+
+[Draft-PR #477](https://github.com/ManuEtt/Dnd/pull/477).
+
+Der neue Chat-B-Branch `fix/chat-b/npc-continuity-zero-width-20261102`
+(Basis-main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`) behebt eine
+separate Lücke im schreibgeschützten `NpcContinuityReader`. Unsichtbare
+Zero-Width- und Bidi-Marken in gespeicherten NPC-Namen dürfen die
+Mehrdeutigkeitsprüfung nicht umgehen: visuell gleiche Figuren bekommen
+im bestätigten Rückblick ihre **gespeicherte, sichere NPC-ID** angehängt,
+damit Notizen nicht einer falschen Figur zugeschrieben werden. Der Rückblick
+entfernt unsichtbare Steuerzeichen auch aus Beziehungen und Notizen,
+während ursprüngliches NPC-JSON und SQLite-Daten unverändert bleiben.
+Fünf neue Testgruppen einschließlich Legacy-JSON, unsicherer IDs und
+echtem SQLite-Neustart. Keine neue Provider-Anbindung, keine Mutation von
+Helden-/Quest-/Regelzustand, keine Schema-/Versionsänderung. Vollständige
+CI-Abnahme erst auf dem finalen PR-Commit nachweisen.
+
+
+---
+
+
+---
+
+## Chat B – Bestätigter NPC-Rückblick ohne ältere Unicode-Formatmarken (03.11.2026)
+
+[PR #519](https://github.com/ManuEtt/Dnd/pull/519) erweitert in
+`app/lib/story/confirmed_npc_resume_selection.dart` ausschließlich die
+schreibgeschützte Normalisierung bereits gespeicherter NPC-Überblicke:
+U+00AD, U+034F, U+180E sowie U+206A–U+206F werden nicht mehr unsichtbar
+an Spieler weitergegeben. Die angezeigte NPC-ID bleibt erhalten; originale
+Kampagnendaten, JSON/SQLite, Regelzustand und App-Version bleiben unverändert.
+Drei neue deterministische Flutter-Tests prüfen betroffene Zeichen in Namen,
+Beziehungen und Notizen, zulässige Akzente und Emoji-Varianten sowie JSON-
+Wiederaufnahme mit unverändertem Rohzustand und Revisionsprüfung.
+Die vollständige CI auf dem finalen PR-HEAD und ein reales Android-Gerät
+müssen noch gesondert abgenommen werden; der PR ist bis dahin Draft.
+
+
+---
+
+## Chat A – Sichtbar eindeutige Zaubermaterial-IDs (03.11.2026)
+
+[Draft-PR #520](https://github.com/ManuEtt/Dnd/pull/520) schließt in
+`SrdSpellInventoryIdRules` eine bisherige Lücke für die neun unsichtbaren
+Unicode-Zeichen U+206A–U+206F und U+FFF9–U+FFFB.
+Ein neuer deterministischer Flutter-Test prüft zulässige internationale
+Inventar-IDs, sämtliche neun Ablehnungen, auditiertes Zaubermaterial,
+ausbleibende Slot-/Inventaränderungen bei Fehlern und erfolgreiche gültige
+Materialbuchung. Ein bestehender Spielstand wird weder migriert noch
+umgeschrieben; SQLite-/JSON-Schema und App-Version bleiben unverändert.
+Die vollständige GitHub-CI auf finalem PR-HEAD sowie Android-Geräte-/
+Upgrade-Abnahme sind getrennt zu bestätigen. Keine automatische Mergefreigabe.
+
+---
+
+
+---
+
+## Chat C – Gelegenheitsbewegung bei großer Schrift und Tastatur (03.11.2026)
+
+[Draft-PR #521](https://github.com/ManuEtt/Dnd/pull/521) macht den
+Android-Dialog „Gegnerbewegung bestätigen“ einschließlich Formular,
+Abbruch und ausdrücklicher Zustimmung scrollbar. Ab 180 % Schrift ist die
+sichtbare Bestätigungszeile kompakt, der ursprüngliche vollständige
+Sicherheitstext bleibt über TalkBack erhalten; Fehler werden als
+Screenreader-Live-Region ausgegeben. Vier neue Widgettests decken
+320/360 dp, 200 % Schrift, simulierte Android-IME, positives und negatives
+Bestätigungsverhalten sowie unveränderte Kampagnendaten ab.
+Regeln, Story, SQLite/JSON, App-Version und Spielstände bleiben
+unverändert. Lokales Flutter/Dart-SDK und Android-Gerät fehlen; die
+vollständige GitHub-CI des **finalen** PR-HEAD und die reale Geräteabnahme
+müssen noch belegt werden. Kein automatischer Merge.
+
+---
+
+
+---
+
+## Chat A – Unsichtbare Unicode-Zeichen in Zauberkomponenten (03.11.2026)
+
+[Draft-PR #523](https://github.com/ManuEtt/Dnd/pull/523) schützt die
+SRD-5.2.1-Metadatenvalidierung von Materialkomponenten gegen unsichtbare
+Unicode-Format- und Steuerzeichen, die sonst Preis- oder Verbrauchswörter
+auftrennen könnten. Ein konkreter negativer Fall ist `Revivify` mit
+einem Steuerzeichen im Wort `consumes`: Ohne Schutz kann die
+Materialverbrauchserkennung fehlschlagen.
+Positive und negative Flutter-Tests decken den regulären Katalog,
+internationale Materialbeschreibungen, neun unauffällige Formatzeichen
+(U+206A–U+206F und U+FFF9–U+FFFB), JSON-Import und
+Ressourcen-Preflight ohne Spielstandsänderung ab. Es werden weder
+SQLite-/JSON-Schema, App-Version, Materialpreise, Slotregeln noch
+bestätigte Inventare verändert. Vollständige CI am finalen PR-HEAD
+und reale Android-Abnahme bleiben separat nachzuweisen.
+
+---
+
+
+---
+
+
+## Chat B – Natürlich formulierte Kampagnenrückblicke (31.10.2026)
+
+[Draft-PR #452](https://github.com/ManuEtt/Dnd/pull/452) ergänzt ausschließlich die
+Story-Gedächtniserkennung: „Was haben wir bisher erlebt?“, „Was ist beim letzten
+Mal passiert?“ und vergleichbare ausdrückliche Rückblickbitten greifen auf
+**bestätigte** Erinnerungen zurück. Allgemeine Fragewörter werden nicht mehr
+als thematische Suchbegriffe fehlgedeutet. Dialoge mit NPCs und freie Aktionen
+bleiben Spielerzüge. Positive/negative Flutter- und GameEngine-Tests liegen in
+`app/test/story_recall_intent_test.dart`. Grundlage `main` `5a88834c`;
+**CI für diesen Branch bei Dokumentation noch ausstehend**. Keine Änderungen
+an SQLite/JSON, Regeln, Heldenwerten, externen KI-Kosten oder App-Version.
+Die parallele PR-Dokumentation wird bei Integration durch Chat D vereinigt.
+
+
+---
+
+## Chat B – bestätigte offene Handlungsnotizen beim Fortsetzen (31.10.2026)
+
+[Draft-PR #456](https://github.com/ManuEtt/Dnd/pull/456) erweitert den
+bestehenden Befehl **„Rückblick dauerhaft speichern“**: Die Bestandsaufnahme
+enthält nun bis zu drei zuletzt gespeicherte offene Handlungsnotizen. Für
+abgeschlossene/aufgegebene Stränge werden keine neuen Anknüpfungspunkte
+vorgeschlagen. Bestätigte Fakten haben Vorrang vor Zusatznotizen;
+Szenenbehauptungen, nicht bestätigte Dialoge und die geheime Storyvorgabe
+bleiben ausgeschlossen. Unicode- und 2.400-Zeichen-Grenzen bleiben erhalten.
+Neue Flutter-/SQLite-Regressionen dokumentieren Neustart und Revisions-/
+Regelzustandskontinuität. **Die vollständige CI dieses PR ist hier noch
+nicht abgenommen.** SQLite 3 / JSON 1 und App-Version unverändert.
+
+
+---
+
+## Chat B – Kampagnenkontext zum Fortsetzen (01.11.2026)
+
+[Draft-PR #459](https://github.com/ManuEtt/Dnd/pull/459) stellt die
+schreibgeschützte Story-API `CampaignResumeReader.read(campaign)` bereit:
+letzte **erzählte** Szene (ausdrücklich kein bestätigter Regelzustand),
+letzter explizit gespeicherter Rückblick (historischer Speicherstand),
+aktuelle bestätigte Fakten und nur **aktuell offene** Handlungsstränge.
+Jede Quelle erhält eine eigene Kennzeichnung; die Projektion ist begrenzt,
+Unicode-/Bidi-bereinigt und unveränderlich. Verdeckte `storyBible`-Ziele,
+Quest-/Inventar-/HP-Änderungen und externe KI-Anfragen sind ausgeschlossen.
+Sechs neue Flutter-Regressionen einschließlich altem JSON und echtem
+SQLite-Neustart wurden hinzugefügt. Noch **keine** UI-/KI-Anbindung und
+**keine behauptete CI-Abnahme** für diesen PR; die GitHub-Gates sind zu prüfen.
+App-Version, SQLite-Schema 3 und äußeres JSON-Schema 1 unverändert.
+
+
+---
+
+**Separates Chat-A-Fachpaket (01.11.2026, noch nicht in main):**
+Der Branch `feat/chat-a/class-prepared-spell-record-20261101`
+speichert eine ausdrücklich bestätigte Zaubervorbereitung
+getrennt nach den beiden tatsächlich eigenen Klassen.
+Die optionale, versionierte Bestätigung bleibt im bestehenden
+Hero-JSON und dadurch beim SQLite-Neustart erhalten;
+historische globale Listen bleiben ohne Klassenannahme
+unverändert. Klassen-/Stufen-/Listenänderungen machen
+die frühere Bestätigung ungültig, reine Ressourcenänderungen
+nicht. Falsche Klassen, unbekannte SRD-Zauber, Dubletten
+und individuell zu hohe Zaubergrade werden abgelehnt.
+Neun Domain-/Alt-JSON-/SQLite-/Revisions-Testgruppen
+wurden angelegt; CI auf finalem PR-Kopf prüfen.
+Keine Migration (SQLite3/äußeresJSON1).
+**Noch keine** automatische Zauberpreflight-Integration:
+Der bestehende Preflight wird separat in offenem PR #461
+bearbeitet. [Regelbeleg und Grenzen](docs/SRD_CLASS_PREPARED_SPELL_RECORD_20261101.md).
+
+**Nächster Chat-A-Schritt:** den Nachweis nach Review des
+PR #461 in dessen Vorprüfung nutzen und dort
+Legacy-/Stale-/Revisionsfälle absichern.
+
+
+---
+
+## 01.11.2026 – Chat A: Klassenprüfung vor Konzentrationswürfen
+
+Entwicklungsstand **0.8.50+100**, Branch
+`fix/chat-a/concentration-class-preflight-20261101`, Code/Test
+`37604994828745ac44e48d8e2f628024f2f355e2`, Basis-Main `5a88834c`.
+Die vorhandene Klassen-/Stufen-/Rettungswurf-Übungsprüfung wird jetzt auch vor
+dem tatsächlichen Konzentrationswurf und vor einer separaten W20-Auflösung
+verwendet. Unbekannte oder widersprüchliche Klassen gewähren keinen Mönchsbonus.
+Der deutsche Schadensdialog zeigt den Fehler ohne Teiländerung; nach expliziter
+Klassenkorrektur bleibt der normale Ablauf ausführbar. Alte Profile bleiben
+lesbar, keine SQLite-/JSON-Migration. SG 10–30 war bereits zuvor umgesetzt.
+
+**GETESTET:** 68 neue Tests (58 Domain, 8 Engine/SQLite, 2 echte UI-Flows) und
+42 bestehende Regressionen: **110 gezielte Tests bestanden**, Analyzer sauber.
+Die neuen Domänentests auf unverändertem Main: 25 bestanden / 33 fehlgeschlagen;
+mit Fix alle 58 bestanden. **Vollständig lokal bestanden:** 2.778 Flutter-,
+262 Python- und 76 Backend-Tests, 579 Dart-Dateien ohne Formatänderung,
+Analyse/Backend-Typecheck/Build/Protokollsmoke. Zusätzlich ARM64-Debug-APK und
+**13 native JUnit-Tests** ohne Fehler oder Skip. Zwei Android-Vorläufe scheiterten
+am vollen Datenträger; nach Bereinigung ausschließlich erzeugter Caches bestand
+die Wiederholung. Quellen, Spielstände und frühere Artefakte blieben erhalten.
+[PR #468](https://github.com/ManuEtt/Dnd/pull/468) ist gesichert; vollständige finale
+GitHub-CI auf seinem aktuellen Head separat abwarten. Kein Main-Merge behauptet.
+**NICHT GETESTET:** echtes Androidgerät/TalkBack, installiertes Upgrade,
+produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** vollständige Konzentrations-
+automation und Klassenprüfung aller allgemeinen Wiederholungswürfe.
+[Fachbericht und Grenzen](docs/parallel/CHAT_A_CONCENTRATION_CLASS_PREFLIGHT_20261101.md).
+
+Nächster Schritt nach Abnahme: allgemeine Klassen-Wiederholungen vor Würfel und
+Ressourcenverbrauch auf dieselbe konsistente Klassenherkunft prüfen. Vorher
+aktuelle PRs abgleichen; offene #453/#461/#463/#448 nicht erneut implementieren.
+Die nachfolgenden früheren Entwicklungsstände sind historische Momentaufnahmen.
+
+---
+
+
+---
+
+**Aktueller integrierter Stand, 02.11.2026 – 0.8.51+101:** Main
+`2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` aus #471 regulär in den eigenen
+Entwicklungsbranch übernommen. Keine Quellkonflikte; die 51 Guardzeilen für
+Klassenwiederholungen sind unverändert, gemeinsame Checkpoint-Ergänzungen erhalten.
+
+**Kombiniert lokal bestanden:** 182 gezielte Flutter-Fälle einschließlich echter
+App-/SQLite-Flows und neuer Main-Pakete, 275 Pythonfälle, 582 unverändert formatierte
+Dartdateien, saubere Analyse, ARM64-Debug und 14 native JUnit-Tests. Die darunter
+historisch dokumentierte vollständige Suite2782/262/76 gehört zum Vorgänger8dd.
+Die vollständige kombinierte **[CI auf dem aktuellen PR-Head](https://github.com/ManuEtt/Dnd/pull/473/checks)**
+ist noch abzunehmen; [PR #473](https://github.com/ManuEtt/Dnd/pull/473) bleibt Draft.
+Aktueller Patch gegen Main2e9, alte geprüfte8dd-Archive bleiben erhalten.
+Main nicht direkt verändert, SQLite3/JSON1 ohne Migration. Reales Gerät/TalkBack/
+Upgrade/Produktivsignierung offen. Nächstes Paket bleibt der allgemeine initiale
+manuelle Rettungswurf vor Klassenbonus/RNG; Gesamt-SRD/Charaktererstellung offen.
+
+### Historische Abnahme vor Main2e9
+
+**Lokale Vollabnahme, Chat A – 02.11.2026, 0.8.51+101:** Klassenprüfung vor
+bestätigten Rettungswurf-Wiederholungen ist auf Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038` vollständig lokal geprüft.
+**2.782 Flutter-, 262 Python- und 76 Backend-Tests**, 579 unverändert formatierte
+Dartdateien, saubere Analyse, Backend-Typecheck/Build und lokaler Protokollsmoke
+bestanden. Außerdem ARM64-Debug-Build und **13 native JUnit-Tests** bestanden.
+72 neue Fälle, einschließlich zweier tatsächlicher App-UI-Flows, und 159 gezielte
+Regressionen sind abgedeckt. Historische Profile, SQLite3 und JSON1 bleiben erhalten.
+
+[PR #473](https://github.com/ManuEtt/Dnd/pull/473) ist ein eigener Draft; **[finale
+PR-Checks](https://github.com/ManuEtt/Dnd/pull/473/checks)** sind noch separat
+abzunehmen. Main unverändert. Der frühe Quellencheckpoint auf d5cf52f1 wurde mit
+1.369 Dateien, tatsächlicher Patchanwendung und isolierter Bundle-Wiederherstellung
+unabhängig geprüft; finaler Quellencheckpoint und optimierte Alpha folgen.
+Vor PR 27 fremde PRs geprüft, einschließlich der neuen #469–#472; Fachdateien
+konfliktfrei, gemeinsame Dokumentation/Requirements und Version101 bei Chat D
+additiv konsolidieren. Reale Geräte-/TalkBack-/Upgrade-/Signierungsabnahme offen.
+
+**Genau nächster Schritt:** allgemeine initiale manuelle Rettungswürfe vor
+automatisch abgeleiteten Klassenboni und RNG validieren, ohne lesende Charakterbogen-
+Vorschauen zu verändern. Zuerst neue PR-Dateilisten prüfen; gültige Aliase,
+Mehrklassen, Ablehnung vor RNG und UI-/SQLite-/Retry-Fälle testen. Die vollständige
+Charaktererstellung und das gesamte SRD bleiben offen.
+
+### Historischer Frühcheckpoint vor lokaler Vollabnahme
+
+**Chat A, 02.11.2026 – Alpha 0.8.51+101: Klassen vor Rettungswurf-Wiederholungen prüfen.**
+Eigener Arbeitsbranch `fix/chat-a/saving-throw-class-preflight-20261102`, Basis-Main
+`5a88834c98f5aca40395088c20c7e1dc5b587868`. Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038` ist gesichert. Dies ist ein Frühcheckpoint vor
+vollständiger Abnahme; Pull Request und aktuelle CI stehen aus. Main wurde
+nicht verändert. Die frühere Migration und Issue #425 sind bereits abgeschlossen;
+die darunter bewahrten Migrationseinträge sind historische Momentaufnahmen.
+
+`SavingThrowClassActions` prüft vor einer ausdrücklich gewählten Mönch-14- oder
+Kämpfer-9-Wiederholung bekannte Klassen, zulässige eigene Klassenstufen und
+eindeutige Rettungswurfübungen. Ungültige Profile bieten keine Klassenwiederholung
+an und werden vor Bonus, Ressourcenverbrauch und W20 abgewiesen. Die vorhandenen
+Berechnungen und die deutsche UI-/Engine-/SQLite-Kette bleiben bestehen. Eine
+abgewiesene Texteingabe wird weiterhin absichtlich als `rules.blocked` mit neuer
+Revision protokolliert; Heldenwerte, Ressourcen und RNG bleiben dabei unverändert.
+
+**Bisher bestanden:** 62 neue Domänen-, acht Engine-/SQLite- und zwei echte
+App-UI-Tests, zusammen **72 neue Fälle**. **159 gezielte Regressionen** bestanden
+(157 Domain-/Flowfälle plus zwei UI-Fälle). Lokaler ARM64-Debug-APK-Build bestanden.
+Vollständiges `scripts/check.sh` und native Android-Tests laufen noch; ihre
+Abschlüsse, optimierte Alpha und finale PR-CI sind noch kein Erfolgsnachweis.
+SQLite **3** / äußeres JSON **1**, keine Migration oder stille Änderung alter
+Profile. Beide betroffenen Klassen-Requirements bleiben **partial**. Allgemeine
+Erstwürfe, vollständiger Charakterassistent und Gesamt-SRD sind nicht abgeschlossen.
+Reales Gerät/TalkBack/Upgrade und produktive Signierung bleiben separate Abnahmen.
+
+**Nächster konkreter Schritt nach Paketabnahme:** Allgemeinen initialen manuellen Rettungswurf vor automatisch abgeleiteten Klassenboni und W20 validieren; schreibfreie Charakterbogen-Vorschauen unverändert lassen. Zuerst frische Main-/PR-Dateilisten prüfen. Akzeptanz: unbekannte/inkonsistente Klassen vor Bonus/RNG ablehnen, gültige Aliase und Mehrklassen behalten dieselben Boni, Domain-, SQLite-/Retry- und tatsächliche UI-Regressionen bestehen.
+[Fachnachweis](docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md) ·
+[aktueller Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md).
+
+### Historischer Main- und Migrationsstand
+
+
+---
+
+
+ 
+---
+
+## Chat B – gespeicherte NPC-Notiz-IDs vor Wiederaufnahme prüfen (03.11.2026)
+
+[PR #516](https://github.com/ManuEtt/Dnd/pull/516) schließt eine
+Lücke im bestätigten NPC-Gedächtnis: Selbst ältere gespeicherte Notizen,
+die nicht in der begrenzten Vorschau erscheinen, müssen für den ausdrücklich
+gewählten NPC eine eindeutige und gültige ASCII-Notiz-ID besitzen.
+Doppelte, leere, zu lange oder formatierte Kennungen führen vor jeder
+Kontextausgabe zu `FormatException`, einschließlich erneuter Abfrage nach
+unbemerkten Änderungen bei identischer Kampagnenrevision.
+Unabhängige NPC-Chroniken bleiben separat auswählbar.
+Sechs neue Tests prüfen JSON, SQLite-Neustart, Negativfälle, Revisionsschutz
+und reguläre positive Erinnerungen. Nur lesende Story-Projektion; keine
+Kampagnen-, Regel-, SQLite-/JSON-Schema-, Wire- oder Versionsänderung.
+**CI/Android-Abnahme auf dem finalen PR-HEAD steht noch aus.**

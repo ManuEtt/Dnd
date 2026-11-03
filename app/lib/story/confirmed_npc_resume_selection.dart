@@ -81,7 +81,7 @@ class ConfirmedNpcResumeSelector {
 
   static final RegExp _safeId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
   static final RegExp _formatMarks = RegExp(
-    r'[\u061c\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]',
+    r'[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]',
   );
   static final RegExp _controls = RegExp(r'[\x00-\x1f\x7f-\x9f\u2028\u2029]');
 

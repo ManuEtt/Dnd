@@ -1589,3 +1589,66 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Übernahme:** Drei unveränderte Original-Git-Blobs (zwei Fachdateien plus neuer Regressionstest) und Regelreferenz-Dokumentation. Beide existierenden Fach-Blobs auf Stack-Basis identisch mit Quell-Main `a2f22e` geprüft. README, zentraler CODEX und CHAT_A-Checkpoint additiv zusammengeführt, keine vorigen Beiträge gelöscht.
 - **Historie:** finaler Quell-HEAD als zusätzlicher Commit-Elternknoten; kein Force-Push, keine Branch-Löschung.
 - **Freigabe:** vollständig erfolgreiche kombinierte CI auf diesem HEAD, danach geordneter regulärer Merge erst nach früheren Integrations-PRs mit grüner Main-CI. Keine SQLite-/JSON-Schema- oder App-Versionsänderung. Reale Android-/Upgrade-Abnahme offen.
+
+---
+
+## Chat D – NPC-Identität bei Zero-Width-Unicode aus drei Quellen konsolidiert (03.11.2026)
+
+- **Stack-Basis:** `036102c40426b804911470f164dad61f2974ba69` (#518 nach #517/#512/#511/#510/#508/#507).
+- **Quellen:** #464 `f3db51cbae5690be22d93ce427bf6e8a355c1b67`, #470 `5b6aa9fbed930de0ad885c74c240f09255c6a947`, #477 `7f1d9051965c90e102cda16a7785c171f4138432`; exakte Quell-CI jedes HEAD erfolgreich.
+- **Lösung:** Versteckte Zero-Width-/Bidi-/BOM-Zeichen dürfen NPC-Identitäten im narrativen Speicher, strukturierten Story-Payload und Bestätigungsleser weder fälschen noch Eindeutigkeit vortäuschen.
+- **Konfliktfreiheit:** Alle drei Fachmodule auf der Stack-Basis enthielten die ursprünglichen Patch-Kontextstellen exakt jeweils einmal; nach präziser Anwendung aller Hunk-Änderungen entspricht jeder resultierende Git-Blob **bytegenau dem finalen Quellblob**. Keine aktuellen Fremdänderungen überschrieben; zusätzliche drei unveränderte Quell-Testblobs aufgenommen.
+- **Dokumentation:** README, zentralen und CHAT_B-Checkpoint verlustfrei additiv zusammengeführt. Git-Geschichte durch drei zusätzliche finale Quell-HEAD-Eltern bewahrt; kein Force-Push oder Branchlöschen.
+- **Gates:** Vollständige neue CI des endgültigen kombinierten HEADs sowie geordneter Main-Merge nach #518 und erfolgreicher Main-CI. Keine JSON-/SQLite-Migration, keine echte Android-Geräteabnahme.
+
+---
+
+## 03.11.2026 – Chat D: vier unabhängige aktuelle Fachpakete für die Folgeintegration vorbereitet
+
+- **Stackbasis:** PR #522, HEAD `698cd697f6fdf3c934641ea1e33c79beed29fee5` (nach #518 → #517 → #512).
+- **Quellpakete:** #519 (Legacy-Unicode im bestätigten NPC-Rückblick; `fdc7b269f67b63f0453484408e22dad86f6eb305`), #520 (sichere Material-IDs; `471bbad20b2b092bd93029c8fc2b6ef228cd8add`), #521 (Gelegenheitsbewegungs-Dialog bei hoher Schrift/IME; `d3213742022bf0779875cbef510b7d8667676eb0`) und #523 (SRD-Zauberkomponententexte; `5e93417329126a552f8cc893405ba27134ebb91a`).
+- **Konfliktprüfung:** Die vier technischen Quelldateien sind an der jeweiligen ursprünglichen Quellbasis und auf dem Stack-HEAD #522 bytegleich; die vier neuen Testdateien haben getrennte Pfade. Originale Fach-/Test-Git-Blobs werden unverändert übernommen, die vier originalen Quell-HEADs als zusätzliche Commit-Eltern bewahrt.
+- **Dokumentation:** Sämtliche ausschließlich additiven Abschnitte der vier PRs in README, zentralem CODEX-Checkpoint sowie den Checkpoints A, B und C werden ohne Löschung bestehender Einträge übernommen. Der Integrations-PR ist ein koordinierter Nachfolger, keine Ersetzung der Quellhistorie.
+- **Quell-CI:** #519 ([41594258320](https://github.com/ManuEtt/Dnd/actions/runs/41594258320)), #520 ([41593663239](https://github.com/ManuEtt/Dnd/actions/runs/41593663239)), #521 ([41593830589](https://github.com/ManuEtt/Dnd/actions/runs/41593830589)) und #523 ([41595431832](https://github.com/ManuEtt/Dnd/actions/runs/41595431832)) jeweils `completed/success` auf dem angegebenen Quell-HEAD.
+- **Noch nicht abgenommen:** Neue vollständig grüne kombinierte CI auf dem exakten Folgeintegrations-HEAD, reguläre Vorgänger-Merges mit grüner Main-CI, aktuelle Konfliktprüfung und reale Android-/TalkBack-/Upgrade-Tests.
+- **Kompatibilität:** Keine beabsichtigte SQLite-/JSON-/Versionsmigration, keine automatische KI-/Regelzustandsänderung.
+- **Nächster Schritt:** Kombinierte CI des Folgeintegrations-PRs abnehmen; erst nach geordneter Vorgängerintegration und grünem Main erneut mergen.
+
+---
+
+## 03.11.2026 – Chat D: drei bestätigte Story-Fortsetzungs-PRs nach #524 vorbereitet
+
+- **Quell-PRs:** #452 (`23422a695ffeab2309b15dae4b973085226de40f`), #456 (`9ca638e3ee85fb7cba894a8c76ca5a90b2120b56`), #459 (`0a859b301dd4660bb19d0c21a8a9b46c2aecd574`).
+- **Stackbasis:** `a1bcf9dd31ed46ad6865641d989c43cd8fc90063` (#524, nach #522).
+- **Abgleich:** Die vier bestehenden Story-/Testdateien auf der Stackbasis sind Git-Blob-bytegleich mit den Ursprungsbasen der Quell-PRs; drei neue Test-/Fachdateien kommen hinzu. Alle sieben technischen Blobs der drei Quellheads werden ohne Umbau übernommen. Originalquell-HEADs bleiben zusätzliche Eltern.
+- **Quell-CIs:** vollständige Android-Alpha-Workflows [41244723884](https://github.com/ManuEtt/Dnd/actions/runs/41244723884), [41246230660](https://github.com/ManuEtt/Dnd/actions/runs/41246230660) und [41282536339](https://github.com/ManuEtt/Dnd/actions/runs/41282536339) jeweils `completed/success`.
+- **Dokumentation:** Drei PRs in README, CODEX-Checkpoint und Chat-B-Checkpoint ausschließlich additiv zusammengeführt.
+- **Noch offen:** Neue kombinierte CI auf finalem Integrationshead, geordnete Vorgängerintegration und erneute Main-/Datei-/CI-Abnahme. Reale Android-/Upgrade-/TalkBack-Prüfung separat.
+- **Kompatibilität:** Keine beabsichtigte SQLite-/JSON-Migration oder App-Versionsänderung. Aus Storytext folgen keine unbestätigten Regelzustandsänderungen.
+
+---
+
+## 03.11.2026 – Chat D: drei ältere SRD-Klassen- und Rettungswurfpakete vorbereitet
+
+- **Quell-PRs:** #463 `6a110cf651fe45ada3cc00d026bef76a1a428ce8` (bestätigte klassengebundene Zaubervorbereitung), #468 `35c620e7e0ec173da73d1bb76c24a23703f78b0e` (Konzentrations-Klassenvorprüfung), #473 `77c172b34bb4c54eb188b659387b2981c1be44ca` (Rettungswurf-Klassenvorprüfung).
+- **Basis:** koordinierter Story-Integrationsstack #525, Commit `e298fa5590a4d8a16af17f7d062a1dfacb4a0960`.
+- **Technische Prüfung:** Alle fünf bereits vorhandenen geänderten Regeldateien auf dem Stack gegen ihre ursprünglichen Quellbasen verglichen: Git-Blobs bytegleich, keine zwischenzeitlichen Änderungen übersprungen. Originale Quell-Git-Blobs der drei PRs und sämtliche neuen Test-/Fachdokumente werden übernommen, Quell-HEADs als Commit-Eltern erhalten.
+- **SRD-Register:** Die voneinander verschiedenen JSON-Hunks aus #468 und #473 wurden einzeln einmalig gegen die unberührte Ursprungsbasis angewandt; resultierendes JSON ist gültig. Keine Quellenbewertung aus einem unbestätigten Katalogstatus abgeleitet.
+- **Version:** Beide PRs ändern `app/pubspec.yaml` von `0.8.49+99` zu `0.8.50+100` beziehungsweise `0.8.51+101`. Der Folgeintegrationsstand behält ausschließlich die neuere, bereits auf #473 erfolgreich gebaute Version `0.8.51+101`; niemals die ältere Versionsdatei von #468 zurückkopieren.
+- **Quell-CIs:** #463 [41312950120](https://github.com/ManuEtt/Dnd/actions/runs/41312950120), #468 [41326319399](https://github.com/ManuEtt/Dnd/actions/runs/41326319399), #473 [41395941527](https://github.com/ManuEtt/Dnd/actions/runs/41395941527), alle auf dem jeweiligen Quellhead `completed/success`.
+- **Gemeinsame Dokumentation:** README, zentraler CODEX-Checkpoint, Chat-A-Checkpoint, CHANGELOG, CHECKPOINT und DEVELOPMENT_STATUS jeweils additiv vereinigt; drei eigenständige SRD-/Chat-A-Nachweisdokumente unverändert.
+- **Noch offen:** Vollständige CI der kombinierten Quelle, Vorgänger-PRs mit grünen Main-Builds geordnet mergen, neuer Main-/Fachabgleich und tatsächlicher Android-/Upgrade-Geräteabnahmetest.
+- **Schema/Kompatibilität:** Keine absichtliche SQLite- oder JSON-Migration, keine Änderung der etablierten Regelschnittstellen außerhalb dokumentierter Preflight-Prüfungen.
+
+---
+
+## 03.11.2026 – Chat D: NPC-Notizvalidierung repariert; drei verwaiste Quellheads verlustfrei erhalten
+
+- **Quelle #516:** `feat/chat-b/confirmed-npc-note-id-integrity-20261103`, letzter HEAD `bd777c59074ae2ee76747972dc0a1fa946257863`, [vollständige CI 41698378638](https://github.com/ManuEtt/Dnd/actions/runs/41698378638) `completed/success`.
+- **CI-Fehlerbehebung:** Zwei Tests erwarteten irrtümlich, dass doppelte NPC-Notiz-IDs erst vom NPC-Leser nach JSON-Rekonstruktion oder SQLite-Neustart abgelehnt werden. Tatsächlich weist die bereits vorhandene Kampagnenvalidierung sie schon beim Import/Speichern ab. Die Tests prüfen jetzt sowohl den vorhandenen frühen Guard als auch die In-Memory-Leseansicht und den unveränderten alten SQLite-Spielstand nach zurückgewiesenem korruptem Schreibversuch; kein produktiver Validator abgeschwächt. Testdatei via offiziellem Dart-3.9.2-Formatter korrigiert, temporärer Diagnoseworkflow vollständig entfernt. PR-Fachdaten und neue Testdatei unverändert vom finalen erfolgreichen Quellhead übernommen. Der bestehende NPC-Identitäts-Fach-Git-Blob auf Stackbasis ist mit seiner Quellbasis bytegleich.
+- **Historischer NPC-Kurzfassungsbranch:** `feat/chat-b/bounded-confirmed-npc-excerpt-20261102` @ `96339224b658072f57d50dea0dcde252b61c934e` (historisch geschlossener, ungemergter PR #484), [Quell-CI 41401806782](https://github.com/ManuEtt/Dnd/actions/runs/41401806782) erfolgreich. Die beiden ursprünglichen Fach-/Testdateien sind **bereits blob-identisch im Stack** enthalten, der README-Abschnitt ebenfalls vorhanden; fehlende Nachträge in CODEX und Chat B additiv übernommen. Der Quellhead wird ausschließlich zur Git-Ancestry-Archivierung als zusätzlicher Parent eingebunden.
+- **Zwei ohne offenen PR verbliebene Flutter-Branches:** `feat/chat-c/manual-turn-queue-large-text-ime-20261102` @ `60f5a6341296eaa3bcced884501f9dd01f7dd779`; `feat/chat-c/material-inventory-large-text-ime-20261102` @ `c917b00ed873d374b83daefd0d847611ca92b2ac`.
+  Die erste produktive Dialogfassung unterscheidet sich von der bereits integrierten Version aus #512 ausschließlich in zwei **weniger aussagekräftigen** Tooltips (die aktuelle Fassung nennt den jeweiligen Namen); der erste Widgettest unterscheidet sich nur durch Dart-Formatter-Umbrüche. Beim Materialinventar ist die produktive Dialogdatei **blobgleich**, die neue Testfassung auf dem aktuellen Stack nutzt für die Eingabe korrekt das verschachtelte `EditableText` statt die vorherige `TextField.controller`-Annahme. Die neueren getesteten technischen Blobs bleiben im Integrationsbaum erhalten.
+- **Historie:** Alle vier ursprünglichen Quellheads (#516, #484 und die zwei verwaisten Chat-C-Branches) als zusätzliche Git-Commit-Eltern gesichert. Somit können die Branches nach einer tatsächlich erfolgreichen, geordneten Main-Integration und Main-CI als exakte Main-Ancestors sicher archiviert/gelöscht werden. Keine direkte Main-Bearbeitung und keine vorzeitige Löschung.
+- **Gemeinsame Dokumentation:** README, CODEX und Chat-B-Checkpoint mit den fehlenden additiven #516/#484-Abschnitten erweitert. Keine andere Fachdatei oder App-Version geändert.
+- **Noch offen:** Neue vollständige kombinierte CI auf exaktem Folge-HEAD, vollständige Main-Integration aller Vorgänger-PRs in Reihenfolge, grüne Main-CI, SHA-gesicherte Bereinigung, reale Android-/Upgrade-/TalkBack-Prüfung.
