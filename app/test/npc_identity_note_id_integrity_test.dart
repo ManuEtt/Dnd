@@ -134,17 +134,14 @@ void main() {
     expect(selection.toContextMap().toString(), isNot(contains('Tor')));
     NpcIdentityMemory.requireCurrent(campaign, selection);
     expect(
-      () => NpcIdentityMemory.read(
-        campaign,
-        npcId: 'tarek',
-        expectedRevision: 3,
-      ),
+      () =>
+          NpcIdentityMemory.read(campaign, npcId: 'tarek', expectedRevision: 3),
       throwsFormatException,
     );
     expect(jsonEncode(campaign.toJson()), before);
   });
 
-  test('legacy records survive SQLite restart, invalid identity is not sent', () async {
+  test('SQLite restart rejects duplicate NPC note IDs', () async {
     final directory = await Directory.systemTemp.createTemp('npc-id-');
     final dbPath = paths.join(directory.path, 'campaign.sqlite');
     var repository = await SqliteCampaignRepository.open(
