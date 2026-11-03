@@ -1095,3 +1095,27 @@ Ausgangs-main `516bc14e06cb02e7035a6adfb8e2d21e54253184`, Branch `fix/chat-d/che
 ## Chat B – Orts-Wiederaufnahme (02.11.2026)
 
 PR #505: bestätigte gespeicherte Ortsauswahl mit ID, Unicode-Schutz, Revision, sechs Tests; CI offen. Siehe docs/parallel/CHAT_B_CHECKPOINT.md.
+
+---
+
+## 02.11.2026 – Chat C: Wilder-Angreifer-Auswahl bei großer Schrift und IME
+
+- **Main-Basis:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`. **Branch:** `feat/chat-c/savage-attacker-ime-20261102`. **PR:** [#506](https://github.com/ManuEtt/Dnd/pull/506).
+- **UI:** Ein vollständig scrollbarer `AlertDialog` statt eigener Inhalts-Scrollfläche; beide bereits geprüften Waffenwürfe zeigen expliziten `Semantics.selected`-Status. Keine direkte Schadens- oder Talentbuchung.
+- **Tests:** Vier zusätzliche Widgetfälle bei 320/360 dp, 200 % Schrift und 220 dp Android-IME. Abbruch/ungültige Quelle gesperrt, Wahl eines auch niedrigeren Wurfs, kritischer Treffer und unverändertes Kampagnen-JSON.
+- **Geprüft:** Zielgerichtete GitHub-Actions-Prüfung [#41478500514](https://github.com/ManuEtt/Dnd/actions/runs/41478500514) erfolgreich mit insgesamt 10 Widgettests. Offizielle Formatkorrekturen übernommen; temporärer Workflow entfernt.
+- **Noch offen:** Vollständige CI auf finalem PR-Head und reales Android/TalkBack/IME/Upgrade. Nur `app/lib/ui/savage_attacker_selection_dialog.dart` und `app/test/savage_attacker_selection_dialog_test.dart` sowie additive Dokumentation geändert; keine Modell-/Speichermigration. Chat D konsolidiert zentrale Docs beim Merge.
+
+---
+
+---
+
+## 02.11.2026 – Chat C: Sanfter Fall – erneute Zustimmung bei editiertem Schaden
+
+- **Main-Basis:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`, **Branch:** `feat/chat-c/slow-fall-ime-consent-20261102`; **PR:** [#509](https://github.com/ManuEtt/Dnd/pull/509) (Draft).
+- `MonkSlowFallDialog` nutzt `AlertDialog.scrollable` und schmale Insets für Android-200-%-Schrift/IME.
+- Editieren des Schadens widerruft die beiden vorherigen Checkbox-Zustimmungen. Der Dialog gibt weiterhin nur `ConfirmedSlowFallChoice` zurück, ohne selbst HP/Reaktion zu ändern.
+- Vier Widgettests ergänzt (320/360 dp, 200 %, 220 dp IME, Abbruch, Reaktionssperre, Neuprüfung, keine Heldenmutation).
+- Zielgerichtete und vollständige GitHub-CI noch zu belegen; physisches Android/TalkBack/Upgrade nicht getestet. Keine Domain-, Datenbank-, Export- oder Versionsmigration. Gemeinsame Docs bei Chat-D-Integration additiv konsolidieren.
+
+---

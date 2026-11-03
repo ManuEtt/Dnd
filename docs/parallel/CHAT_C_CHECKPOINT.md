@@ -658,3 +658,37 @@ Der vollständige rein additive Chat-Fachnachtrag aus PR #479 ist nachfolgend er
 - **Nächster Schritt:** Finale GitHub Actions auf dem vollständig dokumentierten Commit überprüfen und konkrete Fehler im selben Branch korrigieren; erst nach grüner CI für Integration freigeben.
 
 ---
+
+---
+
+## 02.11.2026 – Chat C: Wilder Angreifer bei 200 % Schrift und IME
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`.
+- **Branch:** `feat/chat-c/savage-attacker-ime-20261102`. **PR:** [#506](https://github.com/ManuEtt/Dnd/pull/506) (Draft bis finaler CI).
+- **Problem:** `SavageAttackerSelectionDialog` verwendete einen eigenen `SingleChildScrollView` im `AlertDialog`, ohne titel- und aktionsübergreifende Scrollabsicherung bei schmalen Android-Displays und eingeblendeter Tastatur. Der Auswahlstatus der beiden Würfe war für Screenreader nicht explizit.
+- **IMPLEMENTIERT:** `AlertDialog(scrollable: true)` statt verschachtelter vertikaler Scrollfläche; `Semantics(selected: ...)` für ersten und zweiten Wurf, nur nach ausdrücklicher Wahl ist `Wurf bestätigen` aktiv. Regeln, Würfel, Kämpfe und Speicherung unverändert.
+- **Geänderte technische Dateien:** `app/lib/ui/savage_attacker_selection_dialog.dart` und `app/test/savage_attacker_selection_dialog_test.dart`.
+- **Testfälle ergänzt:** vier Widgetfälle zu 320/360 dp, 200 % Schrift, 220 dp simuliertem IME; Touch-/Semantics-Auswahl, negativer Abbruch, unverbindlicher kritischer Treffer, bereits verbrauchtes Talent und unveränderte Kampagnen-JSON-Snapshots.
+- **GETESTET:** GitHub-Main und offene PR-Dateien abgeglichen; keine fachliche Überschneidung. Gezielter GitHub-Actions-Lauf [#41478500514](https://github.com/ManuEtt/Dnd/actions/runs/41478500514) auf dem damaligen Codecommit `8137394521d686ee4c2b1940a0a1c778821e4883` vollständig **success**, alle **10 Widgettests** bestanden. Die offizielle Dart-Formatabweichung ausschließlich im Test wurde exakt übernommen; temporärer Testworkflow anschließend aus dem Branch gelöscht.
+- **NICHT GETESTET:** Vollständige Python-/Backend-/Flutter-/Android-Gesamt-CI auf finalem Head, reale Android-/TalkBack-/Hardware-IME-/Altversionsupgrade-Tests.
+- **BLOCKIERT:** Keine lokalen Flutter-/Dart-Werkzeuge; finalen GitHub-Actions-Lauf abnehmen. Bestehende README-/Checkpoint-Einträge beim parallelen Merge ausschließlich additiv erhalten (Chat D).
+- **Migration:** Keine Domain-/Regel-/Controller-/SQLite-/JSON-/Version-/Spielstandsänderung. Dialog liefert nur `SavageAttackerSelectionRequest`, keine selbstständige Anwendung von Schaden.
+- **NÄCHSTER SCHRITT:** Finale vollständige GitHub-CI und anschließend Touch-/TalkBack-Abnahme auf echtem schmalen Android-Gerät; bis dahin Draft.
+
+---
+
+---
+
+## 02.11.2026 – Chat C: Mönch/Sanfter Fall bei Großschrift und IME
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`; **Branch:** `feat/chat-c/slow-fall-ime-consent-20261102`; **PR:** [#509](https://github.com/ManuEtt/Dnd/pull/509) (Draft).
+- **Problem:** `MonkSlowFallDialog` besaß nur einen eigenen `SingleChildScrollView` statt eines vollständigen scrollbar-Dialogs. Bei 200 % Schrift, schmalem Android-Bildschirm und virtueller Tastatur fehlten Akzeptanztests. Außerdem blieben zwei bereits erteilte Bestätigungen nach Bearbeitung des Sturzschadens gültig.
+- **IMPLEMENTIERT:** `AlertDialog(scrollable: true)`, schmale Insets und feste maximale Inhaltsbreite. Nach jeder Änderung des Schadenswerts werden Sturz- und Verteidigungsbestätigung widerrufen; erneutes explizites Ankreuzen für die neue Zahl erforderlich. Abbruch bekommt stabilen Widget-Key. Keine Auswertung oder Reaktionsbuchung im Dialog.
+- **Technische Dateien:** `app/lib/ui/monk_slow_fall_dialog.dart`, `app/test/monk_slow_fall_dialog_test.dart`.
+- **Tests ergänzt:** vier Widgetfälle für 320/360 dp, 200-%-Schrift und simuliertes 220-dp-IME: erneuter Konsens nach editiertem Schaden, erreichbares Abbrechen, bereits verbrauchte Reaktion bleibt gesperrt, unveränderter Helden-Snapshot bis zum Controller.
+- **GETESTET:** Code-/PR-Dateiüberschneidungen geprüft; gezielte Flutter-/Dart-GitHub-Abnahme noch abzuschließen.
+- **NICHT GETESTET:** vollständige CI am finalen PR-Head, echtes TalkBack-/Software-IME-/Geräte- und Upgradeverhalten.
+- **Migration:** Keine neuen Regeln, kein Controller-/Domain-/Speichermodell, kein SQLite-/JSON-/Versionswechsel.
+- **Nächster Schritt:** Den gezielten Test und die vollständige GitHub Actions CI inklusive Debug/Alpha-APKs erfolgreich abnehmen, danach PR-Review und echte Android-Touch-/TalkBack-Prüfung.
+
+---

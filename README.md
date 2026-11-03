@@ -751,3 +751,15 @@ Datensätze, Legacy-JSON und SQLite-Neustart. Keine Änderung an Regeln,
 Spielständen, Schema, `story_api.dart` (offener PR #459) oder App-Version.
 Lokale Flutter-/Android-Prüfungen stehen mangels SDK aus; vollständige CI
 auf finalem PR-HEAD und Geräteabnahme sind separat nachzuweisen.
+
+---
+
+## Chat C – Wilder-Angreifer-Auswahl auf schmalem Android (02.11.2026)
+
+Im [Draft-PR #506](https://github.com/ManuEtt/Dnd/pull/506) auf Branch `feat/chat-c/savage-attacker-ime-20261102` scrollt der gesamte Dialog für die Wahl zwischen zwei bestätigten Waffenwürfen (`AlertDialog.scrollable`). Der gewählte Wurf wird für Screenreader ausdrücklich als ausgewählt markiert. Vier neue Widgetfälle decken 320/360 dp, 200 % Schrift und simulierte 220 dp Tastatur, Abbruch, kritischen Treffer und ungültige Auswahl ab. Der Dialog gibt nur eine überprüfbare Wahl zurück und bucht keinen Schaden. Keine Änderungen an Regeln, Controller, SQLite/JSON oder App-Version. Zehn gezielte Widgettests waren in GitHub Actions #41478500514 erfolgreich; die vollständige CI und reale Android-/TalkBack-Prüfung bleiben separat nachzuweisen. Details im [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+
+---
+
+## Chat C – Mönch „Sanfter Fall“: zustimmungssicherer Android-Dialog (02.11.2026)
+
+In [Draft-PR #509](https://github.com/ManuEtt/Dnd/pull/509) auf Branch `feat/chat-c/slow-fall-ime-consent-20261102` ist der Dialog auch bei großer Schrift und simulierter Tastatur als Ganzes scrollbar. Nach einer Änderung des bestätigten Sturzschadens müssen Sturz und vollständig abgeschlossene andere Schadensanpassungen neu bestätigt werden. Die Vorschau und Bestätigung bleiben rein unverbindlich; Reaktion/Schaden verbucht nur der zuständige Controller. Vier zusätzliche Widgetfälle prüfen schmale 320-/360-dp-Ansichten mit 200 % Schrift und simuliertem Android-IME einschließlich Abbruch und bereits verbrauchter Reaktion. Keine Migration von Spielständen, SQLite oder JSON und keine Änderung der Spielregeln. CI-Abnahme und reales Android/TalkBack noch offen. Siehe [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).

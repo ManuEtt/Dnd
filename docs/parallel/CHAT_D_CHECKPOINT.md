@@ -1526,3 +1526,14 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - Keine bestehende Fachdatei verändert, deren Stack-Basis von der geprüften Quellbasis abweicht; Dokumentationsnachträge aus beiden Quellen ausschließlich additiv erhalten.
 - Original-Quellhistorien als zusätzliche Commit-Eltern erhalten. Keine Spielstandmigration, kein Force-Push.
 - Offen: vollständige kombinierte CI, danach geregelter Merge nach #507 und #508 sowie Main-CI; Realgerät-/TalkBack-/Upgrade-Abnahme getrennt.
+
+---
+
+## Chat D – UI-Sicherheitsdialoge, Folgeintegration (02.11.2026)
+
+- **Stack-Basis:** `a0a350fa534769c32293eaf8d7f91d3ab53c4c15` (PR #510, zuvor #508 und #507).
+- **Quellen:** #506 Head `31fa78dd5008018acbb18c5be83d9d22bbd2f9c6`, zwei erfolgreiche vollständige GitHub-CIs; #509 Head `8f930fedeb36df943d63f9278115c7622ecc1d07`, vollständige GitHub-CI erfolgreich.
+- **Umsetzung:** Wilder-Angreifer- und Sanfter-Fall-Dialoge bei 200 % Schrift/IME bedienbar, Auswahl- und Zustimmungsprüfungen; vier technische Original-Git-Blobs inklusive Tests übernommen. Beide produktiven UI-Basisdateien und Tests auf dem Stack gegenüber der Quellbasis unverändert.
+- **Dokumentation:** Originale reine Hinzufügungen von README, CODEX und CHAT_C additiv übernommen. Kein vorhandener Fortschritt entfernt.
+- **Historie:** Finale Quell-HEADs als zusätzliche Git-Eltern gespeichert. Kein Force-Push oder Löschen fremder Branches.
+- **Offen:** Neue vollständige kombinierte CI auf dem finalen Integrationscommit; anschließend geordneter Merge #507 → #508 → #510 → dieses Paket, jeweilige Main-CI und abschließender Merge-Abgleich. Keine reale TalkBack-/IME-/Upgrade-Geräteabnahme, keine Spielstands-/SQLite-/JSON-Änderung.
