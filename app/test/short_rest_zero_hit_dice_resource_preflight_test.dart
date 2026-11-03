@@ -51,7 +51,7 @@ void main() {
     );
     expect(jsonEncode(forged.hero.toJson()), original);
     expect(forged.events, isEmpty);
-    expect(update.campaign.hero.spentPactSlots, 1);
+    expect(forged.hero.spentPactSlots, 1);
     expect(random.calls, beforeRolls);
   });
 
