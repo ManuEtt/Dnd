@@ -1547,3 +1547,34 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Konflikt entschieden:** Produktive Dialogdateien unterscheiden sich ausschließlich in zwei Gleichstand-Tooltips (fünf Diffzeilen). #483 benennt den Figurennamen in beiden Tooltips; deshalb wird dessen Original-Codeblob übernommen und beide unterschiedlichen originalen Widget-Testdateien zusammen übernommen. UI-Ausgangsblob des Stacks entspricht exakt dem vorigen Quell-Main `88558020`.
 - **Historie und Dokumentation:** Beide Original-Quellheads als zusätzliche Commit-Eltern erhalten; sämtliche reinen README-/CODEX-/CHAT_C-Einfügungen additiv zusammengeführt, keine bestehenden Dateien überschrieben.
 - **Grenzen:** Keine Regel-/Speicher-/Versionsänderungen, keine eigenständige Kampfengine. Vollständige kombinierte CI dieser konkreten Testkombination vor jedem Merge erforderlich; danach geordnete Stack-/Main-Integration. Echte TalkBack-/Android-IME- und Altversionstests weiterhin offen.
+
+---
+
+---
+
+## Chat D – Alpha-Release-APK-Quelle ohne symbolische Verknüpfung (02.11.2026)
+
+- **Ausgangs-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f` (nach der vollständigen Abnahme und Integration von #508).
+- **Branch:** `fix/chat-d/alpha-apk-source-symlink-20261102`.
+- **Pull Request:** [#514](https://github.com/ManuEtt/Dnd/pull/514), Draft bis finaler CI-Abnahme.
+- **Implementierungs- und Regressionstest-Commits:** `15c75c8e137e9bf86538463a89db735fcc399571`, `9085c3a2ad0a7eca90f821f5c965c23f56e7c146`, `a9b1c76c5a4701937e3c56d06785edf02de77e2b` (Schutz des externen APK-Byteinhalts in Regression bestätigt).
+- **Problem:** `prepare_release` rief `Path.resolve()` bereits vor der APK-Validierung auf und verdeckte dadurch einen verlinkten Eingabepfad. Eine gültige APK aus einem unerwarteten externen Dateipfad konnte so als Release-Quelle akzeptiert werden.
+- **Lösung:** Originalpfad für die Prüfung erhalten; direkte und geerbte Symlinks vor dem Lesen ablehnen, nach der Quell-ZIP-Erzeugung erneut prüfen, ehe ein Release-APK-Ziel kopiert wird. Kein Zugriff auf das Ziel eines erkannten Linkpfads.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Tests:** vier neue Regressionen für gültige direkte APK-Quelle, verlinkte Quelldatei, verlinktes Elternverzeichnis, Quellpfad-Austausch nach Quellarchiv-Staging mit Rollback des Release-Verzeichnisses.
+- **GETESTET:** Änderung und Testfälle in GitHub auf eigenem Branch gespeichert. Vollständige GitHub-Actions-Abnahme auf finalem HEAD steht aus.
+- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-CI auf finalem HEAD und echter Geräte-Release-Installationspfad.
+- **Spielstände/Migration:** kein Schema-/Versionswechsel, kein Eingriff in Flutter, Story, SRD oder gespeicherte Kampagnen.
+- **Konfliktprüfung:** beim Beginn offene PRs #452–#512 ändern nicht die beiden Python-Fachdateien dieses Arbeitspakets. Gemeinsam genutzte Dokumentation vor Integration additiv bewahren. Keine fremden PRs oder Branches überschreiben.
+- **Nächster Schritt:** finale vollständige CI prüfen; bei erfolgreichen Checks Review-Freigabe und spätere konfliktgeprüfte Integration.
+
+---
+
+## Chat D – Sicherheit von KI-Story und Release-APK (03.11.2026)
+
+- **Stackbasis:** PR #512 Commit `126ccea2c66e3c87390c1856df7dc2f78a0aa9f1`; davor #511, #510, #508 und #507.
+- **Quellköpfe:** PR #513 `775bb246f60dca3d9736e058ab47a0f3a22ddd6f` mit zwei vollständig grünen CIs; PR #514 `47cb0c4ac2b137cfb63a6f6ef4857773ff591672` mit vollständig grüner Quell-CI.
+- **Fachänderungen:** Gleiche Legacy-Unicode-Steuerzeichen im KI-Story-Vertrag Flutter/Backend zurückweisen; Alpha-APK-Ausgangspfade gegen direkte und geerbte Symlinks absichern, auch nach Staging erneut prüfen. Quell-Regressionen vollständig übernommen.
+- **Kollisionskontrolle:** alle vier bereits vorhandenen technischen Fach-/Testdateien auf der Stackbasis entsprechen exakt den Git-Blobs des Quellmains `a2f22eaceb344aaced12d0ad548b813aa44d544f`; die neuen Story-Regressionstests liegen auf zuvor nicht vorhandenen Pfaden. Keine Änderung anderer Pakete.
+- **Dokumentation:** reinen README-/CODEX-/CHAT_B-/CHAT_D-Hinzufügungen beider Quell-PRs zu erhalten, ohne alte Einträge zu löschen. Quellhistorien via zusätzliche Commit-Eltern bewahren; kein Force-Push.
+- **Pflicht:** neue kombinierte CI auf exakt dem finalen Integrations-HEAD, ordentliche Hauptbranch-Integration erst nach #507 → #508 → #510 → #511 → #512 mit jeweils grüner Main-CI. Keine echte Android-TalkBack-/Upgrade-Abnahme und keine SQLite-/JSON-Schemaänderung.
