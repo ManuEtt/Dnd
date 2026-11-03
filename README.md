@@ -811,3 +811,8 @@ Die Python-Releasevorbereitung prüft vor dem Lesen und nochmals vor dem Kopiere
 ## Chat A – Kurzrast ohne Trefferwürfel: Ressourcen vor Recovery prüfen (02.11.2026)
 
 [PR #515](https://github.com/ManuEtt/Dnd/pull/515) ergänzt den zentralen, **nicht mutierenden Kurzrast-Ressourcencheck** für normale Rasten und beide Sonderpfade ohne Trefferwürfelverbrauch. Ein fingierter Paktplatzverbrauch (etwa bei einem Kämpfer ohne Hexenmeisterstufe) wird vor jeder Regeneration abgewiesen. Fünf neue deterministische Domain-/GameEngine-Regressionen decken gültige und ungültige Fälle, RNG-Freiheit, unverändertes Ursprungs-JSON und Wiederaufnahme ab. **CI auf finalem PR-HEAD ausstehend; keine APK-/Gerätefreigabe.** SQLite 3, JSON 1 und App-Version 0.8.49+99 unverändert; keine Migration. Grundlage: SRD 5.2.1, CC BY 4.0.
+
+
+### Regelengine: Unicode-Validierung von Konzentrations-Schadensquellen (CHAT A, 03.11.2026)
+
+Im [Draft-PR #530](https://github.com/ManuEtt/Dnd/pull/530) erweitert CHAT A ausschließlich die Quell-ID-Validierung in `app/lib/domain/srd_concentration_damage_rules.dart`: U+206A–U+206F und U+FFF9–U+FFFB können nicht mehr als unsichtbare Bestandteile bestätigter Konzentrationsschadensquellen verwendet werden. Zwei neue deterministische Testgruppen prüfen Fehl- und Gutfälle in `app/test/srd_concentration_damage_rules_test.dart`. Flutter-/Android-CI auf dem finalen PR-HEAD noch separat nachzuweisen; keine Datenmigration. Fachquelle: [D&D SRD 5.2.1, Concentration](https://www.dndbeyond.com/srd) (CC BY 4.0).
