@@ -52,24 +52,30 @@ NpcIdentityContext _read(Campaign campaign, {int maxNotes = 1}) =>
 void main() {
   sqfliteFfiInit();
 
-  test('duplicate legacy note IDs are rejected even behind preview limit', () {
-    final raw = _campaign(
+  test('duplicate legacy note IDs fail at JSON import and preview read', () {
+    final campaign = _campaign(
       notes: [
         _note('shared', 'mira', 'Der aktuelle Weg.'),
         _note('older', 'mira', 'Ein Zwischenziel.', daysAgo: 1),
         _note('shared', 'mira', 'Alte widersprüchliche Notiz.', daysAgo: 20),
       ],
-    ).toJson();
-    final originalJson = jsonEncode(raw);
-    final restored = Campaign.fromJson(
-      jsonDecode(originalJson) as Map<String, dynamic>,
     );
+    final originalJson = jsonEncode(campaign.toJson());
 
-    expect(() => _read(restored, maxNotes: 1), throwsFormatException);
-    expect(() => _read(restored, maxNotes: 3), throwsFormatException);
-    expect(jsonEncode(restored.toJson()), originalJson);
-    expect(restored.hero.hitPoints, 14);
-    expect(restored.revision, 3);
+    // The campaign JSON validator already rejects duplicate note IDs. The
+    // narrower reader must also reject an in-memory legacy campaign before
+    // its maxNotes preview can conceal the older conflicting ID.
+    expect(
+      () => Campaign.fromJson(
+        jsonDecode(originalJson) as Map<String, dynamic>,
+      ),
+      throwsFormatException,
+    );
+    expect(() => _read(campaign, maxNotes: 1), throwsFormatException);
+    expect(() => _read(campaign, maxNotes: 3), throwsFormatException);
+    expect(jsonEncode(campaign.toJson()), originalJson);
+    expect(campaign.hero.hitPoints, 14);
+    expect(campaign.revision, 3);
   });
 
   test('malformed IDs in hidden history fail closed without data changes', () {
@@ -141,7 +147,7 @@ void main() {
     expect(jsonEncode(campaign.toJson()), before);
   });
 
-  test('SQLite restart rejects duplicate NPC note IDs', () async {
+  test('SQLite rejects duplicate note IDs without changing saved data', () async {
     final directory = await Directory.systemTemp.createTemp('npc-id-');
     final dbPath = paths.join(directory.path, 'campaign.sqlite');
     var repository = await SqliteCampaignRepository.open(
@@ -152,20 +158,34 @@ void main() {
       final original = _campaign(
         revision: 0,
         notes: [
-          _note('same', 'mira', 'Neue Notiz.'),
-          _note('same', 'mira', 'Alte Notiz.', daysAgo: 4),
+          _note('fresh', 'mira', 'Neue Notiz.'),
+          _note('older', 'mira', 'Alte Notiz.', daysAgo: 4),
         ],
       );
+      final before = jsonEncode(original.toJson());
       await repository.saveCampaign(original);
+
+      // Persistence validates the full campaign via Campaign.fromJson before
+      // writing. A corrupted later snapshot must not replace the good one.
+      final corrupted = original.copyWith(
+        npcRelationshipNotes: [
+          ...original.npcRelationshipNotes,
+          _note('fresh', 'mira', 'Widerspruechliche Kopie.', daysAgo: 20),
+        ],
+      );
+      await expectLater(
+        repository.saveCampaign(corrupted),
+        throwsFormatException,
+      );
+
       await repository.close();
       repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: dbPath,
       );
       final saved = (await repository.getCampaign(original.id))!;
-      final before = jsonEncode(saved.toJson());
       expect(saved.npcRelationshipNotes, hasLength(2));
-      expect(() => _read(saved), throwsFormatException);
+      expect(_read(saved).notes.single.id, 'fresh');
       expect(saved.hero.toJson(), original.hero.toJson());
       expect(saved.revision, 0);
       expect(jsonEncode(saved.toJson()), before);
