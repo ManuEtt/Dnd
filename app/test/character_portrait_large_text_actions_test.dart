@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/ui/character_portrait_picker.dart';
-import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
 Finder _key(String name) => find.byKey(ValueKey(name));
 
