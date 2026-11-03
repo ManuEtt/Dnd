@@ -93,10 +93,7 @@ void main() {
         (tester.getCenter(cancel).dx - tester.getCenter(apply).dx).abs(),
         lessThan(1),
       );
-      expect(
-        tester.getCenter(cancel).dy,
-        lessThan(tester.getCenter(apply).dy),
-      );
+      expect(tester.getCenter(cancel).dy, lessThan(tester.getCenter(apply).dy));
       expect(tester.takeException(), isNull);
 
       await _select(tester, 7);
@@ -140,32 +137,30 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('360 dp mit normaler Schrift behält zwei Aktionen nebeneinander', (
-    tester,
-  ) async {
-    final results = <CharacterPortraitChoice?>[];
-    await _open(
-      tester,
-      width: 360,
-      scale: 1,
-      keyboard: 0,
-      onResult: results.add,
-    );
-    final cancel = _key('portrait-cancel');
-    final apply = _key('portrait-apply');
-    expect(cancel.hitTestable(), findsOneWidget);
-    expect(apply.hitTestable(), findsOneWidget);
-    expect(
-      (tester.getCenter(cancel).dy - tester.getCenter(apply).dy).abs(),
-      lessThan(1),
-    );
-    expect(
-      tester.getCenter(cancel).dx,
-      lessThan(tester.getCenter(apply).dx),
-    );
-    await tester.tap(cancel);
-    await tester.pumpAndSettle();
-    expect(results, [null]);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    '360 dp mit normaler Schrift behält zwei Aktionen nebeneinander',
+    (tester) async {
+      final results = <CharacterPortraitChoice?>[];
+      await _open(
+        tester,
+        width: 360,
+        scale: 1,
+        keyboard: 0,
+        onResult: results.add,
+      );
+      final cancel = _key('portrait-cancel');
+      final apply = _key('portrait-apply');
+      expect(cancel.hitTestable(), findsOneWidget);
+      expect(apply.hitTestable(), findsOneWidget);
+      expect(
+        (tester.getCenter(cancel).dy - tester.getCenter(apply).dy).abs(),
+        lessThan(1),
+      );
+      expect(tester.getCenter(cancel).dx, lessThan(tester.getCenter(apply).dx));
+      await tester.tap(cancel);
+      await tester.pumpAndSettle();
+      expect(results, [null]);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
