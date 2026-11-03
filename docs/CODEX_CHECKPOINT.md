@@ -1131,3 +1131,33 @@ PR #505: bestätigte gespeicherte Ortsauswahl mit ID, Unicode-Schutz, Revision, 
 ## 02.11.2026 – Chat C: manuelle Kampf-Zugfolge bei IME/200 % Schrift (PR #483)
 
 [PR #483](https://github.com/ManuEtt/Dnd/pull/483) auf `feat/chat-c/manual-turn-queue-ime-20261102` basiert auf Main `885580202caeafc9787538b6dc1c833b3190a529`. `ManualTurnQueueDialog` verwendet `AlertDialog(scrollable:true)` mit kompakten Insets, eindeutige akteursspezifische Pfeil-Tooltips und `Semantics(liveRegion:true)` für Validierungsfehler. Fünf neue Widgettests bei 320/360 dp, 200 % Schrift und 220 dp Fake-IME prüfen negatives Bestätigen/Abbrechen, positive explizite Initiative/Gleichstandsbestätigung, nur unverbindliches Vorrücken eines gespeicherten Markers und deaktivierte Aktion bei fehlender Kreaturen-Initiative. Kampagnendaten müssen unverändert bleiben. **Finale CI noch ausstehend, Draft bis Grün.** Keine Domain-/JSON-/SQLite-/Versionsänderung, keine Migration, echtes Gerät/TalkBack/Release-Signatur offen.
+
+---
+
+---
+
+## Chat B – KI-Erzähltext gegen ältere Unsichtbarzeichen absichern (02.11.2026)
+
+**Branch:** `fix/chat-b/story-provider-invisible-unicode-20261102`.
+**Pull Request:** [#513](https://github.com/ManuEtt/Dnd/pull/513) (Draft).
+**Ausgangs-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f`.
+**Problem:** Die vorhandene Provider-Validierung blockierte viele C0/C1-
+und Bidi-Zeichen, akzeptierte aber U+00AD, U+034F, U+180E und U+206A–U+206F.
+**Implementiert:** Gleichartige zusätzliche Ablehnung in
+`app/lib/story/ai_story.dart` und `backend/src/story.ts`.
+**Tests neu:** `app/test/ai_story_invisible_unicode_test.dart`,
+`backend/test/story-legacy-format-guard.test.ts`; positive legitime
+Unicode-/Emoji-/Zeilenumbruchfälle und negative Plan-/Turn-/Angebotsfelder.
+**GETESTET:** Repository, PR-Dateipfade und vorhandene Quellcodeprüfung;
+zuvor wurde PR #505 auf exaktem Head erfolgreich vollständig CI-geprüft,
+dies ist aber kein Nachweis für das neue Paket.
+**NICHT GETESTET:** Endgültige GitHub-CI/Dart/Flutter/Android-Tests und Gerät
+bis zur gesonderten Prüfung. Keine Migration von SQLite/JSON oder App-Version.
+**Nächster Schritt:** neuen Draft-PR vollständig CI-prüfen und bei
+Fehlschlägen denselben Branch reparieren; kein automatischer Merge.
+
+---
+
+### Chat D: APK-Quellpfad bei Alpha-Paketierung gegen Symlinks sperren (02.11.2026)
+
+Ausgangs-main `a2f22eaceb344aaced12d0ad548b813aa44d544f`; Branch `fix/chat-d/alpha-apk-source-symlink-20261102`. `scripts/prepare_alpha_release.py` verwirft symbolisch verlinkte Quelldateien und über verlinkte Eltern erreichbare APKs vor der ZIP-Validierung; erneute Kontrolle nach Quellarchiverzeugung und vor dem Kopieren verhindert die Freigabe eines zwischenzeitlich verlinkten Quellpfads. Neue `scripts/tests/test_prepare_alpha_release.py`-Regressionen für direkte/indirekte Symlinks, Austausch nach Staging und zulässige unverlinkte APK. Keine Änderungen an Android-/SQLite-/JSON-/Spielstandsformaten oder Versionsangaben. Vollständige GitHub-CI auf finalem Branch-HEAD ausstehend; reine lokale statische Prüfungen nicht als CI-Erfolg zählen.

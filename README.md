@@ -775,3 +775,28 @@ In [Draft-PR #509](https://github.com/ManuEtt/Dnd/pull/509) auf Branch `feat/cha
 ### Chat C: Manuelle Kampf-Zugfolge bei 200 % Schrift und Tastatur (02.11.2026)
 
 [PR #483](https://github.com/ManuEtt/Dnd/pull/483) hält die manuelle Zugfolgen-Verwaltung bei 320/360 dp, 200 % Schrift und geöffneter Android-Tastatur durch einen einheitlichen Dialog-Scrollbereich bedienbar. Akteurspezifische Gleichstands-Pfeile erhalten eindeutige Screenreader-Beschriftungen, Validierungsfehler sind Live-Regionen. Fünf neue Widgettests prüfen fehlende Bestätigungen, Initiative-Gleichstände, neutralen Abbruch, gespeicherten manuellen Marker und unveränderte Kampagnensnapshots. **Neue finale PR-CI noch offen.** Keine automatische Kampf-/Ressourcenbuchung, Regel-, Speicher- oder Versionsänderung.
+
+---
+
+---
+
+## Chat B – unsichtbare ältere Unicode-Formatzeichen in KI-Storys (02.11.2026)
+
+Eigenständiges Sicherheits-/Kompatibilitätspaket auf
+`fix/chat-b/story-provider-invisible-unicode-20261102`:
+Flutter-`AiStoryPlan`/`AiStoryStep` und Fastify-`parseStoryPlan`/
+`parseStoryTurn`/`parseAdventureDraft` verwerfen zusätzlich
+U+00AD (weiches Trennzeichen), U+034F (Combining Grapheme Joiner),
+U+180E und die veralteten bidi-Steuerzeichen U+206A–U+206F.
+Frühere Unicode-Sperren bleiben bestehen, echte mehrzeilige deutsche
+Erzählungen, Tabs, Emoji und Variation Selector U+FE0F bleiben zulässig.
+Neue Flutter- und Backend-Regressionstests schützen Plan-, NPC-, Orts-,
+Handlungs- und Abenteuerfelder. Keine Änderung an Regeln, bestätigten
+Spielständen, JSON-/SQLite-Schema oder App-Version. Vollständige CI und
+Gerätetest sind am finalen PR-HEAD gesondert nachzuweisen.
+
+---
+
+### Chat D: Alpha-Release akzeptiert keine symbolisch verlinkte APK-Quelle (02.11.2026)
+
+Die Python-Releasevorbereitung prüft vor dem Lesen und nochmals vor dem Kopieren der ARM64-APK, ob der angegebene APK-Pfad oder eines seiner Elternverzeichnisse ein symbolischer Link ist. Verknüpfte APKs werden abgewiesen, statt ihrem externen Ziel zu folgen. Positive und negative Regressionstests decken normale APKs, direkte und Eltern-Symlinks sowie einen Link-Austausch nach der Quell-ZIP-Stagingphase ab. Branch `fix/chat-d/alpha-apk-source-symlink-20261102`; finale CI auf dem PR-HEAD ist noch nicht bestätigt. Keine App-, SQLite-, Spielstands-, JSON- oder Versionsänderung.

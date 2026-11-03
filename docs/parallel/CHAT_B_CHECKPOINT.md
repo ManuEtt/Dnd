@@ -505,3 +505,21 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **BLOCKIERT:** Lokale Flutter-Ausführung; CI-Auswertung ist gesondert erforderlich.
 - **Migrationen:** keine. SQLite/JSON-Schema, Spielstände, Regeln, Provider und App-Version unverändert; story_api.dart bewusst unangetastet, da PR #459 dort arbeitet.
 - **Nächster Schritt:** Finale CI des Draft-PR prüfen und Fehler ggf. im selben Branch korrigieren. Danach eine API-/UI-Anbindung der Ortsübersicht erst konfliktfrei mit PR #459 abstimmen.
+
+---
+
+---
+
+## 02.11.2026 – ältere Unsichtbarzeichen im KI-Story-Transport abweisen
+
+- **Ausgangs-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f`.
+- **Branch:** `fix/chat-b/story-provider-invisible-unicode-20261102`.
+- **Pull Request:** [#513](https://github.com/ManuEtt/Dnd/pull/513) (Draft).
+- **Problem:** Weiches Trennzeichen U+00AD, Combining Grapheme Joiner U+034F, U+180E und veraltete bidi-Steuerzeichen U+206A–U+206F bestanden bislang Flutter- und Backend-Story-Validierung. Sie können in Bestätigungs-/Erzähltexten unsichtbare Bedeutungsunterschiede vortäuschen.
+- **Implementiert:** `app/lib/story/ai_story.dart` und `backend/src/story.ts` synchron auf exakt zusätzliche Unicode-Sperren erweitert, ohne legitime Mehrzeilen-Texte und Emoji-Varianten zu verbieten.
+- **Tests angelegt:** `app/test/ai_story_invisible_unicode_test.dart` und `backend/test/story-legacy-format-guard.test.ts`, jeweils positiven Unicode-/Emoji-Proben und Negativfällen für Geschichten, Threads, NPCs, Orte, Spielzüge und Abenteuerangebote.
+- **Geänderte Fachdateien:** die genannten vier Code-/Testpfade. Die offenen PRs zu NPC-Fortsetzung/Ortsrückblick, Zaubern, Android-UI und Integrationen bearbeiten nach geprüften PR-Dateipfaden keine dieser vier Fachdateien.
+- **Kompatibilität:** SQLite/JSON und bestehende Spielstände unverändert. Kein Player-State-Commit, keine Änderung der Regeln, der Story-Wire-Struktur, Version oder Kostenfreigabe.
+- **GETESTET:** Quellstand und betroffene PR-Fachdateien geprüft. GitHub-Gesamt-CI des vorangegangenen Orts-PR #505 vollständig grün, nicht dieses neue Paket.
+- **NICHT GETESTET:** Neue Dart-/Flutter-/Backend-/Android-CI auf finalem Commit und echte Android-Geräteprüfung stehen noch aus.
+- **Nächster Schritt:** neue PR-CI auf finalem Head abnehmen; bei Fehlern im eigenen Branch korrigieren; erst danach Integrationsreview durch Chat D.
