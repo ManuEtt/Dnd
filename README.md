@@ -727,3 +727,21 @@ Die strikt konservative Metadatenprüfung für ausgelöste Zauber-Reaktionen/-Bo
 ### Chat C: Sending-Dialog mit großer Android-Schrift und Tastatur (02.11.2026)
 
 Ein eigenständiger Chat-C-Entwicklungsbranch `feat/chat-c/sending-dialog-ime-20261102` macht den Sending-Versuch als ganzen `AlertDialog` scrollbar. Bei mindestens 180 % Schrift bleiben die Bestätigungen visuell kurz und für TalkBack vollständig benannt. Neue Widgettests decken 320/360 dp, 200 % Schrift und ein simuliertes 220-dp-Tastatur-Inset ab, darunter Abbruch, bewusste Zustimmung, deren Widerruf nach Eingabeänderung und unveränderte Helden-JSON-Daten. Der Dialog bestätigt nur eine Vorschau; keine Spielregel-, Spielstands-, SQLite-, JSON- oder Versionsänderung. Ausführungsergebnisse und Integrationsstatus stehen im eigenen [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md); keine Freigabe ohne finale GitHub-CI und Review.
+
+ 
+---
+
+## Chat B – gespeicherte NPC-Notiz-IDs vor Wiederaufnahme prüfen (03.11.2026)
+
+[PR #516](https://github.com/ManuEtt/Dnd/pull/516) schließt eine
+Lücke im bestätigten NPC-Gedächtnis: Selbst ältere gespeicherte Notizen,
+die nicht in der begrenzten Vorschau erscheinen, müssen für den ausdrücklich
+gewählten NPC eine eindeutige und gültige ASCII-Notiz-ID besitzen.
+Doppelte, leere, zu lange oder formatierte Kennungen führen vor jeder
+Kontextausgabe zu `FormatException`, einschließlich erneuter Abfrage nach
+unbemerkten Änderungen bei identischer Kampagnenrevision.
+Unabhängige NPC-Chroniken bleiben separat auswählbar.
+Sechs neue Tests prüfen JSON, SQLite-Neustart, Negativfälle, Revisionsschutz
+und reguläre positive Erinnerungen. Nur lesende Story-Projektion; keine
+Kampagnen-, Regel-, SQLite-/JSON-Schema-, Wire- oder Versionsänderung.
+**CI/Android-Abnahme auf dem finalen PR-HEAD steht noch aus.**
