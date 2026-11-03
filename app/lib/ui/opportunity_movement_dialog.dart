@@ -101,145 +101,156 @@ class _OpportunityMovementDialogState extends State<OpportunityMovementDialog> {
     }
     final weapon = _weapon;
     return AlertDialog(
+      scrollable: true,
       key: const ValueKey('opportunity-movement-dialog'),
       insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       title: const Text('Gegnerbewegung bestätigen'),
       content: SizedBox(
         width: 360,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text('Gegner: ${widget.campaign.encounter?.enemyName ?? "–"}'),
-              const SizedBox(height: 8),
-              const Text(
-                'Bestätige die tatsächliche Bewegung aus deiner '
-                'Nahkampfreichweite. Entfernungen werden nicht aus der '
-                'Erzählung übernommen. Die Bewegung wird als offenes '
-                'Gelegenheitsangriffs-Angebot festgehalten. '
-                'Ein Angriff wird hier noch nicht gewürfelt.',
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<OpportunityMovement>(
-                key: const ValueKey('opportunity-movement-kind'),
-                initialValue: _movement,
-                isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Bewegungsart'),
-                items: const [
-                  DropdownMenuItem(
-                    value: OpportunityMovement.ordinary,
-                    child: Text('Eigene gewöhnliche Bewegung'),
-                  ),
-                  DropdownMenuItem(
-                    value: OpportunityMovement.disengage,
-                    child: Text('Rückzug (Disengage)'),
-                  ),
-                  DropdownMenuItem(
-                    value: OpportunityMovement.teleport,
-                    child: Text('Teleportation'),
-                  ),
-                  DropdownMenuItem(
-                    value: OpportunityMovement.forced,
-                    child: Text('Erzwungene Fremdbewegung'),
-                  ),
-                ],
-                onChanged: (value) => _change(() => _movement = value),
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                key: const ValueKey('opportunity-strike'),
-                initialValue: _strike,
-                isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Nahkampfangriff'),
-                items: [
-                  if (weapon != null)
-                    DropdownMenuItem(
-                      value: 'weapon',
-                      child: Text(
-                        weapon.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  const DropdownMenuItem(
-                    value: 'unarmed',
-                    child: Text('Waffenloser Schlag'),
-                  ),
-                ],
-                onChanged: (value) => _change(() => _strike = value),
-              ),
-              if (weapon == null)
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: Text(
-                    'Keine eindeutige angelegte SRD-Nahkampfwaffe bestätigt.',
-                  ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('Gegner: ${widget.campaign.encounter?.enemyName ?? "–"}'),
+            const SizedBox(height: 8),
+            const Text(
+              'Bestätige die tatsächliche Bewegung aus deiner '
+              'Nahkampfreichweite. Entfernungen werden nicht aus der '
+              'Erzählung übernommen. Die Bewegung wird als offenes '
+              'Gelegenheitsangriffs-Angebot festgehalten. '
+              'Ein Angriff wird hier noch nicht gewürfelt.',
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<OpportunityMovement>(
+              key: const ValueKey('opportunity-movement-kind'),
+              initialValue: _movement,
+              isExpanded: true,
+              decoration: const InputDecoration(labelText: 'Bewegungsart'),
+              items: const [
+                DropdownMenuItem(
+                  value: OpportunityMovement.ordinary,
+                  child: Text('Eigene gewöhnliche Bewegung'),
                 ),
-              for (final field in [
-                (
-                  key: 'before',
-                  label: 'Abstand vorher (Fuß)',
-                  controller: _before,
+                DropdownMenuItem(
+                  value: OpportunityMovement.disengage,
+                  child: Text('Rückzug (Disengage)'),
                 ),
-                (
-                  key: 'after',
-                  label: 'Abstand danach (Fuß)',
-                  controller: _after,
+                DropdownMenuItem(
+                  value: OpportunityMovement.teleport,
+                  child: Text('Teleportation'),
                 ),
-                (
-                  key: 'reach',
-                  label: 'Bestätigte Reichweite (Fuß)',
-                  controller: _reach,
-                ),
-              ]) ...[
-                const SizedBox(height: 12),
-                TextField(
-                  key: ValueKey('opportunity-${field.key}'),
-                  controller: field.controller,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: field.label),
-                  onChanged: (_) => _change(() {}),
+                DropdownMenuItem(
+                  value: OpportunityMovement.forced,
+                  child: Text('Erzwungene Fremdbewegung'),
                 ),
               ],
-              const SizedBox(height: 8),
-              CheckboxListTile(
-                key: const ValueKey('opportunity-visible'),
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: const Text('Ich kann den bewegten Gegner sehen.'),
-                value: _visible,
-                onChanged: (value) => _change(() => _visible = value ?? false),
-              ),
-              CheckboxListTile(
-                key: const ValueKey('opportunity-authorized'),
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: const Text(
-                  'Ich bestätige diese Angaben und möchte die Bewegung '
-                  'für meine Reaktionsentscheidung unterbrechen. '
-                  'Noch keine Reaktion verbrauchen.',
+              onChanged: (value) => _change(() => _movement = value),
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              key: const ValueKey('opportunity-strike'),
+              initialValue: _strike,
+              isExpanded: true,
+              decoration: const InputDecoration(labelText: 'Nahkampfangriff'),
+              items: [
+                if (weapon != null)
+                  DropdownMenuItem(
+                    value: 'weapon',
+                    child: Text(
+                      weapon.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                const DropdownMenuItem(
+                  value: 'unarmed',
+                  child: Text('Waffenloser Schlag'),
                 ),
-                value: _authorized,
-                onChanged: (value) =>
-                    setState(() => _authorized = value ?? false),
-              ),
-              if (_movement != null &&
-                  _movement != OpportunityMovement.ordinary)
-                const Text(
-                  'Rückzug, Teleportation und erzwungene Fremdbewegung '
-                  'lösen keinen Gelegenheitsangriff aus.',
-                )
-              else if (failure != null)
-                Text(failure)
-              else if (valid)
-                const Text(
-                  'Vorprüfung gültig: Angebot speichern. '
-                  'Trefferpunkte und Reaktion bleiben unverändert.',
-                  key: ValueKey('opportunity-movement-preview'),
+              ],
+              onChanged: (value) => _change(() => _strike = value),
+            ),
+            if (weapon == null)
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  'Keine eindeutige angelegte SRD-Nahkampfwaffe bestätigt.',
                 ),
+              ),
+            for (final field in [
+              (
+                key: 'before',
+                label: 'Abstand vorher (Fuß)',
+                controller: _before,
+              ),
+              (
+                key: 'after',
+                label: 'Abstand danach (Fuß)',
+                controller: _after,
+              ),
+              (
+                key: 'reach',
+                label: 'Bestätigte Reichweite (Fuß)',
+                controller: _reach,
+              ),
+            ]) ...[
+              const SizedBox(height: 12),
+              TextField(
+                key: ValueKey('opportunity-${field.key}'),
+                controller: field.controller,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: field.label),
+                onChanged: (_) => _change(() {}),
+              ),
             ],
-          ),
+            const SizedBox(height: 8),
+            CheckboxListTile(
+              key: const ValueKey('opportunity-visible'),
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: const Text('Ich kann den bewegten Gegner sehen.'),
+              value: _visible,
+              onChanged: (value) => _change(() => _visible = value ?? false),
+            ),
+            CheckboxListTile(
+              key: const ValueKey('opportunity-authorized'),
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Text(
+                MediaQuery.textScalerOf(context).scale(1) >= 1.8
+                    ? 'Bewegung ausdrücklich bestätigen'
+                    : 'Ich bestätige diese Angaben und möchte die Bewegung '
+                          'für meine Reaktionsentscheidung unterbrechen. '
+                          'Noch keine Reaktion verbrauchen.',
+                semanticsLabel:
+                    'Ich bestätige diese Angaben und möchte die Bewegung '
+                    'für meine Reaktionsentscheidung unterbrechen. '
+                    'Noch keine Reaktion verbrauchen.',
+              ),
+              value: _authorized,
+              onChanged: (value) =>
+                  setState(() => _authorized = value ?? false),
+            ),
+            if (_movement != null &&
+                _movement != OpportunityMovement.ordinary)
+              const Text(
+                'Rückzug, Teleportation und erzwungene Fremdbewegung '
+                'lösen keinen Gelegenheitsangriff aus.',
+              )
+            else if (failure != null)
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  failure,
+                  key: const ValueKey('opportunity-movement-error'),
+                ),
+              )
+            else if (valid)
+              const Text(
+                'Vorprüfung gültig: Angebot speichern. '
+                'Trefferpunkte und Reaktion bleiben unverändert.',
+                key: ValueKey('opportunity-movement-preview'),
+              ),
+          ],
         ),
       ),
       actions: [
