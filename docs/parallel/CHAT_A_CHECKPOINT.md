@@ -1,3 +1,75 @@
+# Chat A – Verlässliche SRD-Komponententexte vor Preis-/Verbrauchserkennung (03.11.2026)
+
+**Basis-main:** `bd423f4586e355ef888fe8ede1a0cd13fdc48dd4`.
+**Arbeitsbranch:** `fix/chat-a/spell-component-format-20261103`.
+**Fachcode-/Test-HEAD:** `48cc73d1b466080fd4703413e20a5ed909591942`.
+**PR:** [#523](https://github.com/ManuEtt/Dnd/pull/523) (Draft).
+**App-Version:** `0.8.49+99` unverändert.
+
+## Ausgangsproblem / Nachweis
+
+Vorher ließ `SrdSpellDefinition.validateComponentMetadata` unsichtbare
+Zeichen innerhalb von `M (...)` zu, solange das V/S/M-Grundformat stimmte.
+Ein scheinbar identischer `Revivify`-Text mit U+206A mitten in
+`consumes` besteht die syntaktische Komponentenprüfung, aber die
+separate Consumption-Worterkennung trifft nicht mehr zu.
+Selbst ein direkt konstruiertes `SrdSpellDefinition` konnte die
+Verbrauchsvoraussetzung dadurch falsch klassifizieren.
+
+## IMPLEMENTIERT
+
+- `app/lib/domain/srd_spell_catalog.dart`: unsichtbare C0/C1-Steuerzeichen,
+  Soft-Hyphen, Bidi/Zero-Width, veraltete Formate und Interlinear-Zeichen
+  bereits bei der Komponenten-Metadatenprüfung fail-closed abweisen.
+- `app/test/srd_spell_component_invisible_format_test.dart`: vier
+  Testgruppen für bekannte Katalogmetadaten, legitime internationale
+  Materialbeschreibungen, alle neun U+206A–U+206F/U+FFF9–U+FFFB innerhalb
+  von Verbrauchs- und Preisworten, JSON-Eingabe und unveränderte
+  Helden-/Slotdaten bei fehlgeschlagenem Preflight sowie positiven
+  `Revivify`-Verbrauchsvorbehalt.
+- `README.md`, `docs/CODEX_CHECKPOINT.md` und dieser Checkpoint
+  werden additiv fortgeschrieben; alte Einträge bleiben erhalten.
+
+## GETESTET
+
+- Verfügbaren Main-/PR-/Branch-/Actions-Stand per GitHub geprüft.
+- Reproduzierender JavaScript-Test bestätigte, dass ein unsichtbares
+  Zeichen das Wort `consumes` zerlegt und der bisherige Regex den
+  Materialverbrauch in der manipulierten Textvariante nicht erkennt.
+- Quell- und Teständerungen im eigenen GitHub-Branch gesichert.
+  Vollständige Flutter-/CI-Abnahme ist davon getrennt.
+
+## NICHT GETESTET / BLOCKIERT
+
+- Noch nicht als grün belegt: `flutter analyze`,
+  `dart format --output=none --set-exit-if-changed lib test`,
+  `flutter test test/srd_spell_component_invisible_format_test.dart`,
+  vollständige Flutter-/Python-/Backend-Suite, Android-Debug-APK,
+  tatsächlicher Android-Geräte-/Upgrade-Test.
+- CI darf nur auf finaler Commit-SHA als `completed/success` gelten.
+- Lokale Flutter-Laufzeit/Checkout nicht verfügbar; GitHub Actions
+  liefert den maßgeblichen überprüfbaren Nachweis.
+
+## KOMPATIBILITÄT / KONFLIKTE
+
+- Keine Änderung an gespeicherten Spielständen, SQLite/JSON-Schema,
+  App-Version, bestehenden Zauberressourcen oder der Erzähl-API.
+- Neue Fail-closed-Prüfung kann manipulierte importierte Zauberkatalogwerte
+  ablehnen, führt aber weder heimliche Datenmigration noch Slot-Abzug aus.
+- Offen: #463 (Klassen-Vorbereitungsbeleg), #520 (Materialstapel-IDs),
+  Integrations-PRs von Chat D. Keines dieser Pakete überschreibt
+  `srd_spell_catalog.dart` oder den neuen Testpfad.
+- **Lizenz:** SRD 5.2.1, *Spells / Components*, CC BY 4.0;
+  keine allgemeine SRD-Vollabdeckung oder neue magische Wirkung behauptet.
+
+## NÄCHSTER SCHRITT (genau ein unabhängiges Paket)
+
+Nach erfolgreich abgenommener kombinierter CI den
+klassenbezogenen Vorbereitungspfad gegen aktuelle Main-Integration
+von #463 prüfen; nur bei reproduzierbarer Lücke ein separates
+Positiv-/Negativpaket ohne parallele Änderung an `models.dart` wählen.
+
+---
 # Chat A – bestätigte Metamagie-Optionen versioniert prüfen (02.11.2026)
 
 **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529` ·
