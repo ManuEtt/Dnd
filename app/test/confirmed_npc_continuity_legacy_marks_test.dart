@@ -24,11 +24,7 @@ Campaign _campaign({
   scene: 'Unbestätigt: 999 Gold und sofortige Questbelohnung.',
   npcs: [
     const WorldNpc(id: 'mira', name: 'Mira', relationship: 'unbekannt'),
-    WorldNpc(
-      id: 'mira-two',
-      name: name,
-      relationship: relationship,
-    ),
+    WorldNpc(id: 'mira-two', name: name, relationship: relationship),
   ],
   npcRelationshipNotes: [
     NpcRelationshipNote(
