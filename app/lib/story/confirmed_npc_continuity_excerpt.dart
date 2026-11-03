@@ -61,10 +61,13 @@ class ConfirmedNpcContinuityExcerpt {
   // Legacy control/format marks are untrusted in presentation. A format
   // character inside an NPC name does not create a distinct identity.
   static bool _format(int value) =>
+      value == 0x00ad ||
+      value == 0x034f ||
       value == 0x061c ||
+      value == 0x180e ||
       (value >= 0x200b && value <= 0x200f) ||
       (value >= 0x202a && value <= 0x202e) ||
-      (value >= 0x2060 && value <= 0x2069) ||
+      (value >= 0x2060 && value <= 0x206f) ||
       value == 0xfeff;
 
   static bool _separator(int value) =>
