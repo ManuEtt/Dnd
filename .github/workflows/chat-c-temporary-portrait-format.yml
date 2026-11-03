@@ -1,0 +1,21 @@
+name: Chat C portrait temporary formatter diagnostics
+
+on:
+  push:
+    branches:
+      - feat/chat-c/portrait-picker-large-text-actions-20261103
+
+jobs:
+  formatter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.35.7'
+      - name: Show exact Dart 3.9 formatter diff
+        run: |
+          cd app
+          dart format test/character_portrait_large_text_actions_test.dart
+          git diff -- test/character_portrait_large_text_actions_test.dart
