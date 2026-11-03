@@ -2,6 +2,7 @@ import 'character_rule_engine.dart';
 import 'class_resource_rules.dart';
 import 'dice_engine.dart';
 import 'models.dart';
+import 'srd_character_classes.dart';
 
 /// Explicit, deterministic rerolls after a *confirmed failed* saving throw.
 /// The new result always replaces the old result, even if it is lower.
@@ -15,6 +16,14 @@ class SavingThrowClassActions {
   static bool available(HeroCharacter hero, SavingThrowRerollFeature feature) {
     final currentHp = hero.hitPoints;
     if (hero.isDead || currentHp == null || currentHp <= 0) {
+      return false;
+    }
+    // This read-only query also supplies suggestions after an ordinary save.
+    // An unconfirmed historical profile must hide the feature, not throw after
+    // the caller has already rolled that separate, ordinary saving throw.
+    try {
+      _validateProfile(hero);
+    } on FormatException {
       return false;
     }
     return switch (feature) {
@@ -57,6 +66,7 @@ class SavingThrowClassActions {
     }.contains(ability)) {
       throw ArgumentError.value(ability, 'ability', 'Unbekanntes Attribut');
     }
+    _validateProfile(hero);
     if (!available(hero, feature)) {
       throw StateError(
         'Klassenmerkmal oder Nutzung für diesen Wiederholungswurf fehlt.',
@@ -87,6 +97,47 @@ class SavingThrowClassActions {
       fighterLevelBonus: fighterBonus,
       resource: resource,
     );
+  }
+
+  /// Validate this explicit class reroll before deriving bonuses or spending.
+  /// Keep old profiles readable; never repair classes or saved training here.
+  /// The existing resolver accepts aliases and the existing rule engine remains
+  /// the sole source of modifier arithmetic (SRD 5.2.1 pp. 48 and 52).
+  static void _validateProfile(HeroCharacter hero) {
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0 ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      throw const FormatException(
+        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+      );
+    }
+    final proficiencies = hero.savingThrowProficiencies;
+    if (proficiencies.toSet().length != proficiencies.length ||
+        proficiencies.any(
+          (ability) => !const {
+            'strength',
+            'dexterity',
+            'constitution',
+            'intelligence',
+            'wisdom',
+            'charisma',
+          }.contains(ability),
+        )) {
+      throw const FormatException(
+        'Die bestätigten Rettungswurf-Übungen sind nicht eindeutig.',
+      );
+    }
   }
 }
 

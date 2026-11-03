@@ -1625,3 +1625,17 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Dokumentation:** Drei PRs in README, CODEX-Checkpoint und Chat-B-Checkpoint ausschließlich additiv zusammengeführt.
 - **Noch offen:** Neue kombinierte CI auf finalem Integrationshead, geordnete Vorgängerintegration und erneute Main-/Datei-/CI-Abnahme. Reale Android-/Upgrade-/TalkBack-Prüfung separat.
 - **Kompatibilität:** Keine beabsichtigte SQLite-/JSON-Migration oder App-Versionsänderung. Aus Storytext folgen keine unbestätigten Regelzustandsänderungen.
+
+---
+
+## 03.11.2026 – Chat D: drei ältere SRD-Klassen- und Rettungswurfpakete vorbereitet
+
+- **Quell-PRs:** #463 `6a110cf651fe45ada3cc00d026bef76a1a428ce8` (bestätigte klassengebundene Zaubervorbereitung), #468 `35c620e7e0ec173da73d1bb76c24a23703f78b0e` (Konzentrations-Klassenvorprüfung), #473 `77c172b34bb4c54eb188b659387b2981c1be44ca` (Rettungswurf-Klassenvorprüfung).
+- **Basis:** koordinierter Story-Integrationsstack #525, Commit `e298fa5590a4d8a16af17f7d062a1dfacb4a0960`.
+- **Technische Prüfung:** Alle fünf bereits vorhandenen geänderten Regeldateien auf dem Stack gegen ihre ursprünglichen Quellbasen verglichen: Git-Blobs bytegleich, keine zwischenzeitlichen Änderungen übersprungen. Originale Quell-Git-Blobs der drei PRs und sämtliche neuen Test-/Fachdokumente werden übernommen, Quell-HEADs als Commit-Eltern erhalten.
+- **SRD-Register:** Die voneinander verschiedenen JSON-Hunks aus #468 und #473 wurden einzeln einmalig gegen die unberührte Ursprungsbasis angewandt; resultierendes JSON ist gültig. Keine Quellenbewertung aus einem unbestätigten Katalogstatus abgeleitet.
+- **Version:** Beide PRs ändern `app/pubspec.yaml` von `0.8.49+99` zu `0.8.50+100` beziehungsweise `0.8.51+101`. Der Folgeintegrationsstand behält ausschließlich die neuere, bereits auf #473 erfolgreich gebaute Version `0.8.51+101`; niemals die ältere Versionsdatei von #468 zurückkopieren.
+- **Quell-CIs:** #463 [41312950120](https://github.com/ManuEtt/Dnd/actions/runs/41312950120), #468 [41326319399](https://github.com/ManuEtt/Dnd/actions/runs/41326319399), #473 [41395941527](https://github.com/ManuEtt/Dnd/actions/runs/41395941527), alle auf dem jeweiligen Quellhead `completed/success`.
+- **Gemeinsame Dokumentation:** README, zentraler CODEX-Checkpoint, Chat-A-Checkpoint, CHANGELOG, CHECKPOINT und DEVELOPMENT_STATUS jeweils additiv vereinigt; drei eigenständige SRD-/Chat-A-Nachweisdokumente unverändert.
+- **Noch offen:** Vollständige CI der kombinierten Quelle, Vorgänger-PRs mit grünen Main-Builds geordnet mergen, neuer Main-/Fachabgleich und tatsächlicher Android-/Upgrade-Geräteabnahmetest.
+- **Schema/Kompatibilität:** Keine absichtliche SQLite- oder JSON-Migration, keine Änderung der etablierten Regelschnittstellen außerhalb dokumentierter Preflight-Prüfungen.

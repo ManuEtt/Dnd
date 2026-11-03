@@ -3,6 +3,7 @@ import 'condition_rules.dart';
 import 'models.dart';
 import 'multiclass_rules.dart';
 import 'srd_character_classes.dart';
+import 'srd_concentration_save_modifier_rules.dart';
 
 /// SRD 5.2.1 resource rules. Spell effects, preparation limits, casting time,
 /// components and concentration duration must be verified separately.
@@ -175,6 +176,7 @@ class SpellcastingRules {
         maintained: false,
       );
     }
+    SrdConcentrationSaveModifierRules.validateClassAndProficiencies(hero);
     final rule = CharacterRuleEngine.savingThrow(hero, 'constitution');
     // Advantage/disadvantage, if situational, must be resolved by dice engine
     // before passing the selected natural d20 value to this function.

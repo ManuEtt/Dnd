@@ -2,6 +2,7 @@ import 'srd_equipment_catalog.dart';
 import 'srd_savage_attacker_pending_hit.dart';
 import 'starting_ability_origin.dart';
 import 'starting_class_choice.dart';
+import 'srd_prepared_spell_record.dart';
 import 'srd_magic_initiate_choice.dart';
 import 'srd_background_package.dart';
 import 'inventory_item_stats.dart';
@@ -181,6 +182,7 @@ class HeroCharacter {
     List<String> savingThrowProficiencies = const [],
     List<String> features = const [],
     List<String> spells = const [],
+    this.preparedSpellRecord,
     List<InventoryItem> inventory = const [],
     this.gold,
     this.experience,
@@ -257,6 +259,9 @@ class HeroCharacter {
 
   /// Confirmed origin-feat choices only; no casting rights are inferred.
   final SrdMagicInitiateChoice? startingMagicInitiate;
+
+  /// Optional explicit per-class preparation; missing in every legacy save.
+  final SrdPreparedSpellRecord? preparedSpellRecord;
   final int? hitPoints, maxHitPoints, armorClass, speed;
 
   static int _readSpeedRemainder(dynamic raw) {
@@ -357,6 +362,7 @@ class HeroCharacter {
     List<String>? savingThrowProficiencies,
     List<String>? features,
     List<String>? spells,
+    Object? preparedSpellRecord = _unchanged,
     List<InventoryItem>? inventory,
     Object? gold = _unchanged,
     Object? experience = _unchanged,
@@ -427,6 +433,22 @@ class HeroCharacter {
         savingThrowProficiencies ?? this.savingThrowProficiencies,
     features: features ?? this.features,
     spells: spells ?? this.spells,
+    // Changing the class, its level or the source spell list invalidates
+    // earlier explicit preparation. Never silently attribute legacy spells.
+    preparedSpellRecord: identical(preparedSpellRecord, _unchanged)
+        ? (this.preparedSpellRecord?.matchesSource(
+                    className: className ?? this.className,
+                    level: level ?? this.level,
+                    secondaryClassName:
+                        secondaryClassName ?? this.secondaryClassName,
+                    secondaryClassLevel:
+                        secondaryClassLevel ?? this.secondaryClassLevel,
+                    spells: spells ?? this.spells,
+                  ) ??
+                  false)
+              ? this.preparedSpellRecord
+              : null
+        : preparedSpellRecord as SrdPreparedSpellRecord?,
     inventory: inventory ?? this.inventory,
     gold: identical(gold, _unchanged) ? this.gold : gold as int?,
     experience: identical(experience, _unchanged)
@@ -491,6 +513,8 @@ class HeroCharacter {
     'savingThrowProficiencies': savingThrowProficiencies,
     'features': features,
     'spells': spells,
+    if (preparedSpellRecord != null)
+      'preparedSpellRecord': preparedSpellRecord!.toJson(),
     'inventory': inventory.map((e) => e.toJson()).toList(),
     'gold': gold,
     'experience': experience,
@@ -825,6 +849,11 @@ class HeroCharacter {
       ),
       features: _strings(j['features'], 'Fähigkeiten'),
       spells: _strings(j['spells'], 'Zauber'),
+      preparedSpellRecord: j['preparedSpellRecord'] == null
+          ? null
+          : SrdPreparedSpellRecord.fromJson(
+              _map(j['preparedSpellRecord'], 'Zaubervorbereitung'),
+            ),
       inventory: items,
       gold: _nullableInt(j['gold'], 'Gold'),
       experience: _nullableInt(j['experience'], 'Erfahrung'),
@@ -885,6 +914,19 @@ class HeroCharacter {
       ),
       unverifiedNotes: _strings(j['unverifiedNotes'], 'Ungeprüfte Angaben'),
     );
+    final record = parsed.preparedSpellRecord;
+    if (record != null &&
+        !record.matchesSource(
+          className: parsed.className,
+          level: parsed.level,
+          secondaryClassName: parsed.secondaryClassName,
+          secondaryClassLevel: parsed.secondaryClassLevel,
+          spells: parsed.spells,
+        )) {
+      throw const FormatException(
+        'Gespeicherte Zaubervorbereitung passt nicht zum Charakter.',
+      );
+    }
     final feat = parsed.startingMagicInitiate;
     final backgroundChoice = parsed.startingBackgroundPackage;
     if (feat != null &&

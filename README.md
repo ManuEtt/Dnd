@@ -993,3 +993,145 @@ Sechs neue Flutter-Regressionen einschließlich altem JSON und echtem
 SQLite-Neustart wurden hinzugefügt. Noch **keine** UI-/KI-Anbindung und
 **keine behauptete CI-Abnahme** für diesen PR; die GitHub-Gates sind zu prüfen.
 App-Version, SQLite-Schema 3 und äußeres JSON-Schema 1 unverändert.
+
+
+---
+
+**Separates Chat-A-Fachpaket (01.11.2026, noch nicht in main):**
+Der Branch `feat/chat-a/class-prepared-spell-record-20261101`
+speichert eine ausdrücklich bestätigte Zaubervorbereitung
+getrennt nach den beiden tatsächlich eigenen Klassen.
+Die optionale, versionierte Bestätigung bleibt im bestehenden
+Hero-JSON und dadurch beim SQLite-Neustart erhalten;
+historische globale Listen bleiben ohne Klassenannahme
+unverändert. Klassen-/Stufen-/Listenänderungen machen
+die frühere Bestätigung ungültig, reine Ressourcenänderungen
+nicht. Falsche Klassen, unbekannte SRD-Zauber, Dubletten
+und individuell zu hohe Zaubergrade werden abgelehnt.
+Neun Domain-/Alt-JSON-/SQLite-/Revisions-Testgruppen
+wurden angelegt; CI auf finalem PR-Kopf prüfen.
+Keine Migration (SQLite3/äußeresJSON1).
+**Noch keine** automatische Zauberpreflight-Integration:
+Der bestehende Preflight wird separat in offenem PR #461
+bearbeitet. [Regelbeleg und Grenzen](docs/SRD_CLASS_PREPARED_SPELL_RECORD_20261101.md).
+
+**Nächster Chat-A-Schritt:** den Nachweis nach Review des
+PR #461 in dessen Vorprüfung nutzen und dort
+Legacy-/Stale-/Revisionsfälle absichern.
+
+
+---
+
+## 01.11.2026 – Chat A: Klassenprüfung vor Konzentrationswürfen
+
+Entwicklungsstand **0.8.50+100**, Branch
+`fix/chat-a/concentration-class-preflight-20261101`, Code/Test
+`37604994828745ac44e48d8e2f628024f2f355e2`, Basis-Main `5a88834c`.
+Die vorhandene Klassen-/Stufen-/Rettungswurf-Übungsprüfung wird jetzt auch vor
+dem tatsächlichen Konzentrationswurf und vor einer separaten W20-Auflösung
+verwendet. Unbekannte oder widersprüchliche Klassen gewähren keinen Mönchsbonus.
+Der deutsche Schadensdialog zeigt den Fehler ohne Teiländerung; nach expliziter
+Klassenkorrektur bleibt der normale Ablauf ausführbar. Alte Profile bleiben
+lesbar, keine SQLite-/JSON-Migration. SG 10–30 war bereits zuvor umgesetzt.
+
+**GETESTET:** 68 neue Tests (58 Domain, 8 Engine/SQLite, 2 echte UI-Flows) und
+42 bestehende Regressionen: **110 gezielte Tests bestanden**, Analyzer sauber.
+Die neuen Domänentests auf unverändertem Main: 25 bestanden / 33 fehlgeschlagen;
+mit Fix alle 58 bestanden. **Vollständig lokal bestanden:** 2.778 Flutter-,
+262 Python- und 76 Backend-Tests, 579 Dart-Dateien ohne Formatänderung,
+Analyse/Backend-Typecheck/Build/Protokollsmoke. Zusätzlich ARM64-Debug-APK und
+**13 native JUnit-Tests** ohne Fehler oder Skip. Zwei Android-Vorläufe scheiterten
+am vollen Datenträger; nach Bereinigung ausschließlich erzeugter Caches bestand
+die Wiederholung. Quellen, Spielstände und frühere Artefakte blieben erhalten.
+[PR #468](https://github.com/ManuEtt/Dnd/pull/468) ist gesichert; vollständige finale
+GitHub-CI auf seinem aktuellen Head separat abwarten. Kein Main-Merge behauptet.
+**NICHT GETESTET:** echtes Androidgerät/TalkBack, installiertes Upgrade,
+produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** vollständige Konzentrations-
+automation und Klassenprüfung aller allgemeinen Wiederholungswürfe.
+[Fachbericht und Grenzen](docs/parallel/CHAT_A_CONCENTRATION_CLASS_PREFLIGHT_20261101.md).
+
+Nächster Schritt nach Abnahme: allgemeine Klassen-Wiederholungen vor Würfel und
+Ressourcenverbrauch auf dieselbe konsistente Klassenherkunft prüfen. Vorher
+aktuelle PRs abgleichen; offene #453/#461/#463/#448 nicht erneut implementieren.
+Die nachfolgenden früheren Entwicklungsstände sind historische Momentaufnahmen.
+
+---
+
+
+---
+
+**Aktueller integrierter Stand, 02.11.2026 – 0.8.51+101:** Main
+`2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` aus #471 regulär in den eigenen
+Entwicklungsbranch übernommen. Keine Quellkonflikte; die 51 Guardzeilen für
+Klassenwiederholungen sind unverändert, gemeinsame Checkpoint-Ergänzungen erhalten.
+
+**Kombiniert lokal bestanden:** 182 gezielte Flutter-Fälle einschließlich echter
+App-/SQLite-Flows und neuer Main-Pakete, 275 Pythonfälle, 582 unverändert formatierte
+Dartdateien, saubere Analyse, ARM64-Debug und 14 native JUnit-Tests. Die darunter
+historisch dokumentierte vollständige Suite2782/262/76 gehört zum Vorgänger8dd.
+Die vollständige kombinierte **[CI auf dem aktuellen PR-Head](https://github.com/ManuEtt/Dnd/pull/473/checks)**
+ist noch abzunehmen; [PR #473](https://github.com/ManuEtt/Dnd/pull/473) bleibt Draft.
+Aktueller Patch gegen Main2e9, alte geprüfte8dd-Archive bleiben erhalten.
+Main nicht direkt verändert, SQLite3/JSON1 ohne Migration. Reales Gerät/TalkBack/
+Upgrade/Produktivsignierung offen. Nächstes Paket bleibt der allgemeine initiale
+manuelle Rettungswurf vor Klassenbonus/RNG; Gesamt-SRD/Charaktererstellung offen.
+
+### Historische Abnahme vor Main2e9
+
+**Lokale Vollabnahme, Chat A – 02.11.2026, 0.8.51+101:** Klassenprüfung vor
+bestätigten Rettungswurf-Wiederholungen ist auf Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038` vollständig lokal geprüft.
+**2.782 Flutter-, 262 Python- und 76 Backend-Tests**, 579 unverändert formatierte
+Dartdateien, saubere Analyse, Backend-Typecheck/Build und lokaler Protokollsmoke
+bestanden. Außerdem ARM64-Debug-Build und **13 native JUnit-Tests** bestanden.
+72 neue Fälle, einschließlich zweier tatsächlicher App-UI-Flows, und 159 gezielte
+Regressionen sind abgedeckt. Historische Profile, SQLite3 und JSON1 bleiben erhalten.
+
+[PR #473](https://github.com/ManuEtt/Dnd/pull/473) ist ein eigener Draft; **[finale
+PR-Checks](https://github.com/ManuEtt/Dnd/pull/473/checks)** sind noch separat
+abzunehmen. Main unverändert. Der frühe Quellencheckpoint auf d5cf52f1 wurde mit
+1.369 Dateien, tatsächlicher Patchanwendung und isolierter Bundle-Wiederherstellung
+unabhängig geprüft; finaler Quellencheckpoint und optimierte Alpha folgen.
+Vor PR 27 fremde PRs geprüft, einschließlich der neuen #469–#472; Fachdateien
+konfliktfrei, gemeinsame Dokumentation/Requirements und Version101 bei Chat D
+additiv konsolidieren. Reale Geräte-/TalkBack-/Upgrade-/Signierungsabnahme offen.
+
+**Genau nächster Schritt:** allgemeine initiale manuelle Rettungswürfe vor
+automatisch abgeleiteten Klassenboni und RNG validieren, ohne lesende Charakterbogen-
+Vorschauen zu verändern. Zuerst neue PR-Dateilisten prüfen; gültige Aliase,
+Mehrklassen, Ablehnung vor RNG und UI-/SQLite-/Retry-Fälle testen. Die vollständige
+Charaktererstellung und das gesamte SRD bleiben offen.
+
+### Historischer Frühcheckpoint vor lokaler Vollabnahme
+
+**Chat A, 02.11.2026 – Alpha 0.8.51+101: Klassen vor Rettungswurf-Wiederholungen prüfen.**
+Eigener Arbeitsbranch `fix/chat-a/saving-throw-class-preflight-20261102`, Basis-Main
+`5a88834c98f5aca40395088c20c7e1dc5b587868`. Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038` ist gesichert. Dies ist ein Frühcheckpoint vor
+vollständiger Abnahme; Pull Request und aktuelle CI stehen aus. Main wurde
+nicht verändert. Die frühere Migration und Issue #425 sind bereits abgeschlossen;
+die darunter bewahrten Migrationseinträge sind historische Momentaufnahmen.
+
+`SavingThrowClassActions` prüft vor einer ausdrücklich gewählten Mönch-14- oder
+Kämpfer-9-Wiederholung bekannte Klassen, zulässige eigene Klassenstufen und
+eindeutige Rettungswurfübungen. Ungültige Profile bieten keine Klassenwiederholung
+an und werden vor Bonus, Ressourcenverbrauch und W20 abgewiesen. Die vorhandenen
+Berechnungen und die deutsche UI-/Engine-/SQLite-Kette bleiben bestehen. Eine
+abgewiesene Texteingabe wird weiterhin absichtlich als `rules.blocked` mit neuer
+Revision protokolliert; Heldenwerte, Ressourcen und RNG bleiben dabei unverändert.
+
+**Bisher bestanden:** 62 neue Domänen-, acht Engine-/SQLite- und zwei echte
+App-UI-Tests, zusammen **72 neue Fälle**. **159 gezielte Regressionen** bestanden
+(157 Domain-/Flowfälle plus zwei UI-Fälle). Lokaler ARM64-Debug-APK-Build bestanden.
+Vollständiges `scripts/check.sh` und native Android-Tests laufen noch; ihre
+Abschlüsse, optimierte Alpha und finale PR-CI sind noch kein Erfolgsnachweis.
+SQLite **3** / äußeres JSON **1**, keine Migration oder stille Änderung alter
+Profile. Beide betroffenen Klassen-Requirements bleiben **partial**. Allgemeine
+Erstwürfe, vollständiger Charakterassistent und Gesamt-SRD sind nicht abgeschlossen.
+Reales Gerät/TalkBack/Upgrade und produktive Signierung bleiben separate Abnahmen.
+
+**Nächster konkreter Schritt nach Paketabnahme:** Allgemeinen initialen manuellen Rettungswurf vor automatisch abgeleiteten Klassenboni und W20 validieren; schreibfreie Charakterbogen-Vorschauen unverändert lassen. Zuerst frische Main-/PR-Dateilisten prüfen. Akzeptanz: unbekannte/inkonsistente Klassen vor Bonus/RNG ablehnen, gültige Aliase und Mehrklassen behalten dieselben Boni, Domain-, SQLite-/Retry- und tatsächliche UI-Regressionen bestehen.
+[Fachnachweis](docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md) ·
+[aktueller Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md).
+
+### Historischer Main- und Migrationsstand
