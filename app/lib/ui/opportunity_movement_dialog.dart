@@ -182,11 +182,7 @@ class _OpportunityMovementDialogState extends State<OpportunityMovementDialog> {
                 label: 'Abstand vorher (Fuß)',
                 controller: _before,
               ),
-              (
-                key: 'after',
-                label: 'Abstand danach (Fuß)',
-                controller: _after,
-              ),
+              (key: 'after', label: 'Abstand danach (Fuß)', controller: _after),
               (
                 key: 'reach',
                 label: 'Bestätigte Reichweite (Fuß)',
@@ -230,8 +226,7 @@ class _OpportunityMovementDialogState extends State<OpportunityMovementDialog> {
               onChanged: (value) =>
                   setState(() => _authorized = value ?? false),
             ),
-            if (_movement != null &&
-                _movement != OpportunityMovement.ordinary)
+            if (_movement != null && _movement != OpportunityMovement.ordinary)
               const Text(
                 'Rückzug, Teleportation und erzwungene Fremdbewegung '
                 'lösen keinen Gelegenheitsangriff aus.',
