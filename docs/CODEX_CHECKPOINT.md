@@ -1,3 +1,21 @@
+## Chat C – Porträt-Aktionen bei 200 % Schrift/IME (03.11.2026)
+
+[Draft-PR #529](https://github.com/ManuEtt/Dnd/pull/529),
+Basis-main `7be2135f5046c4139a7340cc2bfa876a7d311c93`, Branch
+`feat/chat-c/portrait-picker-large-text-actions-20261103`.
+`CharacterPortraitPicker` ordnet ab 180 % Android-Schrift oder unter 320 dp
+die Aktionen „Abbrechen“ und „Übernehmen“ vertikal und vollbreit an;
+bei normaler Breite/Schrift bleibt die bisherige horizontale Fußleiste.
+Vier neue Widgettests erfassen positive/negative Auswahl-/Abbruch- und
+TalkBack-Semantikfälle bei 320/360 dp, 200 % Text, simulierter 220-dp-IME
+sowie die gewohnte horizontale Kontrollansicht. Keine Domain-, Controller-,
+Story-, JSON-/SQLite-, Berechtigungs- oder Versionsänderung; keine Migration.
+Lokales Flutter-SDK fehlt; GitHub-CI und echte Android-TalkBack-/IME-
+Abnahme sind bis zum gesonderten Abschluss ausdrücklich offen. Die
+gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
+
+---
+
 ## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
 
 - **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.
