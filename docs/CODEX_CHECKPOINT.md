@@ -1083,3 +1083,20 @@ UI-only: `app/lib/ui/hero_shield_reaction_dialog.dart` nutzt jetzt `AlertDialog(
 - **Parallelität:** Offene Chat-C-/Integrations-PRs bearbeiten andere UI-Module; gemeinsame README-/Checkpoint-Ergänzungen bei Integration verlustfrei durch Chat D konsolidieren.
 
 ---
+
+
+---
+
+## Chat B – versteckte NPC-Notizkollisionen fail-closed (03.11.2026)
+
+- **Basis-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f`.
+- **Branch:** `feat/chat-b/confirmed-npc-note-id-integrity-20261103`.
+- **Pull Request:** [#516](https://github.com/ManuEtt/Dnd/pull/516) (Draft).
+- **Ausgangsproblem:** `NpcIdentityMemory.read` akzeptierte in gespeicherten Altverläufen doppelte und ungültige Notiz-IDs; `maxNotes` konnte den älteren konflikthaften Eintrag aus der Vorschau verbergen.
+- **Implementiert:** Gesamte Historie **nur des ausgewählten NPCs** auf gültige IDs mit `^[a-zA-Z0-9_-]{1,64}$` und Dubletten prüfen, bevor ein bestätigter Kontext erzeugt wird. Unabhängige NPC-Chroniken werden nicht durch eine fremde Unstimmigkeit blockiert. `requireCurrent` prüft bei unveränderter Revision ebenfalls neu einfügte verdeckte Duplikate.
+- **Fachdateien:** `app/lib/story/npc_identity_memory.dart`, `app/test/npc_identity_note_id_integrity_test.dart`.
+- **Regressionen:** 6 Tests inklusive alter JSON-Snapshots, SQLite-Neustart, ungültiger/unsichtbarer IDs, gleicher Revision, anderer NPCs und unverändertem Heldenzustand.
+- **Bisher GETESTET:** Vorhandene Fachtests, persistente Modelle und sämtliche offenen PR-Fachpfade im aktuellen Repository gesichtet; Code und Tests committet. Die vorangehende [Story-Unicode-PR #513](https://github.com/ManuEtt/Dnd/pull/513) hat zwei vollständige erfolgreiche CIs auf `775bb246`, dies ist kein Testbeleg für PR #516.
+- **NICHT GETESTET:** vollständiger finaler CI-Lauf, Android-APK/-Native, reales Gerät, Altversion-Upgrade und produktiver KI-Provider für PR #516 bis zum jeweiligen Nachweis.
+- **Kompatibilität:** Keine Datenmigration, keine Schreibpfade oder Regelveränderung. JSON 1, SQLite 3, App-Version, Backend-Wire-Vertrag unverändert.
+- **Nächster Schritt:** vollständige CI auf finalem PR-HEAD prüfen, etwaige Fehler im eigenen Branch beheben, anschließend Chat D für koordinierte Integration bereitstellen.
