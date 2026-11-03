@@ -56,7 +56,7 @@ Future<void> _select(WidgetTester tester, int preset) async {
   await tester.scrollUntilVisible(
     option,
     180,
-    scrollable: find.byType(ListView).first,
+    scrollable: find.byType(Scrollable).first,
     maxScrolls: 30,
   );
   await tester.ensureVisible(option);
