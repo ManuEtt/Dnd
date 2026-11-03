@@ -890,3 +890,35 @@ Abbruchtests. Gemeinsame Modelle erst nach Konfliktabgleich ändern.
 **NÄCHSTER SCHRITT (genau ein eigenständiges Paket):** Die **Dauer-Metadatenprüfung** in `srd_spell_duration_rules.dart` separat gegen unsichtbare Formatzeichen innerhalb bestätigter Zeitangaben prüfen; nur bei reproduzierbarem Befund minimale Abwehr und positive/negative Katalog-Regressionen, ansonsten keinen Code ändern. Zunächst #500 CI abnehmen und vor einem neuen Branch die offenen PRs neu vergleichen.
 
 ---
+
+---
+
+## 03.11.2026 – Chat A: PR #515 CI-Testfehler korrigieren
+
+**03.11.2026 – PR #515, gezielte CI-Korrektur:** Die vollständigen Android-Workflows [#41532714674](https://github.com/ManuEtt/Dnd/actions/runs/41532714674) und [#41532722057](https://github.com/ManuEtt/Dnd/actions/runs/41532722057) auf Commit `7ae3aaf5a73e` waren **rot: 2.854 Flutter-Tests bestanden, drei neue fehlgeschlagen**. Ausschließlich die drei Testannahmen waren falsch: Ein ungültiger, manipuliert konstruierter Held kann kein gültiges `rules.blocked`-Event erzeugen; `GameEngine._commit` ruft `Campaign.fromJson` auf und weist den nicht serialisierbaren Zustand mit `FormatException` zurück. **IMPLEMENTIERT** auf Code-Commit `49745fc6232f7f8d3ddd711bbffd4aa1eaea52c0`: Testfälle erwarten `FormatException`, prüfen unverändertes ursprüngliches Helden-JSON, kein gespeichertes Event, und keine RNG-Nutzung. Die zwei gültigen Kurzrastfälle bleiben unverändert. Produktionscode und Persistenzschema wurden bei dieser Korrektur nicht geändert. **GETESTET:** Der ursprüngliche 2854/3-CI-Befund ist belegt; zwei Zusatz-Workflows (Mönch/Eldritch) zum Vorgängercommit grün. **NICHT GETESTET:** vollständige Flutter-/Android-CI auf dem korrigierten finalen PR-HEAD, Android-Gerät, Altversionsupgrade. **BLOCKIERT:** PR bis vollständiger grüner finaler CI als Draft belassen. **NOCH NICHT IMPLEMENTIERT:** vollständiger World-Time-Nachweis für Dauer/Unterbrechung der Rast. **Nächster Schritt:** End-HEAD von PR #515 anhand der vollständigen GitHub-CI prüfen und erst dann zur Integration an Chat D übergeben; kein ungeprüfter Merge.
+
+---
+
+## Chat A – Kurzrast ohne Trefferwürfel: Ressourcen vor Recovery prüfen (02.11.2026)
+
+**Main beim Branchstart:** `a2f22eaceb344aaced12d0ad548b813aa44d544f`. **Branch:** `fix/chat-a/short-rest-zero-dice-preflight-20261102`. **Implementierungs-Commit:** `fe80087dde1ac9b336b3cc1378c67ad73d977d3d`. **PR:** [#515](https://github.com/ManuEtt/Dnd/pull/515) (Draft). **App:** 0.8.49+99, unverändert.
+
+**Ausgangsproblem:** Die bereits geprüfte Kurzrast mit echten Trefferwürfelwürfen validierte die ursprünglichen ausgegebenen Klassen-, Pakt- und Hit-Dice-Ressourcen. Zwei `GameEngine`-Sonderpfade für *null* ausgegebene Trefferwürfel führten dagegen `SpellcastingRules.afterShortRest` direkt aus. Bei beispielsweise einem Kämpfer ohne Hexenmeisterstufe und fingierten `spentPactSlots=1` wurde der Wert auf null zurückgesetzt, bevor ein Paktpoolcheck ihn abweisen konnte. Auch auf volle TP bzw. aufgebrauchte Trefferwürfel darf eine Rast keine manipulierten Quellressourcen still reparieren.
+
+**IMPLEMENTIERT:** `RestRules.validateShortRestResources(hero)` prüft einen unveränderten originalen Helden auf Rastfähigkeit, `ClassFeatureResources.validate`, `ClassResourceRules.validate`, `SpellcastingRules.availablePactSlots` und `availableHitDice`. Der bestehende `RestRules.shortRest`-Würfelpfad nutzt denselben Gate. `GameEngine.act` ruft ihn am Beginn jeder erkannten kurzen Rast vor den bisherigen Sonderpfaden auf. Keine Klassen-, Kosten- oder Erholungsformeln verändert; ein ungültiger Wert wird mit vorhandenem `rules.blocked`-Ergebnis abgewiesen, ohne TP/Ressourcen oder Wurf zu ändern.
+
+**Regressionen:** `app/test/short_rest_zero_hit_dice_resource_preflight_test.dart` umfasst fünf deterministische Tests: Kämpfer mit ungültigem Paktverbrauch bei vollen TP; denselben bei aufgebrauchten Trefferwürfeln; fingierte Klassenressource; gültige Second-Wind-Regeneration bei vollen TP; gültige Paktregeneration des verwundeten Hexenmeisters mit aufgebrauchten Trefferwürfeln. Alle Fälle prüfen keine RNG-Nutzung; bei Ablehnung unverändertes Held-JSON, bei Erfolg Ressourcen-/Hit-Dice-Daten und die JSON-Wiederaufnahme.
+
+**GETESTET:** GitHub-Branch und PR sind erfolgreich angelegt, technische Code- und Testdateien vorhanden. **Noch kein tatsächlich erfolgreicher aktueller Dart-/Flutter-/Python-/Backend-Testlauf behauptet.** Die finale CI steht bis zum tatsächlichen Workflowabschluss aus; ältere grüne Testläufe anderer Commits sind keine Abnahme.
+
+**NICHT GETESTET:** `python3 scripts/verify_project.py`, `python3 scripts/check_domain_boundaries.py`, `python3 scripts/srd_coverage.py --json`, `python3 -m unittest discover -s scripts/tests -v`, `cd backend && npm ci && npm run typecheck && npm run build && npm test`, `cd app && flutter pub get && dart format --output=none --set-exit-if-changed lib test && flutter analyze && flutter test && flutter build apk --debug` auf finalem Commit. Realgerät, TalkBack, Versionsupgrade und Produktivsignierung nicht geprüft.
+
+**BLOCKIERT:** Die GitHub-CI/Format-/Analyse- und App-Tests müssen noch auf diesem finalen Stand bestätigt werden. Kein Merge und keine automatische Branchlöschung; UI und Datenmodelle anderer Chats bleiben unverändert.
+
+**NOCH NICHT IMPLEMENTIERT:** Genaue Dauer und Unterbrechung einer Rast durch eine versionierte Weltzeit, Gerätetest, umfassende SRD-Abdeckung. Die Null-HD-Regeneration war bereits vorhanden; dieses Paket verhindert nur eine Validierungsumgehung.
+
+**Dateien:** `app/lib/domain/rest_rules.dart`, `app/lib/domain/game_engine.dart`, `app/test/short_rest_zero_hit_dice_resource_preflight_test.dart`, `docs/SRD_SHORT_REST_ZERO_DICE_PREFLIGHT_20261102.md` sowie additive README-/Checkpoint-Einträge. SQLite 3, Kampagnen-JSON 1, bestehende Spielstände und `app/pubspec.yaml` bleiben unverändert; keine Migration. Quelle: amtliches D&D SRD 5.2.1, „Rules Glossary / Short Rest“ und „Warlock / Pact Magic“, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd.
+
+**NÄCHSTER SCHRITT (genau ein unabhängiges Paket):** Den Kurzrast-Null-HD-Übergang über den vorhandenen Controller samt SQLite-Neustart und idempotentem Retry für einen *gültigen* Hexenmeister separat prüfen. Abnahme: ein gespeicherter bestätigter Rast-Event, keine zweite Paktregeneration bei Request-ID-Wiederholung, veraltete Revision wird abgewiesen, keinerlei Reparatur ungültiger Herkunftsdaten; vor Beginn offenen PR-Dateiabgleich wiederholen.
+
+---
