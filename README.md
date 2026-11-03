@@ -1,5 +1,22 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Gelegenheitsbewegung bei großer Schrift und Tastatur (03.11.2026)
+
+[Draft-PR #521](https://github.com/ManuEtt/Dnd/pull/521) macht den
+Android-Dialog „Gegnerbewegung bestätigen“ einschließlich Formular,
+Abbruch und ausdrücklicher Zustimmung scrollbar. Ab 180 % Schrift ist die
+sichtbare Bestätigungszeile kompakt, der ursprüngliche vollständige
+Sicherheitstext bleibt über TalkBack erhalten; Fehler werden als
+Screenreader-Live-Region ausgegeben. Vier neue Widgettests decken
+320/360 dp, 200 % Schrift, simulierte Android-IME, positives und negatives
+Bestätigungsverhalten sowie unveränderte Kampagnendaten ab.
+Regeln, Story, SQLite/JSON, App-Version und Spielstände bleiben
+unverändert. Lokales Flutter/Dart-SDK und Android-Gerät fehlen; die
+vollständige GitHub-CI des **finalen** PR-HEAD und die reale Geräteabnahme
+müssen noch belegt werden. Kein automatischer Merge.
+
+---
+
 ## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
 
 [PR #502](https://github.com/ManuEtt/Dnd/pull/502) prüft in der bestehenden
