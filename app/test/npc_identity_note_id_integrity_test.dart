@@ -79,7 +79,7 @@ void main() {
       'newline\nid',
       'invisible\u200bid',
       'reverse\u202eid',
-      'x' * 65,
+      List.filled(65, 'x').join(),
     ];
     for (final badId in invalidIds) {
       final campaign = _campaign(
