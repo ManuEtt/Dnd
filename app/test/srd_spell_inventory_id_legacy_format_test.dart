@@ -73,7 +73,7 @@ void main() {
     for (final codePoint in [0x2069, 0xfeff, 0x200b]) {
       expect(
         SrdSpellInventoryIdRules.isSafe(
-          'diamond-' + String.fromCharCode(codePoint),
+          'diamond-${String.fromCharCode(codePoint)}',
         ),
         isFalse,
         reason: codePoint.toRadixString(16),
@@ -84,7 +84,7 @@ void main() {
   test('all nine obsolete format controls are rejected as material IDs', () {
     for (final codePoint in _hiddenCodePoints) {
       final invisible = String.fromCharCode(codePoint);
-      for (final id in ['dia' + invisible + 'mond', 'diamond' + invisible]) {
+      for (final id in ['dia${invisible}mond', 'diamond$invisible']) {
         expect(
           SrdSpellInventoryIdRules.isSafe(id),
           isFalse,
@@ -97,7 +97,7 @@ void main() {
   test('invalid saved inventory IDs cannot consume a slot or a diamond', () {
     final spell = catalog.find('Revivify')!;
     for (final codePoint in _hiddenCodePoints) {
-      final materialId = 'diamond-' + String.fromCharCode(codePoint);
+      final materialId = 'diamond-${String.fromCharCode(codePoint)}';
       final hero = _cleric(materialId);
       final before = jsonEncode(hero.toJson());
       final plan = _plan(hero, spell);
@@ -123,7 +123,7 @@ void main() {
 
   test('audited multi-material binding refuses hidden ID', () {
     final spell = catalog.find('Secret Chest')!;
-    final hidden = 'chest' + String.fromCharCode(0xfff9);
+    final hidden = 'chest${String.fromCharCode(0xfff9)}';
     final hero = _cleric(hidden).copyWith(
       className: 'Magier',
       level: 9,
