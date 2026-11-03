@@ -1,5 +1,23 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Unsichtbare Unicode-Zeichen in Zauberkomponenten (03.11.2026)
+
+[Draft-PR #523](https://github.com/ManuEtt/Dnd/pull/523) schützt die
+SRD-5.2.1-Metadatenvalidierung von Materialkomponenten gegen unsichtbare
+Unicode-Format- und Steuerzeichen, die sonst Preis- oder Verbrauchswörter
+auftrennen könnten. Ein konkreter negativer Fall ist `Revivify` mit
+einem Steuerzeichen im Wort `consumes`: Ohne Schutz kann die
+Materialverbrauchserkennung fehlschlagen.
+Positive und negative Flutter-Tests decken den regulären Katalog,
+internationale Materialbeschreibungen, neun unauffällige Formatzeichen
+(U+206A–U+206F und U+FFF9–U+FFFB), JSON-Import und
+Ressourcen-Preflight ohne Spielstandsänderung ab. Es werden weder
+SQLite-/JSON-Schema, App-Version, Materialpreise, Slotregeln noch
+bestätigte Inventare verändert. Vollständige CI am finalen PR-HEAD
+und reale Android-Abnahme bleiben separat nachzuweisen.
+
+---
+
 ## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
 
 [PR #502](https://github.com/ManuEtt/Dnd/pull/502) prüft in der bestehenden
