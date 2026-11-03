@@ -77,7 +77,7 @@ void main() {
     selection.requireCurrent(campaign);
   });
 
-  test('JSON resume retains original notes and rejects same-revision edits', () {
+  test('JSON resume preserves notes and rejects same-revision edits', () {
     final campaign = _campaign(
       const WorldNpc(
         id: 'mira',
