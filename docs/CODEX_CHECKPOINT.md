@@ -1,3 +1,32 @@
+## Chat A – Unicode-Schutz für SRD-Materialbindungen (03.11.2026)
+
+- **Basis-main:** `a786ad61c508da1a9ec1a24f85100a4a994182c8`.
+- **Branch:** `fix/chat-a/spell-material-id-invisible-20261103`.
+- **PR:** [#520](https://github.com/ManuEtt/Dnd/pull/520) (Draft).
+- **Implementierungs-HEAD vor Dokumentation:** `79a6a0509d393b0681f662e67427f8a951575f90`.
+- **IMPLEMENTIERT:** `SrdSpellInventoryIdRules.isSafe` verbietet jetzt
+  zusätzlich U+206A–U+206F und U+FFF9–U+FFFB in Inventarstapel-IDs;
+  bestehende erlaubte internationale Zeichen bleiben zulässig.
+- **REGRESSIONEN ERGÄNZT:**
+  `app/test/srd_spell_inventory_id_legacy_format_test.dart` mit direkten
+  positiven/negativen ID-Fällen, auditiertem Mehrmaterial, nicht erfolgender
+  Cast-/Ressourcenbuchung bei manipulierten IDs und gültiger Buchung.
+- **GETESTET:** Quellcode und Dateipfade auf GitHub gelesen; Branch-/PR-
+  Anlage und Commit-Speicherung bestätigt. Keine Flutter-Ausführung behauptet.
+- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/APK-CI für den
+  endgültigen PR-HEAD; reales Android-Gerät und Altversions-Upgrade.
+- **BLOCKIERT:** Lokale Netzwerkauflösung von github.com und Dart-/Flutter-
+  SDK fehlen; GitHub-PR-CI ist das maßgebliche ausführbare Test-Gate.
+- **KOMPATIBILITÄT:** keine Änderung an SQLite 3, JSON 1, vorhandenen
+  Spielständen, Regeln für Materialwerte, Slots oder App-Version 0.8.49+99.
+- **REGELQUELLE:** SRD 5.2.1 *Spells / Components*, CC BY 4.0;
+  Unicode-Prüfung ist eine technische Integritätsabsicherung, keine neue
+  Zaubermechanik. Bestehende Drittlizenzhinweise bleiben erhalten.
+- **NÄCHSTER SCHRITT:** Auf finalem PR-HEAD gezielten ID-Test und vollständige
+  CI auswerten; erst danach unabhängige, noch ungetestete Zaubervorbereitung
+  auf der aktuellen Main-Basis untersuchen.
+
+---
 ## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
 
 - **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.
