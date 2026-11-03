@@ -1,3 +1,21 @@
+## 03.11.2026 – Chat C: Gelegenheitsbewegung mit 200 % Schrift und IME
+
+- **Ausgangs-main:** `a786ad61c508da1a9ec1a24f85100a4a994182c8`.
+- **Branch:** `feat/chat-c/opportunity-movement-ime-accessibility-20261103`.
+- **Codecommit:** `9674fbc4bca191e7d291851d4100658ae05aea76`.
+- **Widgettestcommit:** `5e1bab84446141cb71a58eb744303fffb8f8aefb`; finalen Dokumentations-HEAD über [PR #521](https://github.com/ManuEtt/Dnd/pull/521) prüfen.
+- **Problem:** Der Gelegenheitsbewegungs-Dialog verschachtelte einen eigenen Scrollbereich im nicht als Ganzes scrollbar konfigurierten AlertDialog. Bei 320/360 dp, großer Schrift und IME sind Formular und lange Freigabe schwer erreichbar.
+- **Implementiert:** `AlertDialog(scrollable: true)` ohne inneres Scrollen, kurze sichtbare Zustimmung ab 180 % bei unveränderter vollständiger TalkBack-Semantik, Validierungsfehler als Live-Region. Die Regelprüfung und alle Kampagnendaten sind unverändert.
+- **Dateien:** `app/lib/ui/opportunity_movement_dialog.dart`, neuer `app/test/opportunity_movement_ime_accessibility_test.dart`; additive Einträge in `README.md`, `docs/CODEX_CHECKPOINT.md` und diesem Checkpoint.
+- **Neue Regressionen:** Vier Widgettests zu Scroll-/A11y-Struktur bei 320/360 dp und 200 %/IME, Abbruch, gültiger explicit authorisierter Bewegung, Widerruf nach geänderter ungültiger Entfernung; positive und negative Dialogrückgaben und unverändertes Kampagnen-JSON.
+- **GETESTET:** main-HEAD und offene PRs/Änderungspfade geprüft; Quell- und Testcommits gesichert; Branch-Vergleich zunächst zwei erwartete Fachdateien, keine Überschneidung mit den damals offenen PR-Fachpfaden. Dies sind **keine** ausgeführten Flutter-Tests.
+- **NICHT GETESTET:** Lokale Dart-Format-/Analyse-/Flutter-/APK-Prüfungen (SDK fehlt); komplette CI auf dem finalen PR-HEAD ausstehend; echtes Android, TalkBack, IME, Altversions-Upgrade ausstehend.
+- **BLOCKIERT:** Fehlendes Flutter-/Dart-SDK und fehlender GitHub-Checkout im Container; CI-Freigabe bis vollständig erfolgreich abgeschlossenem Lauf gesperrt. README/zentralen Checkpoint nur additiv durch Chat D integrieren.
+- **Migrationen:** Keine SQLite-, JSON-, Regel-, Story- oder API-Migration; kein Versionswechsel, keine Kostenaktion.
+- **NÄCHSTER SCHRITT:** Den fertigen PR #521 auf exakt seinem finalen HEAD per GitHub-CI vollständig abnehmen; Format-/Testfehler im selben Branch korrigieren und danach einen echten Android-TalkBack-/IME-Test gesondert vornehmen.
+
+---
+
 ## 02.11.2026 – Chat C: Mehrgegner-Initiative mit 200 % Schrift und IME
 
 - **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
