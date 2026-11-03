@@ -1135,3 +1135,25 @@ Reales Gerät/TalkBack/Upgrade und produktive Signierung bleiben separate Abnahm
 [aktueller Chat-A-Checkpoint](docs/parallel/CHAT_A_CHECKPOINT.md).
 
 ### Historischer Main- und Migrationsstand
+
+
+---
+
+
+ 
+---
+
+## Chat B – gespeicherte NPC-Notiz-IDs vor Wiederaufnahme prüfen (03.11.2026)
+
+[PR #516](https://github.com/ManuEtt/Dnd/pull/516) schließt eine
+Lücke im bestätigten NPC-Gedächtnis: Selbst ältere gespeicherte Notizen,
+die nicht in der begrenzten Vorschau erscheinen, müssen für den ausdrücklich
+gewählten NPC eine eindeutige und gültige ASCII-Notiz-ID besitzen.
+Doppelte, leere, zu lange oder formatierte Kennungen führen vor jeder
+Kontextausgabe zu `FormatException`, einschließlich erneuter Abfrage nach
+unbemerkten Änderungen bei identischer Kampagnenrevision.
+Unabhängige NPC-Chroniken bleiben separat auswählbar.
+Sechs neue Tests prüfen JSON, SQLite-Neustart, Negativfälle, Revisionsschutz
+und reguläre positive Erinnerungen. Nur lesende Story-Projektion; keine
+Kampagnen-, Regel-, SQLite-/JSON-Schema-, Wire- oder Versionsänderung.
+**CI/Android-Abnahme auf dem finalen PR-HEAD steht noch aus.**

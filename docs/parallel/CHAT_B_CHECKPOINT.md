@@ -794,3 +794,63 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **Nächster Schritt:** #459-CI auf finalem Dokumentationsstand abnehmen,
   etwaige Format-/Testfehler auf demselben Branch beheben, danach
   Review/Integration an Chat D übergeben.
+
+
+---
+
+
+
+---
+
+## 03.11.2026 – verdeckte doppelte NPC-Notizen bei Fortsetzung ablehnen
+
+- **Basis-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f`.
+- **Branch:** `feat/chat-b/confirmed-npc-note-id-integrity-20261103`.
+- **Pull Request:** [#516](https://github.com/ManuEtt/Dnd/pull/516) (Draft).
+- **Problem:** `NpcIdentityMemory.read` übernahm für einen ausdrücklich ID-gewählten NPC unter Umständen alte Notizen mit wiederholter oder unsicherer Kennung. Ein harmlos wirkender Auszug mit `maxNotes: 1` konnte die Mehrdeutigkeit ausblenden.
+- **Implementiert:** Alle gespeicherten Notizen des gewählten NPCs vor Kürzung auf gültige 1–64-Zeichen-IDs und Wiederholungen prüfen; unveränderte Revision kein Ersatz für diesen vollständigen Check. Keine pauschale Abweisung unbeteiligter NPC-Verläufe und kein Einfluss auf die Spielregelengine.
+- **Fach-/Testdateien:** `app/lib/story/npc_identity_memory.dart`, `app/test/npc_identity_note_id_integrity_test.dart` (6 positive/negative Tests).
+- **Geprüfte Parallelität:** Hauptbranch-HEAD, 21 offene PRs, deren relevante Fachpfade und bestehende Testfälle geprüft; keine Überschneidung auf den beiden Fachpfaden. Gemeinsame README-/Checkpoint-Nachträge bei späterer Integration additiv durch Chat D konsolidieren.
+- **Tests auf neuem HEAD:** Erst durch GitHub-CI nach diesen Dokumentationscommits nachzuweisen; lokales Flutter/Dart nicht vorhanden. Vorherige erfolgreiche PR #513 (zwei vollständige CIs) betrifft ein anderes Paket.
+- **Nicht getestet:** echter Android-Gerätebetrieb, TalkBack, vorherige App-Upgrade-Pfade, produktiver kostenpflichtiger KI-Provider.
+- **Kompatibilität:** keine JSON-/SQLite-Migration, Schema/Version/Erzählprovider-Vertrag unverändert. Altbestände bleiben geladen und gespeichert; nur die unsichere Lesesicht scheitert geschlossen.
+- **Nächster Schritt:** CI einschließlich FFI-Neustarttest prüfen, Fehler korrigieren, finalen HEAD und Abnahme in PR #516 dokumentieren.
+
+
+---
+
+## Chat B – begrenzte bestätigte NPC-Kontinuität (02.11.2026)
+
+- **Ausgangs-main:** `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1`.
+  **Branch:** `feat/chat-b/bounded-confirmed-npc-excerpt-20261102`.
+  **Draft-PR:** gegen main, Nummer in PR-Beschreibung.
+  **Fachcommit:** `92c29ce9a111e765fb43754be196697be6681973`.
+  **Testcommit:** `0165d137534d6a7ceb7e0fb97d1566b461d5a703`.
+  **Dart-Testkorrektur:** `6345b6d5ec3cdea7bc9c93f9e1ec880c0433ee3c`.
+- **Ausgangsproblem:** bestätigte NPC-Kontinuität aus Legacy-Spielständen
+  kann sehr lange Namen/Beziehungen/Notizen enthalten. Die ungebundene
+  `confirmedContext`-Ausgabe ist nicht für kurze Rückblicke geeignet.
+- **IMPLEMENTIERT:** neue schreibgeschützte
+  `ConfirmedNpcContinuityExcerpt.read` auf dem bestehenden
+  `NpcContinuityReader`. Immer eindeutige, sichere NPC-ID,
+  maximal drei bestätigte Notizen, maximal 1.800 UTF-16-Einheiten,
+  rune-sicher, Unicode-/Bidi-Marken ohne Zeileninjektion dargestellt.
+  Nicht bestätigte KI-Prosa und fremde NPC-Notizen ausgeschlossen,
+  gespeicherte Regeln/Kampagnen unverändert.
+- **Dateien:** `app/lib/story/confirmed_npc_continuity_excerpt.dart`,
+  `app/test/confirmed_npc_continuity_excerpt_test.dart`, README
+  und beide Checkpoints.
+- **Tests:** sechs positive/negative Gruppen inklusive historischer
+  langer Emoji-Texte, Notizordnung/-anzahl, unsicherer/mehrdeutiger IDs,
+  JSON-Rückwärtskompatibilität, SQLite-Neustart und unveränderten
+  Helden-/Revisionswerten.
+  **GETESTET:** GitHub Main/PRs/Architektur/Module geprüft.
+  **NICHT GETESTET:** finale CI, Android-Echthardware/produktive KI.
+  **BLOCKIERT:** kein lokales Flutter-/Dart-SDK; Actions verfügbar.
+  **Migration:** keine, SQLite 3/äußeres JSON 1 unverändert.
+- **Koordination:** bestehender `npc_continuity_reader.dart` ist
+  Eigentum des offenen PR #477, wird hier nicht bearbeitet.
+  Auch #464 und #470 betreffen andere NPC-Fachmodule.
+  README und Checkpoints bei Integration nur additiv durch Chat D.
+- **Nächster Schritt:** Formatter/gesamte CI auf finalem Commit auswerten,
+  Fehler im eigenen Branch beheben, danach Review durch Chat D.
