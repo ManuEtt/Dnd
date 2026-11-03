@@ -1,5 +1,10 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – PR #515: korrigierte Negativtests (03.11.2026)
+
+[PR #515](https://github.com/ManuEtt/Dnd/pull/515) wurde nach dem roten Gesamttest auf Code-Commit `49745fc6232f7f8d3ddd711bbffd4aa1eaea52c0` korrigiert. Die drei neuen Negativtests erwarten nun die bestehende `FormatException` beim nicht serialisierbaren manipulierten Spielstand statt ein fälschlich behauptetes gespeichertes `rules.blocked`-Ereignis; Helden-JSON, Eventliste und RNG bleiben unberührt. Die zwei Positivtests bleiben erhalten. Vorher: 2.854 Flutter-Tests bestanden, drei fehlgeschlagen (Läufe #41532714674 und #41532722057); neue finale CI steht noch zur Abnahme aus. Kein Produktions- oder Schemawechsel durch die Korrektur.
+
+
 ## Chat A – Kurzrast ohne Trefferwürfel: Ressourcen vor Recovery prüfen (02.11.2026)
 
 [PR #515](https://github.com/ManuEtt/Dnd/pull/515) ergänzt den zentralen, **nicht mutierenden Kurzrast-Ressourcencheck** für normale Rasten und beide Sonderpfade ohne Trefferwürfelverbrauch. Ein fingierter Paktplatzverbrauch (etwa bei einem Kämpfer ohne Hexenmeisterstufe) wird vor jeder Regeneration abgewiesen. Fünf neue deterministische Domain-/GameEngine-Regressionen decken gültige und ungültige Fälle, RNG-Freiheit, unverändertes Ursprungs-JSON und Wiederaufnahme ab. **CI auf finalem PR-HEAD ausstehend; keine APK-/Gerätefreigabe.** SQLite 3, JSON 1 und App-Version 0.8.49+99 unverändert; keine Migration. Grundlage: SRD 5.2.1, CC BY 4.0.

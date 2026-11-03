@@ -20,3 +20,7 @@ Der Einsatz von Hit Point Dice ist bei einer kurzen Rast optional. Separat wiede
 ## Grenzen
 
 Es werden keine neuen Kurzrastentscheidungen, Daueruhren, Würfelressourcen oder Speicherfelder eingeführt. Schema 3 und äußeres JSON 1 bleiben unverändert. GitHub-CI auf PR #515 vor Integration gesondert abnehmen; keine Geräte- oder Altinstallationsabnahme behauptet.
+
+## Korrektur der drei negativen Engine-Fixtures (03.11.2026)
+
+Der erste Volltest (`7ae3aaf5a73e`) dokumentiert 2.854 erfolgreiche und drei fehlgeschlagene Flutter-Tests. Die drei Negativfälle gingen davon aus, ein strukturell ungültiger Spielstand könne noch ein serialisierbares `rules.blocked`-Ereignis erzeugen. Tatsächlich weist der vorhandene `_commit`-Validierungspfad einen solchen Zustand mit `FormatException` zurück. Der Testcode auf Commit `49745fc6232f7f8d3ddd711bbffd4aa1eaea52c0` erwartet diesen bestehenden Fail-Closed-Vertrag, überprüft unverändertes Held-JSON, die leere Eventliste und ausbleibende Zufallswürfe. Keine Produktionsfunktion oder Persistenzschnittstelle durch die Korrektur verändert. **Vollständige CI des finalen PR-Kopfs muss separat erfolgreich sein; kein APK-Gerätetest behauptet.**
