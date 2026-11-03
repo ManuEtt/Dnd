@@ -1600,3 +1600,16 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Konfliktfreiheit:** Alle drei Fachmodule auf der Stack-Basis enthielten die ursprünglichen Patch-Kontextstellen exakt jeweils einmal; nach präziser Anwendung aller Hunk-Änderungen entspricht jeder resultierende Git-Blob **bytegenau dem finalen Quellblob**. Keine aktuellen Fremdänderungen überschrieben; zusätzliche drei unveränderte Quell-Testblobs aufgenommen.
 - **Dokumentation:** README, zentralen und CHAT_B-Checkpoint verlustfrei additiv zusammengeführt. Git-Geschichte durch drei zusätzliche finale Quell-HEAD-Eltern bewahrt; kein Force-Push oder Branchlöschen.
 - **Gates:** Vollständige neue CI des endgültigen kombinierten HEADs sowie geordneter Main-Merge nach #518 und erfolgreicher Main-CI. Keine JSON-/SQLite-Migration, keine echte Android-Geräteabnahme.
+
+---
+
+## 03.11.2026 – Chat D: vier unabhängige aktuelle Fachpakete für die Folgeintegration vorbereitet
+
+- **Stackbasis:** PR #522, HEAD `698cd697f6fdf3c934641ea1e33c79beed29fee5` (nach #518 → #517 → #512).
+- **Quellpakete:** #519 (Legacy-Unicode im bestätigten NPC-Rückblick; `fdc7b269f67b63f0453484408e22dad86f6eb305`), #520 (sichere Material-IDs; `471bbad20b2b092bd93029c8fc2b6ef228cd8add`), #521 (Gelegenheitsbewegungs-Dialog bei hoher Schrift/IME; `d3213742022bf0779875cbef510b7d8667676eb0`) und #523 (SRD-Zauberkomponententexte; `5e93417329126a552f8cc893405ba27134ebb91a`).
+- **Konfliktprüfung:** Die vier technischen Quelldateien sind an der jeweiligen ursprünglichen Quellbasis und auf dem Stack-HEAD #522 bytegleich; die vier neuen Testdateien haben getrennte Pfade. Originale Fach-/Test-Git-Blobs werden unverändert übernommen, die vier originalen Quell-HEADs als zusätzliche Commit-Eltern bewahrt.
+- **Dokumentation:** Sämtliche ausschließlich additiven Abschnitte der vier PRs in README, zentralem CODEX-Checkpoint sowie den Checkpoints A, B und C werden ohne Löschung bestehender Einträge übernommen. Der Integrations-PR ist ein koordinierter Nachfolger, keine Ersetzung der Quellhistorie.
+- **Quell-CI:** #519 ([41594258320](https://github.com/ManuEtt/Dnd/actions/runs/41594258320)), #520 ([41593663239](https://github.com/ManuEtt/Dnd/actions/runs/41593663239)), #521 ([41593830589](https://github.com/ManuEtt/Dnd/actions/runs/41593830589)) und #523 ([41595431832](https://github.com/ManuEtt/Dnd/actions/runs/41595431832)) jeweils `completed/success` auf dem angegebenen Quell-HEAD.
+- **Noch nicht abgenommen:** Neue vollständig grüne kombinierte CI auf dem exakten Folgeintegrations-HEAD, reguläre Vorgänger-Merges mit grüner Main-CI, aktuelle Konfliktprüfung und reale Android-/TalkBack-/Upgrade-Tests.
+- **Kompatibilität:** Keine beabsichtigte SQLite-/JSON-/Versionsmigration, keine automatische KI-/Regelzustandsänderung.
+- **Nächster Schritt:** Kombinierte CI des Folgeintegrations-PRs abnehmen; erst nach geordneter Vorgängerintegration und grünem Main erneut mergen.

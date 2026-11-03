@@ -1292,3 +1292,115 @@ Ausgangs-main `a2f22eaceb344aaced12d0ad548b813aa44d544f`; Branch `fix/chat-d/alp
 - **NÄCHSTER SCHRITT:** vollständige finale CI inkl. neuer Regressionen
   abnehmen und Fehler im eigenen Branch korrigieren; danach Review
   durch Chat D, kein automatischer Merge.
+
+
+---
+
+
+---
+
+## Chat B – NPC-Wiederaufnahmerückblick gegen ältere unsichtbare Unicode-Zeichen (03.11.2026)
+
+- **Basis-main:** `a786ad61c508da1a9ec1a24f85100a4a994182c8`.
+- **Branch:** `feat/chat-b/npc-resume-invisible-marks-20261103`.
+- **PR:** [#519](https://github.com/ManuEtt/Dnd/pull/519), Draft.
+- **Problem:** Soft Hyphen (U+00AD), Combining Grapheme Joiner (U+034F), Mongolian Vowel Separator (U+180E) sowie ältere Bidi-Formatzeichen (U+206A–U+206F) blieben in der bestätigten NPC-Rückblickansicht versteckt erhalten.
+- **Implementierung:** Nur `app/lib/story/confirmed_npc_resume_selection.dart` erweitert den vorhandenen `_formatMarks`-Filter; derselbe revisionsgebundene Auswahlvertrag, keine Änderung am gespeicherten Text.
+- **Regression:** Neue `app/test/confirmed_npc_resume_invisible_marks_test.dart` mit drei positiven/negativen Tests für sämtliche neun Zeichen, legitime Unicode-Textformen, Quellenbindung, 2.400-Zeichen-Grenze, unveränderten JSON-Roundtrip und gleichrevisionierte Rohdatendifferenz.
+- **Fach-/Testcommits:** `651d9f0f490a1beafe417a83371dd92b0b0f792c`, `1e6e8ba6bff323789821101e9fe7d5d08c0c1634`, Formatlabel `0ea9af27610aa92c244065448840fe32de37dd40`. Finalen PR-HEAD gesondert prüfen.
+- **Tests:** Nur Code-/Teststruktur statisch geprüft. Lokales Flutter/Dart fehlt, vollständige GitHub-CI und Android-Realgerät nicht als bestanden ausgewiesen.
+- **Abgrenzung:** Keine fremden Story-Fachdateien, keine Regel-, Modell-, Controller-, SQLite- oder Backendänderung; keine Migration, kein Provider-Aufruf, keine Versionsänderung. README/zentraler Checkpoint müssen beim Merge additiv koordiniert werden.
+- **Nächster Schritt:** Finalen CI-Run auf dem dokumentierten PR-HEAD vollständig prüfen und bei roten Schritten den eigenen Branch korrigieren.
+
+
+---
+
+## Chat A – Unicode-Schutz für SRD-Materialbindungen (03.11.2026)
+
+- **Basis-main:** `a786ad61c508da1a9ec1a24f85100a4a994182c8`.
+- **Branch:** `fix/chat-a/spell-material-id-invisible-20261103`.
+- **PR:** [#520](https://github.com/ManuEtt/Dnd/pull/520) (Draft).
+- **Implementierungs-HEAD vor Dokumentation:** `79a6a0509d393b0681f662e67427f8a951575f90`.
+- **IMPLEMENTIERT:** `SrdSpellInventoryIdRules.isSafe` verbietet jetzt
+  zusätzlich U+206A–U+206F und U+FFF9–U+FFFB in Inventarstapel-IDs;
+  bestehende erlaubte internationale Zeichen bleiben zulässig.
+- **REGRESSIONEN ERGÄNZT:**
+  `app/test/srd_spell_inventory_id_legacy_format_test.dart` mit direkten
+  positiven/negativen ID-Fällen, auditiertem Mehrmaterial, nicht erfolgender
+  Cast-/Ressourcenbuchung bei manipulierten IDs und gültiger Buchung.
+- **GETESTET:** Quellcode und Dateipfade auf GitHub gelesen; Branch-/PR-
+  Anlage und Commit-Speicherung bestätigt. Keine Flutter-Ausführung behauptet.
+- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/APK-CI für den
+  endgültigen PR-HEAD; reales Android-Gerät und Altversions-Upgrade.
+- **BLOCKIERT:** Lokale Netzwerkauflösung von github.com und Dart-/Flutter-
+  SDK fehlen; GitHub-PR-CI ist das maßgebliche ausführbare Test-Gate.
+- **KOMPATIBILITÄT:** keine Änderung an SQLite 3, JSON 1, vorhandenen
+  Spielständen, Regeln für Materialwerte, Slots oder App-Version 0.8.49+99.
+- **REGELQUELLE:** SRD 5.2.1 *Spells / Components*, CC BY 4.0;
+  Unicode-Prüfung ist eine technische Integritätsabsicherung, keine neue
+  Zaubermechanik. Bestehende Drittlizenzhinweise bleiben erhalten.
+- **NÄCHSTER SCHRITT:** Auf finalem PR-HEAD gezielten ID-Test und vollständige
+  CI auswerten; erst danach unabhängige, noch ungetestete Zaubervorbereitung
+  auf der aktuellen Main-Basis untersuchen.
+
+---
+
+
+---
+
+## Chat C – Gelegenheitsbewegung barrierefrei bei 200 % / IME (03.11.2026)
+
+[Draft-PR #521](https://github.com/ManuEtt/Dnd/pull/521) auf Basis-main
+`a786ad61c508da1a9ec1a24f85100a4a994182c8`, Branch
+`feat/chat-c/opportunity-movement-ime-accessibility-20261103`.
+Code-/Testcommits `9674fbc4` / `5e1bab84`. Der UI-Dialog nutzt jetzt
+`AlertDialog(scrollable: true)` ohne verschachtelten Scrollbereich,
+verkürzt die sichtbare ausdrückliche Bestätigung bei sehr großer Schrift
+mit ungekürztem TalkBack-Label und kennzeichnet Validierungsfehler als
+Live-Region. Vier neue positive/negative Widgettests prüfen 320/360 dp,
+200 % Schrift, 220 dp IME, Scrollstruktur, Abbruch, bestätigten Trigger
+und Widerruf nach Änderung. Domain, Spielstände, SQLite/JSON, Story
+und App-Version unverändert. Lokale Flutter-/Android-Ausführung mangels
+SDK nicht möglich; vollständige CI auf finalem HEAD und Gerätetest
+noch **nicht** als erfolgreich nachgewiesen. Additive Integration der
+gemeinsamen Dokumentation durch Chat D.
+
+---
+
+
+---
+
+## Chat A – Unsichtbare SRD-Materialzeichen abwehren (03.11.2026)
+
+- **Basis-main:** `bd423f4586e355ef888fe8ede1a0cd13fdc48dd4`.
+- **Branch:** `fix/chat-a/spell-component-format-20261103`.
+- **PR:** [#523](https://github.com/ManuEtt/Dnd/pull/523) (Draft).
+- **Code-/Test-Commit vor Dokumentation:** `48cc73d1b466080fd4703413e20a5ed909591942`.
+- **IMPLEMENTIERT:** `SrdSpellDefinition.validateComponentMetadata` blockiert
+  unsichtbare C0/C1- und Unicode-Formatsteuerzeichen in Materialtexten,
+  bevor `SrdSpellComponentRules` Preis oder Verbrauch ermittelt.
+- **TESTS ERGÄNZT:**
+  `app/test/srd_spell_component_invisible_format_test.dart` prüft den
+  bestehenden Katalog, zulässige internationale Komponenten, neun versteckte
+  Steuerzeichen innerhalb von Preis-/Verbrauchsangaben, direkten Konstruktor,
+  JSON-Import und verweigerte Slot-/Materialvorprüfung ohne Heldenmutation.
+- **GETESTET:** Quell- und Testblobs auf GitHub angelegt, zwei Fachpfade
+  auf eigenem Branch mit Main und offenen PRs verglichen. Ein unabhängiges
+  JavaScript-Reproduktionsbeispiel bestätigte, dass ein Steuerzeichen das
+  Wort `consumes` für den bisherigen regulären Ausdruck zerlegen kann.
+- **NICHT GETESTET:** `flutter test`, `flutter analyze`, Dart-Formatierung,
+  vollständige Python-/Backend-/Android-CI auf finalem Commit und Realgerät.
+  GitHub-Actions-Ergebnisse werden separat auf dem finalen SHA geprüft.
+- **BLOCKIERT:** Kein lokaler Flutter-SDK-/Repository-Checkout für eine
+  reproduzierbare lokale Flutter-Vollsuite. Vor Merge vollständige CI
+  und neuen Main-/PR-Abgleich verlangen.
+- **KOMPATIBILITÄT:** Keine Modell-/JSON-/SQLite-Migration, keine Änderung
+  der App-Version `0.8.49+99`, keine Anpassung an Controller, Story oder
+  KI-Provider, keine eigenmächtigen Spielzustandsänderungen.
+- **SRD-Bezug:** D&D SRD 5.2.1 *Spells / Components*, CC BY 4.0;
+  Technik zur Integritätssicherung, keine neu behauptete Zauberwirkung.
+- **NÄCHSTER SCHRITT:** finalen PR-HEAD durch vollständige CI abnehmen;
+  danach getrennt den offenen klassenbezogenen Vorbereitungspfad
+  nach Integration von #463 auf aktuellem `main` prüfen.
+
+---

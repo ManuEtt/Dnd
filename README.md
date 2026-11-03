@@ -863,3 +863,82 @@ Fünf neue Testgruppen einschließlich Legacy-JSON, unsicherer IDs und
 echtem SQLite-Neustart. Keine neue Provider-Anbindung, keine Mutation von
 Helden-/Quest-/Regelzustand, keine Schema-/Versionsänderung. Vollständige
 CI-Abnahme erst auf dem finalen PR-Commit nachweisen.
+
+
+---
+
+
+---
+
+## Chat B – Bestätigter NPC-Rückblick ohne ältere Unicode-Formatmarken (03.11.2026)
+
+[PR #519](https://github.com/ManuEtt/Dnd/pull/519) erweitert in
+`app/lib/story/confirmed_npc_resume_selection.dart` ausschließlich die
+schreibgeschützte Normalisierung bereits gespeicherter NPC-Überblicke:
+U+00AD, U+034F, U+180E sowie U+206A–U+206F werden nicht mehr unsichtbar
+an Spieler weitergegeben. Die angezeigte NPC-ID bleibt erhalten; originale
+Kampagnendaten, JSON/SQLite, Regelzustand und App-Version bleiben unverändert.
+Drei neue deterministische Flutter-Tests prüfen betroffene Zeichen in Namen,
+Beziehungen und Notizen, zulässige Akzente und Emoji-Varianten sowie JSON-
+Wiederaufnahme mit unverändertem Rohzustand und Revisionsprüfung.
+Die vollständige CI auf dem finalen PR-HEAD und ein reales Android-Gerät
+müssen noch gesondert abgenommen werden; der PR ist bis dahin Draft.
+
+
+---
+
+## Chat A – Sichtbar eindeutige Zaubermaterial-IDs (03.11.2026)
+
+[Draft-PR #520](https://github.com/ManuEtt/Dnd/pull/520) schließt in
+`SrdSpellInventoryIdRules` eine bisherige Lücke für die neun unsichtbaren
+Unicode-Zeichen U+206A–U+206F und U+FFF9–U+FFFB.
+Ein neuer deterministischer Flutter-Test prüft zulässige internationale
+Inventar-IDs, sämtliche neun Ablehnungen, auditiertes Zaubermaterial,
+ausbleibende Slot-/Inventaränderungen bei Fehlern und erfolgreiche gültige
+Materialbuchung. Ein bestehender Spielstand wird weder migriert noch
+umgeschrieben; SQLite-/JSON-Schema und App-Version bleiben unverändert.
+Die vollständige GitHub-CI auf finalem PR-HEAD sowie Android-Geräte-/
+Upgrade-Abnahme sind getrennt zu bestätigen. Keine automatische Mergefreigabe.
+
+---
+
+
+---
+
+## Chat C – Gelegenheitsbewegung bei großer Schrift und Tastatur (03.11.2026)
+
+[Draft-PR #521](https://github.com/ManuEtt/Dnd/pull/521) macht den
+Android-Dialog „Gegnerbewegung bestätigen“ einschließlich Formular,
+Abbruch und ausdrücklicher Zustimmung scrollbar. Ab 180 % Schrift ist die
+sichtbare Bestätigungszeile kompakt, der ursprüngliche vollständige
+Sicherheitstext bleibt über TalkBack erhalten; Fehler werden als
+Screenreader-Live-Region ausgegeben. Vier neue Widgettests decken
+320/360 dp, 200 % Schrift, simulierte Android-IME, positives und negatives
+Bestätigungsverhalten sowie unveränderte Kampagnendaten ab.
+Regeln, Story, SQLite/JSON, App-Version und Spielstände bleiben
+unverändert. Lokales Flutter/Dart-SDK und Android-Gerät fehlen; die
+vollständige GitHub-CI des **finalen** PR-HEAD und die reale Geräteabnahme
+müssen noch belegt werden. Kein automatischer Merge.
+
+---
+
+
+---
+
+## Chat A – Unsichtbare Unicode-Zeichen in Zauberkomponenten (03.11.2026)
+
+[Draft-PR #523](https://github.com/ManuEtt/Dnd/pull/523) schützt die
+SRD-5.2.1-Metadatenvalidierung von Materialkomponenten gegen unsichtbare
+Unicode-Format- und Steuerzeichen, die sonst Preis- oder Verbrauchswörter
+auftrennen könnten. Ein konkreter negativer Fall ist `Revivify` mit
+einem Steuerzeichen im Wort `consumes`: Ohne Schutz kann die
+Materialverbrauchserkennung fehlschlagen.
+Positive und negative Flutter-Tests decken den regulären Katalog,
+internationale Materialbeschreibungen, neun unauffällige Formatzeichen
+(U+206A–U+206F und U+FFF9–U+FFFB), JSON-Import und
+Ressourcen-Preflight ohne Spielstandsänderung ab. Es werden weder
+SQLite-/JSON-Schema, App-Version, Materialpreise, Slotregeln noch
+bestätigte Inventare verändert. Vollständige CI am finalen PR-HEAD
+und reale Android-Abnahme bleiben separat nachzuweisen.
+
+---
