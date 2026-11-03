@@ -58,9 +58,7 @@ Future<void> _open(
               onResult(
                 await showDialog<ConfirmedOpportunityTrigger>(
                   context: context,
-                  builder: (_) => OpportunityMovementDialog(
-                    campaign: campaign,
-                  ),
+                  builder: (_) => OpportunityMovementDialog(campaign: campaign),
                 ),
               );
             },
@@ -99,11 +97,7 @@ Future<void> _fill(WidgetTester tester, {String after = '10'}) async {
     'Eigene gewöhnliche Bewegung',
   );
   await _choose(tester, 'opportunity-strike', 'Dolch');
-  for (final entry in {
-    'before': '5',
-    'after': after,
-    'reach': '5',
-  }.entries) {
+  for (final entry in {'before': '5', 'after': after, 'reach': '5'}.entries) {
     final field = _key('opportunity-${entry.key}');
     await tester.ensureVisible(field);
     await tester.enterText(field, entry.value);
@@ -143,9 +137,7 @@ void main() {
       );
       expect(tester.widget<FantasyTextButton>(_confirm).onPressed, isNull);
       expect(
-        (tester
-                    .widget<CheckboxListTile>(_key('opportunity-authorized'))
-                    .title!
+        (tester.widget<CheckboxListTile>(_key('opportunity-authorized')).title!
                 as Text)
             .semanticsLabel,
         contains('Noch keine Reaktion verbrauchen'),
@@ -165,12 +157,7 @@ void main() {
     final campaign = _campaign();
     final original = campaign.toJson();
     final results = <ConfirmedOpportunityTrigger?>[];
-    await _open(
-      tester,
-      width: 320,
-      campaign: campaign,
-      onResult: results.add,
-    );
+    await _open(tester, width: 320, campaign: campaign, onResult: results.add);
     await _fill(tester);
     expect(tester.widget<FantasyTextButton>(_confirm).onPressed, isNull);
     await _tap(tester, _key('opportunity-authorized'));
@@ -195,12 +182,7 @@ void main() {
     final campaign = _campaign();
     final original = campaign.toJson();
     final results = <ConfirmedOpportunityTrigger?>[];
-    await _open(
-      tester,
-      width: 360,
-      campaign: campaign,
-      onResult: results.add,
-    );
+    await _open(tester, width: 360, campaign: campaign, onResult: results.add);
     await _fill(tester);
     await _tap(tester, _key('opportunity-authorized'));
     expect(tester.widget<FantasyTextButton>(_confirm).onPressed, isNotNull);
