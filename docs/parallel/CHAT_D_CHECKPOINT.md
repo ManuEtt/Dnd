@@ -1578,3 +1578,14 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Kollisionskontrolle:** alle vier bereits vorhandenen technischen Fach-/Testdateien auf der Stackbasis entsprechen exakt den Git-Blobs des Quellmains `a2f22eaceb344aaced12d0ad548b813aa44d544f`; die neuen Story-Regressionstests liegen auf zuvor nicht vorhandenen Pfaden. Keine Änderung anderer Pakete.
 - **Dokumentation:** reinen README-/CODEX-/CHAT_B-/CHAT_D-Hinzufügungen beider Quell-PRs zu erhalten, ohne alte Einträge zu löschen. Quellhistorien via zusätzliche Commit-Eltern bewahren; kein Force-Push.
 - **Pflicht:** neue kombinierte CI auf exakt dem finalen Integrations-HEAD, ordentliche Hauptbranch-Integration erst nach #507 → #508 → #510 → #511 → #512 mit jeweils grüner Main-CI. Keine echte Android-TalkBack-/Upgrade-Abnahme und keine SQLite-/JSON-Schemaänderung.
+
+---
+
+## Chat D – Kurzrast auch ohne Trefferwürfel vor Ressourcenerholung prüfen (03.11.2026)
+
+- **Stack-Basis:** `6a317501d58740875694d41440c5f6597565314b` (#517 nach #512/#511/#510/#508/#507).
+- **Quelle:** PR #515, final `7343e91d4af143063b37027d22a8516a96c6c8c0`, vier erfolgreiche vollständige Quell-CIs auf dem finalen HEAD.
+- **Bug:** Kurzrast-Sonderpfade bei vollen HP/fehlenden Trefferwürfeln konnten fingierte Pakt- oder Klassenressourcen ohne Vorprüfung zurücksetzen. Gemeinsame reine `RestRules.validateShortRestResources` prüft Klasse, Pakt, Würfelpools vor jedem Regenerationspfad.
+- **Übernahme:** Drei unveränderte Original-Git-Blobs (zwei Fachdateien plus neuer Regressionstest) und Regelreferenz-Dokumentation. Beide existierenden Fach-Blobs auf Stack-Basis identisch mit Quell-Main `a2f22e` geprüft. README, zentraler CODEX und CHAT_A-Checkpoint additiv zusammengeführt, keine vorigen Beiträge gelöscht.
+- **Historie:** finaler Quell-HEAD als zusätzlicher Commit-Elternknoten; kein Force-Push, keine Branch-Löschung.
+- **Freigabe:** vollständig erfolgreiche kombinierte CI auf diesem HEAD, danach geordneter regulärer Merge erst nach früheren Integrations-PRs mit grüner Main-CI. Keine SQLite-/JSON-Schema- oder App-Versionsänderung. Reale Android-/Upgrade-Abnahme offen.
