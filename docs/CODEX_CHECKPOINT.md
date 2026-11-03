@@ -1,3 +1,37 @@
+## Chat A – Unsichtbare SRD-Materialzeichen abwehren (03.11.2026)
+
+- **Basis-main:** `bd423f4586e355ef888fe8ede1a0cd13fdc48dd4`.
+- **Branch:** `fix/chat-a/spell-component-format-20261103`.
+- **PR:** [#523](https://github.com/ManuEtt/Dnd/pull/523) (Draft).
+- **Code-/Test-Commit vor Dokumentation:** `48cc73d1b466080fd4703413e20a5ed909591942`.
+- **IMPLEMENTIERT:** `SrdSpellDefinition.validateComponentMetadata` blockiert
+  unsichtbare C0/C1- und Unicode-Formatsteuerzeichen in Materialtexten,
+  bevor `SrdSpellComponentRules` Preis oder Verbrauch ermittelt.
+- **TESTS ERGÄNZT:**
+  `app/test/srd_spell_component_invisible_format_test.dart` prüft den
+  bestehenden Katalog, zulässige internationale Komponenten, neun versteckte
+  Steuerzeichen innerhalb von Preis-/Verbrauchsangaben, direkten Konstruktor,
+  JSON-Import und verweigerte Slot-/Materialvorprüfung ohne Heldenmutation.
+- **GETESTET:** Quell- und Testblobs auf GitHub angelegt, zwei Fachpfade
+  auf eigenem Branch mit Main und offenen PRs verglichen. Ein unabhängiges
+  JavaScript-Reproduktionsbeispiel bestätigte, dass ein Steuerzeichen das
+  Wort `consumes` für den bisherigen regulären Ausdruck zerlegen kann.
+- **NICHT GETESTET:** `flutter test`, `flutter analyze`, Dart-Formatierung,
+  vollständige Python-/Backend-/Android-CI auf finalem Commit und Realgerät.
+  GitHub-Actions-Ergebnisse werden separat auf dem finalen SHA geprüft.
+- **BLOCKIERT:** Kein lokaler Flutter-SDK-/Repository-Checkout für eine
+  reproduzierbare lokale Flutter-Vollsuite. Vor Merge vollständige CI
+  und neuen Main-/PR-Abgleich verlangen.
+- **KOMPATIBILITÄT:** Keine Modell-/JSON-/SQLite-Migration, keine Änderung
+  der App-Version `0.8.49+99`, keine Anpassung an Controller, Story oder
+  KI-Provider, keine eigenmächtigen Spielzustandsänderungen.
+- **SRD-Bezug:** D&D SRD 5.2.1 *Spells / Components*, CC BY 4.0;
+  Technik zur Integritätssicherung, keine neu behauptete Zauberwirkung.
+- **NÄCHSTER SCHRITT:** finalen PR-HEAD durch vollständige CI abnehmen;
+  danach getrennt den offenen klassenbezogenen Vorbereitungspfad
+  nach Integration von #463 auf aktuellem `main` prüfen.
+
+---
 ## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
 
 - **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.
