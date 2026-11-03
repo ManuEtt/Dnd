@@ -1,0 +1,21 @@
+name: Chat C temporary Dart format diagnostics
+
+on:
+  push:
+    branches:
+      - feat/chat-c/opportunity-movement-ime-accessibility-20261103
+
+jobs:
+  format-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.35.7'
+      - name: Show exact Dart formatter diff
+        run: |
+          cd app
+          dart format lib/ui/opportunity_movement_dialog.dart test/opportunity_movement_ime_accessibility_test.dart
+          git diff -- lib/ui/opportunity_movement_dialog.dart test/opportunity_movement_ime_accessibility_test.dart
