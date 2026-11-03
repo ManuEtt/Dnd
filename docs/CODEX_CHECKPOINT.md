@@ -1,3 +1,22 @@
+## Chat C – Gelegenheitsbewegung barrierefrei bei 200 % / IME (03.11.2026)
+
+[Draft-PR #521](https://github.com/ManuEtt/Dnd/pull/521) auf Basis-main
+`a786ad61c508da1a9ec1a24f85100a4a994182c8`, Branch
+`feat/chat-c/opportunity-movement-ime-accessibility-20261103`.
+Code-/Testcommits `9674fbc4` / `5e1bab84`. Der UI-Dialog nutzt jetzt
+`AlertDialog(scrollable: true)` ohne verschachtelten Scrollbereich,
+verkürzt die sichtbare ausdrückliche Bestätigung bei sehr großer Schrift
+mit ungekürztem TalkBack-Label und kennzeichnet Validierungsfehler als
+Live-Region. Vier neue positive/negative Widgettests prüfen 320/360 dp,
+200 % Schrift, 220 dp IME, Scrollstruktur, Abbruch, bestätigten Trigger
+und Widerruf nach Änderung. Domain, Spielstände, SQLite/JSON, Story
+und App-Version unverändert. Lokale Flutter-/Android-Ausführung mangels
+SDK nicht möglich; vollständige CI auf finalem HEAD und Gerätetest
+noch **nicht** als erfolgreich nachgewiesen. Additive Integration der
+gemeinsamen Dokumentation durch Chat D.
+
+---
+
 ## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
 
 - **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.
