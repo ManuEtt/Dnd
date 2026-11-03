@@ -692,3 +692,31 @@ Der vollständige rein additive Chat-Fachnachtrag aus PR #479 ist nachfolgend er
 - **Nächster Schritt:** Den gezielten Test und die vollständige GitHub Actions CI inklusive Debug/Alpha-APKs erfolgreich abnehmen, danach PR-Review und echte Android-Touch-/TalkBack-Prüfung.
 
 ---
+
+---
+
+## 02.11.2026 – Chat C: Manuelle Kampf-Zugfolge 200 % Schrift/IME (PR #481)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529` (nach erkanntem parallelem Main-Merge neu aufgesetzt); **Branch:** `feat/chat-c/manual-turn-queue-ime-rebased-20261102`; [PR #481](https://github.com/ManuEtt/Dnd/pull/481), Draft bis zur vollständigen CI-Abnahme.
+- **Problem:** `ManualTurnQueueDialog` scrollte bisher nur den Form-Inhalt, mit feststehendem Titel bei 320/360 dp, 200 % Schrift und 220 dp IME. Die Bestätigungen und Gleichstand-Sortierung waren nicht durch eigene responsiven Tests abgedeckt.
+- **IMPLEMENTIERT:** `app/lib/ui/manual_turn_queue_dialog.dart`: einheitliches `AlertDialog(scrollable:true)` und kompakte Insets statt verschachteltem vertikalem Scrollbereich; Validierungsfehler mit `Semantics(liveRegion:true)` und stabilem Key `queue-validation-error`.
+- **FÜNF TESTS:** `app/test/manual_turn_queue_dialog_ime_test.dart`: 320/360 dp bei 200 % Schrift, 220 dp Fake-IME: Fehler/neutraler Abbruch; bestätigte Initiative und Gleichstände liefern ausschließlich eine `ManualTurnQueueChoice`; Gleichstand-Umsortierung widerruft die zuvor erteilte Tie-Bestätigung und verlangt erneutes Häkchen; bereits gespeicherte Zugfolge gibt nur manuelles Advance-Signal zurück. Keine Mutation der `Campaign` auf irgendeinem Weg.
+- **GEPRÜFT:** Masterprompt, AGENTS, Architektur, Testing, Roadmap, Code, bestehender Widgettest, offene PR-Dateipfade und tatsächlicher Main-Stand. Keine fachliche Überschneidung mit parallelen PRs. Main-Merge vor PR-Erstellung erkannt; geänderten Code unverändert auf neue Main-SHA `885580202caeafc9787538b6dc1c833b3190a529` kopiert.
+- **CI AUSSTEHEND:** Dart-Formatierung, Analyse, gezielte/Vollsuite Flutter, Python-/Backend-, native Android-Tests, Debug-/Alpha-APK und Source-Checkpoint auf exaktem PR-HEAD; frühere PR-CI ist kein Beleg. Echtes Android-/TalkBack-/Hardwaretastatur-Verhalten, Altversions-Upgrade, produktive Signierung bleiben offen.
+- **MIGRATIONEN:** keine. Keine Domain-/Regel-/Controller-/Persistenz-/JSON-/Schema-/Versionsänderungen.
+- **BLOCKER:** Draft bis vollständig grüner CI, kein automatischer Merge. Geteilte Doku durch Chat D bei Integration additiv konsolidieren.
+- **NÄCHSTES PAKET:** Nach Integration der unabhängigen Dialog-PRs größere Fokus-/Screenreader-Tests und Eingabemethoden für responsive Fantasy-Kampfbildschirme ohne Änderungen an aktiven PR-Dateien.
+
+---
+
+## 02.11.2026 – Chat C: manuelle Kampf-Zugfolge bei 200 % Text und IME (PR #483)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`; **Branch:** `feat/chat-c/manual-turn-queue-ime-20261102`; [PR #483](https://github.com/ManuEtt/Dnd/pull/483), bis zur erfolgreichen vollständigen CI Draft.
+- **Problem:** Titel und Inhalt des Kampf-Zugfolge-Dialogs waren in zwei Scroll-/Layoutbereiche getrennt, sodass bei 320/360 dp, 200 % Text und 220 dp simuliertem Android-IME die Erreichbarkeit der Reihenfolge, Pfeile, Checkboxen, Fehler und Aktionen nicht nachgewiesen war. Gleichstands-Pfeile hatten nicht akteursspezifische Beschriftungen.
+- **IMPLEMENTIERT:** `app/lib/ui/manual_turn_queue_dialog.dart`: `AlertDialog(scrollable: true)` mit kompakten Insets; verschachtelter vertikaler `SingleChildScrollView` entfällt. Bestätigungsfehler über `Semantics(liveRegion:true)` und `queue-validation-error`. Pfeile besitzen eindeutige Tooltips mit Akteursnamen.
+- **FÜNF NEUE TESTS:** `app/test/manual_turn_queue_ime_test.dart`: negative Bestätigung/neutraler Abbruch bei 320 und 360 dp; positiver explizit bestätigter Gleichstand und Basis-Initiative bei 320 dp; bestehender, aktueller Marker liefert nur `ManualTurnQueueChoice.advance` bei 360 dp; fehlende Kreaturen-Initiative sperrt Bestätigung bei 320 dp. Immer 200 % Text und 220 dp Fake-IME, Scrollbarkeit und Kampagnen-Snapshot-Unveränderlichkeit.
+- **GETESTET:** Masterprompt, alle verbindlichen Projektdokumente, Main-HEAD, sämtliche 25 offenen PRs und deren Dateipfade sowie vorhandener `manual_turn_queue_dialog_test.dart` und Domain-Status geprüft. Kein Konflikt im UI-/Testpfad. Formatierungsdiagnose mit Dart 3.9.2/Flutter 3.35.7 auf GitHub Actions durchgeführt und Diff übernommen; temporärer Workflow entfernt.
+- **CI-AUSSTEHEND:** Standard-CI auf finalem #483-HEAD mit Struktur/Python/Backend, Dart-Format und Analyse, gezielten/allen Fluttertests, native Android-Tests, Debug-/ABI-Alpha-APKs und Artefakten; keine fremde/ältere CI als Nachweis für dieses Paket ausgeben.
+- **NICHT GETESTET:** echtes Android-Gerät, TalkBack, Hardwaretastatur, Upgrade, produktive Signierung.
+- **MIGRATION:** keine. Keine Regeln, persistierten Kampfzüge, Slotbuchungen, JSON-/SQLite-, Backend-/Versionsänderungen. Nur UI, Widgettests und additive Dokumentation.
+- **NÄCHSTER SCHRITT:** Finale #483-CI prüfen, bei Fehlern korrigieren und vollständige CI auf finalem SHA erneut ausführen; erst bei Grün Ready for review, Integration durch Chat D ohne automatischen Merge.

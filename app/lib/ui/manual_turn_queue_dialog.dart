@@ -91,101 +91,109 @@ class _ManualTurnQueueDialogState extends State<ManualTurnQueueDialog> {
         queue != null &&
         SrdInitiativeRosterRules.isCurrent(widget.campaign, queue);
     return AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       title: const Text('Manuelle Kampf-Zugfolge'),
       content: SizedBox(
         width: 510,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Dies ist eine persistente Reihenfolge-Hilfe, '
-                'keine automatische Mehrgegner-Kampfengine. '
-                'Held und Hauptgegner nutzen weiterhin '
-                'den bisherigen Kampfablauf.',
-              ),
-              if (queue != null) ...[
-                const SizedBox(height: 12),
-                Text('Manuelle Runde: ${queue.round}'),
-                Text('Aktueller Marker: ${queue.activeActorId}'),
-                if (!queueCurrent)
-                  const Text(
-                    'Die gespeicherte Zugfolge ist nach Änderungen '
-                    'nicht mehr aktuell und muss neu bestätigt werden.',
-                  ),
-              ],
-              if (_roster.missing.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Text(
-                  'Initiative fehlt: '
-                  '${_roster.missing.map((x) => x.name).join(', ')}',
-                ),
-              ],
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Dies ist eine persistente Reihenfolge-Hilfe, '
+              'keine automatische Mehrgegner-Kampfengine. '
+              'Held und Hauptgegner nutzen weiterhin '
+              'den bisherigen Kampfablauf.',
+            ),
+            if (queue != null) ...[
               const SizedBox(height: 12),
-              const Text('Reihenfolge – nur Gleichstände umsortieren:'),
-              for (var index = 0; index < _actors.length; index++)
-                Row(
-                  key: ValueKey('queue-entry-${_actors[index].id}'),
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${index + 1}. ${_actors[index].name} '
-                        '(Initiative ${_actors[index].total})',
-                      ),
-                    ),
-                    IconButton(
-                      key: ValueKey('queue-up-${_actors[index].id}'),
-                      tooltip: 'Bei Gleichstand nach oben',
-                      onPressed:
-                          index > 0 &&
-                              _actors[index - 1].total == _actors[index].total
-                          ? () => _move(index, -1)
-                          : null,
-                      icon: const Icon(Icons.arrow_upward),
-                    ),
-                    IconButton(
-                      key: ValueKey('queue-down-${_actors[index].id}'),
-                      tooltip: 'Bei Gleichstand nach unten',
-                      onPressed:
-                          index + 1 < _actors.length &&
-                              _actors[index + 1].total == _actors[index].total
-                          ? () => _move(index, 1)
-                          : null,
-                      icon: const Icon(Icons.arrow_downward),
-                    ),
-                  ],
+              Text('Manuelle Runde: ${queue.round}'),
+              Text('Aktueller Marker: ${queue.activeActorId}'),
+              if (!queueCurrent)
+                const Text(
+                  'Die gespeicherte Zugfolge ist nach Änderungen '
+                  'nicht mehr aktuell und muss neu bestätigt werden.',
                 ),
+            ],
+            if (_roster.missing.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                'Initiative fehlt: '
+                '${_roster.missing.map((x) => x.name).join(', ')}',
+              ),
+            ],
+            const SizedBox(height: 12),
+            const Text('Reihenfolge – nur Gleichstände umsortieren:'),
+            for (var index = 0; index < _actors.length; index++)
+              Row(
+                key: ValueKey('queue-entry-${_actors[index].id}'),
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${index + 1}. ${_actors[index].name} '
+                      '(Initiative ${_actors[index].total})',
+                    ),
+                  ),
+                  IconButton(
+                    key: ValueKey('queue-up-${_actors[index].id}'),
+                    tooltip: '${_actors[index].name} bei Gleichstand nach oben',
+                    onPressed:
+                        index > 0 &&
+                            _actors[index - 1].total == _actors[index].total
+                        ? () => _move(index, -1)
+                        : null,
+                    icon: const Icon(Icons.arrow_upward),
+                  ),
+                  IconButton(
+                    key: ValueKey('queue-down-${_actors[index].id}'),
+                    tooltip:
+                        '${_actors[index].name} bei Gleichstand nach unten',
+                    onPressed:
+                        index + 1 < _actors.length &&
+                            _actors[index + 1].total == _actors[index].total
+                        ? () => _move(index, 1)
+                        : null,
+                    icon: const Icon(Icons.arrow_downward),
+                  ),
+                ],
+              ),
+            CheckboxListTile(
+              key: const ValueKey('queue-base-confirmed'),
+              value: _baseConfirmed,
+              contentPadding: EdgeInsets.zero,
+              title: const Text(
+                'Initiative von Held und Hauptgegner ist bestätigt.',
+              ),
+              onChanged: (value) => setState(() {
+                _baseConfirmed = value ?? false;
+                _error = null;
+              }),
+            ),
+            if (_roster.hasUnresolvedTies)
               CheckboxListTile(
-                key: const ValueKey('queue-base-confirmed'),
-                value: _baseConfirmed,
+                key: const ValueKey('queue-ties-confirmed'),
+                value: _tiesConfirmed,
                 contentPadding: EdgeInsets.zero,
                 title: const Text(
-                  'Initiative von Held und Hauptgegner ist bestätigt.',
+                  'Die angezeigte Reihenfolge aller Gleichstände '
+                  'wurde von Spielern bzw. SL entschieden.',
                 ),
                 onChanged: (value) => setState(() {
-                  _baseConfirmed = value ?? false;
+                  _tiesConfirmed = value ?? false;
                   _error = null;
                 }),
               ),
-              if (_roster.hasUnresolvedTies)
-                CheckboxListTile(
-                  key: const ValueKey('queue-ties-confirmed'),
-                  value: _tiesConfirmed,
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text(
-                    'Die angezeigte Reihenfolge aller Gleichstände '
-                    'wurde von Spielern bzw. SL entschieden.',
-                  ),
-                  onChanged: (value) => setState(() {
-                    _tiesConfirmed = value ?? false;
-                    _error = null;
-                  }),
+            if (_error != null)
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  _error!,
+                  key: const ValueKey('queue-validation-error'),
+                  style: const TextStyle(color: Colors.redAccent),
                 ),
-              if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.redAccent)),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
       actions: [

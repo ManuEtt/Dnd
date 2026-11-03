@@ -763,3 +763,15 @@ Im [Draft-PR #506](https://github.com/ManuEtt/Dnd/pull/506) auf Branch `feat/cha
 ## Chat C – Mönch „Sanfter Fall“: zustimmungssicherer Android-Dialog (02.11.2026)
 
 In [Draft-PR #509](https://github.com/ManuEtt/Dnd/pull/509) auf Branch `feat/chat-c/slow-fall-ime-consent-20261102` ist der Dialog auch bei großer Schrift und simulierter Tastatur als Ganzes scrollbar. Nach einer Änderung des bestätigten Sturzschadens müssen Sturz und vollständig abgeschlossene andere Schadensanpassungen neu bestätigt werden. Die Vorschau und Bestätigung bleiben rein unverbindlich; Reaktion/Schaden verbucht nur der zuständige Controller. Vier zusätzliche Widgetfälle prüfen schmale 320-/360-dp-Ansichten mit 200 % Schrift und simuliertem Android-IME einschließlich Abbruch und bereits verbrauchter Reaktion. Keine Migration von Spielständen, SQLite oder JSON und keine Änderung der Spielregeln. CI-Abnahme und reales Android/TalkBack noch offen. Siehe [Chat-C-Checkpoint](docs/parallel/CHAT_C_CHECKPOINT.md).
+
+---
+
+### Chat C: Manuelle Kampf-Zugfolge bei großer Schrift und Android-Tastatur (02.11.2026)
+
+[PR #481](https://github.com/ManuEtt/Dnd/pull/481) verbessert die responsive Bedienung der manuellen Initiative-Reihenfolge: durchgängig scrollbarer `AlertDialog` bei 320/360 dp, 200 % Schrift und geöffneter Android-Tastatur, kompakte Insets und Screenreader-Live-Region für Bestätigungsfehler. Fünf neue Widgettests schützen explizite Initiative-/Gleichstandbestätigungen, Umordnung bei Gleichstand, read-only Zugfolge/Marker und neutralen Abbruch. **CI auf dem finalen PR-HEAD steht noch aus.** Keine Änderungen an Initiative-Regeln, Kampagnenzustand, Speichern, Schema, Datenformat oder Version.
+
+---
+
+### Chat C: Manuelle Kampf-Zugfolge bei 200 % Schrift und Tastatur (02.11.2026)
+
+[PR #483](https://github.com/ManuEtt/Dnd/pull/483) hält die manuelle Zugfolgen-Verwaltung bei 320/360 dp, 200 % Schrift und geöffneter Android-Tastatur durch einen einheitlichen Dialog-Scrollbereich bedienbar. Akteurspezifische Gleichstands-Pfeile erhalten eindeutige Screenreader-Beschriftungen, Validierungsfehler sind Live-Regionen. Fünf neue Widgettests prüfen fehlende Bestätigungen, Initiative-Gleichstände, neutralen Abbruch, gespeicherten manuellen Marker und unveränderte Kampagnensnapshots. **Neue finale PR-CI noch offen.** Keine automatische Kampf-/Ressourcenbuchung, Regel-, Speicher- oder Versionsänderung.
