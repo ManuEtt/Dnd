@@ -1,3 +1,18 @@
+## 04.11.2026 – CHAT A: Waldläufer „Unermüdlich“ gegen ungültige Klassenprofile absichern (PR #538)
+
+- **Ausgangs-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`; **Arbeitsbranch:** `feat/chat-a/ranger-tireless-class-preflight-20261104`; **Fach-/Test-HEAD:** `58fa652fef01cb25d7fdae553364b31947cbd06a`.
+- **Ausgangsproblem:** Direkt an `SrdRangerTirelessRules` übergebene Klassen-Snapshots wurden ohne Prüfung von Haupt-/Nebenklasse, Alias-Dopplung oder inkonsistenten Stufen ausgewertet; dadurch konnten die SRD-5.2.1-Waldläufermerkmale *Tireless* / Unermüdlich ab Stufe 10 zu Unrecht verfügbar erscheinen.
+- **Implementiert:** `app/lib/domain/srd_ranger_tireless_rules.dart` prüft die Klassenprofile vor temporären TP, Magieaktion/W8 und automatischer Erschöpfungsreduktion. Bei ungültigen Profilen nur neutrale lesende Ergebnisse; ausdrücklich bestätigte Magieaktion wird vor Zufall und Ressourcenverbrauch abgelehnt. Gültige Aliase und gemischte Kämpfer-/Waldläuferklassen bleiben gültig.
+- **Neue Regressionen:** `app/test/srd_ranger_tireless_class_preflight_test.dart`, sieben negative Profile (u. a. unbekannte Klasse, Doppel-Ranger, verwaiste Zweitklasse, unzulässige Stufen), positive gültige Einzel-/Mehrklasse, unverändertes Ausgangs-JSON und keine RNG-Verwendung bei Ablehnung.
+- **Daten-/Schnittstellenschutz:** Keine Änderung an `models.dart`, `game_engine.dart`, `services/`, `data/`, Story/UI/Backend, SQLite3/JSON1; keine Migration. Register `CLASS-WALDL-UFER-10-BASE-TIRELESS-0` bleibt `partial`.
+- **Tests/CI:** Quell- und Git-Diff geprüft; GitHub Actions, `flutter analyze`, `flutter test` und APK auf dem finalen dokumentierten PR-HEAD getrennt zu kontrollieren; vor Abschluss keine grüne CI behauptet.
+- **Regelquelle:** <https://www.dndbeyond.com/srd>, SRD v5.2.1, Classes / Ranger 10 / Tireless; CC BY 4.0.
+- **PR:** <https://github.com/ManuEtt/Dnd/pull/538> (Draft), Integration durch CHAT D nach bestandener finaler CI und konfliktfreiem Main-Abgleich.
+- **Nächster konkreter Schritt:** Klassen-/Quellenvalidierung einer anderen spezialisierten SRD-Regelfunktion nur nach erneuter Prüfung offener PRs und ihrer Dateilisten.
+
+
+---
+
 ## Chat D – Gradle-Properties-Parser: Unicode-Scheinzeilen verhindern (03.11.2026)
 
 - **Main-Basis:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.

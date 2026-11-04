@@ -1224,3 +1224,7 @@ Finale GitHub-CI und reale Geräteabnahme getrennt nachweisen; kein Auto-Merge.
 Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt auch symbolische Links innerhalb von `app/lib/story/` und `app/lib/domain/` zurück (Dateien und Unterordner), bevor externe Dart-Dateien gelesen werden. Drei ergänzende Python-Regressionen sichern verschachtelte Datei- und Verzeichnislinks sowie Nicht-Dart-Links ab. Die Änderung enthält keine Regel-/Story-/UI-Anpassung oder Speicherformatmigration. Separate Chat-D-Abnahme auf `fix/chat-d/domain-symlink-source-guard-20261103`; vollständige CI auf finalem Commit noch ausstehend.
 
 ---
+
+
+### CHAT A · 04.11.2026 – Waldläufer-Unermüdlich mit bestätigtem Klassenprofil
+[PR #538](https://github.com/ManuEtt/Dnd/pull/538) validiert vor der SRD-5.2.1-Waldläuferfähigkeit *Unermüdlich / Tireless* (Klassenstufe 10) die gesamte Klassenkombination, darunter gültige Aliase, unterschiedliche Mehrklassen und konsistente Stufen. Ungültige Profile werden ohne Würfelwurf, Nutzungsverbrauch oder Erschöpfungsreduktion abgewiesen. Ein neuer deterministischer Domain-Test deckt negative und positive Fälle ab; bestehende SQLite-/JSON-Spielstände und öffentliche APIs bleiben unverändert. Vollständige GitHub-CI und APK auf dem finalen PR-HEAD noch gesondert zu bestätigen. Quelle: [SRD v5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0.
