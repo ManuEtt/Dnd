@@ -1,0 +1,45 @@
+name: SRD Monk Class Feature Regression
+
+on:
+  pull_request:
+    paths:
+      - 'app/lib/domain/class_resource_rules.dart'
+      - 'app/lib/domain/monk_initiative_features.dart'
+      - 'app/lib/domain/game_engine.dart'
+      - 'app/lib/services/game_controller.dart'
+      - 'app/lib/ui/app.dart'
+      - 'app/test/monk_uncanny_metabolism_test.dart'
+      - 'app/test/monk_perfect_focus_test.dart'
+      - '.github/workflows/srd-monk-class-regression.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  monk-feature-regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Install SQLite
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsqlite3-dev
+      - name: Install Flutter dependencies
+        working-directory: app
+        run: flutter pub get
+      - name: Verify canonical Dart formatting
+        working-directory: app
+        run: dart format --output=none --set-exit-if-changed lib/domain/monk_initiative_features.dart lib/domain/class_resource_rules.dart lib/domain/game_engine.dart lib/services/game_controller.dart lib/ui/app.dart test/monk_uncanny_metabolism_test.dart
+      - name: Analyze changed rules and integrations
+        working-directory: app
+        run: flutter analyze lib/domain/monk_initiative_features.dart lib/domain/class_resource_rules.dart lib/domain/game_engine.dart lib/services/game_controller.dart lib/ui/app.dart test/monk_uncanny_metabolism_test.dart
+      - name: Test initiative, rest and resource regressions
+        working-directory: app
+        run: flutter test test/monk_uncanny_metabolism_test.dart test/monk_perfect_focus_test.dart test/class_resource_rules_test.dart

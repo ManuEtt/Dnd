@@ -45,8 +45,7 @@ Alle früheren Prüfkommandos bleiben erhalten. Der Rootcause
 (Platz-/Ressourcenproblem als Hypothese) ist durch die neue CI erst
 nach dem vollständigen Integrations-PR-Lauf zu verifizieren.
 
-Neun veraltete/duplizierte oder einmalige Workflow-Dateien entfallen:
-`chat-a-eldritch-regression.yml`,
+Sieben veraltete/duplizierte oder einmalige Workflow-Dateien entfallen:
 `chat-b-npc-note-format.yml`,
 `cleanup-merged-branches-20261024.yml`,
 `import-original-fantasy-art.yml`,
@@ -54,7 +53,8 @@ Neun veraltete/duplizierte oder einmalige Workflow-Dateien entfallen:
 `retire-character-branches-20261023.yml`,
 `retire-verified-branches-20261026.yml`,
 `retire-verified-story-ui-branches-20261027.yml`,
-`srd-monk-class-regression.yml`.
+Die beiden spezialisierten Regression-Workflows `chat-a-eldritch-regression.yml` und `srd-monk-class-regression.yml` bleiben ergänzend zur Vollsuite erhalten. Der Android-Workflow führt `push` nur auf `main` und prüft alle Workflow-Pfadänderungen über `.github/workflows/**`.
+
 Die alte Laufhistorie bleibt als nachvollziehbarer Audit-Trail erhalten.
 Der Hauptworkflow, der abgesicherte automatische Cleanup und die
 manuelle Dart-Formatierungsreparatur bleiben verfügbar.
@@ -74,3 +74,19 @@ nach main; ursprüngliche PRs kontrollieren/abschließen; grüne Main-CI und
 anschließende Branch-Archivierung/-Löschung verifizieren. Bis dahin
 bleiben alle fünf alten PR-Branches erhalten. Reale Geräte-, TalkBack-
 und Upgrade-Abnahme ist separat offen.
+
+## Parallele PRs #540 und #541
+
+Die nach dem Start dieser Integration parallel eröffneten PRs
+[#540](https://github.com/ManuEtt/Dnd/pull/540) und
+[#541](https://github.com/ManuEtt/Dnd/pull/541) überschneiden sich fachlich.
+Ihre unveränderten HEADs `b0c5b92520a8551bf97d2577534943f31386ce50`
+und `7a400a7cc0e419f9bb030ca24e98f47990b7f272` werden deshalb ebenfalls
+als zusätzliche Git-Eltern archiviert. Die zehn fachlichen Code-/Testdateien
+von #540 wurden bytegenau mit dem bestehenden Integrationsstand verglichen
+und sind identisch. Die einzigartigen CI-Triggerverbesserungen und das
+Actions-Audit aus #541 werden übernommen. Die ursprüngliche #540-Dokumentation
+bleibt separat unter `docs/parallel/INTEGRATION_PR540_20261104.md` erhalten.
+Alte Branches werden erst nach vollständiger neuer kombinierter CI, regulärem
+Main-Merge und grüner Main-CI gelöscht; die beiden parallelen PRs dürfen
+nicht zusätzlich mit überschreibenden Änderungen nach main gelangen.
