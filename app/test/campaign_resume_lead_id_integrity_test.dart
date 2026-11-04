@@ -66,7 +66,8 @@ void main() {
     ]);
     expect(snapshot.playerOverview, isNot(contains('Altes Tor')));
     expect(snapshot.playerOverview, isNot(contains('Der See')));
-    expect(snapshot.playerOverview, isNot(contains('9000 Gold')));
+    expect(snapshot.playerOverview, contains('kein bestätigter Regelzustand'));
+    expect(snapshot.openLeads.join(' '), isNot(contains('9000 Gold')));
     expect(campaign.storyThreads, hasLength(6));
     expect(jsonEncode(campaign.toJson()), before);
   });
@@ -148,7 +149,7 @@ void main() {
   });
 
   test(
-    'legacy JSON and SQLite keep raw conflicts without false leads',
+    'duplicate JSON is rejected; valid SQLite resumes safely',
     () async {
       final original = _campaign(const [
         StoryThread(id: 'old', title: 'Die Gruft', description: 'Offen.'),
@@ -160,14 +161,28 @@ void main() {
         ),
         StoryThread(id: 'safe', title: 'Der Turm', description: 'Untersuchen.'),
       ]);
-      final json = jsonEncode(original.toJson());
-      final decoded = Campaign.fromJson(
-        jsonDecode(json) as Map<String, dynamic>,
+      final invalidJson = jsonEncode(original.toJson());
+      expect(
+        () => Campaign.fromJson(
+          jsonDecode(invalidJson) as Map<String, dynamic>,
+        ),
+        throwsFormatException,
       );
-      expect(CampaignResumeReader.read(decoded).openLeads, [
+      expect(CampaignResumeReader.read(original).openLeads, [
         'Der Turm: Untersuchen.',
       ]);
-      expect(jsonEncode(decoded.toJson()), json);
+      expect(jsonEncode(original.toJson()), invalidJson);
+
+      // Import validation rejects duplicates. A valid saved campaign must
+      // still retain its unique open lead after the database restarts.
+      final clean = _campaign(const [
+        StoryThread(id: 'safe', title: 'Der Turm', description: 'Untersuchen.'),
+      ]);
+      final cleanJson = jsonEncode(clean.toJson());
+      final decoded = Campaign.fromJson(
+        jsonDecode(cleanJson) as Map<String, dynamic>,
+      );
+      expect(jsonEncode(decoded.toJson()), cleanJson);
 
       final folder = await Directory.systemTemp.createTemp('resume-lead-id-');
       final path = paths.join(folder.path, 'campaign.sqlite');
@@ -187,7 +202,7 @@ void main() {
         final snapshot = CampaignResumeReader.read(restored);
 
         expect(snapshot.openLeads, ['Der Turm: Untersuchen.']);
-        expect(restored.storyThreads, hasLength(3));
+        expect(restored.storyThreads, hasLength(1));
         expect(restored.hero.hitPoints, 12);
         expect(jsonEncode(restored.toJson()), before);
         expect(
