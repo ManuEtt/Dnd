@@ -1,3 +1,21 @@
+# CHAT D – Gradle-Properties-Werte ohne Java-fremdes Trimmen lesen (04.11.2026)
+
+- **Main-Basis:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`.
+- **Branch:** `fix/chat-d/gradle-properties-value-whitespace-20261104`.
+- **Fach-/Testcommit:** `15304e04861aec5913a55ce312448f2a4cd80a8b`.
+- **PR:** [#537](https://github.com/ManuEtt/Dnd/pull/537), Draft.
+- **Ausgangsproblem:** `str.strip()` auf Java-Property-Werten beseitigt auch abschließende Leerzeichen und führende Unicode-Leerzeichen, obwohl Java diesen Zeicheninhalt beibehält. Dadurch konnten ungültige Werte als sichere Gradle-URL oder SHA angenommen werden.
+- **IMPLEMENTIERT:** `unique_gradle_property()` bewahrt Werte bis auf von Java tatsächlich zu ignorierenden führenden ASCII-SP/Tab/FF; vorhandene strikte HTTPS- und SHA-Prüfung bleibt.
+- **TESTS ERGÄNZT:** Drei Regressionstestmethoden mit 22 Parametervarianten für trailing Space/Tab/FF/NBSP/Em-Space, führende NBSP/Em-Space und erlaubtes führendes Java-Whitespace.
+- **GETESTET:** Lokaler OpenJDK-21-Verhaltensnachweis für `Properties.load()` aus `StringReader`.
+- **NICHT GETESTET:** Repository-Python-Unittests, gesamte Flutter-/Backend-/Android-Projektprüfung, finale GitHub Actions für PR-HEAD, echtes Gerät.
+- **BLOCKIERT:** GitHub-Checkout über Container-Netzwerk war in vorigen Sitzungen nicht verfügbar, Flutter-/Dart-SDK lokal nicht vorhanden; vollständige CI als verlässliche Prüfumgebung.
+- **Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migration:** keine; SQLite, JSON, Save/Load, Backupformat, Android-Version unberührt.
+- **Nächster Schritt:** CI auf finalem Dokumentations-/Test-HEAD prüfen, Fehler gegebenenfalls auf diesem Branch beheben und erst danach Review/Merge.
+
+---
+
 # CHAT D – Java-Properties-Zeilentrennung für verlässliche Gradle-Uploads (03.11.2026)
 
 - **Ausgangs-main-SHA:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`

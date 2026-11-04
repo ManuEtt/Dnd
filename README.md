@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat D – Java-konforme Whitespace-Prüfung der Gradle-Wrapper-Werte (04.11.2026)
+
+Die Übertragungsprüfung `scripts/verify_project.py` validiert `distributionUrl` und `distributionSha256Sum` jetzt ohne das bisherige `strip()` auf den Property-Werten: Java `Properties.load()` ignoriert nur führende ASCII-SP/Tab/FF, bewahrt aber abschließende Leerzeichen und nicht-ASCII-Leerzeichen. Der Parser darf diese ungültigen Werte nicht nachträglich als gültige URL/SHA maskieren. Drei neue Python-Regressionsmethoden in `scripts/tests/test_verify_project.py` prüfen insgesamt 22 Negativ- und Kompatibilitätsvarianten. Java 21 hat das zugrunde liegende Parse-Verhalten in einem isolierten Minimalversuch bestätigt. [Draft-PR #537](https://github.com/ManuEtt/Dnd/pull/537), Fachcommit `15304e04861a`; vollständige Projekt-/CI-Tests für den finalen HEAD sind noch offen. Keine Änderung an Gradle-Distribution, SQLite/JSON, vorhandenen Spielständen oder App-Version.
+
+---
+
 ## Chat D – Korrekte Java-Properties-Zeilentrennung bei Gradle-Uploadprüfung (03.11.2026)
 
 Die Python-Übertragungsprüfung `scripts/verify_project.py` wertet physische Zeilen der Gradle-Wrapper-Konfiguration nun wie Java Properties ausschließlich an CR/LF/CRLF aus. Unicode-Zeichen U+0085, vertikaler Tab und U+2028/U+2029 innerhalb eines Kommentars erzeugen keine vorgetäuschten gültigen `distributionUrl`- oder `distributionSha256Sum`-Einträge und keine fälschlichen Doppelbelegungen mehr. Drei Regressionstest-Gruppen in `scripts/tests/test_verify_project.py` decken fehlende Pflichtwerte, erlaubte Kommentarinhalte und echte Zeilenenden ab. Separater Draft-[PR #528](https://github.com/ManuEtt/Dnd/pull/528), Basis `7be2135`, Fachcommit `ab0a8c8`. **Vollständige CI auf ursprünglichem PR-HEAD `1e04364` erfolgreich:** [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451). Auf dem konsolidierten Integrations-HEAD ist erneut eine vollständige CI erforderlich. Keine SQLite-/JSON-/Versionsmigration.

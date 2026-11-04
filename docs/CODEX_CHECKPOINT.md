@@ -1,3 +1,21 @@
+## Chat D – Gradle-Properties-Whitespace gegen Fehlannahmen absichern (04.11.2026)
+
+- **Ausgangs-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`.
+- **Branch:** `fix/chat-d/gradle-properties-value-whitespace-20261104`.
+- **Fach- und Testcommit:** `15304e04861aec5913a55ce312448f2a4cd80a8b`.
+- **PR:** [#537](https://github.com/ManuEtt/Dnd/pull/537), Draft bis zur vollständigen CI.
+- **Problem:** `unique_gradle_property` entfernte mit `strip()` echten Wertinhalt: Trailing-Whitespace und führende Unicode-Leerzeichen blieben in `java.util.Properties` erhalten, wurden vom Python-Prüfer aber ignoriert.
+- **IMPLEMENTIERT:** Führende ASCII-Leerzeichen, Tabs und Form Feeds werden Java-konform ignoriert; der übrige unveränderte Wert muss den bestehenden strikten HTTPS-/SHA256-Regeln entsprechen.
+- **Regressionen:** `scripts/tests/test_verify_project.py` mit drei Testmethoden und 22 Parametervarianten (10 fehlerhafte trailing-Zeichen, vier führende Unicode-Leerzeichen, acht positive Java-konforme führende ASCII-Leerzeichen).
+- **GETESTET:** OpenJDK 21 `Properties.load(StringReader)` bestätigt in realer Java-Ausführung das Verhalten für ASCII-Space, Tab, FF, NBSP und Em-Space jeweils am Anfang/Ende.
+- **NICHT GETESTET:** Tatsächliche Python-Projektunittests, vollständige GitHub Actions auf finalem HEAD, Flutter-/Backend-/Android-Gesamtabnahme und reales Android-Gerät. Keine davon als bestanden ausgeben, bis CI dies nachweist.
+- **Betroffene Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Kompatibilität:** Kein Schema- oder Exportformatwechsel; keine SQLite-/JSON-/Spielstand-/Migrationsänderung; alte Wrapper-Konfiguration bleibt unverändert.
+- **Abgrenzung:** Die zuvor offene Chat-C-PR #535 betrifft Flutter-UI, nicht die beiden Python-Dateien; gemeinsame Dokumente wurden additiv aktualisiert.
+- **Nächster Schritt:** Finalen PR-HEAD mit allen GitHub-Actions-Gates prüfen und nur bei erfolgreicher Abnahme regulär integrieren.
+
+---
+
 ## Chat D – Gradle-Properties-Parser: Unicode-Scheinzeilen verhindern (03.11.2026)
 
 - **Main-Basis:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.
