@@ -42,14 +42,18 @@ def retired_workflow_is_inert(content: str) -> bool:
 
 
 class RetiredCleanupWorkflowTests(unittest.TestCase):
-    def test_legacy_cleanup_is_read_only_and_manual_only(self):
-        self.assertTrue(RETIRED.is_file())
-        self.assertTrue(retired_workflow_is_inert(
-            RETIRED.read_text(encoding="utf-8")
-        ))
+    def test_retired_cleanup_has_no_executable_entrypoint(self):
+        self.assertFalse(RETIRED.exists())
 
     def test_unsafe_trigger_and_branch_writes_are_rejected(self):
-        original = RETIRED.read_text(encoding="utf-8")
+        # Retain the inert-format contract as a pure regression fixture.
+        # The executable historical entrypoint itself is deleted.
+        original = (
+            "\non:\n  workflow_dispatch:\n"
+            "permissions:\n  contents: read\n"
+            "jobs:\n  deprecated:\n"
+        )
+        self.assertTrue(retired_workflow_is_inert(original)
         self.assertFalse(retired_workflow_is_inert(
             original.replace(
                 "  workflow_dispatch:",

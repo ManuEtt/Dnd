@@ -40,14 +40,15 @@ def is_read_only_notice(text: str) -> bool:
         r"jobs:\n  deprecated:\n    runs-on: ubuntu-latest\n"
         r"    steps:\n      - name: [^\n]+\n"
         r"        run: \|\n"
-        r'(?:          echo "[^"$`\\\n]+"\n?)+',
+        r'(?:          echo "[^"$`\\n]+"\n?)+',
         uncommented,
     ) is not None
 
 
 class RetiredStoryUiCleanupTests(unittest.TestCase):
-    def test_historical_entrypoint_is_dispatch_only_read_only_notice(self):
-        self.assertTrue(is_read_only_notice(RETIRED.read_text(encoding="utf-8")))
+    def test_historical_entrypoint_is_removed_from_active_workflows(self):
+        self.assertFalse(RETIRED.exists())
+        self.assertTrue(ARCHIVE.is_file())
 
     def test_original_pr301_writer_cannot_pass_as_inert(self):
         original = ARCHIVE.read_text(encoding="utf-8")
@@ -56,7 +57,20 @@ class RetiredStoryUiCleanupTests(unittest.TestCase):
         self.assertFalse(is_read_only_notice(original))
 
     def test_reintroduced_automatic_trigger_writer_or_action_is_rejected(self):
-        notice = RETIRED.read_text(encoding="utf-8")
+        # A non-executable fixture preserves the strict historical
+        # read-only contract; the Actions YAML has been retired.
+        notice = (
+            "name: Alte Story/UI-Branchbereinigung (deaktiviert)\n"
+            "on:\n  workflow_dispatch:\n"
+            "permissions:\n  contents: read\n"
+            "jobs:\n  deprecated:\n"
+            "    runs-on: ubuntu-latest\n"
+            "    steps:\n"
+            "      - name: Nachfolger anzeigen – keine Referenzen verändern\n"
+            "        run: |\n"
+            '          echo "Dieser historische PR301-Workflow ist deaktiviert."\n'
+        )
+        self.assertTrue(is_read_only_notice(notice)
         replacements = (
             notice.replace("  workflow_dispatch:", "  push:\n  workflow_dispatch:"),
             notice.replace("contents: read", "contents: write"),

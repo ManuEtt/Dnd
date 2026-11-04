@@ -19,3 +19,6 @@ Diese Änderung entfernt sieben überholte Workflow-Einstiegspunkte aus `.github
 **Nicht behauptet:** dass historisch fehlgeschlagene Workflow-Runs/Artefakte gelöscht wurden oder dass auf diesem Cleanup-PR bereits alle Tests bestanden haben. Alte CI-Logs bleiben als Diagnose-/Auditnachweis erhalten. Beide abgeschlossenen Issues #333/#425 bleiben geschlossen.
 
 **Abnahme:** CI des Cleanup-PR gegen main, nach der Zusammenführung erneute main-CI; dabei darf der maintained safe cleanup nur nach grüner Main-CI laufen.
+
+## Regression nach erstem CI-Lauf
+Der erste Cleanup-PR-Lauf [41899604932](https://github.com/ManuEtt/Dnd/actions/runs/41899604932) schlug im Python-Testpaket fehl, weil vier Prüffälle die nun entfernten, bewusst inert gehaltenen Legacy-Workflow-Dateien weiterhin als physische Dateien voraussetzten. Beide betroffenen Testmodule wurden auf die stärkere Invariante **alter Workflow-Einstiegspunkt existiert nicht mehr** umgestellt. Ihre ursprünglichen Read-only-/Trigger-Sicherheitsprüfungen bleiben als reine Test-Fixtures erhalten; das archivierte Original von PR301 wird weiterhin hashgeprüft. Alle übrigen 305 Python-Tests dieses Vorlaufs hatten bestanden. Der neue komplette CI-Lauf muss separat erfolgreich abschließen.
