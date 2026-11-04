@@ -1,5 +1,20 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – EP-Fortschritt mit Screenreader im Kampagnen-Dashboard (04.11.2026)
+
+Der bestätigte EP-Fortschrittsbalken der aktiven Heldenkarte kündigt jetzt
+„Erfahrungsfortschritt: N Prozent“ an und vermeidet eine doppelte technische
+Balkenansage. Der Wert wird aus der bestehenden EP-Berechnung übernommen;
+unbestätigte Werte bleiben ausdrücklich unbekannt. Drei Widgettests prüfen
+320/360 dp mit 200 % Schrift, simulierter Android-Tastatur, korrekte
+Semantik, bedienbare Aktionen und unveränderte gespeicherte Heldenwerte.
+Branch `feat/chat-c/campaign-xp-progress-semantics-20261104`;
+Pull Request in GitHub (nach Erstellung). Die neue vollständige GitHub-CI
+und eine echte Android-/TalkBack-Abnahme sind noch ausstehend.
+Keine Änderungen an Spielregeln, SQLite/JSON, App-Version oder Assets.
+
+---
+
 ## Chat D – Korrekte Java-Properties-Zeilentrennung bei Gradle-Uploadprüfung (03.11.2026)
 
 Die Python-Übertragungsprüfung `scripts/verify_project.py` wertet physische Zeilen der Gradle-Wrapper-Konfiguration nun wie Java Properties ausschließlich an CR/LF/CRLF aus. Unicode-Zeichen U+0085, vertikaler Tab und U+2028/U+2029 innerhalb eines Kommentars erzeugen keine vorgetäuschten gültigen `distributionUrl`- oder `distributionSha256Sum`-Einträge und keine fälschlichen Doppelbelegungen mehr. Drei Regressionstest-Gruppen in `scripts/tests/test_verify_project.py` decken fehlende Pflichtwerte, erlaubte Kommentarinhalte und echte Zeilenenden ab. Separater Draft-[PR #528](https://github.com/ManuEtt/Dnd/pull/528), Basis `7be2135`, Fachcommit `ab0a8c8`. **Vollständige CI auf ursprünglichem PR-HEAD `1e04364` erfolgreich:** [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451). Auf dem konsolidierten Integrations-HEAD ist erneut eine vollständige CI erforderlich. Keine SQLite-/JSON-/Versionsmigration.
