@@ -87,15 +87,15 @@ void main() {
 
       expect(SrdWarlockMagicalCunningRules.maximumUses(hero), 1);
       expect(SrdWarlockMagicalCunningRules.maximumRecoveredSlots(hero), 4);
-      final result =
-          SrdWarlockMagicalCunningRules.restoreAfterCompletedRite(hero);
+      final result = SrdWarlockMagicalCunningRules.restoreAfterCompletedRite(
+        hero,
+      );
       expect(result.eldritchMaster, isTrue);
       expect(result.recoveredSlots, 4);
       expect(result.hero.spentPactSlots, 0);
       expect(
-        result.hero.spentClassResources[
-          SrdWarlockMagicalCunningRules.resourceKey
-        ],
+        result.hero.spentClassResources[SrdWarlockMagicalCunningRules
+            .resourceKey],
         1,
       );
       expect(hero.toJson(), before);
@@ -112,8 +112,9 @@ void main() {
 
       expect(SrdWarlockMagicalCunningRules.maximumUses(hero), 1);
       expect(SrdWarlockMagicalCunningRules.maximumRecoveredSlots(hero), 2);
-      final result =
-          SrdWarlockMagicalCunningRules.restoreAfterCompletedRite(hero);
+      final result = SrdWarlockMagicalCunningRules.restoreAfterCompletedRite(
+        hero,
+      );
       expect(result.recoveredSlots, 2);
       expect(result.hero.spentPactSlots, 1);
       expect(result.eldritchMaster, isFalse);
