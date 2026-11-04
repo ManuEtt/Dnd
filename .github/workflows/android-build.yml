@@ -2,16 +2,17 @@ name: Android-Alpha bauen
 
 on:
   push:
+    branches: [main]
     paths:
       - 'app/**'
       - 'backend/**'
-      - '.github/workflows/android-build.yml'
+      - '.github/workflows/**'
       - 'scripts/**'
   pull_request:
     paths:
       - 'app/**'
       - 'backend/**'
-      - '.github/workflows/android-build.yml'
+      - '.github/workflows/**'
       - 'scripts/**'
   workflow_dispatch:
 
