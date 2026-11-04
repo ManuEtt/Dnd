@@ -69,7 +69,10 @@ void main() {
       final random = _CountingRandom();
       expect(SrdRangerTirelessRules.maximumTemporaryHitPointUses(hero), 0);
       expect(SrdRangerTirelessRules.canReduceExhaustion(hero), isFalse);
-      expect(SrdRangerTirelessRules.afterShortRest(hero).toJson(), hero.toJson());
+      expect(
+        SrdRangerTirelessRules.afterShortRest(hero).toJson(),
+        hero.toJson(),
+      );
       expect(
         () => SrdRangerTirelessRules.useTemporaryHitPoints(
           hero,
@@ -97,7 +100,10 @@ void main() {
     expect(random.calls, 1);
     expect(magic.rolledTemporaryHitPoints, 4);
     expect(magic.usesRemaining, 2);
-    expect(magic.hero.spentClassResources[SrdRangerTirelessRules.resourceKey], 1);
+    expect(
+      magic.hero.spentClassResources[SrdRangerTirelessRules.resourceKey],
+      1,
+    );
   });
 
   test('gültiger Mehrklassen-Waldläufer nutzt eigene Klassenstufe', () {
@@ -108,7 +114,10 @@ void main() {
       level: 12,
     );
     expect(SrdRangerTirelessRules.maximumTemporaryHitPointUses(multiclass), 3);
-    expect(SrdRangerTirelessRules.afterShortRest(multiclass).exhaustionLevel, 1);
+    expect(
+      SrdRangerTirelessRules.afterShortRest(multiclass).exhaustionLevel,
+      1,
+    );
     final magic = SrdRangerTirelessRules.useTemporaryHitPoints(
       multiclass,
       DiceEngine(random: _CountingRandom()),
