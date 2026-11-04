@@ -1871,3 +1871,20 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **Nächster Schritt:** finale vollständige CI dieses Branches und anschließende konfliktfreie Integration abnehmen.
 
 ---
+
+---
+
+## 04.11.2026 – Chat B: widersprüchliche StoryThread-IDs im Wiederaufnahmerückblick (PR #536)
+
+- **Projekt:** Würfelraunen, Appversion gemäß aktuellem `app/pubspec.yaml` unverändert.
+- **Ausgangs-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`.
+- **Branch:** `feat/chat-b/resume-lead-id-integrity-20261104`.
+- **Pull Request:** [#536](https://github.com/ManuEtt/Dnd/pull/536), Draft.
+- **Codecommit:** `ccdf7cac7b049d58815ae7618e6d4f37a28b5036`; **Testcommit:** `70a9a1e5fe4f12c65bbf424db3387fc0a7eb8f09`. Dokumentations-HEAD nach Schreiben gesondert prüfen.
+- **IMPLEMENTIERT:** `app/lib/story/campaign_resume_context.dart` zeigt offene StoryThreads nur bei eindeutiger, sicherer ID `[a-zA-Z0-9_-]{1,64}` an. Dubletten mit offenen/geschlossenen widersprüchlichen Stati werden in der read-only Projektion vollständig ausgeblendet, statt alte Spuren wiederzubeleben; ursprünglicher Save bleibt erhalten.
+- **Regressionen:** Neuer `app/test/campaign_resume_lead_id_integrity_test.dart` mit vier Tests: contradiktorisch offene/geschlossene Dubletten, identische doppelte offene/unsichere IDs, richtige Reihenfolge/Limit eindeutiger Spuren sowie JSON-Roundtrip und SQLite-Neustart ohne Originaländerung.
+- **GETESTET:** Repository/Masterprompt/Story-Architektur/aktuelle PR-Pfade geprüft, eigene Code-/Testcommits nach GitHub gepusht; [Vorgänger #531](https://github.com/ManuEtt/Dnd/pull/531) ist mit grüner finaler CI gemergt. Dieser grüne Vorgängerlauf ist **kein** Testnachweis für #536.
+- **NICHT GETESTET:** Lokale Flutter-/Dart-Ausführung mangels installiertem SDK; vollständige Python-/Backend-/Dart-/Flutter-/Android-CI auf endgültigem PR-HEAD noch nicht abschließend nachgewiesen. Kein Realgerät-, Anbieter- oder Upgrade-Test.
+- **BLOCKIERT:** Finale CI/Review, konfliktfreie README-/Checkpoint-Integration durch Chat D. Anderer offener PR #535 bearbeitet Chat-C-Dashboard statt Story-Fachcode.
+- **MIGRATION:** Keine; JSON-/SQLite-Schema, Helden-TP, XP, Quests, Events und App-Version unverändert. Keine KI-Kosten.
+- **NÄCHSTER SCHRITT:** CI auf dem finalen PR-HEAD vollständig kontrollieren, eigene Fehler im Branch korrigieren und Integrationsfreigabe bei Chat D vorbereiten.

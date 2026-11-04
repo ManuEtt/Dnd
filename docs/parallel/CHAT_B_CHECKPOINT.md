@@ -876,3 +876,20 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **Migration:** Keine; persistente SQLite- und JSON-Strukturen, Regeln, Quest-/HP-/XP-Zustände, Provider und App-Version unverändert.
 - **Konflikte:** Andere offene Chat-B-/D-PRs ändern teils andere Storymodule, jedoch nicht diese neue Fach-/Testdatei. README und zentraler Checkpoint sind gemeinsame Pfade: Additive Konsolidierung ausschließlich bei Chat-D-Integration. Kein Merge, Force-Push oder fremdes Branch-Löschen.
 - **Nächster Schritt:** CI/Android auf dem finalen PR-HEAD verifizieren; fehlschlagende Schritte gezielt auf eigenem Branch reparieren und danach von Chat D konfliktfrei integrieren lassen.
+
+---
+
+## Chat B – 04.11.2026: Eindeutige offene Story-IDs beim Wiedereinstieg (#536)
+
+- **Ausgangs-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`.
+- **Branch:** `feat/chat-b/resume-lead-id-integrity-20261104`, **PR:** [#536](https://github.com/ManuEtt/Dnd/pull/536) (Draft).
+- **Fachcommit:** `ccdf7cac7b049d58815ae7618e6d4f37a28b5036`, **Testcommit:** `70a9a1e5fe4f12c65bbf424db3387fc0a7eb8f09`; finalen Branch-HEAD nach Dokumentationscommit ermitteln.
+- **Ausgangsproblem:** `CampaignResumeReader.read` nahm alle `status == open`-Einträge ohne Prüfung der gespeicherten Thread-ID als bestätigte offene Spur. Ein Legacy-Spielstand mit identischer ID für `open` und `resolved`/`abandoned` konnte längst abgeschlossene Spuren wieder anzeigen.
+- **IMPLEMENTIERT:** Identitäten vor Auswahl zählen; nur exakt einmalige kanonische IDs mit 1–64 ASCII-Zeichen (Buchstaben, Ziffern, Unterstrich, Bindestrich) zulassen. Doppelte und unsichere IDs konsequent aus der reinen Anzeige ausschließen. Gültige offene Spuren behalten ihre bisherigen Prioritäten, ihre Reihenfolge und das `maxLeads`-Limit.
+- **Neue Regressionstests:** `app/test/campaign_resume_lead_id_integrity_test.dart` mit vier Tests zu widersprüchlichen und identischen Dubletten, unsicheren Unicode-/Zeilenende-IDs, Auswahlgrenzen, JSON-Roundtrip und SQLite-Schließen/Neuöffnen einschließlich Erhalt aller Originaleinträge, Heldenwerte und Journal-Rekonstruktion.
+- **Dateien:** `app/lib/story/campaign_resume_context.dart`, neuer Test, additive README-/CODEX-/Chat-B-Checkpoint-Abschnitte.
+- **GETESTET:** Live-GitHub-/Masterprompt-/PR-Prüfung; eigener Fachcode und Tests versioniert. Main-Android-CI auf `c8f25132a82bcf55368a79100e0c2ea5595140b6` bei Prüfung erfolgreich; **nicht** gleichzusetzen mit PR-CI #536.
+- **NICHT GETESTET:** Neues vollständiges CI auf finalem PR-HEAD; reales Android-Gerät/Upgrade, produktive KI; lokal kein Flutter-/Dart-SDK.
+- **BLOCKIERT:** Finale CI-Gates und Review. README und zentraler Checkpoint müssen mit anderen PRs additiv integriert werden, nicht überschrieben. PR #535 bearbeitet andere UI-Fachpfade.
+- **Datenkompatibilität:** Keine Migration oder Mutation; unveränderte Originale, Schema, Regelwerte, Questzustände, KI-Provider und App-Version.
+- **Nächster konkreter Schritt:** Finalen CI-Lauf #536 prüfen und bei Fehlern im eigenen Branch korrigieren; anschließend von Chat D integrieren lassen.
