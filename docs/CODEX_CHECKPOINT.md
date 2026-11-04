@@ -1,3 +1,17 @@
+## Chat A – 04.11.2026: Hexenmeister-Klassenprofilprüfung vor Magischer List (PR #539)
+
+- **Branch/PR:** `feat/chat-a/warlock-magical-cunning-class-preflight-20261104` / https://github.com/ManuEtt/Dnd/pull/539 (Draft). **Main-Basis:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`. **Fach-/Testcommit:** `86c83b5c93610285866e1717e65ac0a1d8e582b5`.
+- **Ausgangsproblem:** Die Levelprüfung in `SrdWarlockMagicalCunningRules` übernahm aus `SpellcastingRules.pactClassLevel` Stufen aus nicht validierten Klasse-/Alias-Kombinationen. Unplausible Legacy-Objekte konnten das bestätigte 1-Minuten-Ritual für Paktplatzregeneration auslösen.
+- **Implementiert:** nullable, ausschließlich lokale Klassenprofilprüfung; ungültige Profile erlauben weder `maximumUses` noch `maximumRecoveredSlots`; mutierender Ritualzugriff scheitert vor Verbrauch mit `FormatException`. Gültige Klasse Stufe 1 bleibt mit `StateError` gesperrt; SRD-Aliase/Mehrklasse und Eldritch Master Stufe 20 bleiben funktionsfähig.
+- **Dateien:** `app/lib/domain/srd_warlock_magical_cunning_rules.dart`, neue `app/test/srd_warlock_magical_cunning_class_preflight_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`.
+- **Tests:** 12 neue deterministische Fälle (9 ungültige Profile, 3 positive/negative Schwellen/Multiclass), unveränderter Eingabezustand und unberührte Paktplätze bei Ablehnung. Lokales Dart/Flutter nicht vorhanden. **CI auf finalem PR-HEAD noch nicht als bestanden bestätigt**; Python/Backend/Flutter/Debug-APK durch PR-Actions prüfen; keine Tests deaktiviert.
+- **Kompatibilität:** Keine neuen Modelle, Feldeinträge, Schema- oder Versionsänderungen, keine Migration; SQLite 3 / JSON 1 unverändert. Allgemeine Paktmagievalidierung in `SpellcastingRules` ist ausdrücklich nicht Teil dieses PRs.
+- **Quelle:** SRD 5.2.1, *Warlock Level 2 Magical Cunning / Level 20 Eldritch Master*, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd; `CLASS-HEXENMEISTER-2-BASE-MAGICAL-CUNNING-0` bleibt `partial`: Ritualdauer, Unterbrechungen und Geräterevision nicht neu implementiert.
+- **Konflikte/Blocker:** PRs #535–#538 (C/B/D/A) ändern keine der beiden Fachdateien; README und zentraler Checkpoint werden bei Chat D additiv konsolidiert. CI-Endnachweis, D-Review, Gerätetest offen.
+- **Nächster Schritt:** Nur nach konfliktfreier aktueller PR-/Main-Prüfung die Klassenprofilgrenze der **gewöhnlichen Paktmagie** in `SpellcastingRules.pactClassLevel` separat untersuchen; Akzeptanz: keine unverdienten Paktplätze bei doppelten/ungültigen Klasse-Aliassen, gültige Altcharaktere und Casts unverändert, keine stillschweigende Speicherung, eigene Regressionen und vollständige CI.
+
+---
+
 ## Chat D – Gradle-Properties-Parser: Unicode-Scheinzeilen verhindern (03.11.2026)
 
 - **Main-Basis:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.

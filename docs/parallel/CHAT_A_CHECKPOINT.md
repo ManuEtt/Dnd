@@ -1,3 +1,25 @@
+# Chat A – Magische List nur nach Klassenprofilprüfung (04.11.2026, PR #539)
+
+**Basis-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`. **Branch:** `feat/chat-a/warlock-magical-cunning-class-preflight-20261104`. **Fach-/Testcommit:** `86c83b5c93610285866e1717e65ac0a1d8e582b5`. **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/539.
+
+**Ausgangsproblem:** Die spezielle SRD-5.2.1-Regel `SrdWarlockMagicalCunningRules` vertraute auf einen unvalidierten Hexenmeister-Levelwert. Direkt konstruierte, inkonsistente Profile konnten Magische List oder Stufe-20-Eldritch-Master und damit Paktmagieplatz-Erholung freischalten.
+
+**Implementiert:** Profilprüfung erkennt unbekannte Klassen, doppelte deutsche/englische Aliasvarianten, inkonsistente Zweitklassenstufen sowie Gesamtlevel außerhalb 1–20 oder eine Hauptklasse unter Level 1. Lesefunktionen fail-closed (0 Nutzungen/Plätze), expliziter Ritualabschluss mit ungültigem Profil wirft `FormatException` vor jeder Ressourcenänderung. Normale Hexenmeister- und Fighter-/Warlock-Mehrklasse einschließlich Eldritch Master bleiben wirksam. Keine Regelentscheidung aus Storytext.
+
+**Betroffene Dateien:** `app/lib/domain/srd_warlock_magical_cunning_rules.dart`, neue `app/test/srd_warlock_magical_cunning_class_preflight_test.dart` und additiv README/zentraler/persönlicher Checkpoint.
+
+**GETESTET:** Ausgangs-main, PR-Dateilisten, SRD-Rechtsgrundlage, bestehende Fachtests und aktuelle Domänenschnittstelle geprüft; neue 12 deterministische Fälle implementiert. **Noch NICHT getestet:** Flutter-Testlauf, Analyzer, Dart-Format, Android-APK und finale CI auf aktuellem PR-Kopf. Sie werden nur nach nachgewiesenem GitHub-Actions-Ergebnis als bestanden verbucht; lokale SDKs fehlen. Der unabhängig laufende Waldläufer-PR #538 ist kein Testnachweis für #539.
+
+**Migrationen/Kompatibilität:** Keine; SQLite 3, JSON 1, Spielstandsstruktur und App-Version unverändert. `SpellcastingRules.pactClassLevel` bleibt ohne Änderung. Gewöhnliche Paktmagie benötigt gegebenenfalls einen gesonderten Schritt; keine Behauptung globaler Charakterprofilvalidierung.
+
+**Koordination:** Offene PRs #535 (UI), #536 (Story), #537 (CI) und #538 (Waldläufer) ohne Fachdatei-Konflikt; die gemeinsamen Dokumente sind bei der Integration durch Chat D additiv zu konsolidieren. Kein Main-Merge durch Chat A.
+
+**SRD-Nachweis:** Wizards of the Coast LLC, SRD 5.2.1, *Warlock Level 2 Magical Cunning / Level 20 Eldritch Master*, CC BY 4.0, https://www.dndbeyond.com/srd. `CLASS-HEXENMEISTER-2-BASE-MAGICAL-CUNNING-0` verbleibt **partial**, da die reale 1-Minuten-Ritualdauer und Unterbrechungen nicht automatisch kontrolliert werden.
+
+**Nächster unabhängiger Schritt:** Nach finaler CI und aktueller PR-Prüfung Paktmagie-Klassenlevel in `SpellcastingRules` auf doppelte/ungültige SRD-Klassenzuordnungen prüfen; bei echter Lücke kleine, kompatible Domänenkorrektur mit deterministischen Cast-/Rast-/JSON-Regressionen auf eigenem Branch.
+
+---
+
 # Chat A – bestätigte Metamagie-Optionen versioniert prüfen (02.11.2026)
 
 **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529` ·
