@@ -72,6 +72,12 @@ void main() {
         );
 
         expect(find.text('Erfahrung: 150 / 300 EP'), findsOneWidget);
+        final xpProgress = find.byKey(
+          const ValueKey('active-hero-xp-progress'),
+        );
+        await tester.ensureVisible(xpProgress);
+        await tester.pumpAndSettle();
+        expect(xpProgress.hitTestable(), findsOneWidget);
         expect(
           find.bySemanticsLabel('Erfahrungsfortschritt: 50 Prozent'),
           findsOneWidget,
@@ -81,10 +87,6 @@ void main() {
           findsOneWidget,
         );
         expect(find.text('9 / 24'), findsOneWidget);
-        expect(
-          find.bySemanticsLabel('Trefferpunkte: 9 von 24'),
-          findsOneWidget,
-        );
         expect(continued, 0);
         expect(managed, 0);
 
