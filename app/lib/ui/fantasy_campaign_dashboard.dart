@@ -277,6 +277,7 @@ class FantasyActiveHeroCard extends StatelessWidget {
                   if (experienceProgress != null) ...[
                     const SizedBox(height: 6),
                     Semantics(
+                      key: const ValueKey('active-hero-xp-progress'),
                       label:
                           'Erfahrungsfortschritt: ${(experienceProgress * 100).round()} Prozent',
                       child: ExcludeSemantics(
