@@ -1,5 +1,32 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – EP-Fortschritt mit Screenreader im Kampagnen-Dashboard (04.11.2026)
+
+Der bestätigte EP-Fortschrittsbalken der aktiven Heldenkarte kündigt jetzt
+„Erfahrungsfortschritt: N Prozent“ an und vermeidet eine doppelte technische
+Balkenansage. Der Wert wird aus der bestehenden EP-Berechnung übernommen;
+unbestätigte Werte bleiben ausdrücklich unbekannt. Drei Widgettests prüfen
+320/360 dp mit 200 % Schrift, simulierter Android-Tastatur, korrekte
+Semantik, bedienbare Aktionen und unveränderte gespeicherte Heldenwerte.
+Branch `feat/chat-c/campaign-xp-progress-semantics-20261104`;
+[Draft-PR #535](https://github.com/ManuEtt/Dnd/pull/535). Die gezielte Flutter-CI [#41776172261](https://github.com/ManuEtt/Dnd/actions/runs/41776172261) bestand 11 Tests; die neue vollständige GitHub-CI
+und eine echte Android-/TalkBack-Abnahme sind noch ausstehend.
+Keine Änderungen an Spielregeln, SQLite/JSON, App-Version oder Assets.
+
+---
+
+## Chat D – Java-konforme Whitespace-Prüfung der Gradle-Wrapper-Werte (04.11.2026)
+
+Die Übertragungsprüfung `scripts/verify_project.py` validiert `distributionUrl` und `distributionSha256Sum` jetzt ohne das bisherige `strip()` auf den Property-Werten: Java `Properties.load()` ignoriert nur führende ASCII-SP/Tab/FF, bewahrt aber abschließende Leerzeichen und nicht-ASCII-Leerzeichen. Der Parser darf diese ungültigen Werte nicht nachträglich als gültige URL/SHA maskieren. Drei neue Python-Regressionsmethoden in `scripts/tests/test_verify_project.py` prüfen insgesamt 22 Negativ- und Kompatibilitätsvarianten. Java 21 hat das zugrunde liegende Parse-Verhalten in einem isolierten Minimalversuch bestätigt. [Draft-PR #537](https://github.com/ManuEtt/Dnd/pull/537), Fachcommit `15304e04861a`; vollständige Projekt-/CI-Tests für den finalen HEAD sind noch offen. Keine Änderung an Gradle-Distribution, SQLite/JSON, vorhandenen Spielständen oder App-Version.
+
+---
+
+## Chat A – Hexenmeister-Magische-List: konsistente Klassenprofile (04.11.2026)
+
+[Draft-PR #539](https://github.com/ManuEtt/Dnd/pull/539) schützt die SRD-5.2.1-Fähigkeiten `Magical Cunning` (Hexenmeister 2) und `Eldritch Master` (Hexenmeister 20) vor unberechtigten Paktplatz-Regenerationen aus inkonsistenten direkt erzeugten bzw. historischen Klassenprofilen. Unbekannte, doppelte oder unplausibel gestufte Klassenkombinationen liefern lesend null Nutzungen und scheitern beim ausdrücklich abgeschlossenen Ritual vor jedem Ressourcenverbrauch mit `FormatException`. Bestätigte deutsche/englische Aliase und Kämpfer-/Hexenmeister-Mehrklassen bleiben zugelassen. **Zwölf neue deterministische Testfälle**: neun ungültige Profile und drei Positiv-/Grenzfälle. Getestete CI auf finalem PR-Commit und Android-Debug-APK stehen zur Überprüfung aus; lokal kein Dart-/Flutter-SDK. Klassen-/Paktlogik außerhalb dieses spezialisierten Moduls, Story, UI und Datenformate unverändert; SQLite 3 und JSON 1 ohne Migration. SRD 5.2.1 CC BY 4.0; Requirement `CLASS-HEXENMEISTER-2-BASE-MAGICAL-CUNNING-0` bleibt `partial` (keine echte Ritual-Uhr/Unterbrechungsbestätigung). Basis-main `c8f25132`, Code-/Testcommit `86c83b5c`; gemeinsame Dokumentation wird durch Chat D additiv integriert.
+
+---
+
 ## Chat D – Korrekte Java-Properties-Zeilentrennung bei Gradle-Uploadprüfung (03.11.2026)
 
 Die Python-Übertragungsprüfung `scripts/verify_project.py` wertet physische Zeilen der Gradle-Wrapper-Konfiguration nun wie Java Properties ausschließlich an CR/LF/CRLF aus. Unicode-Zeichen U+0085, vertikaler Tab und U+2028/U+2029 innerhalb eines Kommentars erzeugen keine vorgetäuschten gültigen `distributionUrl`- oder `distributionSha256Sum`-Einträge und keine fälschlichen Doppelbelegungen mehr. Drei Regressionstest-Gruppen in `scripts/tests/test_verify_project.py` decken fehlende Pflichtwerte, erlaubte Kommentarinhalte und echte Zeilenenden ab. Separater Draft-[PR #528](https://github.com/ManuEtt/Dnd/pull/528), Basis `7be2135`, Fachcommit `ab0a8c8`. **Vollständige CI auf ursprünglichem PR-HEAD `1e04364` erfolgreich:** [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451). Auf dem konsolidierten Integrations-HEAD ist erneut eine vollständige CI erforderlich. Keine SQLite-/JSON-/Versionsmigration.
@@ -1224,3 +1251,23 @@ Finale GitHub-CI und reale Geräteabnahme getrennt nachweisen; kein Auto-Merge.
 Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt auch symbolische Links innerhalb von `app/lib/story/` und `app/lib/domain/` zurück (Dateien und Unterordner), bevor externe Dart-Dateien gelesen werden. Drei ergänzende Python-Regressionen sichern verschachtelte Datei- und Verzeichnislinks sowie Nicht-Dart-Links ab. Die Änderung enthält keine Regel-/Story-/UI-Anpassung oder Speicherformatmigration. Separate Chat-D-Abnahme auf `fix/chat-d/domain-symlink-source-guard-20261103`; vollständige CI auf finalem Commit noch ausstehend.
 
 ---
+
+---
+
+## Chat B – doppelte Handlungsstrang-IDs bei Kampagnenwiederaufnahme (04.11.2026)
+
+[Draft-PR #536](https://github.com/ManuEtt/Dnd/pull/536) verhindert,
+dass ungeprüfte In-Memory-StoryThreads mit mehrfach belegten IDs und
+widersprüchlichen Stati einen bereits geschlossenen Strang erneut als
+„aktuell offen“ darstellen. Reguläre JSON-Importe weisen solche Dubletten
+bereits zurück. `CampaignResumeReader` übernimmt nur eindeutige
+sichere IDs, erhält die zuletzt gespeicherte Reihenfolge und begrenzt die
+Anzeige unverändert. Vier neue Flutter-Regressionstests decken mehrdeutige
+IDs, ungültige Identitäten, Reihenfolge/Limit, JSON-Importabwehr bei
+Dubletten und SQLite-Neustart mit gültigen IDs ab. Keine Regel-/Event-/Quest-, Datenbank- oder App-Versionsänderung.
+Die vollständige CI auf dem finalen PR-HEAD und Geräteabnahme bleiben
+gesonderte Freigabegates.
+
+
+### CHAT A · 04.11.2026 – Waldläufer-Unermüdlich mit bestätigtem Klassenprofil
+[PR #538](https://github.com/ManuEtt/Dnd/pull/538) validiert vor der SRD-5.2.1-Waldläuferfähigkeit *Unermüdlich / Tireless* (Klassenstufe 10) die gesamte Klassenkombination, darunter gültige Aliase, unterschiedliche Mehrklassen und konsistente Stufen. Ungültige Profile werden ohne Würfelwurf, Nutzungsverbrauch oder Erschöpfungsreduktion abgewiesen. Ein neuer deterministischer Domain-Test deckt negative und positive Fälle ab; bestehende SQLite-/JSON-Spielstände und öffentliche APIs bleiben unverändert. Vollständige GitHub-CI und APK auf dem finalen PR-HEAD noch gesondert zu bestätigen. Quelle: [SRD v5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0.

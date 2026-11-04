@@ -1,3 +1,70 @@
+## Chat C – Bestätigten EP-Fortschritt im Kampagnen-Dashboard ansagen (04.11.2026)
+
+Branch `feat/chat-c/campaign-xp-progress-semantics-20261104`, Ausgangs-main
+`17378018a6fc971aa723f0bfe817d040553fa020` ([Draft-PR #535](https://github.com/ManuEtt/Dnd/pull/535)).
+`FantasyActiveHeroCard` beschriftet den existierenden, schreibgeschützten
+EP-Fortschrittsbalken jetzt mit „Erfahrungsfortschritt: N Prozent“ und
+unterdrückt seine doppelte technische Semantik. Unbestätigte EP liefern
+weiterhin weder Balken noch erfundene Prozentzahl.
+Drei neue Widgettests bei 320/360 dp, 200 % Schrift und 220 dp simulierter
+Android-Tastatur prüfen korrekte Screenreaderansage, aktive Aktionen,
+negativen EP-Fall und unveränderte Helden-JSON-Daten.
+Fachdateien: `app/lib/ui/fantasy_campaign_dashboard.dart`,
+`app/test/fantasy_campaign_xp_accessibility_test.dart`.
+Gezielte Widget-CI [#41776172261](https://github.com/ManuEtt/Dnd/actions/runs/41776172261): 11 Tests grün, 2 Dart-Dateien formatiert. Neue volle GitHub-CI und echte Android-/TalkBack-/IME-Abnahme zunächst
+**ausstehend**; keine automatische Mergefreigabe. Keine Regel-,
+Persistenz-, Schema-, Asset-, Backend- oder Versionsmigration.
+Chat D muss gemeinsame Dokumentation bei Integration additiv erhalten.
+
+---
+
+## Chat D – Gradle-Properties-Whitespace gegen Fehlannahmen absichern (04.11.2026)
+
+- **Ausgangs-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`.
+- **Branch:** `fix/chat-d/gradle-properties-value-whitespace-20261104`.
+- **Fach- und Testcommit:** `15304e04861aec5913a55ce312448f2a4cd80a8b`.
+- **PR:** [#537](https://github.com/ManuEtt/Dnd/pull/537), Draft bis zur vollständigen CI.
+- **Problem:** `unique_gradle_property` entfernte mit `strip()` echten Wertinhalt: Trailing-Whitespace und führende Unicode-Leerzeichen blieben in `java.util.Properties` erhalten, wurden vom Python-Prüfer aber ignoriert.
+- **IMPLEMENTIERT:** Führende ASCII-Leerzeichen, Tabs und Form Feeds werden Java-konform ignoriert; der übrige unveränderte Wert muss den bestehenden strikten HTTPS-/SHA256-Regeln entsprechen.
+- **Regressionen:** `scripts/tests/test_verify_project.py` mit drei Testmethoden und 22 Parametervarianten (10 fehlerhafte trailing-Zeichen, vier führende Unicode-Leerzeichen, acht positive Java-konforme führende ASCII-Leerzeichen).
+- **GETESTET:** OpenJDK 21 `Properties.load(StringReader)` bestätigt in realer Java-Ausführung das Verhalten für ASCII-Space, Tab, FF, NBSP und Em-Space jeweils am Anfang/Ende.
+- **NICHT GETESTET:** Tatsächliche Python-Projektunittests, vollständige GitHub Actions auf finalem HEAD, Flutter-/Backend-/Android-Gesamtabnahme und reales Android-Gerät. Keine davon als bestanden ausgeben, bis CI dies nachweist.
+- **Betroffene Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Kompatibilität:** Kein Schema- oder Exportformatwechsel; keine SQLite-/JSON-/Spielstand-/Migrationsänderung; alte Wrapper-Konfiguration bleibt unverändert.
+- **Abgrenzung:** Die zuvor offene Chat-C-PR #535 betrifft Flutter-UI, nicht die beiden Python-Dateien; gemeinsame Dokumente wurden additiv aktualisiert.
+- **Nächster Schritt:** Finalen PR-HEAD mit allen GitHub-Actions-Gates prüfen und nur bei erfolgreicher Abnahme regulär integrieren.
+
+---
+
+## 04.11.2026 – CHAT A: Waldläufer „Unermüdlich“ gegen ungültige Klassenprofile absichern (PR #538)
+
+- **Ausgangs-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`; **Arbeitsbranch:** `feat/chat-a/ranger-tireless-class-preflight-20261104`; **Fach-/Test-HEAD:** `58fa652fef01cb25d7fdae553364b31947cbd06a`.
+- **Ausgangsproblem:** Direkt an `SrdRangerTirelessRules` übergebene Klassen-Snapshots wurden ohne Prüfung von Haupt-/Nebenklasse, Alias-Dopplung oder inkonsistenten Stufen ausgewertet; dadurch konnten die SRD-5.2.1-Waldläufermerkmale *Tireless* / Unermüdlich ab Stufe 10 zu Unrecht verfügbar erscheinen.
+- **Implementiert:** `app/lib/domain/srd_ranger_tireless_rules.dart` prüft die Klassenprofile vor temporären TP, Magieaktion/W8 und automatischer Erschöpfungsreduktion. Bei ungültigen Profilen nur neutrale lesende Ergebnisse; ausdrücklich bestätigte Magieaktion wird vor Zufall und Ressourcenverbrauch abgelehnt. Gültige Aliase und gemischte Kämpfer-/Waldläuferklassen bleiben gültig.
+- **Neue Regressionen:** `app/test/srd_ranger_tireless_class_preflight_test.dart`, sieben negative Profile (u. a. unbekannte Klasse, Doppel-Ranger, verwaiste Zweitklasse, unzulässige Stufen), positive gültige Einzel-/Mehrklasse, unverändertes Ausgangs-JSON und keine RNG-Verwendung bei Ablehnung.
+- **Daten-/Schnittstellenschutz:** Keine Änderung an `models.dart`, `game_engine.dart`, `services/`, `data/`, Story/UI/Backend, SQLite3/JSON1; keine Migration. Register `CLASS-WALDL-UFER-10-BASE-TIRELESS-0` bleibt `partial`.
+- **Tests/CI:** Quell- und Git-Diff geprüft; GitHub Actions, `flutter analyze`, `flutter test` und APK auf dem finalen dokumentierten PR-HEAD getrennt zu kontrollieren; vor Abschluss keine grüne CI behauptet.
+- **Regelquelle:** <https://www.dndbeyond.com/srd>, SRD v5.2.1, Classes / Ranger 10 / Tireless; CC BY 4.0.
+- **PR:** <https://github.com/ManuEtt/Dnd/pull/538> (Draft), Integration durch CHAT D nach bestandener finaler CI und konfliktfreiem Main-Abgleich.
+- **Nächster konkreter Schritt:** Klassen-/Quellenvalidierung einer anderen spezialisierten SRD-Regelfunktion nur nach erneuter Prüfung offener PRs und ihrer Dateilisten.
+
+
+---
+
+## Chat A – 04.11.2026: Hexenmeister-Klassenprofilprüfung vor Magischer List (PR #539)
+
+- **Branch/PR:** `feat/chat-a/warlock-magical-cunning-class-preflight-20261104` / https://github.com/ManuEtt/Dnd/pull/539 (Draft). **Main-Basis:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`. **Fach-/Testcommit:** `86c83b5c93610285866e1717e65ac0a1d8e582b5`.
+- **Ausgangsproblem:** Die Levelprüfung in `SrdWarlockMagicalCunningRules` übernahm aus `SpellcastingRules.pactClassLevel` Stufen aus nicht validierten Klasse-/Alias-Kombinationen. Unplausible Legacy-Objekte konnten das bestätigte 1-Minuten-Ritual für Paktplatzregeneration auslösen.
+- **Implementiert:** nullable, ausschließlich lokale Klassenprofilprüfung; ungültige Profile erlauben weder `maximumUses` noch `maximumRecoveredSlots`; mutierender Ritualzugriff scheitert vor Verbrauch mit `FormatException`. Gültige Klasse Stufe 1 bleibt mit `StateError` gesperrt; SRD-Aliase/Mehrklasse und Eldritch Master Stufe 20 bleiben funktionsfähig.
+- **Dateien:** `app/lib/domain/srd_warlock_magical_cunning_rules.dart`, neue `app/test/srd_warlock_magical_cunning_class_preflight_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`.
+- **Tests:** 12 neue deterministische Fälle (9 ungültige Profile, 3 positive/negative Schwellen/Multiclass), unveränderter Eingabezustand und unberührte Paktplätze bei Ablehnung. Lokales Dart/Flutter nicht vorhanden. **CI auf finalem PR-HEAD noch nicht als bestanden bestätigt**; Python/Backend/Flutter/Debug-APK durch PR-Actions prüfen; keine Tests deaktiviert.
+- **Kompatibilität:** Keine neuen Modelle, Feldeinträge, Schema- oder Versionsänderungen, keine Migration; SQLite 3 / JSON 1 unverändert. Allgemeine Paktmagievalidierung in `SpellcastingRules` ist ausdrücklich nicht Teil dieses PRs.
+- **Quelle:** SRD 5.2.1, *Warlock Level 2 Magical Cunning / Level 20 Eldritch Master*, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd; `CLASS-HEXENMEISTER-2-BASE-MAGICAL-CUNNING-0` bleibt `partial`: Ritualdauer, Unterbrechungen und Geräterevision nicht neu implementiert.
+- **Konflikte/Blocker:** PRs #535–#538 (C/B/D/A) ändern keine der beiden Fachdateien; README und zentraler Checkpoint werden bei Chat D additiv konsolidiert. CI-Endnachweis, D-Review, Gerätetest offen.
+- **Nächster Schritt:** Nur nach konfliktfreier aktueller PR-/Main-Prüfung die Klassenprofilgrenze der **gewöhnlichen Paktmagie** in `SpellcastingRules.pactClassLevel` separat untersuchen; Akzeptanz: keine unverdienten Paktplätze bei doppelten/ungültigen Klasse-Aliassen, gültige Altcharaktere und Casts unverändert, keine stillschweigende Speicherung, eigene Regressionen und vollständige CI.
+
+---
+
 ## Chat D – Gradle-Properties-Parser: Unicode-Scheinzeilen verhindern (03.11.2026)
 
 - **Main-Basis:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.
@@ -1871,3 +1938,20 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **Nächster Schritt:** finale vollständige CI dieses Branches und anschließende konfliktfreie Integration abnehmen.
 
 ---
+
+---
+
+## 04.11.2026 – Chat B: widersprüchliche StoryThread-IDs im Wiederaufnahmerückblick (PR #536)
+
+- **Projekt:** Würfelraunen, Appversion gemäß aktuellem `app/pubspec.yaml` unverändert.
+- **Ausgangs-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`.
+- **Branch:** `feat/chat-b/resume-lead-id-integrity-20261104`.
+- **Pull Request:** [#536](https://github.com/ManuEtt/Dnd/pull/536), Draft.
+- **Korrigierter Codecommit:** `0c9243b3d5f8cc1232372081403a963dcf864c09`; **korrigierter Testcommit:** `d8d12b3ee2aae27e1b415190fd0353ce73969284`. Formatfix `351f5a5c97af2387e3b9704b169ca90011a18487`, diagnostischer Workflow wieder entfernt. Finalen Branch-HEAD nach Dokumentation prüfen.
+- **IMPLEMENTIERT:** `app/lib/story/campaign_resume_context.dart` zeigt offene StoryThreads nur bei eindeutiger, sicherer ID `[a-zA-Z0-9_-]{1,64}` an. Dubletten mit widersprüchlichen Stati werden in der reinen In-Memory-Leseansicht vollständig ausgeblendet; die vorhandene JSON-Importvalidierung weist doppelte Story-IDs bereits zurück. Der gültige Spielstand bleibt unverändert.
+- **Regressionen:** Neuer `app/test/campaign_resume_lead_id_integrity_test.dart` mit vier Tests: contradiktorisch offene/geschlossene Dubletten, identische doppelte offene/unsichere IDs, richtige Reihenfolge/Limit eindeutiger Spuren sowie Ablehnung doppelter IDs beim JSON-Import und SQLite-Neustart mit eindeutigem offenen Strang.
+- **GETESTET:** Repository/Masterprompt/Story-Architektur/PR-Pfade geprüft. CI [#41783012878](https://github.com/ManuEtt/Dnd/actions/runs/41783012878): Python, Backend, Dart-Format/Flutter-Analyse und gezielte Dialogtests grün, 3095 Flutter-Tests bestanden; zwei neue Tests scheiterten an falschen Erwartungen (unbestätigte Szene bleibt sichtbar, duplizierte JSON-IDs werden bereits abgewiesen). Beide im Commit `d8d12b3` korrigiert; vollständige CI des neuen HEAD noch ausstehend. [Vorgänger #531](https://github.com/ManuEtt/Dnd/pull/531) ist mit grüner finaler CI gemergt. Dieser grüne Vorgängerlauf ist **kein** Testnachweis für #536.
+- **NICHT GETESTET:** Lokale Flutter-/Dart-Ausführung mangels installiertem SDK; vollständige Python-/Backend-/Dart-/Flutter-/Android-CI auf endgültigem PR-HEAD noch nicht abschließend nachgewiesen. Kein Realgerät-, Anbieter- oder Upgrade-Test.
+- **BLOCKIERT:** Finale CI/Review, konfliktfreie README-/Checkpoint-Integration durch Chat D. Anderer offener PR #535 bearbeitet Chat-C-Dashboard statt Story-Fachcode.
+- **MIGRATION:** Keine; JSON-/SQLite-Schema, Helden-TP, XP, Quests, Events und App-Version unverändert. Keine KI-Kosten.
+- **NÄCHSTER SCHRITT:** CI auf dem finalen PR-HEAD vollständig kontrollieren, eigene Fehler im Branch korrigieren und Integrationsfreigabe bei Chat D vorbereiten.

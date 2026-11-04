@@ -1,3 +1,20 @@
+## 04.11.2026 – Chat C: Screenreader-Fortschritt der Kampagnenübersicht
+
+- **Ausgangs-main:** `17378018a6fc971aa723f0bfe817d040553fa020`.
+- **Branch:** `feat/chat-c/campaign-xp-progress-semantics-20261104`.
+- **PR:** [#535](https://github.com/ManuEtt/Dnd/pull/535), Draft.
+- **Problem:** Das schreibgeschützte `FantasyActiveHeroCard` zeigte den Fortschritt zum nächsten Level visuell, aber nicht mit einem sprechenden, eindeutigen Label; das bestehende Abenteuer-HUD enthielt bereits ein solches Label.
+- **IMPLEMENTIERT:** Eine `Semantics`-Beschriftung „Erfahrungsfortschritt: N Prozent“ auf dem vorhandenen `LinearProgressIndicator`; die inneren dekorativen Indikator-Semantiken werden ausgeschlossen, damit kein doppelter oder unbeschrifteter Balken angesagt wird. Der Prozentwert verwendet unverändert `CampaignExperience.levelProgress(hero)`, gerundet wie im Abenteuer-HUD. Ohne bestätigte EP entsteht weder Balken noch Prozentansage.
+- **Dateien:** `app/lib/ui/fantasy_campaign_dashboard.dart` und `app/test/fantasy_campaign_xp_accessibility_test.dart` sowie additive README-/Checkpoint-Einträge. Keine andere UI, keine Regelengine und keine Persistenzänderung.
+- **Drei Widgettests hinzugefügt:** 320/360 dp, 200 % Schrift, 220 dp simulierte Android-IME, eindeutige Prozentansage bei Level 1/150 EP (50 %), unveränderte bestätigte HP und JSON-Daten, bedienbare Fortsetzen-Aktion; negativer Fall ohne bestätigte EP und ohne implizite Spielstandsänderung.
+- **GETESTET:** aktuellen Main-HEAD, offenen PR-Fachdateien, Masterprompt, bestehende Dashboard-/HUD-Tests und die Fortschrittsberechnung geprüft; eigener Branch und GitHub-Code- und Testcommits vorhanden. **Gezielte GitHub-Widget-CI [#41776172261](https://github.com/ManuEtt/Dnd/actions/runs/41776172261): 11 Tests bestanden, 2 Dateien korrekt formatiert; vollständige CI auf finalem PR-HEAD noch ausstehend.**
+- **NICHT GETESTET:** Flutter/Dart lokal (SDK nicht verfügbar), neuer vollständiger Flutter-/Backend-/Python-/Android-GitHub-Lauf auf finalem HEAD, physisches Android-Gerät mit TalkBack und echter IME, Upgrade/Signierung.
+- **BLOCKIERT:** keine fachliche Überschneidung; technische CI und reale Geräteabnahme fehlen. Gemeinsame Dokumentationsdateien bei Integration durch Chat D additiv bewahren.
+- **Kompatibilität:** Schema SQLite 3, JSON 1, Domain-Regeln, SRD, Story, Controller, Assets, Berechtigungen und Versionsnummer unverändert. Keine Migration.
+- **NÄCHSTER SCHRITT:** CI auf endgültigem PR-HEAD vollständig abnehmen; bei Fehlern gezielt korrigieren. Anschließend echte TalkBack- und IME-Abnahme auf 320/360 dp durchführen.
+
+---
+
 ## 02.11.2026 – Chat C: Mehrgegner-Initiative mit 200 % Schrift und IME
 
 - **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.

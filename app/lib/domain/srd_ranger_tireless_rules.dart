@@ -16,7 +16,7 @@ class SrdRangerTirelessRules {
 
   /// A missing confirmed Wisdom score never grants fabricated uses.
   static int maximumTemporaryHitPointUses(HeroCharacter hero) {
-    if (_rangerClassLevel(hero) < 10) return 0;
+    if ((_rangerClassLevel(hero) ?? 0) < 10) return 0;
     final wisdom = hero.abilities['wisdom'];
     if (wisdom == null) return 0;
     final modifier = RulesEngine.abilityModifier(wisdom);
@@ -39,7 +39,13 @@ class SrdRangerTirelessRules {
     DiceEngine dice, {
     bool replaceExisting = false,
   }) {
-    if (_rangerClassLevel(hero) < 10) {
+    final rangerLevel = _rangerClassLevel(hero);
+    if (rangerLevel == null) {
+      throw const FormatException(
+        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+      );
+    }
+    if (rangerLevel < 10) {
       throw StateError('Unermüdlich erfordert Waldläufer-Klassenstufe 10.');
     }
     if (hero.abilities['wisdom'] == null) {
@@ -82,16 +88,30 @@ class SrdRangerTirelessRules {
     );
   }
 
-  static int _rangerClassLevel(HeroCharacter hero) {
-    final primary = findSrdClass(hero.className)?.name == 'Waldläufer'
-        ? hero.primaryClassLevel
-        : 0;
-    final secondary =
-        hero.hasSecondClass &&
-            findSrdClass(hero.secondaryClassName)?.name == 'Waldläufer'
-        ? hero.secondaryClassLevel
-        : 0;
-    return primary + secondary;
+  /// Null means that the historical class snapshot is inconsistent.
+  /// Read-only helpers fail closed; the explicit Magic action rejects it
+  /// before a die is rolled or any class resource is consumed.
+  static int? _rangerClassLevel(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return null;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return null;
+    }
+    return (primary == 'Waldläufer' ? hero.primaryClassLevel : 0) +
+        (secondary == 'Waldläufer' ? hero.secondaryClassLevel : 0);
   }
 
   /// Eligibility is tied to class levels, never total multiclass levels.
@@ -101,7 +121,7 @@ class SrdRangerTirelessRules {
       hero.hitPoints! > 0 &&
       hero.maxHitPoints != null &&
       hero.maxHitPoints! >= hero.hitPoints! &&
-      _rangerClassLevel(hero) >= 10 &&
+      (_rangerClassLevel(hero) ?? 0) >= 10 &&
       hero.exhaustionLevel > 0;
 
   /// Pure state transition; cannot be called by an AI narrative decision.
