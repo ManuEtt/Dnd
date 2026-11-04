@@ -1,3 +1,24 @@
+## Chat D – Gradle-Properties-Parser: Unicode-Scheinzeilen verhindern (03.11.2026)
+
+- **Main-Basis:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.
+- **Eigener Branch:** `fix/chat-d/gradle-properties-physical-lines-20261103`.
+- **Code- und Testcommit:** `ab0a8c8827dbfc092d53ca048be24e13c1b23a64` (Dokumentations-HEAD in PR #528 prüfen).
+- **Pull Request:** [#528](https://github.com/ManuEtt/Dnd/pull/528), Draft.
+- **Problem:** Python-`str.splitlines()` trennt zusätzlich an U+0085, VT, U+2028/U+2029. Java Properties sieht dort keine physischen Zeilenenden. Ein Kommentar konnte nach dem Unicode-Zeichen einen scheinbar aktiven Wrapper-URL-/Checksum-Eintrag enthalten.
+- **IMPLEMENTIERT:** `scripts/verify_project.py` verwendet `re.split(r'\r\n|\r|\n', text)` für nur CR, LF und CRLF; übriges Java-Properties-Key-/Continuation-Verhalten unverändert.
+- **Regressionen:** `scripts/tests/test_verify_project.py`: (1) falsche Pflichtwerte aus Kommentaren abweisen, (2) gültige kommentierte Unicode-Sequenzen ohne fälschliche Duplikate akzeptieren, (3) CR-/LF-/CRLF-Eingaben weiter akzeptieren.
+- **GETESTET:** GitHub-Actions [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451) auf ursprünglichem PR-HEAD `1e04364c63bf1890c716adae2fe7b76dad356f6a` vollständig erfolgreich: Python-/Domain-/SRD-Skripte, Backend, Flutter, Android-Debug-/Alpha-APK, native Backuptests und Quellcode-Checkpoint. Eine neue gemeinsame CI für den Integrations-HEAD ist gesondert erforderlich.
+- **NICHT GETESTET:** Finale kombinierte CI des Integrationscommits, reales Android-Gerät und Altspielstand-Upgrade.
+- **BLOCKIERT:** Kein GitHub-Clone per lokalem Netz-DNS; kein Flutter-/Dart-SDK in dieser Ausführungsumgebung. CI muss den finalen Commit prüfen.
+- **Auswirkungen:** Vorhandene SQLite-/JSON-Spielstände, Android-Backupformat, Rule-/Storymodule, App-Version und Migrationen unberührt.
+- **Betroffene Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktabgrenzung:** Keine der beim Arbeitsbeginn offenen A/B/C/D-PRs ändert die beiden Python-Fachdateien; Dokumentationskonsolidierung beim späteren Merge ausschließlich additiv.
+- **NOCH NICHT IMPLEMENTIERT:** CI-Abnahme und reguläre Integration dieses Draft-PRs. Keine Branchbereinigung.
+- **Nächster Schritt (DoD):** Den *finalen* PR-HEAD von #528 in GitHub Actions mit erfolgreicher Python-/Backend-/Flutter-/Android-CI belegen; bei Fehlern auf diesem Branch korrigieren und erneut testen.
+
+
+---
+
 ## Chat D – UTF-8-Bytegrenze beim JSON-Import (02.11.2026)
 
 - **Basis-main:** `84437e4e92d735e179bb2585427b46a10451951d`.
@@ -1766,3 +1787,69 @@ Die darunter bewahrten Berichte gelten jeweils für ihren damaligen Stand.
 - **NÄCHSTER SCHRITT:** vollständige CI des eigenen finalen PR-HEAD
   abnehmen und Fehler auf eigenem Branch korrigieren; danach Integration
   durch Chat D prüfen, ohne automatischen Merge.
+
+
+---
+
+## Chat C – Porträt-Aktionen bei 200 % Schrift/IME (03.11.2026)
+
+[Draft-PR #529](https://github.com/ManuEtt/Dnd/pull/529),
+Basis-main `7be2135f5046c4139a7340cc2bfa876a7d311c93`, Branch
+`feat/chat-c/portrait-picker-large-text-actions-20261103`.
+`CharacterPortraitPicker` ordnet ab 180 % Android-Schrift oder unter 320 dp
+die Aktionen „Abbrechen“ und „Übernehmen“ vertikal und vollbreit an;
+bei normaler Breite/Schrift bleibt die bisherige horizontale Fußleiste.
+Vier neue Widgettests erfassen positive/negative Auswahl-/Abbruch- und
+TalkBack-Semantikfälle bei 320/360 dp, 200 % Text, simulierter 220-dp-IME
+sowie die gewohnte horizontale Kontrollansicht. Keine Domain-, Controller-,
+Story-, JSON-/SQLite-, Berechtigungs- oder Versionsänderung; keine Migration.
+Lokales Flutter-SDK fehlt; GitHub-CI und echte Android-TalkBack-/IME-
+Abnahme sind bis zum gesonderten Abschluss ausdrücklich offen. Die
+gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
+
+---
+
+
+---
+
+## CHAT A · 03.11.2026 · Konzentrationsschadensquellen-IDs
+
+- **PR:** [#530](https://github.com/ManuEtt/Dnd/pull/530) (Draft), **Branch:** `fix/chat-a/concentration-damage-source-id-unicode-20261103`, **Basis-main:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.
+- **Fach-/Testcommit vor Dokumentation:** `f9bdb9b687c2144bb45c3f8227900048fd2a0249`.
+- **Problem:** In `SrdConcentrationDamageRules.resolve` konnten U+206A–U+206F und U+FFF9–U+FFFB in auditierbaren Schadensquellen-IDs unbemerkt unterschiedliche Schlüssel für optisch gleiche Quellen bilden.
+- **Umsetzung:** Neun weitere unsichtbare Legacy-Formatzeichen in der bestehenden Fail-Closed-Validierung gesperrt; zwei deterministische Testgruppen prüfen verworfene Einzelschlüssel, fingierte Zweitquelle nach gescheitertem Rettungswurf, die automatische Beendigung ohne Wurf sowie weiterhin zulässige internationale IDs. Keine Änderungen an Modellen, Spielständen oder Aktionsökonomie.
+- **Tests:** `app/test/srd_concentration_damage_rules_test.dart` erweitert; Flutter/Dart nicht im ausführenden Container installiert, GitHub-Actions-Lauf auf finalem PR-HEAD gesondert prüfen. Keine lokale Testausführung oder grüne CI behauptet.
+- **Quelle:** D&D SRD 5.2.1, Concentration / Taking Damage, CC BY 4.0: https://www.dndbeyond.com/srd.
+- **Nächster unabhängiger Schritt:** Einen weiteren spezialisierten Quellen-/ID-Validator ausschließlich nach erneuter PR-Dateiprüfung auf bestätigte externe Dateneingaben testen.
+
+
+---
+
+
+---
+
+## Chat B – Bestätigte NPC-Kurzchronik gegen ältere Formatmarken (03.11.2026, Europe/Berlin)
+
+- **Ausgangs-main:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`; **Branch:** `feat/chat-b/npc-continuity-legacy-marks-20261103`; **PR:** [#531](https://github.com/ManuEtt/Dnd/pull/531), Draft. Vor jedem Merge finalen HEAD und Main neu prüfen.
+- **Projekt:** Würfelraunen 0.8.49+99 (unverändert).
+- **IMPLEMENTIERT:** `app/lib/story/confirmed_npc_continuity_excerpt.dart` filtert neun zuvor übersehene, alte Unicode-Formatzeichen im rein lesenden NPC-Auszug. Die gespeicherte NPC-ID und die begrenzte, quellengebundene Ausgabe bleiben erhalten.
+- **Tests ergänzt:** `app/test/confirmed_npc_continuity_legacy_marks_test.dart` mit drei Flutter-Regressionen für alle neun Unicode-Zeichen in NPC-Anzeigenamen, aktueller Beziehung, Notizbeziehung/-text, positive de-DE- und Emoji-Variation-Texte sowie SQLite-Schließen/Neuöffnen und identisches JSON.
+- **Quell-/Testcommits:** `86caf50c4f1bc5a98c5c914ad796cfd58667937b`, `d6842a309ab1a0ee54d2de102064250de0f3bbaa`, `ae548ef951ef2bbc48a1d35cd6044f1dd772f3fb`; finalen Dokumentations-HEAD neu ermitteln.
+- **GETESTET:** Repository, PR-Dateipfade, bestehende Fachtests, Architektur- und Story-/Regelgrenzen über GitHub inspiziert; Code/Testcommits gesichert. Frühere [#519-CI](https://github.com/ManuEtt/Dnd/actions/runs/41594258320) erfolgreich, ausdrücklich **nicht** der Nachweis dieses neuen Pakets.
+- **NICHT GETESTET:** Neue vollständige Python-, Backend-, Dart-/Flutter- und Android-/APK-CI auf finalem Head zum Zeitpunkt dieses Eintrags noch offen; lokales Dart/Flutter nicht installiert. Realgerät, produktive KI, Upgrade und TalkBack nicht geprüft.
+- **BLOCKIERT:** Endgültige GitHub-CI/Review; Integration der gestapelten Chat-D-PRs vor dieser eigenen Freigabe.
+- **Dateien:** Excerpt-Storymodul, neuer Regressionstest, additiv README und beide Checkpoints. Keine JSON-/SQLite-Migration, Modell-, Controller-, Backend-, Rule- oder Versionänderung. Keine kostenpflichtigen KI-Aufrufe.
+- **Nächster Schritt:** Finalen GitHub-Workflow dieses PRs prüfen, Fehler auf demselben Branch korrigieren und nur bei grünen Tests konfliktfreie Übernahme durch Chat D vorbereiten.
+
+---
+
+## 03.11.2026 – Chat D: Integrations-PR #533 (vier unabhängig CI-geprüfte Fixes)
+
+- **Main-Basis:** `fad366d778de1ab69984dfcae1c139d72f976e77`.
+- **Branch:** `chore/chat-d/integrate-nov03-regression-batch-20261103`.
+- **PR:** [#533](https://github.com/ManuEtt/Dnd/pull/533) (Draft bis zur kombinierten CI).
+- **Technischer Integrationscommit vor diesem Dokumentationsnachtrag:** `9b759cd3f8ae66055e527cc4002ec2d6e3e18648`.
+- **Quellen:** #528 Python-Gradle-Properties-Verifikation, #529 Porträt-Android-Accessibility, #530 Konzentrationsschaden-Unicode, #531 bestätigte NPC-Kurzchronik-Unicode. Alle vier Quellheads auf vollständiger GitHub-CI erfolgreich; eigene vollständige kombinierte CI auf finalem Branch gesondert abzunehmen.
+- **Inhalt:** acht unveränderte technische Quell-/Test-Git-Blobs, sechs gemeinsame Dokumentationsdateien additiv vereinigt, alle vier Quellheads als zusätzliche Commit-Eltern. Originalquellbranches bis zur erfolgreichen Main-CI geschützt.
+- **OFFEN:** Finale kombinierte CI, Main-/PR-Konfliktprüfung, regulärer Merge, grüne Main-CI, dann sichere Archivierung/Bereinigung. Reales Androidgerät/TalkBack/Update nicht geprüft.
+- **Kompatibilität:** SQLite3, äußeres JSON1, alte Spielstände und App-Version unverändert.

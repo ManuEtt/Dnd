@@ -741,3 +741,24 @@ Der vollständige rein additive Chat-Fachnachtrag aus PR #479 ist nachfolgend er
 - **NÄCHSTER SCHRITT:** Den fertigen PR #521 auf exakt seinem finalen HEAD per GitHub-CI vollständig abnehmen; Format-/Testfehler im selben Branch korrigieren und danach einen echten Android-TalkBack-/IME-Test gesondert vornehmen.
 
 ---
+
+
+---
+
+## 03.11.2026 – Chat C: Porträtauswahl bei 200 % Schrift und Android-IME
+
+- **Ausgangs-main:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.
+- **Branch:** `feat/chat-c/portrait-picker-large-text-actions-20261103`.
+- **Codecommit:** `b0bfb1b542ee92424ae7f10a8f231a1b0b417639`; **Testcommit:** `56223375245d45b5f3224cf21f28c0e9d8ca6f4e`.
+- **PR:** [#529](https://github.com/ManuEtt/Dnd/pull/529) (Draft); finalen Branch-HEAD einschließlich Dokumentation über GitHub prüfen.
+- **Problem:** Die halbbreiten, nebeneinander angeordneten Porträt-Aktionen können bei 200 % Android-Schrift und kleinen Geräten ihre vollständige lesbare Beschriftung verlieren.
+- **Implementiert:** Ab 180 % Schrift oder unter 320 dp zwei vertikal angeordnete volle Aktionsbreiten. Bei normaler Schrift bleibt die horizontale Anordnung unverändert. Der Auswahl-/Abbruch-/Übernahmevertrag bleibt derselbe.
+- **Fachdateien:** `app/lib/ui/character_portrait_picker.dart`; `app/test/character_portrait_large_text_actions_test.dart`. Additive Fortschritte in README, zentralem und Chat-C-Checkpoint.
+- **Vier Widgettests ergänzt:** 320/360 dp, 200 % Text und 220 dp simulierte IME (Abbrechen, vollbreite Actions, Touch-Erreichbarkeit, Semantikstatus und Scrollen), positive Übernahme einer bewussten Wahl und negative Abbruchfälle; normale horizontale Ansicht unverändert.
+- **GETESTET:** Main, letzte Commits/Actions, alle offenen PRs und deren Fachpfade geprüft; eigene Code- und Testcommits auf GitHub; Branch-Fachpfade von anderen PRs getrennt. Diese Bestandsaufnahme ist **kein ausgeführter Flutter-Test**.
+- **NICHT GETESTET:** Flutter/Dart lokal (kein SDK), vollständiger GitHub-Actions-Lauf auf finalem PR-HEAD, echte Android-Bedienung/TalkBack/IME und Altversions-Upgrade.
+- **BLOCKIERT:** Lokaler Flutter-/Android-SDK-Zugriff fehlt; GitHub-Actions-CI zur technischen Freigabe erforderlich. Gemeinsame README-/Checkpoint-Hunks additiv durch Chat D zusammenführen; kein eigenmächtiger Merge.
+- **Migration:** Keine. SQLite, JSON, Regelengine, KI, Story, Controller, Assets, Berechtigungen, bestehende Spielstände und App-Version unverändert.
+- **NÄCHSTER SCHRITT:** Finale GitHub-CI auf exakt dem Dokumentations-HEAD abnehmen, konkrete Fehler auf demselben Branch korrigieren; anschließend echte Android-/TalkBack-/IME-Prüfung.
+
+---

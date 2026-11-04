@@ -1295,3 +1295,36 @@ Fachnachweis: `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
 Die darunter bewahrten Berichte gelten jeweils für ihren damaligen Stand.
 
 ---
+
+
+---
+
+# CHAT A · Status 2026-11-03 · PR #530
+
+**Basis-main-SHA:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`  
+**Branch:** `fix/chat-a/concentration-damage-source-id-unicode-20261103`  
+**Fach-/Testcommit:** `f9bdb9b687c2144bb45c3f8227900048fd2a0249`  
+**PR:** https://github.com/ManuEtt/Dnd/pull/530 (Draft)
+
+### IMPLEMENTIERT
+- `app/lib/domain/srd_concentration_damage_rules.dart`: U+206A–U+206F und U+FFF9–U+FFFB als unsichtbare, irreführende Schadensquellen-ID-Zeichen abweisen; Vorprüfung aller Quellen vor irgendeiner Zustandsänderung erhalten.
+- `app/test/srd_concentration_damage_rules_test.dart`: zwei Gruppen mit negativen Fällen für alle 9 Zeichen (allein, nach Wurffehlschlag, ohne Wurf bei 0 TP) und positiven internationalen Quellen mit zwei getrennten erfolgreichen Würfen.
+- Additive Statusdokumentation in `README.md`, `docs/CODEX_CHECKPOINT.md` und dieser Chat-A-Datei.
+
+### GETESTET
+- Prüflogik und Codepfade über Quellcode-Review analysiert; GitHub-PR-Diff und CI gesondert kontrollieren.
+- **Keine** lokal ausgeführten Dart-/Flutter-Tests. Es gibt keine behauptete grüne lokale Testausführung.
+
+### NICHT GETESTET / BLOCKIERT
+- Werkzeugcontainer enthält kein `flutter` oder `dart`; `flutter test test/srd_concentration_damage_rules_test.dart`, `flutter analyze`, APK-Build und volle Projektprüfungen dort nicht ausführbar.
+- GitHub Actions auf dem finalen PR-HEAD separat nachweisen; laufende Workflows nicht als erfolgreich deklarieren.
+- Reale Hardware, TalkBack, Upgrade und signierte APK nicht getestet.
+
+### KOMPATIBILITÄT / MIGRATIONEN
+- Keine Modelle, Controller, Speicherformate, API oder bestehenden Events geändert; SQLite/JSON unverändert; keine Migration.
+- Kein direkter Commit auf `main`. PR #527 und seine Vorgänger nicht verändert; deren gemeinsame Dokuänderungen sind bei Integration durch CHAT D additiv zu konsolidieren.
+
+### NÄCHSTER SCHRITT
+- Nach CI/Integrationsabgleich einen unabhängigen, bislang unbelegten Quellen-ID-Validierungsfall im Regelbereich mit positiven und negativen Tests bearbeiten.
+
+---
