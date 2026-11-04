@@ -599,6 +599,56 @@ class VerifyProjectTests(unittest.TestCase):
                 properties.write_bytes(original.replace('\n', newline).encode('utf-8'))
                 self.assertEqual([], verify_project(self.root))
 
+    def test_gradle_properties_reject_trailing_whitespace_in_required_values(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        original = properties.read_text(encoding='utf-8')
+        for key, message in (
+            ('distributionUrl', 'HTTPS-Distribution'),
+            ('distributionSha256Sum', 'prüfsumme'),
+        ):
+            entry = next(
+                line for line in original.splitlines()
+                if line.startswith(key + '=')
+            )
+            for suffix in (' ', '\t', '\f', '\u00a0', '\u2003'):
+                with self.subTest(key=key, suffix=repr(suffix)):
+                    properties.write_text(
+                        original.replace(entry, entry + suffix, 1),
+                        encoding='utf-8',
+                    )
+                    self.assertTrue(any(
+                        message in error for error in verify_project(self.root)
+                    ))
+
+    def test_gradle_properties_reject_non_java_leading_whitespace(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        original = properties.read_text(encoding='utf-8')
+        for key, message in (
+            ('distributionUrl', 'HTTPS-Distribution'),
+            ('distributionSha256Sum', 'prüfsumme'),
+        ):
+            for leading in ('\u00a0', '\u2003'):
+                with self.subTest(key=key, leading=repr(leading)):
+                    properties.write_text(
+                        original.replace(key + '=', key + '=' + leading, 1),
+                        encoding='utf-8',
+                    )
+                    self.assertTrue(any(
+                        message in error for error in verify_project(self.root)
+                    ))
+
+    def test_gradle_properties_allow_java_leading_value_whitespace(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        original = properties.read_text(encoding='utf-8')
+        for key in ('distributionUrl', 'distributionSha256Sum'):
+            for leading in (' ', '\t', '\f', ' \t\f '):
+                with self.subTest(key=key, leading=repr(leading)):
+                    properties.write_text(
+                        original.replace(key + '=', key + '=' + leading, 1),
+                        encoding='utf-8',
+                    )
+                    self.assertEqual([], verify_project(self.root))
+
     def test_comments_do_not_count_as_duplicate_gradle_properties(self):
         path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
         path.write_text(path.read_text() +
