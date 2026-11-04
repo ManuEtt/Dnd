@@ -1,0 +1,23 @@
+name: Chat B resume lead formatter recheck
+on:
+  push:
+    branches:
+      - feat/chat-b/resume-lead-id-integrity-20261104
+    paths:
+      - .github/workflows/chat-b-resume-lead-format-recheck.yml
+      - app/test/campaign_resume_lead_id_integrity_test.dart
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Show Dart formatter correction
+        run: |
+          dart format app/test/campaign_resume_lead_id_integrity_test.dart
+          git diff -- app/test/campaign_resume_lead_id_integrity_test.dart
