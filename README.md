@@ -1230,12 +1230,13 @@ Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt
 ## Chat B – doppelte Handlungsstrang-IDs bei Kampagnenwiederaufnahme (04.11.2026)
 
 [Draft-PR #536](https://github.com/ManuEtt/Dnd/pull/536) verhindert,
-dass alte/importierte, mehrfach gespeicherte StoryThread-IDs mit
-widersprüchlichen Stati einen bereits geschlossenen Handlungsstrang erneut als
-„aktuell offen“ darstellen. `CampaignResumeReader` übernimmt nur eindeutige
+dass ungeprüfte In-Memory-StoryThreads mit mehrfach belegten IDs und
+widersprüchlichen Stati einen bereits geschlossenen Strang erneut als
+„aktuell offen“ darstellen. Reguläre JSON-Importe weisen solche Dubletten
+bereits zurück. `CampaignResumeReader` übernimmt nur eindeutige
 sichere IDs, erhält die zuletzt gespeicherte Reihenfolge und begrenzt die
 Anzeige unverändert. Vier neue Flutter-Regressionstests decken mehrdeutige
-IDs, ungültige Identitäten, Reihenfolge/Limit sowie JSON- und SQLite-Neustart
-ab. Keine Regel-/Event-/Quest-, Datenbank- oder App-Versionsänderung.
+IDs, ungültige Identitäten, Reihenfolge/Limit, JSON-Importabwehr bei
+Dubletten und SQLite-Neustart mit gültigen IDs ab. Keine Regel-/Event-/Quest-, Datenbank- oder App-Versionsänderung.
 Die vollständige CI auf dem finalen PR-HEAD und Geräteabnahme bleiben
 gesonderte Freigabegates.
