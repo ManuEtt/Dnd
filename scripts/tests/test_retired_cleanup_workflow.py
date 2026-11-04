@@ -53,7 +53,7 @@ class RetiredCleanupWorkflowTests(unittest.TestCase):
             "permissions:\n  contents: read\n"
             "jobs:\n  deprecated:\n"
         )
-        self.assertTrue(retired_workflow_is_inert(original)
+        self.assertTrue(retired_workflow_is_inert(original))
         self.assertFalse(retired_workflow_is_inert(
             original.replace(
                 "  workflow_dispatch:",

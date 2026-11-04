@@ -70,7 +70,7 @@ class RetiredStoryUiCleanupTests(unittest.TestCase):
             "        run: |\n"
             '          echo "Dieser historische PR301-Workflow ist deaktiviert."\n'
         )
-        self.assertTrue(is_read_only_notice(notice)
+        self.assertTrue(is_read_only_notice(notice))
         replacements = (
             notice.replace("  workflow_dispatch:", "  push:\n  workflow_dispatch:"),
             notice.replace("contents: read", "contents: write"),
