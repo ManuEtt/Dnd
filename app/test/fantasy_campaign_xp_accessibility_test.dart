@@ -81,7 +81,10 @@ void main() {
           findsOneWidget,
         );
         expect(find.text('9 / 24'), findsOneWidget);
-        expect(find.bySemanticsLabel('Trefferpunkte: 9 von 24'), findsOneWidget);
+        expect(
+          find.bySemanticsLabel('Trefferpunkte: 9 von 24'),
+          findsOneWidget,
+        );
         expect(continued, 0);
         expect(managed, 0);
 
