@@ -1,7 +1,7 @@
 ## Chat C – Bestätigten EP-Fortschritt im Kampagnen-Dashboard ansagen (04.11.2026)
 
 Branch `feat/chat-c/campaign-xp-progress-semantics-20261104`, Ausgangs-main
-`17378018a6fc971aa723f0bfe817d040553fa020` (PR-Link im separaten PR).
+`17378018a6fc971aa723f0bfe817d040553fa020` ([Draft-PR #535](https://github.com/ManuEtt/Dnd/pull/535)).
 `FantasyActiveHeroCard` beschriftet den existierenden, schreibgeschützten
 EP-Fortschrittsbalken jetzt mit „Erfahrungsfortschritt: N Prozent“ und
 unterdrückt seine doppelte technische Semantik. Unbestätigte EP liefern
@@ -11,7 +11,7 @@ Android-Tastatur prüfen korrekte Screenreaderansage, aktive Aktionen,
 negativen EP-Fall und unveränderte Helden-JSON-Daten.
 Fachdateien: `app/lib/ui/fantasy_campaign_dashboard.dart`,
 `app/test/fantasy_campaign_xp_accessibility_test.dart`.
-Neue finale GitHub-CI und echte Android-/TalkBack-/IME-Abnahme zunächst
+Gezielte Widget-CI [#41776172261](https://github.com/ManuEtt/Dnd/actions/runs/41776172261): 11 Tests grün, 2 Dart-Dateien formatiert. Neue volle GitHub-CI und echte Android-/TalkBack-/IME-Abnahme zunächst
 **ausstehend**; keine automatische Mergefreigabe. Keine Regel-,
 Persistenz-, Schema-, Asset-, Backend- oder Versionsmigration.
 Chat D muss gemeinsame Dokumentation bei Integration additiv erhalten.
