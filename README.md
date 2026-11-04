@@ -9,7 +9,7 @@ unbestätigte Werte bleiben ausdrücklich unbekannt. Drei Widgettests prüfen
 320/360 dp mit 200 % Schrift, simulierter Android-Tastatur, korrekte
 Semantik, bedienbare Aktionen und unveränderte gespeicherte Heldenwerte.
 Branch `feat/chat-c/campaign-xp-progress-semantics-20261104`;
-Pull Request in GitHub (nach Erstellung). Die neue vollständige GitHub-CI
+[Draft-PR #535](https://github.com/ManuEtt/Dnd/pull/535). Die gezielte Flutter-CI [#41776172261](https://github.com/ManuEtt/Dnd/actions/runs/41776172261) bestand 11 Tests; die neue vollständige GitHub-CI
 und eine echte Android-/TalkBack-Abnahme sind noch ausstehend.
 Keine Änderungen an Spielregeln, SQLite/JSON, App-Version oder Assets.
 
