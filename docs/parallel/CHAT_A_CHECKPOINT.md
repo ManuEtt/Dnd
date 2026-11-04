@@ -1,3 +1,52 @@
+## Chat-A-Konsolidierung – 04.11.2026
+
+Die Beiträge zu Waldläufer-Unermüdlich (#538) und Hexenmeister-Magische-List (#539) werden im gemeinsamen Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` vereint; die originale Commit-Historie und beide individuellen Belege werden beibehalten. Kombinierte CI vor Main-Merge gesondert nachweisen.
+
+---
+
+<!-- PR #538 vor Integration, unverändert archivierter Zusatz -->
+## 04.11.2026 – CHAT A: Waldläufer „Unermüdlich“ gegen ungültige Klassenprofile absichern (PR #538)
+
+- **Ausgangs-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`; **Arbeitsbranch:** `feat/chat-a/ranger-tireless-class-preflight-20261104`; **Fach-/Test-HEAD:** `58fa652fef01cb25d7fdae553364b31947cbd06a`.
+- **Ausgangsproblem:** Direkt an `SrdRangerTirelessRules` übergebene Klassen-Snapshots wurden ohne Prüfung von Haupt-/Nebenklasse, Alias-Dopplung oder inkonsistenten Stufen ausgewertet; dadurch konnten die SRD-5.2.1-Waldläufermerkmale *Tireless* / Unermüdlich ab Stufe 10 zu Unrecht verfügbar erscheinen.
+- **Implementiert:** `app/lib/domain/srd_ranger_tireless_rules.dart` prüft die Klassenprofile vor temporären TP, Magieaktion/W8 und automatischer Erschöpfungsreduktion. Bei ungültigen Profilen nur neutrale lesende Ergebnisse; ausdrücklich bestätigte Magieaktion wird vor Zufall und Ressourcenverbrauch abgelehnt. Gültige Aliase und gemischte Kämpfer-/Waldläuferklassen bleiben gültig.
+- **Neue Regressionen:** `app/test/srd_ranger_tireless_class_preflight_test.dart`, sieben negative Profile (u. a. unbekannte Klasse, Doppel-Ranger, verwaiste Zweitklasse, unzulässige Stufen), positive gültige Einzel-/Mehrklasse, unverändertes Ausgangs-JSON und keine RNG-Verwendung bei Ablehnung.
+- **Daten-/Schnittstellenschutz:** Keine Änderung an `models.dart`, `game_engine.dart`, `services/`, `data/`, Story/UI/Backend, SQLite3/JSON1; keine Migration. Register `CLASS-WALDL-UFER-10-BASE-TIRELESS-0` bleibt `partial`.
+- **Tests/CI:** Quell- und Git-Diff geprüft; GitHub Actions, `flutter analyze`, `flutter test` und APK auf dem finalen dokumentierten PR-HEAD getrennt zu kontrollieren; vor Abschluss keine grüne CI behauptet.
+- **Regelquelle:** <https://www.dndbeyond.com/srd>, SRD v5.2.1, Classes / Ranger 10 / Tireless; CC BY 4.0.
+- **PR:** <https://github.com/ManuEtt/Dnd/pull/538> (Draft), Integration durch CHAT D nach bestandener finaler CI und konfliktfreiem Main-Abgleich.
+- **Nächster konkreter Schritt:** Klassen-/Quellenvalidierung einer anderen spezialisierten SRD-Regelfunktion nur nach erneuter Prüfung offener PRs und ihrer Dateilisten.
+
+
+---
+
+---
+
+<!-- PR #539 vor Integration, unverändert archivierter Zusatz -->
+# Chat A – Magische List nur nach Klassenprofilprüfung (04.11.2026, PR #539)
+
+**Basis-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`. **Branch:** `feat/chat-a/warlock-magical-cunning-class-preflight-20261104`. **Fach-/Testcommit:** `86c83b5c93610285866e1717e65ac0a1d8e582b5`. **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/539.
+
+**Ausgangsproblem:** Die spezielle SRD-5.2.1-Regel `SrdWarlockMagicalCunningRules` vertraute auf einen unvalidierten Hexenmeister-Levelwert. Direkt konstruierte, inkonsistente Profile konnten Magische List oder Stufe-20-Eldritch-Master und damit Paktmagieplatz-Erholung freischalten.
+
+**Implementiert:** Profilprüfung erkennt unbekannte Klassen, doppelte deutsche/englische Aliasvarianten, inkonsistente Zweitklassenstufen sowie Gesamtlevel außerhalb 1–20 oder eine Hauptklasse unter Level 1. Lesefunktionen fail-closed (0 Nutzungen/Plätze), expliziter Ritualabschluss mit ungültigem Profil wirft `FormatException` vor jeder Ressourcenänderung. Normale Hexenmeister- und Fighter-/Warlock-Mehrklasse einschließlich Eldritch Master bleiben wirksam. Keine Regelentscheidung aus Storytext.
+
+**Betroffene Dateien:** `app/lib/domain/srd_warlock_magical_cunning_rules.dart`, neue `app/test/srd_warlock_magical_cunning_class_preflight_test.dart` und additiv README/zentraler/persönlicher Checkpoint.
+
+**GETESTET:** Ausgangs-main, PR-Dateilisten, SRD-Rechtsgrundlage, bestehende Fachtests und aktuelle Domänenschnittstelle geprüft; neue 12 deterministische Fälle implementiert. **Noch NICHT getestet:** Flutter-Testlauf, Analyzer, Dart-Format, Android-APK und finale CI auf aktuellem PR-Kopf. Sie werden nur nach nachgewiesenem GitHub-Actions-Ergebnis als bestanden verbucht; lokale SDKs fehlen. Der unabhängig laufende Waldläufer-PR #538 ist kein Testnachweis für #539.
+
+**Migrationen/Kompatibilität:** Keine; SQLite 3, JSON 1, Spielstandsstruktur und App-Version unverändert. `SpellcastingRules.pactClassLevel` bleibt ohne Änderung. Gewöhnliche Paktmagie benötigt gegebenenfalls einen gesonderten Schritt; keine Behauptung globaler Charakterprofilvalidierung.
+
+**Koordination:** Offene PRs #535 (UI), #536 (Story), #537 (CI) und #538 (Waldläufer) ohne Fachdatei-Konflikt; die gemeinsamen Dokumente sind bei der Integration durch Chat D additiv zu konsolidieren. Kein Main-Merge durch Chat A.
+
+**SRD-Nachweis:** Wizards of the Coast LLC, SRD 5.2.1, *Warlock Level 2 Magical Cunning / Level 20 Eldritch Master*, CC BY 4.0, https://www.dndbeyond.com/srd. `CLASS-HEXENMEISTER-2-BASE-MAGICAL-CUNNING-0` verbleibt **partial**, da die reale 1-Minuten-Ritualdauer und Unterbrechungen nicht automatisch kontrolliert werden.
+
+**Nächster unabhängiger Schritt:** Nach finaler CI und aktueller PR-Prüfung Paktmagie-Klassenlevel in `SpellcastingRules` auf doppelte/ungültige SRD-Klassenzuordnungen prüfen; bei echter Lücke kleine, kompatible Domänenkorrektur mit deterministischen Cast-/Rast-/JSON-Regressionen auf eigenem Branch.
+
+---
+
+---
+
 # Chat A – bestätigte Metamagie-Optionen versioniert prüfen (02.11.2026)
 
 **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529` ·
