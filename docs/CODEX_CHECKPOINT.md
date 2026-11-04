@@ -1,3 +1,23 @@
+## Chat C – Bestätigten EP-Fortschritt im Kampagnen-Dashboard ansagen (04.11.2026)
+
+Branch `feat/chat-c/campaign-xp-progress-semantics-20261104`, Ausgangs-main
+`17378018a6fc971aa723f0bfe817d040553fa020` (PR-Link im separaten PR).
+`FantasyActiveHeroCard` beschriftet den existierenden, schreibgeschützten
+EP-Fortschrittsbalken jetzt mit „Erfahrungsfortschritt: N Prozent“ und
+unterdrückt seine doppelte technische Semantik. Unbestätigte EP liefern
+weiterhin weder Balken noch erfundene Prozentzahl.
+Drei neue Widgettests bei 320/360 dp, 200 % Schrift und 220 dp simulierter
+Android-Tastatur prüfen korrekte Screenreaderansage, aktive Aktionen,
+negativen EP-Fall und unveränderte Helden-JSON-Daten.
+Fachdateien: `app/lib/ui/fantasy_campaign_dashboard.dart`,
+`app/test/fantasy_campaign_xp_accessibility_test.dart`.
+Neue finale GitHub-CI und echte Android-/TalkBack-/IME-Abnahme zunächst
+**ausstehend**; keine automatische Mergefreigabe. Keine Regel-,
+Persistenz-, Schema-, Asset-, Backend- oder Versionsmigration.
+Chat D muss gemeinsame Dokumentation bei Integration additiv erhalten.
+
+---
+
 ## Chat D – Gradle-Properties-Parser: Unicode-Scheinzeilen verhindern (03.11.2026)
 
 - **Main-Basis:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.
