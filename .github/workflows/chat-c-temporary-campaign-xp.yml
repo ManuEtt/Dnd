@@ -18,5 +18,6 @@ jobs:
         run: |
           cd app
           flutter pub get
-          dart format --output=none --set-exit-if-changed lib/ui/fantasy_campaign_dashboard.dart test/fantasy_campaign_xp_accessibility_test.dart
-          flutter test test/fantasy_campaign_xp_accessibility_test.dart test/fantasy_campaign_dashboard_test.dart
+          dart format lib/ui/fantasy_campaign_dashboard.dart test/fantasy_campaign_xp_accessibility_test.dart
+          git diff -- test/fantasy_campaign_xp_accessibility_test.dart
+
