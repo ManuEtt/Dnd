@@ -55,9 +55,7 @@ void main() {
       ),
       'Gesamtstufe über 20': _warlockProfile(level: 21),
       'Gesamtstufe null': _warlockProfile(level: 0),
-      'negative Nebenklassenstufe': _warlockProfile(
-        secondaryLevel: -1,
-      ),
+      'negative Nebenklassenstufe': _warlockProfile(secondaryLevel: -1),
     };
 
     for (final entry in invalidProfiles.entries) {
