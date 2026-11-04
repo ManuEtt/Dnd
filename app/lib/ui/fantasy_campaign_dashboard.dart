@@ -276,13 +276,19 @@ class FantasyActiveHeroCard extends StatelessWidget {
                   ),
                   if (experienceProgress != null) ...[
                     const SizedBox(height: 6),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: LinearProgressIndicator(
-                        value: experienceProgress,
-                        minHeight: 5,
-                        backgroundColor: FantasyPalette.night,
-                        color: FantasyPalette.blue,
+                    Semantics(
+                      label:
+                          'Erfahrungsfortschritt: ${(experienceProgress * 100).round()} Prozent',
+                      child: ExcludeSemantics(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: LinearProgressIndicator(
+                            value: experienceProgress,
+                            minHeight: 5,
+                            backgroundColor: FantasyPalette.night,
+                            color: FantasyPalette.blue,
+                          ),
+                        ),
                       ),
                     ),
                   ],
