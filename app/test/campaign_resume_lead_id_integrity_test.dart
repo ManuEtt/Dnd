@@ -117,9 +117,7 @@ void main() {
 
     final snapshot = CampaignResumeReader.read(campaign);
 
-    expect(snapshot.openLeads, [
-      'Sichere Spur: Nur diese Spur ist eindeutig.',
-    ]);
+    expect(snapshot.openLeads, ['Sichere Spur: Nur diese Spur ist eindeutig.']);
     expect(snapshot.playerOverview, isNot(contains('Falscher Doppelter')));
     expect(snapshot.playerOverview, isNot(contains('Bidi')));
     expect(snapshot.playerOverview, isNot(contains('Zeilenende')));
@@ -144,64 +142,62 @@ void main() {
     final three = CampaignResumeReader.read(campaign, maxLeads: 3);
 
     expect(one.openLeads, ['Neueste: Offen.']);
-    expect(three.openLeads, [
-      'Neueste: Offen.',
-      'Neu: Offen.',
-      'Alt: Offen.',
-    ]);
+    expect(three.openLeads, ['Neueste: Offen.', 'Neu: Offen.', 'Alt: Offen.']);
     expect(() => three.openLeads.clear(), throwsUnsupportedError);
     expect(three.openLeads.join(' '), isNot(contains('Doppelt')));
   });
 
-  test('legacy JSON and SQLite keep raw conflicts without false leads',
-      () async {
-    final original = _campaign(const [
-      StoryThread(id: 'old', title: 'Die Gruft', description: 'Offen.'),
-      StoryThread(
-        id: 'old',
-        title: 'Die Gruft',
-        description: 'Abgeschlossen.',
-        status: 'resolved',
-      ),
-      StoryThread(id: 'safe', title: 'Der Turm', description: 'Untersuchen.'),
-    ]);
-    final json = jsonEncode(original.toJson());
-    final decoded = Campaign.fromJson(
-      jsonDecode(json) as Map<String, dynamic>,
-    );
-    expect(CampaignResumeReader.read(decoded).openLeads, [
-      'Der Turm: Untersuchen.',
-    ]);
-    expect(jsonEncode(decoded.toJson()), json);
+  test(
+    'legacy JSON and SQLite keep raw conflicts without false leads',
+    () async {
+      final original = _campaign(const [
+        StoryThread(id: 'old', title: 'Die Gruft', description: 'Offen.'),
+        StoryThread(
+          id: 'old',
+          title: 'Die Gruft',
+          description: 'Abgeschlossen.',
+          status: 'resolved',
+        ),
+        StoryThread(id: 'safe', title: 'Der Turm', description: 'Untersuchen.'),
+      ]);
+      final json = jsonEncode(original.toJson());
+      final decoded = Campaign.fromJson(
+        jsonDecode(json) as Map<String, dynamic>,
+      );
+      expect(CampaignResumeReader.read(decoded).openLeads, [
+        'Der Turm: Untersuchen.',
+      ]);
+      expect(jsonEncode(decoded.toJson()), json);
 
-    final folder = await Directory.systemTemp.createTemp('resume-lead-id-');
-    final path = paths.join(folder.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      await repository.saveCampaign(decoded);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+      final folder = await Directory.systemTemp.createTemp('resume-lead-id-');
+      final path = paths.join(folder.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      final restored = (await repository.getCampaign(decoded.id))!;
-      final before = jsonEncode(restored.toJson());
-      final snapshot = CampaignResumeReader.read(restored);
+      try {
+        await repository.saveCampaign(decoded);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final restored = (await repository.getCampaign(decoded.id))!;
+        final before = jsonEncode(restored.toJson());
+        final snapshot = CampaignResumeReader.read(restored);
 
-      expect(snapshot.openLeads, ['Der Turm: Untersuchen.']);
-      expect(restored.storyThreads, hasLength(3));
-      expect(restored.hero.hitPoints, 12);
-      expect(jsonEncode(restored.toJson()), before);
-      expect(
-        (await repository.reconstructCampaign(decoded.id))!.toJson(),
-        restored.toJson(),
-      );
-    } finally {
-      await repository.close();
-      await folder.delete(recursive: true);
-    }
-  });
+        expect(snapshot.openLeads, ['Der Turm: Untersuchen.']);
+        expect(restored.storyThreads, hasLength(3));
+        expect(restored.hero.hitPoints, 12);
+        expect(jsonEncode(restored.toJson()), before);
+        expect(
+          (await repository.reconstructCampaign(decoded.id))!.toJson(),
+          restored.toJson(),
+        );
+      } finally {
+        await repository.close();
+        await folder.delete(recursive: true);
+      }
+    },
+  );
 }
