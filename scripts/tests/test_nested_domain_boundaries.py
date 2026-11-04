@@ -1,5 +1,7 @@
 """Regression: nested Dart modules must obey the same Story/Rules boundaries."""
 from pathlib import Path
+import os
+from unittest import mock
 from tempfile import TemporaryDirectory
 import unittest
 
@@ -65,6 +67,59 @@ class NestedDomainBoundaryTests(unittest.TestCase):
             )
             problems = check_repository(root)
             self.assertEqual(2, len(problems), problems)
+
+    @unittest.skipUnless(os.name == "posix", "POSIX symlinks required")
+    def test_symlinked_nested_dart_file_is_rejected_without_reading_target(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp) / "repository"
+            story = root / "app/lib/story/chapters"
+            story.mkdir(parents=True)
+            (root / "app/lib/domain").mkdir(parents=True)
+            private_source = Path(temp) / "private-outside.dart"
+            private_source.write_text("import 'dart:io';", encoding="utf-8")
+            (story / "linked.dart").symlink_to(private_source)
+            with mock.patch.object(
+                Path, "read_text",
+                side_effect=AssertionError("external Dart source was opened"),
+            ):
+                problems = check_repository(root)
+            self.assertEqual(
+                ["symlinked app/lib/story/chapters/linked.dart source entry"],
+                problems,
+            )
+
+    @unittest.skipUnless(os.name == "posix", "POSIX symlinks required")
+    def test_symlinked_nested_directory_is_rejected_without_traversal(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp) / "repository"
+            story = root / "app/lib/story"
+            story.mkdir(parents=True)
+            (root / "app/lib/domain").mkdir(parents=True)
+            external = Path(temp) / "external-source"
+            external.mkdir()
+            (external / "forbidden.dart").write_text(
+                "import 'dart:io';", encoding="utf-8"
+            )
+            (story / "chapter_alias").symlink_to(external, target_is_directory=True)
+            self.assertEqual(
+                ["symlinked app/lib/story/chapter_alias source entry"],
+                check_repository(root),
+            )
+
+    @unittest.skipUnless(os.name == "posix", "POSIX symlinks required")
+    def test_non_dart_symlink_inside_module_is_not_accepted(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp) / "repository"
+            story = root / "app/lib/story"
+            story.mkdir(parents=True)
+            (root / "app/lib/domain").mkdir(parents=True)
+            external = Path(temp) / "outside-notes.txt"
+            external.write_text("private notes", encoding="utf-8")
+            (story / "notes.txt").symlink_to(external)
+            self.assertEqual(
+                ["symlinked app/lib/story/notes.txt source entry"],
+                check_repository(root),
+            )
 
     def test_recursive_repository_scan_allows_valid_nested_imports(self):
         with TemporaryDirectory() as temp:
