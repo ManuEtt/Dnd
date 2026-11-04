@@ -1697,3 +1697,22 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Dateien:** acht technische Quell-/Testdateien und README, zentraler CODEX-Checkpoint, Checkpoints A/B/C/D. Fach-Git-Blobs aus den vier final vollständig erfolgreich geprüften Quellheads #528–#531 unverändert; nur gemeinsame Dokumentation additiv integriert. Alle Quellheads sind zusätzliche Eltern des Git-Commits.
 - **Tests:** Die vier **Einzel-Quell-CIs** sind `completed/success`. Die neue **kombinierte** GitHub-CI auf dem finalen Stand ist nach diesem Dokumentationscommit neu nachzuweisen, nicht vorzeitig als erfolgreich melden.
 - **Nächster Schritt:** Exakten finalen CI-HEAD und aktuelle Main-/PR-Konflikte abnehmen, regulär mergen, neue Main-CI prüfen und erst danach sichere, SHA-geprüfte Bereinigung. Kein Realgerätetest.
+
+
+---
+
+# CHAT D – Verschachtelte Quell-Symlinks in Story/Rules abweisen (03.11.2026)
+
+- **Ausgangs-main-SHA:** `fad366d778de1ab69984dfcae1c139d72f976e77`.
+- **Eigener Branch:** `fix/chat-d/domain-symlink-source-guard-20261103`.
+- **Pull Request:** wird für diesen Branch erstellt; finalen Commit im GitHub-PR ablesen.
+- **IMPLEMENTIERT:** Prüfer `scripts/check_domain_boundaries.py` scannt auch verschachtelte Einträge, lehnt symbolische Dateien/Ordner ab, liest keine Symlink-Dart-Ziele und belässt reguläre Dart-Grenzprüfung.
+- **TESTS ERGÄNZT:** `scripts/tests/test_nested_domain_boundaries.py` mit drei negativen Symlink-Fällen; bestehende positive Fälle unverändert.
+- **GETESTET:** Python-3.13-Minimalversuch zu `rglob`-Linkverhalten, GitHub-Schreibvorgang nach Bestätigung.
+- **NICHT GETESTET:** Projekt-Python-/Backend-/Flutter-/Android-Tests, finaler Actions-Lauf, reales Android-Gerät.
+- **BLOCKIERT:** keine lokale Repository-Kopie (GitHub-DNS im Container gesperrt); CI-Abnahme erforderlich.
+- **Geänderte Dateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_nested_domain_boundaries.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migrationen:** keine. Alte Spielstände, SQLite/JSON, App-Version und Regel-/Storyzustand unverändert.
+- **Nächster Schritt:** gesamte PR-CI auf finalem Commit prüfen und erst danach einen kontrollierten Main-Integrationsreview durchführen.
+
+---

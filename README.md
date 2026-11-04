@@ -1215,3 +1215,12 @@ Finale GitHub-CI und reale Geräteabnahme getrennt nachweisen; kein Auto-Merge.
 ## Chat D – vier Quellpakete koordiniert integriert (03.11.2026)
 
 [Draft-PR #533](https://github.com/ManuEtt/Dnd/pull/533) bündelt die vier erfolgreich einzeln geprüften PRs #528–#531 als einen 14-Dateien-Integrationsstand auf Basis `main@fad366d7`. Der technische Integrationscommit vor diesem Nachtrag ist `9b759cd3`; Quell-Git-Blobs und Original-Historien sind erhalten, gemeinsame Checkpoints ausschließlich additiv konsolidiert. Die vollständige gemeinsame GitHub-CI auf dem **finalen** PR-HEAD und danach die neue Main-CI sind separate Freigaben, noch nicht als bestanden behauptet. Kein SQLite-/JSON-/Versionswechsel. Sichere Branch-Bereinigung erst nach geprüfter Main-Integration.
+
+
+---
+
+## Chat D – Story-/Regelmodule vor verschachtelten Symlinks schützen (03.11.2026)
+
+Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt auch symbolische Links innerhalb von `app/lib/story/` und `app/lib/domain/` zurück (Dateien und Unterordner), bevor externe Dart-Dateien gelesen werden. Drei ergänzende Python-Regressionen sichern verschachtelte Datei- und Verzeichnislinks sowie Nicht-Dart-Links ab. Die Änderung enthält keine Regel-/Story-/UI-Anpassung oder Speicherformatmigration. Separate Chat-D-Abnahme auf `fix/chat-d/domain-symlink-source-guard-20261103`; vollständige CI auf finalem Commit noch ausstehend.
+
+---

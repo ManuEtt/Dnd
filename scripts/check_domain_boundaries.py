@@ -192,9 +192,17 @@ def check_repository(root: Path = ROOT) -> list[str]:
     if result:
         return result
     for module in modules:
-        for file in sorted(module.rglob("*.dart")):
-            relative = file.relative_to(root).as_posix()
-            result.extend(check_imports(relative, file.read_text(encoding="utf-8")))
+        for entry in sorted(module.rglob("*")):
+            relative = entry.relative_to(root).as_posix()
+            # A regular file may be replaced by a link, and rglob('*.dart')
+            # includes symlinked Dart files. Check every nested entry before
+            # reading source so outside files and linked directories cannot
+            # silently pass the repository boundary inspection.
+            if entry.is_symlink():
+                result.append(f"symlinked {relative} source entry")
+                continue
+            if entry.is_file() and entry.suffix == ".dart":
+                result.extend(check_imports(relative, entry.read_text(encoding="utf-8")))
     return result
 
 
