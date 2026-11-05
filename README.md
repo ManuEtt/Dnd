@@ -1,5 +1,18 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Ausstehende Handlungen: Fehler per TalkBack ankündigen (05.11.2026)
+
+[Draft-PR #556](https://github.com/ManuEtt/Dnd/pull/556):
+Erscheint ein Fehler bei der Wiederaufnahme einer gespeicherten
+Spielerhandlung, macht die Oberfläche ihn als Screenreader-Live-Meldung
+mit eindeutiger deutscher Beschriftung zugänglich. Positive und negative
+Widgettests prüfen kleine Android-Breiten, 200 % Schrift, simulierte
+Bildschirmtastatur, Fehlerwechsel/-entfernung und unveränderte
+Outbox-Daten. Keine automatische Wiederholung oder Speicheränderung.
+Vollständige CI und reale Android-/TalkBack-Abnahme noch ausstehend.
+
+---
+
 ## Chat D – validierte Android-APK sicher in das Release übernehmen (05.11.2026)
 
 Der Alpha-Release-Builder `scripts/prepare_alpha_release.py` bindet die Quell-APK jetzt beim Kopieren an die vor dem ZIP-Validierungslauf aufgezeichnete Identität (Gerät, Inode, Größe, Änderungs- und Statuszeit). Unter POSIX öffnet er außerdem jeden Quellpfad-Bestandteil ohne Verfolgung symbolischer Links und prüft die tatsächlich geöffnete APK vor und nach dem Kopieren. Eine spät eingefügte symbolische Datei/ein Elternordnerlink oder der Austausch gegen eine andere reguläre APK kann so keine fremde, unvalidierte Installationsdatei in ein fertiges Release schleusen. Drei zusätzliche Regressionen sichern die Austauschzeitfenster ab; der normale APK-Releasefall bleibt bestehen. [Draft-PR #552](https://github.com/ManuEtt/Dnd/pull/552), Fach-/Testcommit `333d00776672`; vollständige CI auf dem finalen Head noch offen. Keine Änderung an SQLite-/JSON-Spielständen, App-Version oder Release-Namen.
