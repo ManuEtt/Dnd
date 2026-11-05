@@ -1,3 +1,13 @@
+## Chat C – JSON-Importdialog: CI-Korrektur und README-Koordination (05.11.2026)
+
+- **Basis:** `7d7bb421261af0f690fd0af9012996e45b95ff95`; Branch `feat/chat-c/backup-import-ime-accessible-20261105`; [Draft-PR #570](https://github.com/ManuEtt/Dnd/pull/570).
+- **CI-Zwischenstand:** [Android-Workflow #42064017074](https://github.com/ManuEtt/Dnd/actions/runs/42064017074): Python-/Backend-Prüfungen, Dart-Format, Flutter-Analyse und gezielte Fantasy-Tests bestanden; in der vollständigen Flutter-Suite **3.127 bestanden, ein neuer Test fehlgeschlagen**. Grund: Der Test rief `pumpAndSettle()` während eines absichtlich offenen Dateidialogs mit permanent animiertem Ladeindikator auf. Das ist ein Test-Synchronisierungsfehler, kein Nachweis eines Produktionsabsturzes.
+- **Korrektur:** Commit `b07aaf4c37ee0f4b786641c7e92671db1edb2057` ersetzt diesen unendlichen Settle-Wartepunkt durch ein einzelnes `pump()` nach dem Tap; Busy-Sperre und App-Code bleiben unverändert. **Die erneute Flutter-/Android-CI ist noch nicht als bestanden nachgewiesen.**
+- **README-Koordination:** Das inzwischen integrierte [Main #572](https://github.com/ManuEtt/Dnd/pull/572) hat die README als Projekteinstieg umgestellt und im Masterprompt ausschließlich append-only Nachträge vorgeschrieben. Der zuvor am Anfang eingefügte Nachtrag für #570 wurde auf dem eigenen Branch zurückgenommen; README-Update für #570 ist **zur konfliktfreien Append-only-Integration durch Chat D zurückgestellt**. Alle Main-README-Einträge bleiben unverändert.
+- **Kompatibilität:** Keine Speicher-, JSON-, Schema-, API- oder Datenmigration. Nächster Schritt: finalen UI-Widget-/Android-Workflow auf aktueller Commitbasis prüfen und bei Fehlern denselben Branch korrigieren.
+
+---
+
 ## 05.11.2026 – Chat C: JSON-Importdialog bei 200 % Text und geöffneter IME
 
 - **Ausgangs-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95`.
