@@ -74,10 +74,7 @@ void main() {
         isNull,
       );
       expect(
-        NpcIdentityStoryPayload.prepare(
-          campaign,
-          'Ich frage Mi${mark}ra.',
-        ),
+        NpcIdentityStoryPayload.prepare(campaign, 'Ich frage Mi${mark}ra.'),
         isNull,
       );
       // Explicitly selecting the clean stored identity is still permitted.
@@ -135,9 +132,7 @@ void main() {
         ),
         _campaign(
           npcs: const [WorldNpc(id: 'mira-a', name: 'Mira')],
-          notes: [
-            _note('first', 'mira-a', 'Das${mark} geheime Tor.'),
-          ],
+          notes: [_note('first', 'mira-a', 'Das${mark} geheime Tor.')],
         ),
         _campaign(
           npcs: const [WorldNpc(id: 'mira-a', name: 'Mira')],
