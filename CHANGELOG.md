@@ -1,3 +1,9 @@
+## 05.11.2026 – Chat A: Entrinnen-Klassenprofile validieren (Draft-PR #568)
+
+`SrdEvasionRules.unlocked` prüft die konsistente SRD-Haupt-/Zweitklasse einschließlich unterschiedlicher deutscher/englischer Aliase, Klassenstufe und Gesamtlevel 1–20. Direkt konstruierte/ältere ungültige Profile können keine Stufe-7-Entrinnen-Wirkung in bestätigten Geschicklichkeitsrettungswürfen erhalten; gültige Mönch-/Schurke-Mehrklassen behalten 0 bzw. halben Schaden. Neue deterministische Regressionen `app/test/srd_evasion_class_profile_preflight_test.dart`; bestehende Evasion-/UI-Tests unverändert. Basis-main `7d7bb421261af0f690fd0af9012996e45b95ff95`, Fach-/Testcommit `67e48593e677cd93ad277766091eb3aa14e510e7`, [Draft-PR #568](https://github.com/ManuEtt/Dnd/pull/568). **Finale CI, Android-APK und Gerätetest noch ausstehend**, keine Mergefreigabe. SQLite-/JSON-Schema, Spielstände, App `0.8.51+101`, Story/UI/Backend unverändert; keine Migration. WotC SRD v5.2.1 Monk/Rogue Level 7 Evasion, CC BY 4.0; `CLASS-M-NCH-7-BASE-EVASION-0` und `CLASS-SCHURKE-7-BASE-EVASION-0` bleiben `partial`.
+
+---
+
 ## 31.10.2026 – Migration abgenommen, Alpha 0.8.49+99
 
 Gesamtintegration #440 und Herkunftsnachtrag #444 sind regulär integriert.
