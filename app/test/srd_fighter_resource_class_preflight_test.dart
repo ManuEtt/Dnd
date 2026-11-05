@@ -50,10 +50,7 @@ void _reject(HeroCharacter hero) {
   expect(ClassFeatureResources.remainingSecondWind(hero), 0);
   expect(ClassFeatureResources.remainingActionSurge(hero), 0);
   expect(
-    () => ClassFeatureResources.useSecondWind(
-      hero,
-      DiceEngine(random: random),
-    ),
+    () => ClassFeatureResources.useSecondWind(hero, DiceEngine(random: random)),
     throwsStateError,
   );
   expect(() => ClassFeatureResources.spendActionSurge(hero), throwsStateError);
