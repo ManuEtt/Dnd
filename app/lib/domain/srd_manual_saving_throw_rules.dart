@@ -1,7 +1,7 @@
 import 'character_rule_engine.dart';
 import 'condition_rules.dart';
 import 'models.dart';
-import 'srd_character_classes.dart';
+import 'srd_concentration_save_modifier_rules.dart';
 
 /// Preparation for an explicitly requested manual saving throw, not a sheet
 /// preview. SRD 5.2.1: Saving Throws, class proficiencies and Conditions.
@@ -23,31 +23,9 @@ class SrdManualSavingThrowRules {
     if (ConditionRules.hasAutomaticSavingThrowFailure(hero, ability)) {
       return null;
     }
-    final primary = findSrdClass(hero.className)?.name;
-    final secondary = hero.hasSecondClass
-        ? findSrdClass(hero.secondaryClassName)?.name
-        : null;
-    if (primary == null ||
-        hero.level < 1 ||
-        hero.level > 20 ||
-        hero.primaryClassLevel < 1 ||
-        hero.secondaryClassLevel < 0 ||
-        (hero.hasSecondClass
-            ? hero.secondaryClassLevel < 1 ||
-                  secondary == null ||
-                  secondary == primary
-            : hero.secondaryClassLevel != 0)) {
-      throw const FormatException(
-        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
-      );
-    }
-    final proficiencies = hero.savingThrowProficiencies;
-    if (proficiencies.toSet().length != proficiencies.length ||
-        proficiencies.any((value) => !abilityNames.contains(value))) {
-      throw const FormatException(
-        'Die bestätigten Rettungswurf-Übungen sind nicht eindeutig.',
-      );
-    }
+    // Reuse only the existing pure profile guard. No concentration, die,
+    // situational bonus or player confirmation is inferred by this call.
+    SrdConcentrationSaveModifierRules.validateClassAndProficiencies(hero);
     // Keep all proficiency, exhaustion and advantage arithmetic in one place.
     return CharacterRuleEngine.savingThrow(hero, ability);
   }

@@ -6637,10 +6637,19 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "SRD 5.2.1: Playing the Game",
       "unlocks_catalogued": false,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [],
-      "note": "Atomarer Audit-Prüfpunkt. Ein Implementierungs-/Testabgleich gegen den aktuellen Quellcode steht aus; nicht als fehlend oder fertig behauptet."
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/srd_manual_saving_throw_preflight_test.dart",
+        "app/test/srd_manual_saving_throw_preflight_flow_test.dart",
+        "app/test/srd_manual_saving_throw_preflight_ui_test.dart"
+      ],
+      "code": [
+        "app/lib/domain/srd_manual_saving_throw_rules.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/domain/character_rule_engine.dart",
+        "app/lib/domain/srd_concentration_save_modifier_rules.dart"
+      ],
+      "note": "SRD5.2.1 S.7 Saving Throws, S.8 Proficiency, S.52 Monk14 sowie bestehende automatische STR/DEX-Fehlschläge: explizite manuelle erste Rettungswürfe prüfen vor tatsächlichem Klassenbonus/W20 bekannte Klassen, Stufensplit und eindeutige Übungen über vorhandenen reinen Validator. Keine fiktive Konzentration oder Bestätigungsflags. Vorhandene Attribut-, SG-, Todes-, Deckungs- und Bonusberechnung bleibt; automatische Fehlschläge ergeben keinen erfundenen Modifier oder W20. Deutsche UI-, SQLite-/Replay-/Restart-/Export-Flows getestet. Andere Rettungswurfquellen, situative Zusatzboni und reale Android-Abnahme sind damit nicht vollständig abgedeckt; deshalb partial."
     },
     {
       "id": "RULE-CORE-RULES-ATTACK-ROLLS",

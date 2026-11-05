@@ -7,6 +7,8 @@ import 'package:lebendiger_spielleiter/domain/dice_engine.dart';
 import 'package:lebendiger_spielleiter/domain/game_engine.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/srd_character_classes.dart';
+import 'package:lebendiger_spielleiter/rules/rules_api.dart'
+    show SrdManualSavingThrowRules;
 
 class _Random implements Random {
   int draws = 0;
@@ -87,6 +89,38 @@ void main() {
         final hero = entry.value;
         final before = jsonEncode(hero.toJson());
         final campaign = engine.createDemo().copyWith(hero: hero);
+        if (entry.key == 'negative secondary') {
+          final key = ability == 'Weisheit' ? 'wisdom' : 'dexterity';
+          expect(
+            () => SrdManualSavingThrowRules.prepare(hero, key),
+            throwsFormatException,
+          );
+          expect(hero.secondaryClassLevel, -1);
+          expect(random.draws, 0);
+          return;
+        }
+        if (const {
+          'named secondary level zero',
+          'unnamed secondary has levels',
+          'no primary level',
+          'above total limit',
+          'zero total',
+        }.contains(entry.key)) {
+          final key = ability == 'Weisheit' ? 'wisdom' : 'dexterity';
+          expect(
+            () => SrdManualSavingThrowRules.prepare(hero, key),
+            throwsFormatException,
+          );
+          // Such forged profiles cannot be serialized as a Campaign even for
+          // a blocked journal event. They still must not consume a die.
+          expect(
+            () => engine.act(campaign, 'Rettungswurf: $ability SG 20'),
+            throwsFormatException,
+          );
+          expect(random.draws, 0);
+          expect(jsonEncode(hero.toJson()), before);
+          return;
+        }
         final result = engine.act(campaign, 'Rettungswurf: $ability SG 20');
         expect(result.events.single.type, 'rules.blocked');
         expect(result.events.single.payload.containsKey('roll'), isFalse);
@@ -165,6 +199,52 @@ void main() {
       expect(random.draws, 1);
       expect(result.campaign.hero.className, 'Wizard');
       expect(result.campaign.hero.secondaryClassName, ' MONK ');
+    },
+  );
+  for (final ability in ['wisdom', 'charisma']) {
+    test(
+      'Rogue 15 grants $ability proficiency once without saved training',
+      () {
+        final hero = _hero(
+          primary: 'Wizard',
+          secondary: 'Rogue',
+          level: 16,
+          secondaryLevel: 15,
+          proficiencies: const [],
+        );
+        final before = jsonEncode(hero.toJson());
+        final rule = SrdManualSavingThrowRules.prepare(hero, ability)!;
+        expect(rule.modifier, 7); // Ability +2, total-level PB +5.
+        expect(random.draws, 0); // Pure preparation cannot roll or spend.
+        expect(jsonEncode(hero.toJson()), before);
+      },
+    );
+  }
+
+  test('unknown ability is rejected instead of inventing an attribute', () {
+    expect(
+      () => SrdManualSavingThrowRules.prepare(_hero(), 'flying'),
+      throwsFormatException,
+    );
+    expect(random.draws, 0);
+  });
+
+  test(
+    'reading an old sheet remains possible without authorizing its roll',
+    () {
+      final hero = _hero(
+        primary: 'Historisch',
+        secondary: 'Monk',
+        secondaryLevel: 14,
+      );
+      final before = jsonEncode(hero.toJson());
+      expect(CharacterRuleEngine.savingThrow(hero, 'wisdom').modifier, 7);
+      expect(
+        () => SrdManualSavingThrowRules.prepare(hero, 'wisdom'),
+        throwsFormatException,
+      );
+      expect(jsonEncode(hero.toJson()), before);
+      expect(random.draws, 0);
     },
   );
 }
