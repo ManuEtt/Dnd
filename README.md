@@ -1384,3 +1384,34 @@ Der Masterprompt verlangt für künftige Änderungen **ausschließlich neue, sac
 [Draft-PR #571](https://github.com/ManuEtt/Dnd/pull/571) stellt ausschließlich den aktiven archivierenden Branch-Cleanup in `.github/workflows/cleanup-merged-safe-20261027.yml` von `actions/github-script@v7` auf `@v8` um. GitHub hat die Ausführung von JavaScript-Actions auf Node.js 24 umgestellt; v8 unterstützt diese Laufzeit und benötigt GitHub Actions Runner 2.327.1 oder neuer. Drei neue Python-Regressionstests in `scripts/tests/test_cleanup_github_script_runtime.py` verhindern einen Rückfall auf v7, fehlende oder doppelte Einstiegspunkte und das irrtümliche Zählen von Kommentaren als Action-Steps. Die bestehenden SHA-, Vorfahren-, Archivtag-, Schutzbranch- und erfolgreiches-Main-CI-Gates bleiben unverändert. **CI des finalen PR-HEADs steht noch aus; der Workflow wurde nicht manuell ausgelöst.** Keine Android-App-, SQLite-/JSON-, Spielstands- oder Versionsänderung.
 
 ---
+
+### 2026-11-05 – Zusammenführung der 21 offenen Entwicklungs-PRs
+
+Die folgenden fachlichen Korrekturen, Tests und Build-Anpassungen wurden in einem separaten Integrationsbranch verlustarm zusammengetragen. Die Original-Commits sind über reguläre Merge-Eltern erreichbar. Dieser Nachtrag bestätigt **noch keinen Merge nach `main` und keinen erfolgreichen kombinierten CI-Durchlauf**.
+
+- [PR #543](https://github.com/ManuEtt/Dnd/pull/543): fix(): Paktmagie-Slots nur aus konsistenten SRD-Klassenprofilen.
+- [PR #545](https://github.com/ManuEtt/Dnd/pull/545): feat(): Kampagnenrückblick gegen veraltete Storyquellen absichern.
+- [PR #546](https://github.com/ManuEtt/Dnd/pull/546): fix(): gleichnamige Orte im bestätigten Langzeitgedächtnis unterscheiden.
+- [PR #548](https://github.com/ManuEtt/Dnd/pull/548): feat(): gespeicherte Klassen-Zaubervorbereitung im SRD-Preflight prüfen.
+- [PR #549](https://github.com/ManuEtt/Dnd/pull/549): fix(): Fertigkeitensuche über Android-Tastatur halten.
+- [PR #551](https://github.com/ManuEtt/Dnd/pull/551): feat(): bestätigte Mehrklassen-Zauberquelle bis zum Turn-Staging weiterreichen.
+- [PR #554](https://github.com/ManuEtt/Dnd/pull/554): fix(): Zauber- und Paktverbrauch vor langer Rast validieren (sauberer CI-Branch).
+- [PR #556](https://github.com/ManuEtt/Dnd/pull/556): fix(): Outbox-Fehler für TalkBack als Live-Meldung markieren.
+- [PR #557](https://github.com/ManuEtt/Dnd/pull/557): fix(): erste manuelle Rettungswürfe vor Klassenbonus und W20 validieren.
+- [PR #560](https://github.com/ManuEtt/Dnd/pull/560): fix(): freie KI-Erzählungen gegen unsichtbare Unicode-Steuerzeichen schützen.
+- [PR #561](https://github.com/ManuEtt/Dnd/pull/561): fix(): Zweite Luft und Aktionsschub nur mit gültigem Kämpfer-Klassenprofil.
+- [PR #564](https://github.com/ManuEtt/Dnd/pull/564): fix(): Zauberkraftregeneration nur bei gültigem Zauberer-Klassenprofil.
+- [PR #565](https://github.com/ManuEtt/Dnd/pull/565): fix(): ältere Unicode-Formatzeichen in bestätigten NPC-Rückblicken absichern.
+- [PR #566](https://github.com/ManuEtt/Dnd/pull/566): fix(): Materialauswahl gegen doppelte und ungültige Inventar-IDs absichern.
+- [PR #567](https://github.com/ManuEtt/Dnd/pull/567): fix(): Gradle-Wrapper-JAR gegen nicht portable ZIP-Pfadnamen absichern.
+- [PR #568](https://github.com/ManuEtt/Dnd/pull/568): fix(): Entrinnen nur mit konsistentem Mönch-/Schurken-Klassenprofil.
+- [PR #569](https://github.com/ManuEtt/Dnd/pull/569): fix(): NPC-Erzählergedächtnis gegen ältere unsichtbare Unicode-Zeichen absichern.
+- [PR #570](https://github.com/ManuEtt/Dnd/pull/570): fix(): JSON-Importdialog bei großer Schrift und Android-Tastatur bedienbar halten.
+- [PR #573](https://github.com/ManuEtt/Dnd/pull/573): fix(): Windows-Gerätenamen in Alpha-APK-ZIP-Pfaden abweisen.
+- [PR #575](https://github.com/ManuEtt/Dnd/pull/575): ci: Android-Alpha-Buildaktionen auf Node.js 24 aktualisieren.
+- [PR #576](https://github.com/ManuEtt/Dnd/pull/576): Überlegene Inspiration nur mit konsistenten Barden-Klassenstufen.
+
+Integration: `integration/open-prs-20261105-reviewed`, ausgehend von `main` `7b76d34e42f9f536993035876f8789d3405d70f9`. Beide getrennten SRD-Requirements-Änderungen sind in gültigem JSON erhalten. Drei fachlich ersetzte Diagnose-/Vorgängerbranches wurden über die Git-Historie gesichert; der eigentliche Produktcode ihrer nachfolgenden PRs ist maßgeblich.
+
+Verifizierung: Vorherige Main-CI [#42072388815](https://github.com/ManuEtt/Dnd/actions/runs/42072388815) erfolgreich. Die Einzel-PRs besitzen eigene Testergebnisse; der **neue gemeinsame Stand muss noch durch GitHub Actions geprüft werden**. Gemeinsame CI, `main`-Merge, Archiv-Tags, Branchlöschungen und ein abschließender Issue-Nachweis bleiben bis zur tatsächlichen Ausführung offen. Details und alle Original-SHAs: [`docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md`](docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md).
+
