@@ -1377,3 +1377,20 @@ Die darunter bewahrten Berichte gelten jeweils für ihren damaligen Stand.
 - Nach CI/Integrationsabgleich einen unabhängigen, bislang unbelegten Quellen-ID-Validierungsfall im Regelbereich mit positiven und negativen Tests bearbeiten.
 
 ---
+
+## 2026-11-05 – Quellenhistorien im zentralen Integrationsbranch
+
+Folgende Fach-PRs von Arbeitsbereich A sind im Branch `integration/open-prs-20261105-reviewed` als unveränderte Git-Merge-Vorfahren eingebunden, einschließlich ihrer fachlichen Dateien und Regressionstests:
+
+- [PR #543](https://github.com/ManuEtt/Dnd/pull/543)
+- [PR #548](https://github.com/ManuEtt/Dnd/pull/548)
+- [PR #551](https://github.com/ManuEtt/Dnd/pull/551)
+- [PR #554](https://github.com/ManuEtt/Dnd/pull/554)
+- [PR #557](https://github.com/ManuEtt/Dnd/pull/557)
+- [PR #561](https://github.com/ManuEtt/Dnd/pull/561)
+- [PR #564](https://github.com/ManuEtt/Dnd/pull/564)
+- [PR #568](https://github.com/ManuEtt/Dnd/pull/568)
+- [PR #576](https://github.com/ManuEtt/Dnd/pull/576)
+
+Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
+
