@@ -69,6 +69,10 @@ class SrdExtraCreatureAttackRules {
     ConfirmedExtraCreatureAttack input,
   ) {
     final match = _damagePattern.firstMatch(input.weaponDamage.trim());
+    // Only obstacles opposite the attacker grant cover, even at total cover.
+    final relativeCover = input.coverOppositeAttacker
+        ? input.targetCover
+        : CoverLevel.none;
     if (match == null ||
         int.parse(match.group(1)!) > 10 ||
         input.attackBonus < -30 ||
@@ -82,17 +86,14 @@ class SrdExtraCreatureAttackRules {
         !input.noUnmodelledDamageAdjustmentsConfirmed ||
         !input.noTargetReactionConfirmed ||
         !input.noAdditionalAttackEffectsConfirmed ||
-        (input.coverOppositeAttacker && input.targetCover == CoverLevel.total)) {
+        relativeCover == CoverLevel.total) {
       throw const FormatException(
         'Angriff nur mit bestätigtem vollständigem Trefferbonus, '
         'Waffenschaden, Ziel-RK, Reichweite, Deckung und '
         'geprüften Fähigkeiten/Reaktionen.',
       );
     }
-    // Even total cover applies only from the opposite side of its obstacle.
-    final cover = input.coverOppositeAttacker
-        ? CoverRules.getBonus(input.targetCover)
-        : 0;
+    final cover = CoverRules.getBonus(relativeCover);
     if (input.targetArmorClass + cover > 100) {
       throw const FormatException('Ungültige Ziel-RK einschließlich Deckung.');
     }
