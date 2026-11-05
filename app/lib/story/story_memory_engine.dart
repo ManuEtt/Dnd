@@ -237,7 +237,8 @@ class MemoryEngine {
     for (final place in campaign.places) {
       // Imported or in-memory duplicate IDs cannot prove which physical
       // place owns the description. Never guess from list order or the name.
-      if (!_safePlaceId.hasMatch(place.id) || placeIdCounts[place.id] != 1) {
+      if (_safePlaceId.stringMatch(place.id) != place.id ||
+          placeIdCounts[place.id] != 1) {
         continue;
       }
       final name = _visiblePlaceName(place.name);
