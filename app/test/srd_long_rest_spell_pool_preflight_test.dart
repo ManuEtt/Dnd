@@ -8,9 +8,9 @@ HeroCharacter _hero({
   String second = '',
   int secondLevel = 0,
   int level = 3,
-  Map<String, int> spentSpellSlots = const {},
-  int spentPactSlots = 0,
-  Map<String, int> spentHitDice = const {},
+  Map<String, int> slots = const {},
+  int pact = 0,
+  Map<String, int> dice = const {},
 }) => HeroCharacter(
   id: 'long-rest-spell-source',
   name: 'Rastprobe',
@@ -21,99 +21,103 @@ HeroCharacter _hero({
   hitPoints: 12,
   maxHitPoints: 20,
   concentratingOn: 'Unsichtbarkeit',
-  spentSpellSlots: spentSpellSlots,
-  spentPactSlots: spentPactSlots,
-  spentHitDice: spentHitDice,
+  spentSpellSlots: slots,
+  spentPactSlots: pact,
+  spentHitDice: dice,
 );
 
+void _rejectRest(HeroCharacter hero) {
+  final before = hero.toJson();
+  final spellsBefore = Map<String, int>.from(hero.spentSpellSlots);
+  final pactBefore = hero.spentPactSlots;
+  expect(() => RestRules.longRest(hero), throwsFormatException);
+  expect(hero.toJson(), before);
+  expect(hero.spentSpellSlots, spellsBefore);
+  expect(hero.spentPactSlots, pactBefore);
+  expect(hero.hitPoints, 12);
+  expect(hero.concentratingOn, 'Unsichtbarkeit');
+}
+
 void main() {
-  group('Lange Rast: ursprüngliche Zauberpools validieren', () {
-    final invalid = <String, HeroCharacter>{
-      'Zaubergrad ohne Plätze': _hero(spentSpellSlots: const {'8': 1}),
-      'zu viele verbrauchte normale Plätze': _hero(
-        level: 1,
-        spentSpellSlots: const {'1': 3},
-      ),
-      'negativer normaler Verbrauch': _hero(spentSpellSlots: const {'1': -1}),
-      'ungültiger Grad 01': _hero(spentSpellSlots: const {'01': 1}),
-      'fremder Gradschlüssel': _hero(spentSpellSlots: const {'10': 1}),
-      'Paktplätze über Klassengrenze': _hero(
-        first: 'Hexenmeister',
-        level: 1,
-        spentPactSlots: 2,
-      ),
-      'Paktverbrauch ohne Hexenmeister': _hero(spentPactSlots: 1),
-      'negativer Paktverbrauch': _hero(spentPactSlots: -1),
-    };
+  test('missing high-grade slots block long rest', () {
+    _rejectRest(_hero(slots: const {'8': 1}));
+  });
 
-    for (final entry in invalid.entries) {
-      test('${entry.key}: keine stillschweigende Ressourcenreparatur', () {
-        final hero = entry.value;
-        final before = hero.toJson();
-        final initialSpells = Map<String, int>.from(hero.spentSpellSlots);
-        final initialPactSlots = hero.spentPactSlots;
+  test('overspent level-one spell slots block long rest', () {
+    _rejectRest(_hero(level: 1, slots: const {'1': 3}));
+  });
 
-        expect(() => RestRules.longRest(hero), throwsFormatException);
-        expect(hero.toJson(), before);
-        expect(hero.spentSpellSlots, initialSpells);
-        expect(hero.spentPactSlots, initialPactSlots);
-        expect(hero.hitPoints, 12);
-        expect(hero.concentratingOn, 'Unsichtbarkeit');
-      });
-    }
+  test('negative normal spell slot use blocks long rest', () {
+    _rejectRest(_hero(slots: const {'1': -1}));
+  });
 
-    test('gültige Mehrklasse regeneriert beide Slotpools', () {
-      final hero = _hero(
-        first: 'Wizard',
-        second: 'Warlock',
-        level: 6,
-        secondLevel: 3,
-        spentSpellSlots: const {'1': 2, '2': 1},
-        spentPactSlots: 1,
-        spentHitDice: const {'d6': 2, 'd8': 1},
-      );
-      final initial = hero.toJson();
-      expect(SpellcastingRules.availableSlots(hero), {1: 2, 2: 1});
-      expect(SpellcastingRules.availablePactSlots(hero), 1);
+  test('noncanonical grade 01 blocks long rest', () {
+    _rejectRest(_hero(slots: const {'01': 1}));
+  });
 
-      final rested = RestRules.longRest(hero);
-      expect(rested.hitPoints, 20);
-      expect(rested.spentSpellSlots, isEmpty);
-      expect(rested.spentPactSlots, 0);
-      expect(rested.spentHitDice, isEmpty);
-      expect(rested.concentratingOn, isEmpty);
-      expect(hero.toJson(), initial);
-      final reloaded = HeroCharacter.fromJson(rested.toJson());
-      expect(reloaded.toJson(), rested.toJson());
-    });
+  test('unrecognized grade 10 blocks long rest', () {
+    _rejectRest(_hero(slots: const {'10': 1}));
+  });
 
-    test('Altspielstand ohne verbrauchte Zauberplätze bleibt gültig', () {
-      final oldHero = _hero(first: 'Fighter', level: 2);
-      final original = oldHero.toJson();
-      final loaded = HeroCharacter.fromJson(original);
-      expect(loaded.toJson(), original);
-      expect(loaded.spentSpellSlots, isEmpty);
-      expect(loaded.spentPactSlots, 0);
+  test('overspent warlock pact slots block long rest', () {
+    _rejectRest(_hero(first: 'Hexenmeister', level: 1, pact: 2));
+  });
 
-      final rested = RestRules.longRest(loaded);
-      expect(rested.hitPoints, 20);
-      expect(rested.spentSpellSlots, isEmpty);
-      expect(rested.spentPactSlots, 0);
-      expect(rested.preparedSpellRecord, isNull);
-      expect(loaded.toJson(), original);
-    });
+  test('pact spending without warlock blocks long rest', () {
+    _rejectRest(_hero(pact: 1));
+  });
 
-    test('rechtmäßige Hexenmeister-Paktplätze werden zurückgesetzt', () {
-      final hero = _hero(
-        first: 'Hexenmeister',
-        level: 5,
-        spentPactSlots: 2,
-      );
-      expect(SpellcastingRules.availablePactSlots(hero), 0);
-      final after = RestRules.longRest(hero);
-      expect(after.spentPactSlots, 0);
-      expect(SpellcastingRules.availablePactSlots(after), 2);
-      expect(hero.spentPactSlots, 2);
-    });
+  test('negative pact spending blocks long rest', () {
+    _rejectRest(_hero(pact: -1));
+  });
+
+  test('valid wizard warlock multiclass regains both pools', () {
+    final hero = _hero(
+      first: 'Wizard',
+      second: 'Warlock',
+      level: 6,
+      secondLevel: 3,
+      slots: const {'1': 2, '2': 1},
+      pact: 1,
+      dice: const {'d6': 2, 'd8': 1},
+    );
+    final before = hero.toJson();
+    expect(SpellcastingRules.availableSlots(hero), {1: 2, 2: 1});
+    expect(SpellcastingRules.availablePactSlots(hero), 1);
+
+    final rested = RestRules.longRest(hero);
+    expect(rested.hitPoints, 20);
+    expect(rested.spentSpellSlots, isEmpty);
+    expect(rested.spentPactSlots, 0);
+    expect(rested.spentHitDice, isEmpty);
+    expect(rested.concentratingOn, isEmpty);
+    expect(hero.toJson(), before);
+    final decoded = HeroCharacter.fromJson(rested.toJson());
+    expect(decoded.toJson(), rested.toJson());
+  });
+
+  test('legacy noncaster without spent slots keeps valid rest', () {
+    final original = _hero(first: 'Fighter', level: 2);
+    final before = original.toJson();
+    final loaded = HeroCharacter.fromJson(before);
+    expect(loaded.toJson(), before);
+    expect(loaded.spentSpellSlots, isEmpty);
+    expect(loaded.spentPactSlots, 0);
+
+    final rested = RestRules.longRest(loaded);
+    expect(rested.hitPoints, 20);
+    expect(rested.spentSpellSlots, isEmpty);
+    expect(rested.spentPactSlots, 0);
+    expect(rested.preparedSpellRecord, isNull);
+    expect(loaded.toJson(), before);
+  });
+
+  test('valid warlock pact slots return after long rest', () {
+    final hero = _hero(first: 'Hexenmeister', level: 5, pact: 2);
+    expect(SpellcastingRules.availablePactSlots(hero), 0);
+    final rested = RestRules.longRest(hero);
+    expect(rested.spentPactSlots, 0);
+    expect(SpellcastingRules.availablePactSlots(rested), 2);
+    expect(hero.spentPactSlots, 2);
   });
 }
