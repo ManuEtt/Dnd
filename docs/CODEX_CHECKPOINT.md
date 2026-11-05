@@ -1,3 +1,20 @@
+## Chat D – TOCTOU-Abwehr beim Kopieren geprüfter ARM64-Release-APKs (05.11.2026)
+
+- **Ausgangs-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9` (vollständig grüne Main-CI [41998020622](https://github.com/ManuEtt/Dnd/actions/runs/41998020622)).
+- **Branch:** `fix/chat-d/alpha-apk-source-identity-20261105`.
+- **Fach-/Testcommit:** `333d00776672a4f36b8b50a6b93bcc454e4e6cd2`.
+- **PR:** [#552](https://github.com/ManuEtt/Dnd/pull/552), bis zur finalen Actions-Abnahme Draft.
+- **Ausgangsproblem:** Eine validierte APK wurde nach möglicherweise aufwendiger Quellarchiverstellung nur über den Pfad per `shutil.copy2` kopiert. Nach dem letzten Pfadlink-Check ließ sich die Quelle gegen eine andere reguläre APK oder einen Link austauschen.
+- **IMPLEMENTIERT:** Vor der Inhaltsvalidierung Quellstatistik aufnehmen und nachher abgleichen. Beim Kopieren auf POSIX jede Elternkomponente und die APK selbst mit `openat`-/`O_NOFOLLOW`-Deskriptoren pinnen; geöffnete Datei muss regulär sein und die ursprüngliche Identität behalten. Auch nach dem Kopieren Quell-Datei und -Pfad nochmals abgleichen. Plattformen ohne diese Flags verwenden Best-Effort-Checks, keine garantierte Linkfreiheit bei zeitgleichem Swap.
+- **Regressionen:** `scripts/tests/test_prepare_alpha_release.py` ergänzt drei Negativfälle: nach Validierung spät eingesetzter symbolischer APK-Link, nachträgliche Änderung der regulären Quelldatei und spät ausgewechselter verlinkter Elternordner. Alte Positivfälle bleiben bestehen.
+- **GETESTET:** GitHub-Code-/Testcommit und isolierter PR angelegt; das Ausgangs-main hat vollständig grüne CI. Kein lokaler Python-/Flutter-Projekttest für diesen neuen Head als bestanden ausgegeben.
+- **NICHT GETESTET:** vollständiger Python-Projektunittestlauf, Release-/Backend-/Flutter-/Android-CI auf finalem PR-Head, realer Geräteeinsatz und Altspielstandmigration.
+- **Kompatibilität:** keine Schema-, JSON-/SQLite-/Spielstand-, Backup- oder App-Versionsänderung. Nur Alpha-APK-Veröffentlichungsgrenze.
+- **Konfliktkontrolle:** Offene A/B/C-PRs und vorheriger Chat-D-PR #547 bearbeiten nicht `scripts/prepare_alpha_release.py` oder `scripts/tests/test_prepare_alpha_release.py`. Gemeinsame Dokumentation additiv erhalten.
+- **Nächster Schritt:** volle CI auf finalem PR-Head prüfen; mögliche Fehler korrigieren; vor Merge aktuellen Main, Commit-SHA und Konflikte erneut vergleichen.
+
+---
+
 ## Chat D – Exklusive Checkpoint-Namensprüfung nach Lock-Übernahme (05.11.2026)
 
 - **Basis-main:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.

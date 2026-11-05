@@ -1,3 +1,21 @@
+# CHAT D – unveränderte geprüfte ARM64-APK veröffentlichen (05.11.2026)
+
+- **Ausgangs-main-SHA:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`.
+- **Eigener Branch:** `fix/chat-d/alpha-apk-source-identity-20261105`.
+- **Fach-/Testcommit:** `333d00776672a4f36b8b50a6b93bcc454e4e6cd2`.
+- **Pull Request:** [#552](https://github.com/ManuEtt/Dnd/pull/552), Draft.
+- **Ausgangsproblem:** Zwischen `validate_arm64_apk` und `shutil.copy2` konnte eine reguläre, bereits geprüfte APK durch eine andere Datei, einen verlinkten Dateipfad oder einen verlinkten Elternordner ersetzt werden. Eine anschließend gültige ZIP-APK wäre dadurch nicht zwingend die zuvor geprüfte Quelle.
+- **IMPLEMENTIERT:** Stat-Identität vor/nach Validierung prüfen; POSIX-Quellpfad-Komponenten per `O_NOFOLLOW|O_DIRECTORY` und geöffnete Quelldatei per `O_NOFOLLOW` fixieren; kopierten Inhalt auf Ursprung und Endidentität prüfen; vor Abschluss den Quellpfad nochmals kontrollieren.
+- **Tests ergänzt:** drei gezielte Regressionen in `scripts/tests/test_prepare_alpha_release.py` für späten Dateilink, Austausch der regulären APK und nachträglichen Elternordner-Symlink.
+- **GETESTET:** Github Branch/Commit und PR erstellt; bestehende positive/negative Testfälle im Quelltext geprüft; Ausgangs-main-CI vollständig grün.
+- **NICHT GETESTET:** neue Python-Unittest-Suite, vollständige Backend-/Flutter-/Android-/APK-Release-CI auf dem finalen Dokumentations-Head und Realgerät.
+- **BLOCKIERT:** Vollständige Projekt-Abnahme muss noch von GitHub Actions bestätigt werden; der lokale Checkout war zuvor durch fehlendes GitHub-DNS eingeschränkt.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Kompatibilität:** keine SQLite-/JSON-/Save-/Migration-/Versionseffekte; valide Alpha-APKs bleiben zulässig.
+- **Nächster Schritt:** finale PR-CI durchlaufen lassen, Probleme auf eigenem Branch lösen und erst nach grüner CI konfliktfrei integrieren.
+
+---
+
 # CHAT D – Wiederholte Versionsnamen vor Checkpoint-Veröffentlichung sperren (05.11.2026)
 
 - **Ausgangs-main-SHA:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.
