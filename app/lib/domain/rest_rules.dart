@@ -128,6 +128,15 @@ class RestRules {
 
   static HeroCharacter longRest(HeroCharacter hero) {
     _ensureRestPossible(hero);
+    // Validate the ORIGINAL slot pools before recovery can erase forged or
+    // otherwise inconsistent spent resources. Legacy slot keys are numeric,
+    // canonical grades 1-9; the generic pool reader does not check extra keys.
+    const grades = <String>{'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    if (hero.spentSpellSlots.keys.any((key) => !grades.contains(key))) {
+      throw const FormatException('Ungültiger Zauberplatzverbrauch.');
+    }
+    SpellcastingRules.availableSlots(hero);
+    SpellcastingRules.availablePactSlots(hero);
     // The SRD restores all lost HP and all spent Hit Dice after a Long Rest.
     // No class-specific charges are fabricated by this generic rule.
     return ClassResourceRules.afterLongRest(
