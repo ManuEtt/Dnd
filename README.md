@@ -110,6 +110,35 @@ regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
 ## Aktueller Stand und autonome Fortsetzung
 
+## 05.11.2026 – Chat A: erste manuelle Rettungswürfe vor Klassenbonus prüfen
+
+**Implementiert auf Codecommit `6d6207f12ae3769475e28cd4751731cb555232df`**, Basis-Main
+`74548d3d5243485c05fa7cb26bf1cea945e6ce9b`, Branch `fix/chat-a/manual-save-class-preflight-20261105`,
+App **0.8.52+102**. Der neue schreibfreie Vorbereitungshelfer nutzt den vorhandenen
+reinen Klassen-/Übungsvalidator; keine doppelte Regelberechnung oder erfundenen
+Konzentrationsbestätigungen. GameEngine ruft ihn vor dem ersten manuellen W20 auf
+und protokolliert ungültige, lesbare Altprofile als deutsche rules.blocked-Ablehnung.
+Automatische STR/DEX-Fehlschläge bleiben ohne W20/Bonus; fehlende Attribute bleiben
+Fehler. Lesende Charakterbogenberechnungen und gespeicherte Profile unverändert.
+
+**Getestet:**52 neue Domain-/Enginefälle,8 SQLite-/Controller-Flows und2 tatsächliche
+App-UI-Flows bestanden. Zusammen mit31 alten Regressionen93 gezielte Fälle. Unter
+den UI-Nachweisen: Altprofil ablehnen, explizite Klassenkorrektur speichern, neue
+Rettung mit einmaligem Bonus würfeln, Neustart; gültige englische Klassenaliase.
+**Noch offen:** vollständiges scripts/check.sh, Android-Build/native Tests und
+finale GitHub-CI dieses Branches. Keine erfolgreiche neue APK/CI behauptet.
+SQLite3/JSON1 ohne Migration. Core-Requirement RULE-CORE-RULES-SAVING-THROWS partial;
+weitere Rettungswurfquellen und vollständiger Charakterassistent/SRD bleiben offen.
+
+**Live-Hinweis:** Main ist nach der letzten lokalen Abnahme erneut fortgeschritten;
+vor finaler Abnahme Main und neue PR-Dateilisten prüfen, Änderungen koordinieren
+und den kombinierten Stand erneut testen. Vorige Kontingentunterbrechungen haben
+den Scope nicht ersetzt. Dieser überprüfte Teilstand wird zuerst remote/als ZIP
+gesichert. Nächster Schritt: finale Integration und komplette Prüfkette.
+
+---
+
+
 ## Wiederaufnahme 05.11.2026 – gesicherter, noch ungeprüfter Zwischenstand
 
 Branch `fix/chat-a/manual-save-class-preflight-20261102`, bisherige Basis
