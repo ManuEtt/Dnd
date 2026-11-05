@@ -2085,3 +2085,13 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **MIGRATION:** Keine; JSON, SQLite, World/Quest/HP/XP/Regeln, App-Version und Provider bleiben unverändert. Herkunftsstempel prüft weiterhin alle ungekürzten gespeicherten Orte.
 - **Konfliktkontrolle:** Chat-B-PR #545 (Kampagnenrückblick), #546 (Langzeit-Ortsgedächtnis) und #550 (generierte Abenteuerangebote) berühren andere Fachdateien. Andere aktive PRs aus A, C, D ebenfalls abgeglichen; gemeinsame README/Checkpoints nur additiv bei Integration konsolidieren.
 - **Nächster Schritt:** Vollständige CI auf finalem PR-HEAD prüfen; Format-/Testfehler im selben Branch beheben; grünen PR zur kontrollierten Integration an Chat D übergeben.
+
+## 05.11.2026 – geprüfte 21-PR-Migration im Integrationsbranch (noch nicht nach main übernommen)
+
+Quellstand: `main` `7b76d34e42f9f536993035876f8789d3405d70f9`. Integrationsbranch: `integration/open-prs-20261105-reviewed`.
+21 historische PR-Heads und drei ersetzte Diagnose-/Vorgängerbranches sind über Merge-Vorfahren gesichert. Fachänderungen, bestehende Regressionstests und neue Testdateien wurden aus den Quell-PRs zusammengeführt, ohne andere `main`-Dateiversionen pauschal durch ältere Branch-Snapshots zu ersetzen.
+Der kombinierte SRD-Regelebene-Audit enthält beide getrennten Ergänzungen aus PR #557 und #576 und wurde als JSON validiert. Die README-Projektbeschreibung wurde unverändert belassen; ein neutraler Nachtrag befindet sich ausschließlich am Dateiende.
+Umfang: Paktmagie, vorbereitete Zauber, Klassenressourcen und -profile, Rettungswürfe, Rast, Erzähl-/NPC-/Ortsgedächtnis, Android-Dialoge und Barrierefreiheit, Gradle-/ZIP-Validatoren sowie Node-24-Action-Updates.
+Einzel-PR-CI wurde geprüft, aber **die gemeinsame CI des Integrationsstands ist noch ausstehend**. Keine Aussage über erfolgreichen `main`-Merge, Branchlöschungen, Geräteabnahme oder Signierung.
+Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen und Cleanup-Sicherheitsregeln: `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md`.
+
