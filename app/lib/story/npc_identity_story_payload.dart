@@ -164,14 +164,14 @@ class NpcIdentityStoryPayload {
 
   // Structured identity contexts are revision-bound and must mirror the
   // confirmed snapshot exactly. Reject unsafe legacy text, including
-  // invisible zero-width Unicode, instead of rewriting a signed identity
-  // or relationship note on the wire.
+  // soft hyphens, grapheme joiners, obsolete vowel separators and bidi
+  // controls; never rewrite stored names or confirmed relationship notes.
   static bool _validText(String text, int max) =>
       text.trim().isNotEmpty &&
       text.length <= max &&
       !RegExp(
-        r'[\x00-\x1f\x7f-\x9f\u061c\u200b-\u200f'
-        r'\u2028-\u202e\u2060-\u2069\ufeff]',
+        r'[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f'
+        r'\u2028-\u202e\u2060-\u206f\ufeff]',
       ).hasMatch(text);
 
   static bool _mentions(String action, String name) {
@@ -182,12 +182,12 @@ class NpcIdentityStoryPayload {
     ).hasMatch(playerText);
   }
 
-  // Bidi marks, zero-width joiners/spaces, word joiners and BOM are
-  // invisible, not distinct NPC name characters. Strip them for uniqueness
-  // and mention checks, while _validText rejects them on the structured wire.
+  // Invisible legacy formatting does not distinguish NPC identities. Apply
+  // the same comparison folding to stored names and player mentions, while
+  // _validText rejects it on the structured wire (fail closed).
   static String _fold(String value) => value
       .replaceAll(
-        RegExp(r'[\u061c\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]'),
+        RegExp(r'[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]'),
         '',
       )
       .toLowerCase()
