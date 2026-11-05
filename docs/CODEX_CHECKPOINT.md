@@ -1,3 +1,18 @@
+## Chat C – JSON-Importdialog gegen IME-/Großschrift-Layoutprobleme absichern (05.11.2026)
+
+- **Ausgangs-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95`.
+- **Branch:** `feat/chat-c/backup-import-ime-accessible-20261105`; **Pull Request:** [#570](https://github.com/ManuEtt/Dnd/pull/570), Draft.
+- **Problem:** Bisheriger innerer Scrollbereich bei separaten Titel-/Aktionsflächen erschwert bei 320/360 dp, 200 % Text und IME das Erreichen von Bearbeitung und Bestätigung.
+- **IMPLEMENTIERT:** Nur `app/lib/ui/backup_dialogs.dart` (Importdialog): `AlertDialog(scrollable: true)`, keine doppelte innere Scrollfläche, kleinere Dialogränder, kompakterer mehrzeiliger Editor ab 180 % Schrift. Keine Änderung der Import-/Busy-Logik.
+- **Widgettests:** `app/test/backup_import_ime_accessibility_test.dart`: sechs positive/negative Fälle, simulierte Android-IME, Textentwurf erst nach ausdrücklicher Aktion als Ergebnis; Abbruch, Busy-Disable, Datei-Abbruch und Fehlermeldung mit Live-Region.
+- **GETESTET:** GitHub-Hauptbranch, Masterprompt, Projektanweisungen, offener PR-Dateiabgleich, aktuelle UI-/Integrationstests und neue Code-/Testdateien statisch geprüft.
+- **NICHT GETESTET:** Flutter/Dart-Test-/Format-/Analyse-Lauf, vollständiger Python-/Backend-/Android-Workflow auf finalem Commit, physisches Gerät/TalkBack/IME, produktive Signierung. GitHub Actions gesondert auswerten.
+- **BLOCKIERT:** Lokales Flutter/Dart-SDK nicht verfügbar; PR bis zur CI-Auswertung und Review Draft lassen. Chat D soll gemeinsame README-/Checkpoint-Änderungen additiv zusammenführen.
+- **Migration / Spielstände:** Keine Änderung an `BackupFiles`, SQLite, JSON, Controllern oder Importvalidierung; keine Migration.
+- **NÄCHSTER SCHRITT:** GitHub-CI auf finalem PR-HEAD abschließen, gegebenenfalls Widget-/Formatfehler im gleichen Branch beheben.
+
+---
+
 ## Chat D – APK-ZIP-Komponenten mit abschließendem Punkt/Leerzeichen sperren (05.11.2026)
 
 - **Basis-main:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4` (Main-CI [42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539): erfolgreich, unabhängig vom neuen Patch).
