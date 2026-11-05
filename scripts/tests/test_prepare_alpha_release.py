@@ -251,6 +251,42 @@ class AlphaReleaseTests(unittest.TestCase):
                     release.prepare_release(self.root, self.out)
                 self.assertFalse(self.out.exists())
 
+    def test_apk_rejects_trailing_space_or_dot_in_any_path_component_before_crc(self):
+        # Windows-compatible tools may collapse these names onto existing
+        # entries, even when the ZIP itself has unique literal names.
+        unsafe = (
+            'assets/map.json.',
+            'assets/map.json ',
+            'assets./map.json',
+            'assets /map.json',
+            'assets/room./scene.dat',
+            'assets/room /scene.dat',
+        )
+        for name in unsafe:
+            with self.subTest(path=name):
+                self.create_apk()
+                with zipfile.ZipFile(self.apk, 'a') as archive:
+                    archive.writestr(name, b'unportable asset')
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before path validation'),
+                ):
+                    with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+                        release.validate_arm64_apk(self.apk)
+
+    def test_apk_allows_internal_spaces_and_dots_in_path_components(self):
+        self.create_apk()
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/map.v2/alte karte.json', b'valid asset')
+        release.validate_arm64_apk(self.apk)
+
+    def test_unportable_apk_path_never_creates_release_files(self):
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/room./scene.json', b'unportable asset')
+        with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+            release.prepare_release(self.root, self.out)
+        self.assertFalse(self.out.exists())
+
     def test_apk_rejects_file_used_as_implicit_directory_before_crc(self):
         for reversed_order in (False, True):
             with self.subTest(reversed_order=reversed_order):

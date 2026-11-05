@@ -1,3 +1,23 @@
+## Chat D – portables Alpha-APK-ZIP vor Veröffentlichung (05.11.2026)
+
+- **Ausgangs-Main-SHA:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4`.
+- **Branch:** `fix/chat-d/apk-portable-trailing-paths-20261105`.
+- **Fach-/Testcommit:** `cbc9f90d0d28c99097c3551d9c553f0ee84f4fc2`; zusätzliche Dokumentationsaktualisierung im PR-Head.
+- **Pull Request:** [#563](https://github.com/ManuEtt/Dnd/pull/563), Draft bis zur vollständigen CI-Abnahme.
+- **Ausgangsproblem:** In validierten APK-ZIPs waren Dateinamen und Verzeichniskomponenten mit abschließendem Punkt bzw. Leerzeichen erlaubt; auf Windows-kompatiblen Extraktionszielen können sich dadurch unterschiedliche ZIP-Einträge überschneiden.
+- **IMPLEMENTIERT:** Ablehnung solcher Namen in `validate_arm64_apk` schon bei ZIP-Metadaten vor CRC-Entpackung. Keine Veränderung gültiger APKs oder Android-Buildartefakte.
+- **Akzeptanzkriterien:** Sechs Varianten in Datei und Verzeichnisteilen werden vor `testzip` abgewiesen; Namen mit inneren Punkten/Leerzeichen bleiben gültig; fehlerhafte APK erstellt weder Release-Output noch verändert bestehende Spielstände.
+- **Regressionen:** `scripts/tests/test_prepare_alpha_release.py` ergänzt drei gezielte Testmethoden (sechs Negativfälle, ein Positivfall, eine Publikations-Negativprobe).
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`; `scripts/tests/test_prepare_alpha_release.py`; `README.md`; `docs/CODEX_CHECKPOINT.md`; `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktkontrolle:** elf offene PRs #543, #545, #546, #548, #549, #551, #554, #556, #557, #560 und #561 samt geänderten Fachdateien geprüft; kein offener PR berührt die zwei Skript-/Testdateien. Gemeinsame Dokumentation nur additiv geändert.
+- **GETESTET:** GitHub-main und Branch-SHA verglichen; Code/Test-Commits erfolgreich veröffentlicht. Ausgangs-main erfolgreich in [Main-CI #42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539); dieser Lauf testet **nicht** die Änderung.
+- **NICHT GETESTET:** lokale Python-Suite (Container ohne Checkout/DNS), Backend-/Flutter-/Android-Build auf finalem PR-HEAD, Release-APKs auf echtem Gerät und Altdatenupgrade.
+- **BLOCKIERT:** Verlässlicher vollständiger Testnachweis erst nach Prüfung der CI auf letztem Dokumentationscommit.
+- **Migrationen:** keine. Unverändert: SQLite-Schema 3, JSON-Format 1, Spielstände, Backups, Regeln, Android-Version.
+- **Genau nächster Schritt:** abschließende Python-/Backend-/Flutter-/Android-CI für PR #563 prüfen und nur bei voll bestandenem Ergebnis zur Integration freigeben.
+
+---
+
 ## Chat D – Integration PR #555: bestätigte Ortsrückblicke Unicode-sicher anzeigen (05.11.2026)
 
 - **Ausgangs-main:** `c8fa5ae32fac740dff4ff677d2141ddfd1c81a6e`; **Original-PR:** [#555](https://github.com/ManuEtt/Dnd/pull/555), Original-HEAD `2af06a6231fe55dbd0652b3177582a2eec5bc97b`.
