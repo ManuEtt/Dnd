@@ -1,3 +1,59 @@
+# CHAT D – unveränderte geprüfte ARM64-APK veröffentlichen (05.11.2026)
+
+- **Ausgangs-main-SHA:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`.
+- **Eigener Branch:** `fix/chat-d/alpha-apk-source-identity-20261105`.
+- **Fach-/Testcommit:** `333d00776672a4f36b8b50a6b93bcc454e4e6cd2`.
+- **Pull Request:** [#552](https://github.com/ManuEtt/Dnd/pull/552), Draft.
+- **Ausgangsproblem:** Zwischen `validate_arm64_apk` und `shutil.copy2` konnte eine reguläre, bereits geprüfte APK durch eine andere Datei, einen verlinkten Dateipfad oder einen verlinkten Elternordner ersetzt werden. Eine anschließend gültige ZIP-APK wäre dadurch nicht zwingend die zuvor geprüfte Quelle.
+- **IMPLEMENTIERT:** Stat-Identität vor/nach Validierung prüfen; POSIX-Quellpfad-Komponenten per `O_NOFOLLOW|O_DIRECTORY` und geöffnete Quelldatei per `O_NOFOLLOW` fixieren; kopierten Inhalt auf Ursprung und Endidentität prüfen; vor Abschluss den Quellpfad nochmals kontrollieren.
+- **Tests ergänzt:** drei gezielte Regressionen in `scripts/tests/test_prepare_alpha_release.py` für späten Dateilink, Austausch der regulären APK und nachträglichen Elternordner-Symlink.
+- **GETESTET:** Github Branch/Commit und PR erstellt; bestehende positive/negative Testfälle im Quelltext geprüft; Ausgangs-main-CI vollständig grün.
+- **NICHT GETESTET:** neue Python-Unittest-Suite, vollständige Backend-/Flutter-/Android-/APK-Release-CI auf dem finalen Dokumentations-Head und Realgerät.
+- **BLOCKIERT:** Vollständige Projekt-Abnahme muss noch von GitHub Actions bestätigt werden; der lokale Checkout war zuvor durch fehlendes GitHub-DNS eingeschränkt.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Kompatibilität:** keine SQLite-/JSON-/Save-/Migration-/Versionseffekte; valide Alpha-APKs bleiben zulässig.
+- **Nächster Schritt:** finale PR-CI durchlaufen lassen, Probleme auf eigenem Branch lösen und erst nach grüner CI konfliktfrei integrieren.
+
+---
+
+# CHAT D – Java-Properties-Kommentare nicht fortsetzen (05.11.2026)
+
+- **Ausgangs-main-SHA:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`.
+- **Eigener Branch:** `fix/chat-d/gradle-comments-continuation-20261105`.
+- **Fach-/Test-HEAD vor Dokumentation:** `9a88f16448b2baa42fa8e75773bd370cfca29987`.
+- **PR:** [#547](https://github.com/ManuEtt/Dnd/pull/547), Draft bis vollständiger CI.
+- **Ausgangsproblem:** Auf `#` oder `!` beginnende physische Properties-Kommentare dürfen trotz abschließendem Backslash keine Folgezeile konsumieren. Der Python-Uploadvalidator tat dies jedoch und konnte eine wirksame zweite `distributionUrl` oder `distributionSha256Sum` übersehen.
+- **IMPLEMENTIERT:** Frühzeitige Kommentarerkennung in `_gradle_logical_lines`; fortgesetzte echte Property-Zeilen bleiben erhalten; unveränderte HTTPS-/SHA256-Eindeutigkeitsprüfung.
+- **Akzeptanzkriterien:** Kommentierte Backslashes verdecken weder gültige Pflichtwerte noch manipulierte doppelte Schlüssel. CR/LF/CRLF gültig. Marker `#`/`!` in wirklich fortgesetzten Werten sind keine Kommentare. Keine Änderung der bereits akzeptierten Wrapper-Datei.
+- **Neue Tests:** vier Methoden, 23 positive/negative Parametervarianten, in `scripts/tests/test_verify_project.py`.
+- **GETESTET:** Echte Java-21-Properties-Dekodierung mit Kommentar + späterer HTTP-URL für CR/LF/CRLF nachgewiesen; GitHub-Branch/Codecommit/PR erstellt.
+- **NICHT GETESTET:** Projekt-Python-Unittests, vollständig kombiniertes GitHub Actions auf endgültigem HEAD, reales Android-Gerät und Altdatenupgrade.
+- **BLOCKIERT:** GitHub-DNS-Zugriff für lokalen Repository-Klon war in vorigen Sitzungen nicht verfügbar; vollständige Abnahme über Projekt-CI.
+- **Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migrationen:** keine. SQLite, JSON-Spielstände, Backups, Android-Release-Version unverändert.
+- **Nächster Schritt:** finalen PR-HEAD in GitHub Actions prüfen, bei CI-Fehlern im selben Branch korrigieren und erst nach erfolgreicher Integrationsprüfung nach main übernehmen.
+
+---
+
+# CHAT D – Wiederholte Versionsnamen vor Checkpoint-Veröffentlichung sperren (05.11.2026)
+
+- **Ausgangs-main-SHA:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.
+- **Branch:** `fix/chat-d/checkpoint-name-race-20261105`.
+- **Code-/Testcommit:** `0216724630759ce853c722c05e904c39aad59289`.
+- **Pull Request:** [#544](https://github.com/ManuEtt/Dnd/pull/544) (Draft bis vollständiger CI).
+- **Ausgangsproblem:** Ein gleichnamiges, versioniertes Quellcode-Checkpointartefakt kann nach der frühen Vorprüfung während der Manifestphase durch einen zweiten Schreiber entstehen. Ein späteres `os.replace` überschriebe die erste, bereits gültige Ausgabe. Hängende Symlinks zählen in `Path.exists()` nicht als bestehend.
+- **IMPLEMENTIERT:** Zweite Namensprüfung unter exklusiver `.checkpoint.lock`-Sperre; Vorabprüfung berücksichtigt Symlinks. ZIP/Patch/Manifest/SHA-Dateien werden nur bei freiem Versionsnamen veröffentlicht.
+- **Akzeptanz:** Nachträglich erschienene Dateien/Links verhindern jede Veröffentlichung; konkurrierende Originaldateien und externe Symlinkziele bleiben unverändert; LATEST und Checksummen-Alias bleiben wie vorher; Sperre wird freigegeben.
+- **Neue Tests:** `scripts/tests/test_create_checkpoint.py` mit einer spät angelegten ZIP und einem spät angelegten hängenden Manifest-Symlink, jeweils mit Alias- und Lock-Negativprüfungen.
+- **GETESTET:** Dateivergleich des Quellcodes und gültige GitHub-Branch-/Commit-/PR-Erstellung. Tatsächliche Projekt-Unittests noch nicht ausgeführt.
+- **NICHT GETESTET:** Projekt-Python-Suite, gesamte Backend-/Flutter-/Android-Actions-Pipeline für letzten PR-HEAD, Android-Gerät.
+- **BLOCKIERT:** Lokaler Git-Clone im Container mangels DNS zu GitHub nicht verfügbar; GitHub Actions zur vollen Abnahme nötig.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migrationsstatus:** keine; SQLite, JSON, Backups, Spielstände, Versionsnummer und bestehende Module unberührt.
+- **Nächster Schritt:** Finale PR-CI abnehmen, Fehler gegebenenfalls reparieren und erst nach erneuter Konfliktprüfung reviewfähig markieren/integrieren.
+
+---
+
 ## Konsolidierung 04.11.2026 – PR #537
 
 Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.

@@ -376,6 +376,63 @@ class CheckpointTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'already exists'):
             self.create()
 
+    def test_checkpoint_collision_after_early_check_keeps_original_artifacts(self):
+        first = self.create(label='previous')
+        previous_latest = Path(first['latest_archive']).read_bytes()
+        previous_checksums = Path(first['latest_checksums']).read_bytes()
+        stamp = NOW.strftime('%Y%m%dT%H%M%S%fZ')
+        existing = (
+            self.output /
+            f'Wuerfelraunen_0.7.4+44_{stamp}_tested_Vollprojekt.zip'
+        )
+        original_manifest = checkpoint.file_manifest
+        competing_bytes = b'ALREADY_PUBLISHED_CHECKPOINT'
+
+        def publish_while_collecting_manifest(root):
+            manifest = original_manifest(root)
+            existing.write_bytes(competing_bytes)
+            return manifest
+
+        with mock.patch.object(
+            checkpoint, 'file_manifest',
+            side_effect=publish_while_collecting_manifest,
+        ):
+            with self.assertRaisesRegex(ValueError, 'already exists'):
+                self.create()
+        self.assertEqual(existing.read_bytes(), competing_bytes)
+        self.assertEqual(Path(first['latest_archive']).read_bytes(), previous_latest)
+        self.assertEqual(Path(first['latest_checksums']).read_bytes(), previous_checksums)
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+
+    def test_dangling_checkpoint_link_during_preparation_is_not_replaced(self):
+        first = self.create(label='previous')
+        previous_latest = Path(first['latest_archive']).read_bytes()
+        previous_checksums = Path(first['latest_checksums']).read_bytes()
+        stamp = NOW.strftime('%Y%m%dT%H%M%S%fZ')
+        existing = (
+            self.output /
+            f'Wuerfelraunen_0.7.4+44_{stamp}_tested_Dateimanifest.json'
+        )
+        target = self.directory / 'not-created-outside.json'
+        original_manifest = checkpoint.file_manifest
+
+        def replace_with_link_while_collecting(root):
+            manifest = original_manifest(root)
+            existing.symlink_to(target)
+            return manifest
+
+        with mock.patch.object(
+            checkpoint, 'file_manifest',
+            side_effect=replace_with_link_while_collecting,
+        ):
+            with self.assertRaisesRegex(ValueError, 'already exists'):
+                self.create()
+        self.assertTrue(existing.is_symlink())
+        self.assertFalse(target.exists())
+        self.assertEqual(Path(first['latest_archive']).read_bytes(), previous_latest)
+        self.assertEqual(Path(first['latest_checksums']).read_bytes(), previous_checksums)
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+
     def test_output_inside_repository_is_rejected(self):
         with self.assertRaisesRegex(ValueError, 'outside'):
             checkpoint.create_checkpoint(self.root, self.root / 'output',

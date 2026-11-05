@@ -110,6 +110,67 @@ class AlphaReleaseTests(unittest.TestCase):
         self.assertEqual(outside.read_bytes(), original_bytes)
         self.assertEqual(list(self.out.iterdir()), [])
 
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_source_link_swap_after_final_precheck_cannot_publish_external_apk(self):
+        outside = self.base / 'outside-valid.apk'
+        original_bytes = self.apk.read_bytes()
+        outside.write_bytes(original_bytes)
+        actual_copy = release.copy_validated_apk
+
+        def swap_immediately_before_copy(source, target, expected):
+            self.apk.unlink()
+            self.apk.symlink_to(outside)
+            return actual_copy(source, target, expected)
+
+        with mock.patch.object(
+            release, 'copy_validated_apk', side_effect=swap_immediately_before_copy,
+        ):
+            with self.assertRaisesRegex(ValueError, 'Pfadlink|Pfadlinks|ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertTrue(self.apk.is_symlink())
+        self.assertEqual(outside.read_bytes(), original_bytes)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    def test_regular_apk_replacement_after_validation_cannot_be_published(self):
+        replacement = self.base / 'replacement.apk'
+        with zipfile.ZipFile(replacement, 'w') as archive:
+            for path in release.REQUIRED_ARM64:
+                archive.writestr(path, b'another valid APK content')
+        actual_copy = release.copy_validated_apk
+        previous = self.apk.read_bytes()
+
+        def swap_immediately_before_copy(source, target, expected):
+            self.apk.write_bytes(replacement.read_bytes())
+            return actual_copy(source, target, expected)
+
+        with mock.patch.object(
+            release, 'copy_validated_apk', side_effect=swap_immediately_before_copy,
+        ):
+            with self.assertRaisesRegex(ValueError, 'Quelle.*verändert'):
+                release.prepare_release(self.root, self.out)
+        self.assertNotEqual(self.apk.read_bytes(), previous)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_parent_directory_link_swap_after_validation_is_rejected(self):
+        actual_copy = release.copy_validated_apk
+        source_bytes = self.apk.read_bytes()
+
+        def replace_parent_before_copy(source, target, expected):
+            moved = self.base / 'original-alpha'
+            self.apk.parent.rename(moved)
+            self.apk.parent.symlink_to(moved, target_is_directory=True)
+            return actual_copy(source, target, expected)
+
+        with mock.patch.object(
+            release, 'copy_validated_apk', side_effect=replace_parent_before_copy,
+        ):
+            with self.assertRaisesRegex(ValueError, 'Pfadlink|Pfadlinks|ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual((self.base / 'original-alpha' / self.apk.name).read_bytes(),
+                         source_bytes)
+        self.assertEqual(list(self.out.iterdir()), [])
+
     def test_explicit_regular_apk_remains_accepted(self):
         published = release.prepare_release(self.root, self.out, apk=self.apk)
         self.assertTrue(all(path.is_file() for path in published))
@@ -506,11 +567,15 @@ class AlphaReleaseTests(unittest.TestCase):
         stem = 'Wuerfelraunen_v0.5.4_24'
         lock = self.out / f'.{stem}_Release.lock'
 
-        def interrupt_during_copy(_source, target):
-            Path(target).write_bytes(b'PARTIAL_APK')
+        def interrupt_during_copy(_source, target, *, length=None):
+            target.write(b'PARTIAL_APK')
             raise KeyboardInterrupt()
 
-        with mock.patch.object(release.shutil, 'copy2', side_effect=interrupt_during_copy):
+        # Publication now uses a pinned source descriptor and copyfileobj,
+        # not shutil.copy2(path, path). Interrupt the actual copy boundary.
+        with mock.patch.object(
+            release.shutil, 'copyfileobj', side_effect=interrupt_during_copy,
+        ):
             with self.assertRaises(KeyboardInterrupt):
                 release.prepare_release(self.root, self.out)
         self.assertFalse(lock.exists())

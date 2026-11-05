@@ -72,6 +72,57 @@ CI41395941527 erfolgreich; das ist kein neuer Testnachweis dieses Branches.
 deterministische positive/negative Tests und reale SQLite-/UI-Abläufe.
 Keine Datenmigration, SQLite3/JSON1 erhalten. Frühere Einträge folgen historisch.
 
+## Chat D – TOCTOU-Abwehr beim Kopieren geprüfter ARM64-Release-APKs (05.11.2026)
+
+- **Ausgangs-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9` (vollständig grüne Main-CI [41998020622](https://github.com/ManuEtt/Dnd/actions/runs/41998020622)).
+- **Branch:** `fix/chat-d/alpha-apk-source-identity-20261105`.
+- **Fach-/Testcommit:** `333d00776672a4f36b8b50a6b93bcc454e4e6cd2`.
+- **PR:** [#552](https://github.com/ManuEtt/Dnd/pull/552), bis zur finalen Actions-Abnahme Draft.
+- **Ausgangsproblem:** Eine validierte APK wurde nach möglicherweise aufwendiger Quellarchiverstellung nur über den Pfad per `shutil.copy2` kopiert. Nach dem letzten Pfadlink-Check ließ sich die Quelle gegen eine andere reguläre APK oder einen Link austauschen.
+- **IMPLEMENTIERT:** Vor der Inhaltsvalidierung Quellstatistik aufnehmen und nachher abgleichen. Beim Kopieren auf POSIX jede Elternkomponente und die APK selbst mit `openat`-/`O_NOFOLLOW`-Deskriptoren pinnen; geöffnete Datei muss regulär sein und die ursprüngliche Identität behalten. Auch nach dem Kopieren Quell-Datei und -Pfad nochmals abgleichen. Plattformen ohne diese Flags verwenden Best-Effort-Checks, keine garantierte Linkfreiheit bei zeitgleichem Swap.
+- **Regressionen:** `scripts/tests/test_prepare_alpha_release.py` ergänzt drei Negativfälle: nach Validierung spät eingesetzter symbolischer APK-Link, nachträgliche Änderung der regulären Quelldatei und spät ausgewechselter verlinkter Elternordner. Alte Positivfälle bleiben bestehen.
+- **GETESTET:** GitHub-Code-/Testcommit und isolierter PR angelegt; das Ausgangs-main hat vollständig grüne CI. Kein lokaler Python-/Flutter-Projekttest für diesen neuen Head als bestanden ausgegeben.
+- **NICHT GETESTET:** vollständiger Python-Projektunittestlauf, Release-/Backend-/Flutter-/Android-CI auf finalem PR-Head, realer Geräteeinsatz und Altspielstandmigration.
+- **Kompatibilität:** keine Schema-, JSON-/SQLite-/Spielstand-, Backup- oder App-Versionsänderung. Nur Alpha-APK-Veröffentlichungsgrenze.
+- **Konfliktkontrolle:** Offene A/B/C-PRs und vorheriger Chat-D-PR #547 bearbeiten nicht `scripts/prepare_alpha_release.py` oder `scripts/tests/test_prepare_alpha_release.py`. Gemeinsame Dokumentation additiv erhalten.
+- **Nächster Schritt:** volle CI auf finalem PR-Head prüfen; mögliche Fehler korrigieren; vor Merge aktuellen Main, Commit-SHA und Konflikte erneut vergleichen.
+
+---
+
+## Chat D – Kommentar-Backslashes dürfen keine Gradle-Properties verstecken (05.11.2026)
+
+- **Basis-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`.
+- **Branch:** `fix/chat-d/gradle-comments-continuation-20261105`.
+- **Fach-/Test-HEAD vor Dokumentation:** `9a88f16448b2baa42fa8e75773bd370cfca29987`.
+- **PR:** [#547](https://github.com/ManuEtt/Dnd/pull/547), bis zur grünen vollständigen CI als Draft.
+- **Fehler:** `_gradle_logical_lines` verband `#`-/`!`-Kommentare mit abschließendem Backslash mit der nächsten physischen Zeile, obwohl Java `Properties.load` Kommentare nicht fortsetzt. Dadurch wurde ein folgender echter, eventuell manipulierter URL-/SHA-Doppelwert übersehen.
+- **IMPLEMENTIERT:** Eigenständige physische Kommentarzeilen werden vor der Fortsetzungsprüfung erkannt; nur nicht kommentierte Eigenschaftszeilen dürfen weiterhin logisch fortgesetzt werden. `distributionUrl` und `distributionSha256Sum` werden unverändert streng als eindeutige Werte geprüft.
+- **Tests ergänzt:** vier Regressionstestmethoden in `scripts/tests/test_verify_project.py`: 6 gültige Kommentar-Vorlagen (LF/CR/CRLF, #/!), 12 schädliche Duplikatfälle, 3 echte gültige Fortsetzungen, 2 Kommentarzeichen innerhalb einer fortgesetzten ungültigen Property = 23 Varianten.
+- **GETESTET:** Java 21 `Properties.load(StringReader)` bestätigt, dass ein späterer URL-Eintrag nach backslashterminiertem Kommentar unter LF/CR/CRLF tatsächlich wirksam wird; Branch, Fach-/Testcode und PR erfolgreich gesichert.
+- **NICHT GETESTET:** vollständiger `scripts/tests`-Pythonlauf, Backend-/Flutter-/Android-CI auf finalem Dokumentations-HEAD und Gerätetest. Diese bis zum nachweislichen erfolgreichen Workflow nicht als grün behaupten.
+- **Abgrenzung:** Keine Änderung an Android-/Flutter-Anwendungsquellen, Backend, SRD-Regeln, SQLite-/JSON-Schemas, Backupformaten oder App-Version. Aktuelle Chat-A-/B-PRs #543/#545/#546 ändern nicht die beiden Python-Fachdateien.
+- **Geänderte Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Nächster Schritt:** Volle CI auf dem finalen PR-HEAD prüfen, Fehler im eigenen Branch korrigieren und danach Konflikte/Main-CI vor einem Merge neu abgleichen.
+
+---
+
+## Chat D – Exklusive Checkpoint-Namensprüfung nach Lock-Übernahme (05.11.2026)
+
+- **Basis-main:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.
+- **Eigener Branch:** `fix/chat-d/checkpoint-name-race-20261105`.
+- **Fach-/Testcommit:** `0216724630759ce853c722c05e904c39aad59289`.
+- **Pull Request:** [#544](https://github.com/ManuEtt/Dnd/pull/544), Draft.
+- **Problem:** `create_checkpoint()` prüfte Kollisionen nur vor `file_manifest()` und vor dem exklusiven Lock. Ein konkurrierender Lauf konnte den gleichen Version-/Zeitstempel-/Label-Namen zwischen Vorprüfung und `os.replace()` erfolgreich veröffentlichen; das zweite Programm hätte ihn überschrieben. `exists()` übersieht zudem hängende Symlinks.
+- **IMPLEMENTIERT:** Die schnelle Prüfung erkennt auch Symlinks; die verbindliche zweite Kollisionsprüfung erfolgt innerhalb von `exclusive_checkpoint_output()`, vor Erzeugung/Veröffentlichung der vier versionierten Checkpoint-Artefakte. Bei Konflikt werden bisheriges LATEST-ZIP und `SHA256SUMS.txt` nicht verändert und die Sperre freigegeben.
+- **Regressionen:** `scripts/tests/test_create_checkpoint.py` enthält (1) eine spät angelegte konkurrierende ZIP-Datei und (2) einen nach der frühen Prüfung angelegten hängenden Manifest-Symlink; beide müssen Abbruch, Unverändertheit der Bestandsartefakte und Lock-Freigabe nachweisen.
+- **GETESTET:** Quell-/Testcode und Dateiabgrenzung auf aktuellem main geprüft; GitHub-Branch, Commit und PR erstellt. Kein vollständiger Testdurchlauf behauptet.
+- **NICHT GETESTET:** Tatsächlicher `scripts/tests`-Python-Unittest-Lauf, Backend-/Flutter-/Android-CI auf finalem Dokumentations-HEAD, reales Android-Gerät.
+- **Kompatibilität:** Keine JSON-/SQLite-Schemaänderung, kein Backup-/Spielstand-Upgrade, kein Versionswechsel, keine Änderung an bestehenden erfolgreichen Checkpoint-Ausgaben.
+- **Konflikte:** Der inzwischen offene PR #543 betrifft `app/lib/domain/spellcasting_rules.dart` und seinen Dart-Test; keine Überschneidung mit den beiden Python-Fachdateien. Dokumentation wird additiv konsolidiert.
+- **Nächster Schritt:** Finale GitHub-Actions-CI des PR-HEAD vollständig auswerten; bei Fehlern auf diesem Branch korrigieren; erst nach grüner CI und erneuter Main-Prüfung regulär integrieren.
+
+---
+
 ## Integrationscheckpoint 04.11.2026 – Chats A–D
 
 Ausgangs-main: `c8f25132a82bcf55368a79100e0c2ea5595140b6`. Integrationsbranch: `fix/chat-d/branch-migration-actions-20261104`. Die fünf Quell-HEADs aus PR #535 bis #539 werden mit echten Git-Commit-Eltern historienwahrend zusammengeführt; Fachcode und Tests bleiben unverändert. Die kombinierte CI sowie alle drei getrennten ABI-Builds und das Quell-Bundle sind bis zur GitHub-Abnahme **noch nicht als bestanden nachgewiesen**. Danach erst Integrationsmerge und Archivierung alter Branches. Keine SQLite-/JSON-Migration. [Vollständiger Bericht](parallel/INTEGRATION_20261104.md).

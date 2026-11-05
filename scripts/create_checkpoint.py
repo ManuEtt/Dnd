@@ -260,7 +260,11 @@ def create_checkpoint(root: Path, output_dir: Path, *, base: str, label: str,
         'manifest': f'{stem}_Dateimanifest.json',
         'checksums': f'{stem}_SHA256SUMS.txt',
     }
-    if any((output_dir / name).exists() for name in names.values()):
+    # Fast precheck is not authoritative: another writer can publish the same
+    # version/timestamp/label after this line and before we own the output lock.
+    # Check dangling links too, not just files for which exists() is true.
+    if any((output_dir / name).exists() or (output_dir / name).is_symlink()
+           for name in names.values()):
         raise ValueError('A checkpoint with this version, timestamp and label already exists.')
     expected = file_manifest(root)
     metadata = {
@@ -276,6 +280,14 @@ def create_checkpoint(root: Path, output_dir: Path, *, base: str, label: str,
     }
     output_dir.mkdir(parents=True, exist_ok=True)
     with exclusive_checkpoint_output(output_dir):
+        # The collision check above can become stale while file_manifest()
+        # runs. The exclusive lock makes this second check authoritative and
+        # prevents replacing an already published versioned checkpoint.
+        if any((output_dir / name).exists() or (output_dir / name).is_symlink()
+               for name in names.values()):
+            raise ValueError(
+                'A checkpoint with this version, timestamp and label already exists.'
+            )
         with tempfile.TemporaryDirectory(prefix='.checkpoint-', dir=output_dir) as temp:
             staging = Path(temp)
             archive, patch, manifest, sums = (staging / names[key]
