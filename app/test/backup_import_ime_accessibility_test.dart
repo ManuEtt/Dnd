@@ -136,7 +136,12 @@ void main() {
     await tester.ensureVisible(field);
     await tester.enterText(field, '{"entwurf":true}');
     await tester.pumpAndSettle();
-    await _tapVisible(tester, _button('Datei wählen'));
+    // A deliberately pending picker keeps the progress indicator animating.
+    // Pump one frame rather than waiting for every animation to settle.
+    await tester.ensureVisible(_button('Datei wählen'));
+    await tester.pumpAndSettle();
+    await tester.tap(_button('Datei wählen'));
+    await tester.pump();
 
     expect(files.openCalls, 1);
     expect(tester.widget<TextField>(field).readOnly, isTrue);
