@@ -1,3 +1,17 @@
+## 05.11.2026 – Chat A: Paktmagie-Slotlevel an bestätigtes Klassenprofil binden (PR #543)
+
+- **Main-Ausgangspunkt:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b` (grüne Main-CI [41965518861](https://github.com/ManuEtt/Dnd/actions/runs/41965518861), PRs #538/#539 integriert). Beim Branchstart keine offenen PRs; sichere Branchbereinigung [41967509961](https://github.com/ManuEtt/Dnd/actions/runs/41967509961) erfolgreich.
+- **Branch:** `feat/chat-a/pact-magic-class-profile-20261105`; **Code/Testcommit:** `0ea98e84e08b9ecf05aaea8f743bf684a9e01802`; **PR:** https://github.com/ManuEtt/Dnd/pull/543 (Draft).
+- **Problem:** `SpellcastingRules.pactClassLevel` akzeptierte ungültige Kombinationen wie `Hexenmeister 5 / Warlock 5` und vergab regulär Paktlevel/Slots und Paktzauberberechtigung. Anderweitig ungültige Haupt-/Nebenklassennamen und Levels wurden nicht geprüft.
+- **Implementiert:** kleine, reine Klassenprofilvalidierung in `app/lib/domain/spellcasting_rules.dart` (Klassennamen über `findSrdClass`, eindeutige Klassen, positive Haupt-/Nebenstufen, Gesamtlevel 1–20). Bei inkonsistenten Profilen `pactClassLevel`, `pactSlotCount`, `pactSlotLevel` = 0 und `availablePactSlots` keine freien Paktplätze. Ein vorhandener Verbrauch solcher Profile löst eine `FormatException` aus; Kurzrastprüfung lehnt vor Rückbuchung ab. Gültige DE/EN-Aliase und unterschiedliche Mehrklassen unverändert.
+- **Neu:** `app/test/srd_pact_magic_class_profile_guard_test.dart` mit 15 deterministischen Testfällen: 10 ungültige Profile und 5 Positiv-/Ressourcenfälle; kein Cast auf ungültigem Profil, ursprüngliches JSON unverändert, Kurzrast-Preflight, DE/EN, Level 1/20, Fighter2/Warlock11 mit JSON-Roundtrip.
+- **Tests:** lokale SDK-Abfrage: Dart/Flutter nicht installiert, daher lokal nicht ausführbar. Kein lokaler Test als bestanden behauptet; CI muss Format, Analyzer, vollständige Flutter-Suite, Python/Backend und Android-Debug/ABI/Artefakte auf finalem PR-HEAD abnehmen.
+- **Konflikte/Kompatibilität:** Keine offene PR-Überschneidung bei Start; keine Änderungen an `models.dart`, `game_engine.dart`, `app/lib/data/`, Story/UI, `MulticlassRules` oder Persistenz. SQLite 3, externes JSON 1 und Version unverändert; keine Migration; `README.md` und Checkpoints nur additiv auf PR-Branch.
+- **Quelle:** offizielle SRD 5.2.1, Warlock / Pact Magic, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd. `RULE-SPELLS-PACT-MAGIC` bleibt `partial`: weitere Wirkungs-/Vorbereitungs-/Klassenrestriktionen außerhalb des Pakets.
+- **Nächster Schritt:** nach CI und koordinierter Integration die **gültige Zauberberechtigung von Paktmagie** unabhängig prüfen (bekannte/vorbereitete Pact-Spells, Klassenquelle bei Mehrklasse) – ohne Modell-/Persistenzänderung; positive/negative Slot- und JSON-Regressionen voraussetzen.
+
+---
+
 ## Integrationscheckpoint 04.11.2026 – Chats A–D
 
 Ausgangs-main: `c8f25132a82bcf55368a79100e0c2ea5595140b6`. Integrationsbranch: `fix/chat-d/branch-migration-actions-20261104`. Die fünf Quell-HEADs aus PR #535 bis #539 werden mit echten Git-Commit-Eltern historienwahrend zusammengeführt; Fachcode und Tests bleiben unverändert. Die kombinierte CI sowie alle drei getrennten ABI-Builds und das Quell-Bundle sind bis zur GitHub-Abnahme **noch nicht als bestanden nachgewiesen**. Danach erst Integrationsmerge und Archivierung alter Branches. Keine SQLite-/JSON-Migration. [Vollständiger Bericht](parallel/INTEGRATION_20261104.md).

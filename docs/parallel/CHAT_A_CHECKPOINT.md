@@ -1,3 +1,23 @@
+# Chat A – Paktmagie-Klassenprofil vor Slotberechnung (05.11.2026)
+
+**Ausgangs-Main-SHA:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`. **Branch:** `feat/chat-a/pact-magic-class-profile-20261105`. **Fach-/Testcommit:** `0ea98e84e08b9ecf05aaea8f743bf684a9e01802`. **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/543.
+
+**Problem:** Allgemeine `SpellcastingRules.pactClassLevel` summierte Klassenstufen ohne Prüfung von unbekannten Klassennamen, doppelten SRD-Klassenaliasen oder ungültigen Haupt-/Zweitklassenzahlen. Damit waren unverdiente Hexenmeister-Paktplätze und Paktcasts möglich.
+
+**Implementierung:** Read-only-Auswertung verweigert bei inkonsistentem Profil mit 0 sowohl Paktlevel als auch Anzahl/Stufe der Paktplätze. `availablePactSlots` blockiert vorhandene unverdiente Ausgaben via `FormatException`; `RestRules.validateShortRestResources` prüft diesen Originalzustand vor jeder bestätigten Kurzrast. Gültige DE/EN-Aliase sowie Fighter-/Warlock-Mehrklasse funktionieren unverändert. Kein Eingriff in normale Zauberplätze, den Charakterimport, die Klassenressourcen-Buchhaltung oder die allgemeine Story-/Regelgrenze.
+
+**Geänderte Dateien:** `app/lib/domain/spellcasting_rules.dart`, neue `app/test/srd_pact_magic_class_profile_guard_test.dart`, diese Chat-A-Checkpoint-Datei, `README.md`, `docs/CODEX_CHECKPOINT.md`.
+
+**Akzeptanz und Tests:** 15 neu erstellte deterministische Fälle (10 inkonsistente Profile, 1 manipulierte Ressource/Kurzrastblockade, 4 gültige Grenz-/Alias-/Mehrklassenfälle). Bestehende `app/test/spellcasting_rules_test.dart`, `app/test/multiclass_spell_slot_alias_test.dart` und `app/test/srd_warlock_magical_cunning_rules_test.dart` zusätzlich per CI. **Lokal nicht ausführbar:** Dart/Flutter-SDK fehlen. **GitHub-CI:** vor finalem Head noch nicht als vollständig bestanden bestätigt; keine Tests abgeschaltet. Ausgangs-main-CI [41965518861](https://github.com/ManuEtt/Dnd/actions/runs/41965518861) bestanden, nicht Nachweis für neues Paket.
+
+**Konflikte, Kompatibilität, Blocker:** Bei Erstellung keine offenen PRs, eigenständige Fachdatei. Keine Migration; SQLite 3, JSON 1, App-Version, vorhandene gespeicherte Klassenwerte unverändert. Ungültige historische Klassenprofile werden nicht eigenmächtig umgeschrieben; nur neue Paktregelauswertung fail-closed. Finaler Test-/APK-Nachweis, Android-Geräteprüfung und Chat-D-Review bleiben offen. Keine eigenmächtige Main-Integration.
+
+**Regelquelle:** Wizards of the Coast LLC, SRD 5.2.1, *Warlock / Pact Magic*, CC BY 4.0, https://www.dndbeyond.com/srd. `RULE-SPELLS-PACT-MAGIC` weiterhin **partial**.
+
+**Nächster einzelner Schritt:** Nach CI/Integration bei Paktzaubern die bestätigte Klassen-/Zauberquelle in einer eigenständigen Domänenprüfung absichern (keine von Fremdklasse bekannten Zauber unberechtigt mit Pact Magic nutzen; gültige Multiclass-Casts erhalten; Ressourcenneutralität/JSON-Prüfung).
+
+---
+
 ## Chat-A-Konsolidierung – 04.11.2026
 
 Die Beiträge zu Waldläufer-Unermüdlich (#538) und Hexenmeister-Magische-List (#539) werden im gemeinsamen Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` vereint; die originale Commit-Historie und beide individuellen Belege werden beibehalten. Kombinierte CI vor Main-Merge gesondert nachweisen.

@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Paktmagie-Klassenprofile vor Slotfreigabe validieren (05.11.2026)
+
+[Draft-PR #543](https://github.com/ManuEtt/Dnd/pull/543) korrigiert die SRD-5.2.1-Paktmagieprüfung: `SpellcastingRules.pactClassLevel` leitete bisher Paktmagie-Stufen allein aus passenden deutschen/englischen Klassenbezeichnungen ab und konnte bei doppelten Klassennamen, unbekannter Haupt-/Nebenklasse, unplausiblen Stufen oder fehlerhafter Zweitklassendeklaration zusätzliche Slots freigeben. Das Profil wird nun **vor** der Slotberechnung geprüft; ungültige Datensätze geben lesend 0 Paktplätze frei, gestohlene/überhöhte Verbrauchswerte werden weiter als `FormatException` abgelehnt und ein Paktzauber darf keine Slots verbuchen. Normale Warlock-/Hexenmeister-Namen, Klassenlevel 1/20 und legale Fighter-/Warlock-Mehrklassen sind unverändert. **15 neue deterministische Regressionstests** (10 ungültige Profile, 5 Ressourcen-/Positiv-/Grenzfälle) plus die vorhandene Vollsuite als CI-Gate. Keine Speicher-/JSON-/SQLite-Migration, keine neue SRD-Vollständigkeitsbehauptung. Grundlage: SRD 5.2.1, Pact Magic (CC BY 4.0). Basis-main `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`, Code-/Testcommit `0ea98e84e08b9ecf05aaea8f743bf684a9e01802`; finale PR-Actions auf dokumentiertem HEAD müssen noch bestanden werden. Chat D koordiniert die Integration.
+
+---
+
+
 ## A–D-Integration und CI-Bereinigung (04.11.2026)
 
 Die Fachbeiträge [#535](https://github.com/ManuEtt/Dnd/pull/535) bis [#539](https://github.com/ManuEtt/Dnd/pull/539) werden im Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` unter Erhalt ihrer Commit-Historien zusammengeführt. Die Android-Alpha-ABIs und der Quellcode-Checkpoint sollen auf getrennten GitHub-Actions-Runnern geprüft werden. Historische Zusatz-Workflows werden entfernt; `main` bleibt bis zur vollständigen Integrations-CI unverändert. Details: [Integrationsbericht](docs/parallel/INTEGRATION_20261104.md). Keine SQLite-/JSON-Schema- oder App-Versionsänderung.
