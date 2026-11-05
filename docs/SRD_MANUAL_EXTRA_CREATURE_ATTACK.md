@@ -33,3 +33,8 @@ flutter build apk --debug
 ```
 
 Merge nur bei erfolgreicher kompletter Android-Alpha-/Quellcode-CI. Echter Android-Gerätetest steht offen.
+
+
+## Deckungsrichtung bei manuellen Zusatzkreaturen-Angriffen (05.11.2026)
+
+Beim bestätigten Einzelangriff einer Zusatzkreatur gilt Deckung nur dann, wenn der Angriff von der **gegenüberliegenden Seite** des Hindernisses kommt. Das gilt auch bei vollständiger Deckung: `targetCover = total` und `coverOppositeAttacker = true` sperrt den Angriff vor dem W20; dieselbe gespeicherte Hindernisangabe auf der **Angreiferseite** (`coverOppositeAttacker = false`) gibt weder den Bonus noch das Zielverbot. Voraussetzungen wie bestätigte Reichweite, Zielbarkeit, andere Modifikatoren und Ressourcen bleiben unverändert; die Regel prüft keine Geometrie automatisch. Fachcode `app/lib/domain/srd_extra_creature_attack_rules.dart`, Regression `app/test/srd_extra_creature_attack_test.dart` mit RNG-/Event-/HP-/JSON-Kontrolle. Quelle: D&D SRD 5.2.1, *Playing the Game / Combat / Cover* (Wizards of the Coast LLC, CC BY 4.0). Kein neues Schema, keine Migration. Vollständige GitHub-Actions-CI auf dem Fach-PR-HEAD separat nachweisen.
