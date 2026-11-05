@@ -82,13 +82,14 @@ class SrdExtraCreatureAttackRules {
         !input.noUnmodelledDamageAdjustmentsConfirmed ||
         !input.noTargetReactionConfirmed ||
         !input.noAdditionalAttackEffectsConfirmed ||
-        input.targetCover == CoverLevel.total) {
+        (input.coverOppositeAttacker && input.targetCover == CoverLevel.total)) {
       throw const FormatException(
         'Angriff nur mit bestätigtem vollständigem Trefferbonus, '
         'Waffenschaden, Ziel-RK, Reichweite, Deckung und '
         'geprüften Fähigkeiten/Reaktionen.',
       );
     }
+    // Even total cover applies only from the opposite side of its obstacle.
     final cover = input.coverOppositeAttacker
         ? CoverRules.getBonus(input.targetCover)
         : 0;
