@@ -1,3 +1,20 @@
+## Chat D – Exklusive Checkpoint-Namensprüfung nach Lock-Übernahme (05.11.2026)
+
+- **Basis-main:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.
+- **Eigener Branch:** `fix/chat-d/checkpoint-name-race-20261105`.
+- **Fach-/Testcommit:** `0216724630759ce853c722c05e904c39aad59289`.
+- **Pull Request:** [#544](https://github.com/ManuEtt/Dnd/pull/544), Draft.
+- **Problem:** `create_checkpoint()` prüfte Kollisionen nur vor `file_manifest()` und vor dem exklusiven Lock. Ein konkurrierender Lauf konnte den gleichen Version-/Zeitstempel-/Label-Namen zwischen Vorprüfung und `os.replace()` erfolgreich veröffentlichen; das zweite Programm hätte ihn überschrieben. `exists()` übersieht zudem hängende Symlinks.
+- **IMPLEMENTIERT:** Die schnelle Prüfung erkennt auch Symlinks; die verbindliche zweite Kollisionsprüfung erfolgt innerhalb von `exclusive_checkpoint_output()`, vor Erzeugung/Veröffentlichung der vier versionierten Checkpoint-Artefakte. Bei Konflikt werden bisheriges LATEST-ZIP und `SHA256SUMS.txt` nicht verändert und die Sperre freigegeben.
+- **Regressionen:** `scripts/tests/test_create_checkpoint.py` enthält (1) eine spät angelegte konkurrierende ZIP-Datei und (2) einen nach der frühen Prüfung angelegten hängenden Manifest-Symlink; beide müssen Abbruch, Unverändertheit der Bestandsartefakte und Lock-Freigabe nachweisen.
+- **GETESTET:** Quell-/Testcode und Dateiabgrenzung auf aktuellem main geprüft; GitHub-Branch, Commit und PR erstellt. Kein vollständiger Testdurchlauf behauptet.
+- **NICHT GETESTET:** Tatsächlicher `scripts/tests`-Python-Unittest-Lauf, Backend-/Flutter-/Android-CI auf finalem Dokumentations-HEAD, reales Android-Gerät.
+- **Kompatibilität:** Keine JSON-/SQLite-Schemaänderung, kein Backup-/Spielstand-Upgrade, kein Versionswechsel, keine Änderung an bestehenden erfolgreichen Checkpoint-Ausgaben.
+- **Konflikte:** Der inzwischen offene PR #543 betrifft `app/lib/domain/spellcasting_rules.dart` und seinen Dart-Test; keine Überschneidung mit den beiden Python-Fachdateien. Dokumentation wird additiv konsolidiert.
+- **Nächster Schritt:** Finale GitHub-Actions-CI des PR-HEAD vollständig auswerten; bei Fehlern auf diesem Branch korrigieren; erst nach grüner CI und erneuter Main-Prüfung regulär integrieren.
+
+---
+
 ## Integrationscheckpoint 04.11.2026 – Chats A–D
 
 Ausgangs-main: `c8f25132a82bcf55368a79100e0c2ea5595140b6`. Integrationsbranch: `fix/chat-d/branch-migration-actions-20261104`. Die fünf Quell-HEADs aus PR #535 bis #539 werden mit echten Git-Commit-Eltern historienwahrend zusammengeführt; Fachcode und Tests bleiben unverändert. Die kombinierte CI sowie alle drei getrennten ABI-Builds und das Quell-Bundle sind bis zur GitHub-Abnahme **noch nicht als bestanden nachgewiesen**. Danach erst Integrationsmerge und Archivierung alter Branches. Keine SQLite-/JSON-Migration. [Vollständiger Bericht](parallel/INTEGRATION_20261104.md).

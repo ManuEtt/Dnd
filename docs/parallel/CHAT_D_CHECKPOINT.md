@@ -1,3 +1,22 @@
+# CHAT D – Wiederholte Versionsnamen vor Checkpoint-Veröffentlichung sperren (05.11.2026)
+
+- **Ausgangs-main-SHA:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.
+- **Branch:** `fix/chat-d/checkpoint-name-race-20261105`.
+- **Code-/Testcommit:** `0216724630759ce853c722c05e904c39aad59289`.
+- **Pull Request:** [#544](https://github.com/ManuEtt/Dnd/pull/544) (Draft bis vollständiger CI).
+- **Ausgangsproblem:** Ein gleichnamiges, versioniertes Quellcode-Checkpointartefakt kann nach der frühen Vorprüfung während der Manifestphase durch einen zweiten Schreiber entstehen. Ein späteres `os.replace` überschriebe die erste, bereits gültige Ausgabe. Hängende Symlinks zählen in `Path.exists()` nicht als bestehend.
+- **IMPLEMENTIERT:** Zweite Namensprüfung unter exklusiver `.checkpoint.lock`-Sperre; Vorabprüfung berücksichtigt Symlinks. ZIP/Patch/Manifest/SHA-Dateien werden nur bei freiem Versionsnamen veröffentlicht.
+- **Akzeptanz:** Nachträglich erschienene Dateien/Links verhindern jede Veröffentlichung; konkurrierende Originaldateien und externe Symlinkziele bleiben unverändert; LATEST und Checksummen-Alias bleiben wie vorher; Sperre wird freigegeben.
+- **Neue Tests:** `scripts/tests/test_create_checkpoint.py` mit einer spät angelegten ZIP und einem spät angelegten hängenden Manifest-Symlink, jeweils mit Alias- und Lock-Negativprüfungen.
+- **GETESTET:** Dateivergleich des Quellcodes und gültige GitHub-Branch-/Commit-/PR-Erstellung. Tatsächliche Projekt-Unittests noch nicht ausgeführt.
+- **NICHT GETESTET:** Projekt-Python-Suite, gesamte Backend-/Flutter-/Android-Actions-Pipeline für letzten PR-HEAD, Android-Gerät.
+- **BLOCKIERT:** Lokaler Git-Clone im Container mangels DNS zu GitHub nicht verfügbar; GitHub Actions zur vollen Abnahme nötig.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migrationsstatus:** keine; SQLite, JSON, Backups, Spielstände, Versionsnummer und bestehende Module unberührt.
+- **Nächster Schritt:** Finale PR-CI abnehmen, Fehler gegebenenfalls reparieren und erst nach erneuter Konfliktprüfung reviewfähig markieren/integrieren.
+
+---
+
 ## Konsolidierung 04.11.2026 – PR #537
 
 Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
