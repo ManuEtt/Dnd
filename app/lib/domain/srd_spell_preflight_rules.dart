@@ -103,19 +103,25 @@ class SrdSpellPreflightRules {
     // Pact slots may fund a prepared Wizard spell (and conversely); the
     // selected slot pool is not evidence of which class prepared the spell.
     final preparationRecord = hero.preparedSpellRecord;
-    if (preparationRecord != null &&
-        (!preparationRecord.matchesSource(
-              className: hero.className,
-              level: hero.level,
-              secondaryClassName: hero.secondaryClassName,
-              secondaryClassLevel: hero.secondaryClassLevel,
-              spells: hero.spells,
-            ) ||
-            !(preparationRecord.spellsByClass[chosenClass]?.contains(knownName) ??
-                false))) {
-      throw const FormatException(
-        'Der gespeicherte Zaubernachweis bestätigt diese Klassenquelle nicht.',
+    if (preparationRecord != null) {
+      final matchesSource = preparationRecord.matchesSource(
+        className: hero.className,
+        level: hero.level,
+        secondaryClassName: hero.secondaryClassName,
+        secondaryClassLevel: hero.secondaryClassLevel,
+        spells: hero.spells,
       );
+      if (!matchesSource) {
+        throw const FormatException(
+          'Der gespeicherte Zaubernachweis passt nicht zum Charakter.',
+        );
+      }
+      final assigned = preparationRecord.spellsByClass[chosenClass] ?? const [];
+      if (!assigned.contains(knownName)) {
+        throw const FormatException(
+          'Der gespeicherte Zaubernachweis bestätigt diese Klassenquelle nicht.',
+        );
+      }
     }
     // Legacy characters without a class-owned record retain the existing
     // explicit choice for ambiguous spells. Do not invent a preparation.
