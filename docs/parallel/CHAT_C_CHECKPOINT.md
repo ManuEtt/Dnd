@@ -3,15 +3,15 @@
 - **Ausgangs-main:** `36ced64cd6b6b13888bee34f5dd33103edf04dcb`.
 - **Branch:** `feat/chat-c/pending-error-live-region-20261105`.
 - **PR:** [#556](https://github.com/ManuEtt/Dnd/pull/556), Draft; GitHub-PR-HEAD ist der verbindliche endgültige SHA nach Dokumentation.
-- **Code-/Testcommits:** `c5c0c18ff33a048335893388d9f459fa2f5676e4`, `559369a546276e415871c8aa350b2c3a8a8d4e32`.
+- **Code-/Testcommits:** `c5c0c18ff33a048335893388d9f459fa2f5676e4`, `559369a546276e415871c8aa350b2c3a8a8d4e32`; Testressourcen-/Formatterkorrektur `e1112b1c99a508f3a2e5e5b840cd26fdaf665e5b`.
 - **Ausgangsproblem:** Sichtbare Fehler der dauerhaft gespeicherten ausstehenden Spielerhandlung waren keine expliziten Live-Regionen. Ein Screenreader konnte Änderungen wie „Verbindung fehlgeschlagen“ oder „Auftrag veraltet“ übersehen.
 - **IMPLEMENTIERT:** Fehler-Text in `PendingActionStatus` erhält eine einmalige `Semantics`-Live-Region mit Label `Fehler bei ausstehender Handlung: ...`. Die visuelle Fehlermeldung bleibt unverändert, innere Textsemantik ist zur Vermeidung doppelter Ansagen ausgeschlossen. Ohne Fehler existiert keine Warnregion.
 - **Fachdateien:** `app/lib/ui/pending_action_status.dart`, `app/test/pending_action_error_semantics_test.dart`.
 - **Regression:** Drei Widgettests (320/360 dp bei 200 % Schrift und 220 dp simulierter IME sowie Leerlauf) für erste/ersetzte/gelöschte Fehler, Live-Region, weiterhin ausdrücklich klickbares Retry, keine automatische Wiederholung, unverändertes `PendingPlayerAction.toJson()`.
-- **GETESTET:** Aktuellen GitHub-main, offene PRs/Fachdateien und bestehende Outbox-Widgettests geprüft; Code- und Testcommits auf eigenem Branch, Draft-PR erstellt.
+- **GETESTET:** Aktuellen GitHub-main, offene PRs/Fachdateien und bestehende Outbox-Widgettests geprüft; Code- und Testcommits auf eigenem Branch, Draft-PR erstellt. Gezielte GitHub-Actions-CI [#42038325743](https://github.com/ManuEtt/Dnd/actions/runs/42038325743) erfolgreich: Dart-Formatierung **2 Dateien, 0 Änderungen**, `flutter analyze` ohne Probleme, **20 Widgettests bestanden** (3 neue + 17 bisherige). Zuvor rote Tests durch zu späte Freigabe eines Test-`SemanticsHandle` korrigiert; temporären Diagnoseworkflow vollständig entfernt.
 - **NICHT GETESTET:** Finale GitHub-Actions-CI auf dokumentiertem PR-HEAD und physisches Android-/TalkBack-Gerät mit echter Tastatur; lokales Flutter/Dart-SDK nicht vorhanden.
 - **Kompatibilität:** Keine Spielregel-, Controller-, Outbox-Persistenz-, SQLite-, JSON-, Versions-, Berechtigungs- oder Netzwerkänderung. Keine Migration.
-- **NÄCHSTER SCHRITT:** Format, Flutter-Analyse, bestehende/neue Widgettests und vollständige Android-CI auf finalem PR-HEAD abnehmen; Chat D konsolidiert gemeinsame README-/Checkpoint-Dokumentation additiv.
+- **NÄCHSTER SCHRITT:** Vollständige Python-/Backend-/Flutter-/Android-CI auf finalem PR-HEAD abnehmen; Chat D konsolidiert gemeinsame README-/Checkpoint-Dokumentation additiv.
 
 ---
 
