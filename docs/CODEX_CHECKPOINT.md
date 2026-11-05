@@ -1,3 +1,17 @@
+## Chat D – GitHub-Script-Cleanup mit Node.js 24 (05.11.2026)
+
+- **Ausgangs-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95`; App-Version `0.8.51+101`.
+- **Branch:** `fix/chat-d/github-script-node24-20261105`; **Pull Request:** [#571](https://github.com/ManuEtt/Dnd/pull/571) (Draft). **Code-/Teststand vor Dokumentation:** `c9244ae9e6350005907226cd033da44ace54485c`.
+- **Problem:** `actions/github-script@v7` im aktiven Branch-Cleanup meldet angesichts der Node.js-24-Umstellung eine veraltete Action-Laufzeit. Die aktuell unterstützte Version ist `@v8` (Runner >= 2.327.1; GitHub-gehostetes `ubuntu-latest`).
+- **IMPLEMENTIERT:** Einzige aktive Cleanup-Action auf `@v8` aktualisiert; 3 Regressionstests für Node-24-Action-Referenz, v7-/fehlende-/doppelte Einträge und ignorierte Kommentarstellen erstellt. Unverändert: nur erfolgreiches aktuelles Main-CI-Ereignis, Schutz aktiver/geprüfter Branches, Archivierung und SHA-Kontrolle.
+- **GETESTET:** Alle aktuell offenen 18 PR-Dateilisten auf Konflikte mit den beiden Fachdateien geprüft (keine); GitHub-Code-/Testcommits auf eigenem Branch gesichert. Die vorherige Main-CI `42056520768` war erfolgreich, ist **kein Test des neuen Branches**.
+- **NICHT GETESTET:** Neue lokale Python-Suite, vollständige GitHub-PR-CI des finalen Dokumentations-HEADs, erneute produktive automatische Archivbereinigung und reales Android-Gerät.
+- **BLOCKIERT:** Freigabe erst nach vollständiger grüner CI auf genau dem finalen PR-HEAD und frischem Main-/PR-/Dateivergleich.
+- **Geänderte Dateien:** `.github/workflows/cleanup-merged-safe-20261027.yml`, `scripts/tests/test_cleanup_github_script_runtime.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`. Keine SQLite-/JSON-/Daten-/App-Versionsmigration.
+- **Nächster konkreter Schritt:** PR #571 mit finalem Head vollständig auf grüne Python-/Backend-/Flutter-/Android-CI prüfen; nur bei vollständigem Erfolg nach erneuter Konfliktkontrolle eine reguläre Main-Integration erwägen.
+
+---
+
 ## Chat D – APK-ZIP-Komponenten mit abschließendem Punkt/Leerzeichen sperren (05.11.2026)
 
 - **Basis-main:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4` (Main-CI [42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539): erfolgreich, unabhängig vom neuen Patch).
