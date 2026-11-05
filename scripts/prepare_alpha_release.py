@@ -6,6 +6,8 @@ It does not sign, compile or publish anything by itself.
 """
 
 import argparse
+import contextlib
+import errno
 import hashlib
 import os
 from pathlib import Path
@@ -59,6 +61,69 @@ def _has_symlink_component(path: Path) -> bool:
         if parent == current:
             return False
         current = parent
+
+
+def _source_identity(info: os.stat_result) -> tuple[int, ...]:
+    """Detect replacement or in-place modification of a validated APK."""
+    return (
+        info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns,
+    )
+
+
+def copy_validated_apk(source: Path, destination: Path,
+                       expected: os.stat_result) -> None:
+    """Pin the validated regular APK before copying, without following links.
+
+    On POSIX, pin *each* parent directory with descriptor-relative O_NOFOLLOW.
+    A late symlink in the leaf or any parent cannot redirect the copy. The
+    identity captured before archive validation must remain unchanged through
+    opening, reading and final publication preparation.
+    """
+    identity = _source_identity(expected)
+    with contextlib.ExitStack() as stack:
+        try:
+            if (os.name == 'posix' and hasattr(os, 'O_NOFOLLOW')
+                    and hasattr(os, 'O_DIRECTORY')):
+                absolute = source.absolute()
+                flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_DIRECTORY
+                directory_fd = os.open(absolute.anchor, flags)
+                stack.callback(os.close, directory_fd)
+                for part in absolute.parts[1:-1]:
+                    next_fd = os.open(part, flags, dir_fd=directory_fd)
+                    stack.callback(os.close, next_fd)
+                    directory_fd = next_fd
+                fd = os.open(
+                    absolute.name,
+                    os.O_RDONLY | os.O_NOFOLLOW | getattr(os, 'O_NONBLOCK', 0),
+                    dir_fd=directory_fd,
+                )
+            else:
+                # Platforms without openat/O_NOFOLLOW use the same identity
+                # checks, but cannot guarantee race-free parent traversal.
+                if _has_symlink_component(source):
+                    raise ValueError(
+                        'Die ARM64-APK darf keine symbolischen Pfadlinks verwenden.'
+                    )
+                fd = os.open(source, os.O_RDONLY | getattr(os, 'O_NONBLOCK', 0))
+            stream = stack.enter_context(os.fdopen(fd, 'rb'))
+            opened = os.fstat(stream.fileno())
+            if not stat.S_ISREG(opened.st_mode) or _source_identity(opened) != identity:
+                raise ValueError('Die ARM64-APK-Quelle wurde seit der Prüfung verändert.')
+            with destination.open('wb') as output:
+                shutil.copyfileobj(stream, output, length=1024 * 1024)
+            after = os.fstat(stream.fileno())
+            if _source_identity(after) != identity:
+                raise ValueError('Die ARM64-APK-Quelle wurde beim Kopieren verändert.')
+            if (_has_symlink_component(source) or not source.is_file()
+                    or _source_identity(source.stat()) != identity):
+                raise ValueError('Die ARM64-APK-Quelle wurde beim Kopieren verändert.')
+        except OSError as error:
+            if error.errno in (errno.ELOOP, errno.ENOTDIR, errno.ENOENT):
+                raise ValueError(
+                    'Die ARM64-APK-Quelle wurde durch einen Pfadlink oder '
+                    'eine andere Datei ersetzt.'
+                ) from error
+            raise
 
 
 def validate_arm64_apk(apk: Path) -> None:
@@ -165,7 +230,17 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     # Preserve the caller-supplied path spelling so validation can identify
     # symlinked APK files and any linked parent directories before reading.
     source_apk = apk if apk is not None else root / 'app/build/alpha/app-arm64-v8a-alpha.apk'
+    # Record the source identity before validating its ZIP content. A later
+    # file swap or in-place rewrite must not publish an unvalidated APK.
+    checked_source = (
+        source_apk.stat()
+        if not _has_symlink_component(source_apk) and source_apk.is_file()
+        else None
+    )
     validate_arm64_apk(source_apk)
+    if (checked_source is None
+            or _source_identity(source_apk.stat()) != _source_identity(checked_source)):
+        raise ValueError('Die ARM64-APK-Quelle wurde während der Prüfung verändert.')
     stem = f'Wuerfelraunen_v{app_version}_{build}'
     source = output / f'{stem}_Source.zip'
     target_apk = output / f'{stem}_arm64.apk'
@@ -194,7 +269,7 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
         # Recheck after potentially long source ZIP creation as well.
         if _has_symlink_component(source_apk):
             raise ValueError('Die ARM64-APK darf keine symbolischen Pfadlinks verwenden.')
-        shutil.copy2(source_apk, target_apk)
+        copy_validated_apk(source_apk, target_apk, checked_source)
         notes.write_text(
             f'# Würfelraunen {app_version}+{build} – Android-Alpha\n\n'
             f'- Quellstand: `{commit}`\n'
