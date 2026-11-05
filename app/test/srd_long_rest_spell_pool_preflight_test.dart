@@ -29,22 +29,14 @@ HeroCharacter _hero({
 void main() {
   group('Lange Rast: ursprüngliche Zauberpools validieren', () {
     final invalid = <String, HeroCharacter>{
-      'Zaubergrad ohne Plätze': _hero(
-        spentSpellSlots: const {'8': 1},
-      ),
+      'Zaubergrad ohne Plätze': _hero(spentSpellSlots: const {'8': 1}),
       'zu viele verbrauchte normale Plätze': _hero(
         level: 1,
         spentSpellSlots: const {'1': 3},
       ),
-      'negativ verbrauchter normaler Platz': _hero(
-        spentSpellSlots: const {'1': -1},
-      ),
-      'nichtkanonischer Gradschlüssel': _hero(
-        spentSpellSlots: const {'01': 1},
-      ),
-      'fremder Eintrag außerhalb 1 bis 9': _hero(
-        spentSpellSlots: const {'10': 1},
-      ),
+      'negativer normaler Verbrauch': _hero(spentSpellSlots: const {'1': -1}),
+      'nichtkanonischer Gradschlüssel': _hero(spentSpellSlots: const {'01': 1}),
+      'fremder Gradschlüssel': _hero(spentSpellSlots: const {'10': 1}),
       'Paktplätze über Klassengrenze': _hero(
         first: 'Hexenmeister',
         level: 1,
