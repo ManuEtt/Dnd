@@ -204,6 +204,15 @@ class AiStoryStep {
             (campaign.encounter != null && !campaign.encounter!.isFinished)
         ? null
         : AdventureOffer.fromJson(_obj(proposed));
+    if (offer != null) {
+      // AdventureOffer.fromJson validates shape and length for saved offers.
+      // Provider-authored fields must also obey the stricter AI text policy:
+      // invisible formatting must not impersonate a trusted quest or reward.
+      _text(offer.title, 120);
+      _text(offer.description, 500);
+      _text(offer.questTitle, 120);
+      _text(offer.questDescription, 500);
+    }
     if (offer != null && campaign.quests.any((q) => q.id == 'ai-${offer.id}')) {
       throw const FormatException('Bereits benutzte Quest-ID.');
     }
