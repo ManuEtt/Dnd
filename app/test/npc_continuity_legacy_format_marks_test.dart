@@ -16,7 +16,12 @@ Campaign _campaign({
   name: 'Die Chronik der Nebelstadt',
   world: 'Valdorn',
   sessionId: 'session-legacy',
-  hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 17, maxHitPoints: 20),
+  hero: HeroCharacter(
+    id: 'aria',
+    name: 'Aria',
+    hitPoints: 17,
+    maxHitPoints: 20,
+  ),
   scene: 'Eine unbestätigte Erzählung über Mira.',
   npcs: npcs,
   npcRelationshipNotes: notes,
@@ -36,8 +41,15 @@ void main() {
 
   test('legacy invisible marks cannot hide equal displayed NPC names', () {
     const marks = [
-      '\u00ad', '\u034f', '\u180e', '\u206a', '\u206b',
-      '\u206c', '\u206d', '\u206e', '\u206f',
+      '\u00ad',
+      '\u034f',
+      '\u180e',
+      '\u206a',
+      '\u206b',
+      '\u206c',
+      '\u206d',
+      '\u206e',
+      '\u206f',
     ];
     for (final mark in marks) {
       final campaign = _campaign(
@@ -60,14 +72,19 @@ void main() {
       expect(second.confirmedContext, contains('NPC: Mira (NPC-ID: mira-two)'));
       expect(first.confirmedContext, contains('erste Mira kennt das Tor'));
       expect(first.confirmedContext, isNot(contains('Brunnen')));
-      expect(second.confirmedContext, contains('zweite Mira kennt den Brunnen'));
+      expect(
+        second.confirmedContext,
+        contains('zweite Mira kennt den Brunnen'),
+      );
       expect(second.confirmedContext, isNot(contains('das Tor')));
       expect(second.confirmedContext, isNot(contains(mark)));
       expect(jsonEncode(campaign.toJson()), before);
     }
   });
 
-  test('relationships and saved notes render without legacy format controls', () {
+  test(
+    'relationships and saved notes render without legacy format controls',
+    () {
     final campaign = _campaign(
       npcs: const [
         WorldNpc(
@@ -92,7 +109,8 @@ void main() {
       expect(context, isNot(contains(mark)));
     }
     expect(jsonEncode(campaign.toJson()), before);
-  });
+    },
+  );
 
   test('unsafe ambiguous IDs are rejected; distinct names stay distinct', () {
     final ambiguous = _campaign(
@@ -129,7 +147,9 @@ void main() {
     );
   });
 
-  test('SQLite restart keeps raw legacy names and confirmed NPC identities', () async {
+  test(
+    'SQLite restart keeps raw legacy names and confirmed NPC identities',
+    () async {
     final folder = await Directory.systemTemp.createTemp('npc-legacy-format-');
     final file = paths.join(folder.path, 'campaign.sqlite');
     var repository = await SqliteCampaignRepository.open(
@@ -173,5 +193,6 @@ void main() {
       await repository.close();
       await folder.delete(recursive: true);
     }
-  });
+    },
+  );
 }
