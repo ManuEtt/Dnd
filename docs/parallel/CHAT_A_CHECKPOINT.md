@@ -1,6 +1,6 @@
-# Chat A – Lange Rast validiert Zauberplätze vor Regeneration (05.11.2026, PR #553)
+# Chat A – Lange Rast validiert Zauberplätze vor Regeneration (05.11.2026, PR #554)
 
-**Ausgangs-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`. **Branch:** `feat/chat-a/long-rest-spell-pool-preflight-20261105`. **Fach-/Testcommit:** `6eb4c4c0cc906cee96b180ac78b6551a14e34a50`. **PR:** https://github.com/ManuEtt/Dnd/pull/553 (Draft).
+**Ausgangs-main:** `ad3768b60ff0a731392fbdd393479ec3ed9e042f`. **Branch:** `feat/chat-a/long-rest-spell-guard-clean-20261105`. **Fach-/Testcommit:** `5e6927083f0f842795c71e17ed1418729629e1b4`. **PR:** https://github.com/ManuEtt/Dnd/pull/554 (Draft).
 
 **Problem:** Ungültige ursprüngliche `spentSpellSlots` oder `spentPactSlots` konnten beim langen Rasten ohne Prüfung auf null gesetzt werden. Das löschte Widersprüche eines direkt konstruierten oder fehlerhaften Altcharakters. Kanonisch falsche Gradschlüssel `01`, `10` wurden durch die üblichen Grad-1..9-Lesefunktionen nicht erfasst.
 
@@ -16,6 +16,8 @@
 
 **Nächster einzelner Arbeitsschritt:** Nach CI, D-Review und konfliktfreier Main-Integration den unveränderten Originalbestand von Trefferwürfeln vor Long-Rest-Rücksetzung mit vorhandenem `RestRules.availableHitDice` gegen Klassenstufen absichern und mit negativen/positiven Mehrklassen-/Altstand-Tests belegen.
 
+
+**Branchwechsel:** Der ursprüngliche Draft-PR #553 ist nur der unveränderte Quellbeleg. Die neue CI-fähige Nachfolge-PR #554 übernimmt die bereinigte Fach- und Testimplementierung ohne temporäre Workflow-Diagnose-Commits. Keine Fremdbranch-Änderung.
 ---
 
 ## Chat-A-Konsolidierung – 04.11.2026
