@@ -916,3 +916,20 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **BLOCKIERT:** vollständige CI-Abnahme auf finalem Commit und Chat-D-Integration. **Migration:** keine; bestehende gespeicherte Angebote bleiben gültig.
 - **Koordination:** Keine Fachdatei-Überschneidung mit offenen Chat-B-PRs #545/#546; README/zentralen Checkpoint nur additiv integrieren.
 - **Nächster Schritt:** Finalen CI-Status abwarten, bei roten Prüfungen denselben Branch korrigieren, nach Grün an Chat D übergeben.
+
+---
+
+## Chat B – 05.11.2026: Legacy-Formatzeichen in Ortsrückblicken (#555)
+
+- **Basis-main:** `36ced64cd6b6b13888bee34f5dd33103edf04dcb`.
+- **Eigener Branch:** `feat/chat-b/place-resume-legacy-format-marks-20261105`. **Draft-PR:** [#555](https://github.com/ManuEtt/Dnd/pull/555).
+- **Commits:** `085a003aa529c4016b5e179827f279ab42564342` (Source-Filter), `7328f0722c4f1c5ef7fbcf053acd869a06f377fb` (drei Regressionstests), `185059e4d0a9d7ce82f6d0576df7f35c91e149da` (Dart-Interplations-/Assertion-Präzisierung). Finalen Dokuments-HEAD nachtragen.
+- **Problem und Lösung:** Bei bestätigter Ortswiederaufnahme blieben sieben in älteren Daten vorkommende unsichtbare Formatzeichen U+00AD und U+206A–U+206F stehen. Erweiterung von `ConfirmedPlaceResumeSelector._formatMarks` auf diese sieben Codes; nur die schreibgeschützte Anzeige wird bereinigt. IDs bleiben eindeutig, gespeicherte Rohdaten unangetastet.
+- **Dateien:** `app/lib/story/confirmed_place_resume_selection.dart`, `app/test/confirmed_place_resume_legacy_format_marks_test.dart`, README, zentraler und persönlicher Checkpoint.
+- **Akzeptanz:** Positive/negative Zeichenfälle in beiden Feldern, eindeutige Orts-IDs trotz gleicher lesbarer Namen, Revalidation gegen unsichtbare Same-Revision-Änderungen, JSON-/SQLite-Roundtrip mit unveränderten Daten, TP, Revision und Ereignisrekonstruktion.
+- **GETESTET:** aktuelle Main- und PR-Liste sowie tatsächlich betroffene Fachdateien konfliktfrei geprüft; alle Änderungen versioniert. Für #550 ist die vollständige unabhängige GitHub-CI #42000537289 erfolgreich. Diese frühere CI beweist **nicht** die neue Änderung #555.
+- **NICHT GETESTET:** Finales #555-CI und tatsächlicher Android-Geräte-/Legacy-Upgrade-Test. Lokales Dart-/Flutter-SDK fehlt.
+- **BLOCKIERT:** GitHub-CI-Abnahme, Integrationsreview durch Chat D.
+- **Migration:** keine, keine Änderungen an Regeln, Quests, HP/XP, JSON/SQLite-Schema, Version oder Generierungsprovider.
+- **Konfliktkontrolle:** Kein neuer Storyfachpfad in den parallel offenen PRs #545, #546, #550; gemeinsame Docs beim Merge nur additiv konsolidieren.
+- **Genau nächster Schritt:** CI auf dem finalen Dokumentations-HEAD prüfen; etwaige Fehler beheben und Integration über Chat D abstimmen.

@@ -1,3 +1,16 @@
+## Chat D – Integration PR #555: bestätigte Ortsrückblicke Unicode-sicher anzeigen (05.11.2026)
+
+- **Ausgangs-main:** `c8fa5ae32fac740dff4ff677d2141ddfd1c81a6e`; **Original-PR:** [#555](https://github.com/ManuEtt/Dnd/pull/555), Original-HEAD `2af06a6231fe55dbd0652b3177582a2eec5bc97b`.
+- **IMPLEMENTIERT:** Vollständig getesteter Chat-B-Fachcode und drei Regressionstestgruppen mit Original-Commit als zweitem Elterncommit in einen aktuellen Main-basierten Integrationsstand überführt; `ConfirmedPlaceResumeSelector` entfernt sieben zusätzliche unsichtbare Legacy-Zeichen aus der **Anzeige** gespeicherter Orte, ohne die gespeicherten Rohdaten zu ändern.
+- **Dateien:** `app/lib/story/confirmed_place_resume_selection.dart`, `app/test/confirmed_place_resume_legacy_format_marks_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`. Gemeinsame Dokumentation additiv; vorherige Einträge und Tests erhalten.
+- **GETESTET:** Original-PR-HEAD [CI 42037924128](https://github.com/ManuEtt/Dnd/actions/runs/42037924128) vollständig grün, einschließlich Flutter, Python, Backend, drei Android-ABIs und Artefakten. Das ist kein kombinierter Testnachweis.
+- **NICHT GETESTET:** kombinierte GitHub-CI auf dem Integrations-Commit, danach aktualisierte Main-CI, reale Geräteinstallation/TalkBack, Altdatenupgrade oder Produktiv-KI.
+- **BLOCKIERT:** reguläre Integration erst nach finaler kombinierter CI und erneuter Prüfung paralleler PRs.
+- **Kompatibilität:** kein SQLite-/JSON-/Backup-Formatwechsel, kein Spielstand-Eingriff, keine App-Versionsänderung.
+- **NÄCHSTER SCHRITT:** Integrations-PR-CI und aktuelle Main-CI abnehmen, bei Bedarf eigene Fehler reparieren, dann regulär mergen.
+
+---
+
 # CHAT D – unveränderte geprüfte ARM64-APK veröffentlichen (05.11.2026)
 
 - **Ausgangs-main-SHA:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`.
