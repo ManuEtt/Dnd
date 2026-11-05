@@ -9,6 +9,9 @@ mit eindeutiger deutscher Beschriftung zugänglich. Positive und negative
 Widgettests prüfen kleine Android-Breiten, 200 % Schrift, simulierte
 Bildschirmtastatur, Fehlerwechsel/-entfernung und unveränderte
 Outbox-Daten. Keine automatische Wiederholung oder Speicheränderung.
+Gezielte CI [#42038325743](https://github.com/ManuEtt/Dnd/actions/runs/42038325743)
+**erfolgreich**: 20 Flutter-Widgettests, Dart-Format ohne Änderungen,
+Flutter-Analyse ohne Probleme. Temporäre Diagnoseworkflow-Datei entfernt.
 Vollständige CI und reale Android-/TalkBack-Abnahme noch ausstehend.
 
 ---
