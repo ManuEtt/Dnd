@@ -1,0 +1,21 @@
+name: Chat C temporary skill-sheet formatting and widget check
+on:
+  push:
+    branches:
+      - feat/chat-c/skill-search-ime-safe-sheet-20261105
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - run: |
+          cd app
+          flutter pub get
+          dart format lib/ui/fantasy_character_overview.dart test/fantasy_skill_search_ime_test.dart
+          git diff -- lib/ui/fantasy_character_overview.dart test/fantasy_skill_search_ime_test.dart
+          flutter analyze
+          flutter test test/fantasy_skill_search_ime_test.dart test/fantasy_character_reference_design_test.dart
