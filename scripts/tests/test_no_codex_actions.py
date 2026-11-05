@@ -12,7 +12,7 @@ class NoCodexActionsTests(unittest.TestCase):
 
     def test_android_quality_workflow_is_preserved(self):
         text = (WORKFLOWS / 'android-build.yml').read_text(encoding='utf-8')
-        for stage in ('flutter analyze', 'flutter test', 'flutter build apk --debug', 'actions/upload-artifact@v4'):
+        for stage in ('flutter analyze', 'flutter test', 'flutter build apk --debug', 'actions/upload-artifact@v6'):
             with self.subTest(stage=stage):
                 self.assertIn(stage, text)
 
