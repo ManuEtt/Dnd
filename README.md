@@ -1,142 +1,123 @@
-## Chat D – Portable Gradle-Wrapper-ZIP-Pfade (05.11.2026)
-
-[Draft-PR #567](https://github.com/ManuEtt/Dnd/pull/567) validiert jetzt auch die Portabilität aller JAR-ZIP-Pfadkomponenten: abschließende Leerzeichen oder Punkte werden vor ZIP-CRC abgewiesen. Acht negative und ein positiver Fall sind in `scripts/tests/test_verify_project.py` abgedeckt. Gültige JAR-/Gradle-Konfigurationen, SQLite/JSON-Spielstände und App-Version bleiben unverändert. Fach-HEAD `4c699c5317364d5db424cdd453ecb781edb92aa1`; vollständige CI auf finalem PR-HEAD separat abnehmen.
-
----
-
-## Chat D – portable APK-ZIP-Pfade vor Alpha-Veröffentlichung prüfen (05.11.2026)
-
-[Draft-PR #563](https://github.com/ManuEtt/Dnd/pull/563) weist innerhalb der ARM64-APK-Prüfung jetzt ZIP-Mitgliedsnamen zurück, deren Datei- oder Verzeichnisbestandteile mit Punkt oder Leerzeichen enden. Diese können auf Windows-kompatiblen Dateisystemen beim Entpacken mit anderen Namen kollidieren. Sechs negative Pfadvarianten, ein gültiger Pfad mit innerem Punkt/Leerzeichen und ein Release-Abbruchtest sichern die Vorabprüfung vor ZIP-CRC und Veröffentlichung ab. Keine SQLite-/JSON-/Spielstands- oder Android-Versionsänderung. Die vollständige GitHub-CI auf dem finalen PR-HEAD ist getrennt abzunehmen; die erfolgreiche Main-CI [#42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539) beweist diese neue Änderung noch nicht.
-
----
-
 # Würfelraunen – Der lebendige Spielleiter
 
-## Chat D – validierte Android-APK sicher in das Release übernehmen (05.11.2026)
+**Würfelraunen** ist eine deutschsprachige Fantasy-Solo-App für Android. Eine lokale Regelengine prüft Spielerhandlungen und verwaltet bestätigte Spielzustände; ein austauschbarer Erzähler führt durch Abenteuer, Figuren, Orte und Quests. Das Projekt befindet sich in der **Alpha-Entwicklung**.
 
-Der Alpha-Release-Builder `scripts/prepare_alpha_release.py` bindet die Quell-APK jetzt beim Kopieren an die vor dem ZIP-Validierungslauf aufgezeichnete Identität (Gerät, Inode, Größe, Änderungs- und Statuszeit). Unter POSIX öffnet er außerdem jeden Quellpfad-Bestandteil ohne Verfolgung symbolischer Links und prüft die tatsächlich geöffnete APK vor und nach dem Kopieren. Eine spät eingefügte symbolische Datei/ein Elternordnerlink oder der Austausch gegen eine andere reguläre APK kann so keine fremde, unvalidierte Installationsdatei in ein fertiges Release schleusen. Drei zusätzliche Regressionen sichern die Austauschzeitfenster ab; der normale APK-Releasefall bleibt bestehen. [Draft-PR #552](https://github.com/ManuEtt/Dnd/pull/552), Fach-/Testcommit `333d00776672`; vollständige CI auf dem finalen Head noch offen. Keine Änderung an SQLite-/JSON-Spielständen, App-Version oder Release-Namen.
+## Funktionsüberblick
 
----
+- **Charaktere und Kampagnen:** Charakterverwaltung, Abenteuerverlauf, Journal, Quests, Inventar, Kampf und Würfelproben.
+- **Regeln statt freier KI-Behauptungen:** Die lokale Engine entscheidet über bestätigte Würfe, Trefferpunkte und Ressourcen. Erzähltexte und KI-Vorschläge dürfen diese Werte nicht eigenmächtig ändern.
+- **Beständiges Kampagnengedächtnis:** bestätigte Ereignisse, Orte, NPCs und Handlungsstränge bleiben für die Wiederaufnahme erhalten.
+- **Lokale Spielstände:** SQLite mit versioniertem JSON-Import und -Export; ein Demo-Modus ist ohne externen KI-Dienst nutzbar.
+- **Optionaler Erzähler und Sprache:** ein Fastify-/TypeScript-Backend für externe Erzählmodelle sowie Android-Sprachfunktionen über verfügbare Gerätedienste.
+- **Android-Oberfläche:** deutschsprachige Flutter-Oberfläche mit Fantasy-Gestaltung und laufender Verbesserung von Bedienbarkeit und Barrierefreiheit.
 
-## Chat D – Gradle-Kommentare mit Backslash verdecken keine Folgewerte (05.11.2026)
+## Repository-Aufbau
 
-Die Python-Uploadprüfung erkennt jetzt, dass Java `Properties.load` **Kommentarzeilen niemals durch einen abschließenden Backslash fortsetzt**. Bisher konnte eine auf `# ignored \\` oder `! ignored \\` endende Zeile den nächsten tatsächlichen `distributionUrl`- oder `distributionSha256Sum`-Eintrag bei der Duplikatprüfung verschlucken. Die Kontrolle behandelt `#`/`!`-Kommentarzeilen jetzt vor dem Fortsetzungsmechanismus; echte, nicht kommentierte Java-Properties-Fortsetzungen bleiben erlaubt. Vier Regressionstestmethoden decken 23 CR/LF/CRLF-, Duplikat- und Kompatibilitätsfälle ab. OpenJDK 21 bestätigt die Kommentarsemantik direkt. [Draft-PR #547](https://github.com/ManuEtt/Dnd/pull/547) auf `fix/chat-d/gradle-comments-continuation-20261105`, Code-/Test-HEAD `9a88f16448b2`, finale GitHub-CI noch nicht vollständig abgenommen. Keine Migration, keine Änderung an SQLite-/JSON-Spielständen oder der App-Version.
+| Pfad | Zweck |
+| --- | --- |
+| `app/` | Flutter-/Dart-App, Regelengine, Story, Oberfläche und Tests |
+| `backend/` | optionaler Fastify-/TypeScript-Erzähler und Backendtests |
+| `scripts/` | Projektprüfungen, Build-, Paket- und Release-Werkzeuge |
+| `docs/` | Architektur, Spielstandhinweise, SRD-Nachweise und Entwicklungsdokumentation |
+| `docs/parallel/` | koordinierte Arbeit der Entwicklungs-Chats A–D |
+| `.github/workflows/` | automatisierte Prüfungen und Android-Builds |
 
----
+## Projektstand und Grenzen
 
-## Chat D – Checkpoint-Dateien gegen spätes Überschreiben schützen (05.11.2026)
+Die **verbindliche App-Version** steht in [`app/pubspec.yaml`](app/pubspec.yaml); den Integrations- und Teststatus des aktuellen Commits zeigen [GitHub Actions](https://github.com/ManuEtt/Dnd/actions) und [offene Pull Requests](https://github.com/ManuEtt/Dnd/pulls). Ältere Versions-, PR- und Testergebnisse im Entwicklungsprotokoll sind **historische Momentaufnahmen**, keine automatische Freigabe neuerer Commits.
 
-Das Quellcode-Checkpoint-Skript `scripts/create_checkpoint.py` prüft identische Version-/Zeitstempel-/Label-Artefakte jetzt nicht nur vor der aufwendigen Vorbereitung, sondern nochmals unter der exklusiven Veröffentlichungssperre unmittelbar vor der eigentlichen Ausgabe. Dadurch kann ein konkurrierender Lauf nach der frühen Prüfung keine gleichnamigen, bereits veröffentlichten ZIP-/Patch-/Manifest-/Prüfsummendateien mehr unbemerkt ersetzen. Hängende Symlinks zählen ebenfalls als belegte Namen. Zwei neue Regressionen in `scripts/tests/test_create_checkpoint.py` decken spätes Auftauchen einer Archivdatei und eines hängenden Manifest-Symlinks ab. [Draft-PR #544](https://github.com/ManuEtt/Dnd/pull/544), Basis `74548d3d5243`, Fachcommit `021672463075`. Vollständige Actions-CI auf dem finalen dokumentierten HEAD noch ausstehend. SQLite/JSON, Speicherformate, App-Version und bestehende Aliasse bleiben unverändert.
+Die D&D-Regelgrundlage ist das **SRD 5.2.1** unter CC BY 4.0. Die Regelabdeckung ist noch **nicht vollständig**: einzelne Domänenbausteine können bereits getestet sein, ohne vollständig an Oberfläche, Controller oder Speicherung angeschlossen zu sein. Reale Android-Geräteabnahme, produktive Release-Signierung und die Unterstützung weiterer Plattformen sind getrennt zu verifizieren. Ein öffentlich nutzbarer Mehrspielerdienst gehört nicht zum derzeit nachgewiesenen Funktionsumfang.
 
----
+## Starten und prüfen
 
-## A–D-Integration und CI-Bereinigung (04.11.2026)
+Toolchain wie CI: Flutter **3.35.7**, Dart **3.9.2**, Java **17**, Node **22.14.0**,
+Android SDK/API 36. Unter Linux benötigen SQLite-Tests `libsqlite3-dev`.
 
-Die Fachbeiträge [#535](https://github.com/ManuEtt/Dnd/pull/535) bis [#539](https://github.com/ManuEtt/Dnd/pull/539) werden im Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` unter Erhalt ihrer Commit-Historien zusammengeführt. Die Android-Alpha-ABIs und der Quellcode-Checkpoint sollen auf getrennten GitHub-Actions-Runnern geprüft werden. Historische Zusatz-Workflows werden entfernt; `main` bleibt bis zur vollständigen Integrations-CI unverändert. Details: [Integrationsbericht](docs/parallel/INTEGRATION_20261104.md). Keine SQLite-/JSON-Schema- oder App-Versionsänderung.
+```bash
+python3 scripts/generate_fantasy_buttons.py
+bash scripts/check.sh
+cd app
+flutter build apk --debug
+cd android
+./gradlew :app:testDebugUnitTest --no-daemon
+```
 
----
+`check.sh` prüft Projektstruktur, Modulgrenzen, SRD-Register, Python-Pakettests,
+Backend-Installation/Typecheck/Tests/Build sowie Flutter-Formatierung/Analyse/
+Tests einschließlich lokalem Node-/Dart-Protokolltest. Tests nutzen Mocks und
+deterministische Würfel; kostenpflichtige KI ist nicht erforderlich.
 
-<!-- Originalbeitrag aus PR #535 -->
-## Chat C – EP-Fortschritt mit Screenreader im Kampagnen-Dashboard (04.11.2026)
+## Spielen und sichern
 
-Der bestätigte EP-Fortschrittsbalken der aktiven Heldenkarte kündigt jetzt
-„Erfahrungsfortschritt: N Prozent“ an und vermeidet eine doppelte technische
-Balkenansage. Der Wert wird aus der bestehenden EP-Berechnung übernommen;
-unbestätigte Werte bleiben ausdrücklich unbekannt. Drei Widgettests prüfen
-320/360 dp mit 200 % Schrift, simulierter Android-Tastatur, korrekte
-Semantik, bedienbare Aktionen und unveränderte gespeicherte Heldenwerte.
-Branch `feat/chat-c/campaign-xp-progress-semantics-20261104`;
-[Draft-PR #535](https://github.com/ManuEtt/Dnd/pull/535). Die gezielte Flutter-CI [#41776172261](https://github.com/ManuEtt/Dnd/actions/runs/41776172261) bestand 11 Tests; die neue vollständige GitHub-CI
-und eine echte Android-/TalkBack-Abnahme sind noch ausstehend.
-Keine Änderungen an Spielregeln, SQLite/JSON, App-Version oder Assets.
+Helden anlegen oder bestehende Charaktere importieren, Kampagne auswählen und
+im Abenteuer ausdrücklich bestätigte Aktionen ausführen. Die lokale Engine
+entscheidet über Würfe, TP, Ressourcen und Gegenstände. Erzähltext und
+KI-Vorschläge erhalten keine Regelautorität. Unbekannte Werte bleiben unbekannt.
 
----
+Spielstände lassen sich als JSON über Androids Dokumentauswahl oder Text sichern.
+Importe werden vor Bestätigung validiert und atomar gespeichert. Vor einer
+Deinstallation eigene Spielstände exportieren; Sicherungen sind nicht zusätzlich
+verschlüsselt. [Backup-Anleitung](docs/SAVE_BACKUPS.md).
 
----
+Der lokale Demo-Modus benötigt keinen Server oder API-Schlüssel. Ein optionaler
+HTTPS-Erzähler verwendet nur serverseitige Anbieter-Schlüssel und ausdrücklich
+freigegebene Kosten; Sitzungstoken bleiben im Arbeitsspeicher. Android-Sprache
+hängt von den installierten Gerätediensten ab; vollständiges Offline-STT ist
+nicht garantiert. [Backend](backend/README.md) · [Sprache](docs/SPEECH_TROUBLESHOOTING.md).
 
-<!-- Originalbeitrag aus PR #536 -->
----
+## Historische Build-Artefakte und Wiederherstellung
 
-## Chat B – doppelte Handlungsstrang-IDs bei Kampagnenwiederaufnahme (04.11.2026)
+Aus der erfolgreichen Produkt-Main-CI `47ab0028`:
+[Quell-ZIP, Patch, Manifest und vollständiges History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/41183481979/artifacts/13036032830) ·
+[ARM64-Alpha mit Quellen](https://github.com/ManuEtt/Dnd/actions/runs/41183481979/artifacts/13036442277).
+Der enthaltene CI-Patch verwendet die Basis `72ba9d2e06e7121f955832b4ad22223f64f7c343`;
+für eine vollständige Wiederherstellung das ZIP oder History-Bundle verwenden.
+Der Abschlussnachtrag #445 wird als reine Dokumentationsänderung separat geprüft.
 
-[Draft-PR #536](https://github.com/ManuEtt/Dnd/pull/536) verhindert,
-dass ungeprüfte In-Memory-StoryThreads mit mehrfach belegten IDs und
-widersprüchlichen Stati einen bereits geschlossenen Strang erneut als
-„aktuell offen“ darstellen. Reguläre JSON-Importe weisen solche Dubletten
-bereits zurück. `CampaignResumeReader` übernimmt nur eindeutige
-sichere IDs, erhält die zuletzt gespeicherte Reihenfolge und begrenzt die
-Anzeige unverändert. Vier neue Flutter-Regressionstests decken mehrdeutige
-IDs, ungültige Identitäten, Reihenfolge/Limit, JSON-Importabwehr bei
-Dubletten und SQLite-Neustart mit gültigen IDs ab. Keine Regel-/Event-/Quest-, Datenbank- oder App-Versionsänderung.
-Die vollständige CI auf dem finalen PR-HEAD und Geräteabnahme bleiben
-gesonderte Freigabegates.
+Unter GitHub **Actions → erfolgreicher Android-Lauf → Artifacts** liegen
+vollständiges Quell-ZIP, Binärpatch, SHA256-Manifest und History-Bundle sowie
+Debug- und optimierte ARM64/ARMv7/x64-Alpha-APKs. Optimierte Alphas tragen eine
+Debug-Testsignatur; Store-Signierung und echter Geräte-/Upgrade-/TalkBack-Test
+sind separate offene Abnahmen. [APK-Hilfe](docs/APK_DOWNLOAD.md).
 
----
+Ein ZIP enthält `app/`, `backend/`, `scripts/`, `docs/` und `.github/` unmittelbar
+an der Wurzel. Für GitHub entpackte Inhalte in einem separaten Branch vergleichen;
+kein bestehendes Main blind mit einem älteren ZIP überschreiben. Patches zuerst
+mit `git apply --check` auf ihrer dokumentierten Basis prüfen. Das Git-Bundle
+bewahrt die vollständige erreichbare Historie. [Import](docs/UPLOAD_TO_GITHUB.md).
 
-<!-- Originalbeitrag aus PR #537 -->
-## Chat D – Java-konforme Whitespace-Prüfung der Gradle-Wrapper-Werte (04.11.2026)
+Alle ursprünglichen Branchspitzen sind zusätzlich als
+`archive/pre-migration-20261030/<Branch>-<SHA12>` auf GitHub erhalten.
+Eine Branchlöschung erfordert vollständige Ancestry, erfolgreiche finale
+Main-CI und einen frisch geprüften unveränderten Head.
 
-Die Übertragungsprüfung `scripts/verify_project.py` validiert `distributionUrl` und `distributionSha256Sum` jetzt ohne das bisherige `strip()` auf den Property-Werten: Java `Properties.load()` ignoriert nur führende ASCII-SP/Tab/FF, bewahrt aber abschließende Leerzeichen und nicht-ASCII-Leerzeichen. Der Parser darf diese ungültigen Werte nicht nachträglich als gültige URL/SHA maskieren. Drei neue Python-Regressionsmethoden in `scripts/tests/test_verify_project.py` prüfen insgesamt 22 Negativ- und Kompatibilitätsvarianten. Java 21 hat das zugrunde liegende Parse-Verhalten in einem isolierten Minimalversuch bestätigt. [Draft-PR #537](https://github.com/ManuEtt/Dnd/pull/537), Fachcommit `15304e04861a`; vollständige Projekt-/CI-Tests für den finalen HEAD sind noch offen. Keine Änderung an Gradle-Distribution, SQLite/JSON, vorhandenen Spielständen oder App-Version.
+## Dokumentation und Regelquelle
 
----
+[Architektur](ARCHITECTURE.md) · [Tests](TESTING.md) ·
+[Entwicklungsstand](DEVELOPMENT_STATUS.md) · [Änderungen](CHANGELOG.md) ·
+[SRD-Audit](docs/SRD_5_2_1_COVERAGE_AUDIT.md) ·
+[Integrationsbericht](docs/parallel/ALL_BRANCHES_MIGRATION_20261030.md).
 
----
+Die vor der Konsolidierung vereinigten README-/Checkpoint-/Statusdateien sind
+[bytegenau archiviert](docs/history/migration_20261030/manifest.json).
+Alle ursprünglichen Fortschritte und Testberichte bleiben außerdem in Git
+sowie den persönlichen Chat-Checkpoints erhalten. Historische Meldungen zu
+laufender CI oder damals fehlenden SDKs sind keine aktuellen Befunde.
 
-<!-- Originalbeitrag aus PR #538 -->
-### CHAT A · 04.11.2026 – Waldläufer-Unermüdlich mit bestätigtem Klassenprofil
-[PR #538](https://github.com/ManuEtt/Dnd/pull/538) validiert vor der SRD-5.2.1-Waldläuferfähigkeit *Unermüdlich / Tireless* (Klassenstufe 10) die gesamte Klassenkombination, darunter gültige Aliase, unterschiedliche Mehrklassen und konsistente Stufen. Ungültige Profile werden ohne Würfelwurf, Nutzungsverbrauch oder Erschöpfungsreduktion abgewiesen. Ein neuer deterministischer Domain-Test deckt negative und positive Fälle ab; bestehende SQLite-/JSON-Spielstände und öffentliche APIs bleiben unverändert. Vollständige GitHub-CI und APK auf dem finalen PR-HEAD noch gesondert zu bestätigen. Quelle: [SRD v5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0.
-
----
-
-<!-- Originalbeitrag aus PR #539 -->
-## Chat A – Hexenmeister-Magische-List: konsistente Klassenprofile (04.11.2026)
-
-[Draft-PR #539](https://github.com/ManuEtt/Dnd/pull/539) schützt die SRD-5.2.1-Fähigkeiten `Magical Cunning` (Hexenmeister 2) und `Eldritch Master` (Hexenmeister 20) vor unberechtigten Paktplatz-Regenerationen aus inkonsistenten direkt erzeugten bzw. historischen Klassenprofilen. Unbekannte, doppelte oder unplausibel gestufte Klassenkombinationen liefern lesend null Nutzungen und scheitern beim ausdrücklich abgeschlossenen Ritual vor jedem Ressourcenverbrauch mit `FormatException`. Bestätigte deutsche/englische Aliase und Kämpfer-/Hexenmeister-Mehrklassen bleiben zugelassen. **Zwölf neue deterministische Testfälle**: neun ungültige Profile und drei Positiv-/Grenzfälle. Getestete CI auf finalem PR-Commit und Android-Debug-APK stehen zur Überprüfung aus; lokal kein Dart-/Flutter-SDK. Klassen-/Paktlogik außerhalb dieses spezialisierten Moduls, Story, UI und Datenformate unverändert; SQLite 3 und JSON 1 ohne Migration. SRD 5.2.1 CC BY 4.0; Requirement `CLASS-HEXENMEISTER-2-BASE-MAGICAL-CUNNING-0` bleibt `partial` (keine echte Ritual-Uhr/Unterbrechungsbestätigung). Basis-main `c8f25132`, Code-/Testcommit `86c83b5c`; gemeinsame Dokumentation wird durch Chat D additiv integriert.
-
----
-
----
-
-## Chat D – Korrekte Java-Properties-Zeilentrennung bei Gradle-Uploadprüfung (03.11.2026)
-
-Die Python-Übertragungsprüfung `scripts/verify_project.py` wertet physische Zeilen der Gradle-Wrapper-Konfiguration nun wie Java Properties ausschließlich an CR/LF/CRLF aus. Unicode-Zeichen U+0085, vertikaler Tab und U+2028/U+2029 innerhalb eines Kommentars erzeugen keine vorgetäuschten gültigen `distributionUrl`- oder `distributionSha256Sum`-Einträge und keine fälschlichen Doppelbelegungen mehr. Drei Regressionstest-Gruppen in `scripts/tests/test_verify_project.py` decken fehlende Pflichtwerte, erlaubte Kommentarinhalte und echte Zeilenenden ab. Separater Draft-[PR #528](https://github.com/ManuEtt/Dnd/pull/528), Basis `7be2135`, Fachcommit `ab0a8c8`. **Vollständige CI auf ursprünglichem PR-HEAD `1e04364` erfolgreich:** [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451). Auf dem konsolidierten Integrations-HEAD ist erneut eine vollständige CI erforderlich. Keine SQLite-/JSON-/Versionsmigration.
-
-
----
-
-## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
-
-[PR #502](https://github.com/ManuEtt/Dnd/pull/502) prüft in der bestehenden
-SQLite-Importgrenze nun die tatsächlichen UTF-8-Bytes statt ausschließlich
-Darts UTF-16-`String.length`. Die billige Zeichenlängenprüfung bleibt vor
-der Bytezählung erhalten. Zwei SQLite-FFI-Regressionstests schützen die
-Ablehnung eines mehrbyteigen Übergrößenimports ohne Datenbankänderungen und
-den regulären Unicode-Roundtrip. SQLite 3, JSON-Format 1, App-Version,
-vorhandene Spielstände und Exportformat bleiben unverändert.
-Flutter-/Android-Build und CI auf dem finalen PR-HEAD müssen noch bestätigt
-werden; kein Realgerätetest behauptet.
-
----
-
-
-## Chat C – Mehrgegner-Initiative bei 200 % Schrift und IME (02.11.2026)
-
-[Draft-PR #488](https://github.com/ManuEtt/Dnd/pull/488) verbessert den
-unabhängigen `TrackedCreatureInitiativeDialog`: Der gesamte Dialog scrollt
-ohne verschachtelte Scrollflächen, Bestätigungen bleiben auf schmalen
-Android-Displays bedienbar, die ursprünglichen ausführlichen
-Screenreader-Texte bleiben trotz kürzerer sichtbarer Labels erhalten.
-Fünf Widgettests prüfen 320/360 dp bei 200 % Schrift und 220 dp
-Tastatureinblendung einschließlich Abbruch, unvollständiger/ungültiger
-Initiative und rein unverbindlicher Auswahl. Keine Kampfregel-, 
-SQLite-/JSON-, Spielstands- oder Versionsänderungen. Vollständige CI
-auf dem finalen PR-HEAD und reale TalkBack-/IME-Geräteprüfung noch offen;
-keine automatische Mergefreigabe.
+Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.1**
+unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
+Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
+weiterhin Entwicklungsziele.
 
 ---
 
-Deutschsprachige Fantasy-Solo-App für Android: Flutter/Dart, lokale SQLite-Spielstände,
-regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
+## Entwicklungsprotokoll und Nachweise
+
+Die folgenden unverändert erhaltenen Entwicklungsnotizen enthalten sowohl integrierte Arbeit als auch **damals offene oder nur vorgeschlagene Pull Requests**. Vor einer Aussage zum heutigen Stand müssen jeweils Code, PR-Status und CI auf dem betreffenden Commit geprüft werden. Die Reihenfolge der älteren Notizen ist historisch gewachsen.
+
+**Verbindliche Schreibregel:** Ab jetzt dürfen neue Entwicklungsnachträge ausschließlich **ganz am Ende dieser README, nach dem letzten vorhandenen Eintrag**, angefügt werden. Nichts vor die Projektüberschrift, nicht in die Projektbeschreibung und nicht zwischen ältere Einträge setzen.
+
+### Archivierter Integrationsstand (31.10.–02.11.2026)
 
 ## Aktueller Stand und autonome Fortsetzung
 
@@ -235,86 +216,7 @@ persistieren und Distant Spell nur
 bei nachweisbarer aktueller Wahl
 in die atomare Cast-Transaktion aufnehmen.
 
-## Starten und prüfen
-
-Toolchain wie CI: Flutter **3.35.7**, Dart **3.9.2**, Java **17**, Node **22.14.0**,
-Android SDK/API 36. Unter Linux benötigen SQLite-Tests `libsqlite3-dev`.
-
-```bash
-python3 scripts/generate_fantasy_buttons.py
-bash scripts/check.sh
-cd app
-flutter build apk --debug
-cd android
-./gradlew :app:testDebugUnitTest --no-daemon
-```
-
-`check.sh` prüft Projektstruktur, Modulgrenzen, SRD-Register, Python-Pakettests,
-Backend-Installation/Typecheck/Tests/Build sowie Flutter-Formatierung/Analyse/
-Tests einschließlich lokalem Node-/Dart-Protokolltest. Tests nutzen Mocks und
-deterministische Würfel; kostenpflichtige KI ist nicht erforderlich.
-
-## Spielen und sichern
-
-Helden anlegen oder bestehende Charaktere importieren, Kampagne auswählen und
-im Abenteuer ausdrücklich bestätigte Aktionen ausführen. Die lokale Engine
-entscheidet über Würfe, TP, Ressourcen und Gegenstände. Erzähltext und
-KI-Vorschläge erhalten keine Regelautorität. Unbekannte Werte bleiben unbekannt.
-
-Spielstände lassen sich als JSON über Androids Dokumentauswahl oder Text sichern.
-Importe werden vor Bestätigung validiert und atomar gespeichert. Vor einer
-Deinstallation eigene Spielstände exportieren; Sicherungen sind nicht zusätzlich
-verschlüsselt. [Backup-Anleitung](docs/SAVE_BACKUPS.md).
-
-Der lokale Demo-Modus benötigt keinen Server oder API-Schlüssel. Ein optionaler
-HTTPS-Erzähler verwendet nur serverseitige Anbieter-Schlüssel und ausdrücklich
-freigegebene Kosten; Sitzungstoken bleiben im Arbeitsspeicher. Android-Sprache
-hängt von den installierten Gerätediensten ab; vollständiges Offline-STT ist
-nicht garantiert. [Backend](backend/README.md) · [Sprache](docs/SPEECH_TROUBLESHOOTING.md).
-
-## Artefakte und Wiederherstellung
-
-Aus der erfolgreichen Produkt-Main-CI `47ab0028`:
-[Quell-ZIP, Patch, Manifest und vollständiges History-Bundle](https://github.com/ManuEtt/Dnd/actions/runs/41183481979/artifacts/13036032830) ·
-[ARM64-Alpha mit Quellen](https://github.com/ManuEtt/Dnd/actions/runs/41183481979/artifacts/13036442277).
-Der enthaltene CI-Patch verwendet die Basis `72ba9d2e06e7121f955832b4ad22223f64f7c343`;
-für eine vollständige Wiederherstellung das ZIP oder History-Bundle verwenden.
-Der Abschlussnachtrag #445 wird als reine Dokumentationsänderung separat geprüft.
-
-Unter GitHub **Actions → erfolgreicher Android-Lauf → Artifacts** liegen
-vollständiges Quell-ZIP, Binärpatch, SHA256-Manifest und History-Bundle sowie
-Debug- und optimierte ARM64/ARMv7/x64-Alpha-APKs. Optimierte Alphas tragen eine
-Debug-Testsignatur; Store-Signierung und echter Geräte-/Upgrade-/TalkBack-Test
-sind separate offene Abnahmen. [APK-Hilfe](docs/APK_DOWNLOAD.md).
-
-Ein ZIP enthält `app/`, `backend/`, `scripts/`, `docs/` und `.github/` unmittelbar
-an der Wurzel. Für GitHub entpackte Inhalte in einem separaten Branch vergleichen;
-kein bestehendes Main blind mit einem älteren ZIP überschreiben. Patches zuerst
-mit `git apply --check` auf ihrer dokumentierten Basis prüfen. Das Git-Bundle
-bewahrt die vollständige erreichbare Historie. [Import](docs/UPLOAD_TO_GITHUB.md).
-
-Alle ursprünglichen Branchspitzen sind zusätzlich als
-`archive/pre-migration-20261030/<Branch>-<SHA12>` auf GitHub erhalten.
-Eine Branchlöschung erfordert vollständige Ancestry, erfolgreiche finale
-Main-CI und einen frisch geprüften unveränderten Head.
-
-## Dokumentation und Regelquelle
-
-[Architektur](ARCHITECTURE.md) · [Tests](TESTING.md) ·
-[Entwicklungsstand](DEVELOPMENT_STATUS.md) · [Änderungen](CHANGELOG.md) ·
-[SRD-Audit](docs/SRD_5_2_1_COVERAGE_AUDIT.md) ·
-[Integrationsbericht](docs/parallel/ALL_BRANCHES_MIGRATION_20261030.md).
-
-Die vor der Konsolidierung vereinigten README-/Checkpoint-/Statusdateien sind
-[bytegenau archiviert](docs/history/migration_20261030/manifest.json).
-Alle ursprünglichen Fortschritte und Testberichte bleiben außerdem in Git
-sowie den persönlichen Chat-Checkpoints erhalten. Historische Meldungen zu
-laufender CI oder damals fehlenden SDKs sind keine aktuellen Befunde.
-
-Regelgrundlage: ausschließlich rechtmäßig nutzbare Inhalte des **D&D SRD 5.2.1**
-unter **CC BY 4.0**. [Namensnennung und Lizenzen](THIRD_PARTY_NOTICES.md).
-Eine vollständige SRD-Umsetzung und ein öffentlicher Mehrspielerdienst sind
-weiterhin Entwicklungsziele.
+---
 
 ## Chat B – verzögerte KI-Antwort nach SQLite-Neustart (31.10.2026)
 
@@ -1333,3 +1235,146 @@ Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt
 ## Chat B – alte unsichtbare Zeichen in bestätigten Ortsrückblicken (05.11.2026)
 
 [Draft-PR #555](https://github.com/ManuEtt/Dnd/pull/555) erweitert die rein darstellende Ortsbereinigung um Soft Hyphen (U+00AD) und die sechs früheren Bidi-Formatsteuerzeichen U+206A–U+206F. Namen bleiben lesbar, Beschreibungen einzeilig; eine nur scheinbar andere Ortsbezeichnung erhält weiterhin ihre echte Orts-ID. Drei Flutter-Regressionsgruppen prüfen alle sieben Zeichen in beiden Textfeldern, gleiche sichtbare Namen mit unterschiedlichen IDs, veraltete Schnappschüsse trotz gleicher Revision sowie JSON-/SQLite-Neustart mit unveränderten Rohdaten. Keine Änderung an gespeichertem Ort, Schema, Quest, Regelwert oder Versionsnummer. Vollständige CI auf finalem Commit und Android-Realgerät werden gesondert abgenommen.
+
+---
+
+## Chat D – validierte Android-APK sicher in das Release übernehmen (05.11.2026)
+
+Der Alpha-Release-Builder `scripts/prepare_alpha_release.py` bindet die Quell-APK jetzt beim Kopieren an die vor dem ZIP-Validierungslauf aufgezeichnete Identität (Gerät, Inode, Größe, Änderungs- und Statuszeit). Unter POSIX öffnet er außerdem jeden Quellpfad-Bestandteil ohne Verfolgung symbolischer Links und prüft die tatsächlich geöffnete APK vor und nach dem Kopieren. Eine spät eingefügte symbolische Datei/ein Elternordnerlink oder der Austausch gegen eine andere reguläre APK kann so keine fremde, unvalidierte Installationsdatei in ein fertiges Release schleusen. Drei zusätzliche Regressionen sichern die Austauschzeitfenster ab; der normale APK-Releasefall bleibt bestehen. [Draft-PR #552](https://github.com/ManuEtt/Dnd/pull/552), Fach-/Testcommit `333d00776672`; vollständige CI auf dem finalen Head noch offen. Keine Änderung an SQLite-/JSON-Spielständen, App-Version oder Release-Namen.
+
+---
+
+## Chat D – Gradle-Kommentare mit Backslash verdecken keine Folgewerte (05.11.2026)
+
+Die Python-Uploadprüfung erkennt jetzt, dass Java `Properties.load` **Kommentarzeilen niemals durch einen abschließenden Backslash fortsetzt**. Bisher konnte eine auf `# ignored \\` oder `! ignored \\` endende Zeile den nächsten tatsächlichen `distributionUrl`- oder `distributionSha256Sum`-Eintrag bei der Duplikatprüfung verschlucken. Die Kontrolle behandelt `#`/`!`-Kommentarzeilen jetzt vor dem Fortsetzungsmechanismus; echte, nicht kommentierte Java-Properties-Fortsetzungen bleiben erlaubt. Vier Regressionstestmethoden decken 23 CR/LF/CRLF-, Duplikat- und Kompatibilitätsfälle ab. OpenJDK 21 bestätigt die Kommentarsemantik direkt. [Draft-PR #547](https://github.com/ManuEtt/Dnd/pull/547) auf `fix/chat-d/gradle-comments-continuation-20261105`, Code-/Test-HEAD `9a88f16448b2`, finale GitHub-CI noch nicht vollständig abgenommen. Keine Migration, keine Änderung an SQLite-/JSON-Spielständen oder der App-Version.
+
+---
+
+## Chat D – Checkpoint-Dateien gegen spätes Überschreiben schützen (05.11.2026)
+
+Das Quellcode-Checkpoint-Skript `scripts/create_checkpoint.py` prüft identische Version-/Zeitstempel-/Label-Artefakte jetzt nicht nur vor der aufwendigen Vorbereitung, sondern nochmals unter der exklusiven Veröffentlichungssperre unmittelbar vor der eigentlichen Ausgabe. Dadurch kann ein konkurrierender Lauf nach der frühen Prüfung keine gleichnamigen, bereits veröffentlichten ZIP-/Patch-/Manifest-/Prüfsummendateien mehr unbemerkt ersetzen. Hängende Symlinks zählen ebenfalls als belegte Namen. Zwei neue Regressionen in `scripts/tests/test_create_checkpoint.py` decken spätes Auftauchen einer Archivdatei und eines hängenden Manifest-Symlinks ab. [Draft-PR #544](https://github.com/ManuEtt/Dnd/pull/544), Basis `74548d3d5243`, Fachcommit `021672463075`. Vollständige Actions-CI auf dem finalen dokumentierten HEAD noch ausstehend. SQLite/JSON, Speicherformate, App-Version und bestehende Aliasse bleiben unverändert.
+
+---
+
+## A–D-Integration und CI-Bereinigung (04.11.2026)
+
+Die Fachbeiträge [#535](https://github.com/ManuEtt/Dnd/pull/535) bis [#539](https://github.com/ManuEtt/Dnd/pull/539) werden im Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` unter Erhalt ihrer Commit-Historien zusammengeführt. Die Android-Alpha-ABIs und der Quellcode-Checkpoint sollen auf getrennten GitHub-Actions-Runnern geprüft werden. Historische Zusatz-Workflows werden entfernt; `main` bleibt bis zur vollständigen Integrations-CI unverändert. Details: [Integrationsbericht](docs/parallel/INTEGRATION_20261104.md). Keine SQLite-/JSON-Schema- oder App-Versionsänderung.
+
+---
+
+<!-- Originalbeitrag aus PR #535 -->
+## Chat C – EP-Fortschritt mit Screenreader im Kampagnen-Dashboard (04.11.2026)
+
+Der bestätigte EP-Fortschrittsbalken der aktiven Heldenkarte kündigt jetzt
+„Erfahrungsfortschritt: N Prozent“ an und vermeidet eine doppelte technische
+Balkenansage. Der Wert wird aus der bestehenden EP-Berechnung übernommen;
+unbestätigte Werte bleiben ausdrücklich unbekannt. Drei Widgettests prüfen
+320/360 dp mit 200 % Schrift, simulierter Android-Tastatur, korrekte
+Semantik, bedienbare Aktionen und unveränderte gespeicherte Heldenwerte.
+Branch `feat/chat-c/campaign-xp-progress-semantics-20261104`;
+[Draft-PR #535](https://github.com/ManuEtt/Dnd/pull/535). Die gezielte Flutter-CI [#41776172261](https://github.com/ManuEtt/Dnd/actions/runs/41776172261) bestand 11 Tests; die neue vollständige GitHub-CI
+und eine echte Android-/TalkBack-Abnahme sind noch ausstehend.
+Keine Änderungen an Spielregeln, SQLite/JSON, App-Version oder Assets.
+
+---
+
+---
+
+<!-- Originalbeitrag aus PR #536 -->
+---
+
+## Chat B – doppelte Handlungsstrang-IDs bei Kampagnenwiederaufnahme (04.11.2026)
+
+[Draft-PR #536](https://github.com/ManuEtt/Dnd/pull/536) verhindert,
+dass ungeprüfte In-Memory-StoryThreads mit mehrfach belegten IDs und
+widersprüchlichen Stati einen bereits geschlossenen Strang erneut als
+„aktuell offen“ darstellen. Reguläre JSON-Importe weisen solche Dubletten
+bereits zurück. `CampaignResumeReader` übernimmt nur eindeutige
+sichere IDs, erhält die zuletzt gespeicherte Reihenfolge und begrenzt die
+Anzeige unverändert. Vier neue Flutter-Regressionstests decken mehrdeutige
+IDs, ungültige Identitäten, Reihenfolge/Limit, JSON-Importabwehr bei
+Dubletten und SQLite-Neustart mit gültigen IDs ab. Keine Regel-/Event-/Quest-, Datenbank- oder App-Versionsänderung.
+Die vollständige CI auf dem finalen PR-HEAD und Geräteabnahme bleiben
+gesonderte Freigabegates.
+
+---
+
+<!-- Originalbeitrag aus PR #537 -->
+## Chat D – Java-konforme Whitespace-Prüfung der Gradle-Wrapper-Werte (04.11.2026)
+
+Die Übertragungsprüfung `scripts/verify_project.py` validiert `distributionUrl` und `distributionSha256Sum` jetzt ohne das bisherige `strip()` auf den Property-Werten: Java `Properties.load()` ignoriert nur führende ASCII-SP/Tab/FF, bewahrt aber abschließende Leerzeichen und nicht-ASCII-Leerzeichen. Der Parser darf diese ungültigen Werte nicht nachträglich als gültige URL/SHA maskieren. Drei neue Python-Regressionsmethoden in `scripts/tests/test_verify_project.py` prüfen insgesamt 22 Negativ- und Kompatibilitätsvarianten. Java 21 hat das zugrunde liegende Parse-Verhalten in einem isolierten Minimalversuch bestätigt. [Draft-PR #537](https://github.com/ManuEtt/Dnd/pull/537), Fachcommit `15304e04861a`; vollständige Projekt-/CI-Tests für den finalen HEAD sind noch offen. Keine Änderung an Gradle-Distribution, SQLite/JSON, vorhandenen Spielständen oder App-Version.
+
+---
+
+---
+
+<!-- Originalbeitrag aus PR #538 -->
+### CHAT A · 04.11.2026 – Waldläufer-Unermüdlich mit bestätigtem Klassenprofil
+[PR #538](https://github.com/ManuEtt/Dnd/pull/538) validiert vor der SRD-5.2.1-Waldläuferfähigkeit *Unermüdlich / Tireless* (Klassenstufe 10) die gesamte Klassenkombination, darunter gültige Aliase, unterschiedliche Mehrklassen und konsistente Stufen. Ungültige Profile werden ohne Würfelwurf, Nutzungsverbrauch oder Erschöpfungsreduktion abgewiesen. Ein neuer deterministischer Domain-Test deckt negative und positive Fälle ab; bestehende SQLite-/JSON-Spielstände und öffentliche APIs bleiben unverändert. Vollständige GitHub-CI und APK auf dem finalen PR-HEAD noch gesondert zu bestätigen. Quelle: [SRD v5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0.
+
+---
+
+<!-- Originalbeitrag aus PR #539 -->
+## Chat A – Hexenmeister-Magische-List: konsistente Klassenprofile (04.11.2026)
+
+[Draft-PR #539](https://github.com/ManuEtt/Dnd/pull/539) schützt die SRD-5.2.1-Fähigkeiten `Magical Cunning` (Hexenmeister 2) und `Eldritch Master` (Hexenmeister 20) vor unberechtigten Paktplatz-Regenerationen aus inkonsistenten direkt erzeugten bzw. historischen Klassenprofilen. Unbekannte, doppelte oder unplausibel gestufte Klassenkombinationen liefern lesend null Nutzungen und scheitern beim ausdrücklich abgeschlossenen Ritual vor jedem Ressourcenverbrauch mit `FormatException`. Bestätigte deutsche/englische Aliase und Kämpfer-/Hexenmeister-Mehrklassen bleiben zugelassen. **Zwölf neue deterministische Testfälle**: neun ungültige Profile und drei Positiv-/Grenzfälle. Getestete CI auf finalem PR-Commit und Android-Debug-APK stehen zur Überprüfung aus; lokal kein Dart-/Flutter-SDK. Klassen-/Paktlogik außerhalb dieses spezialisierten Moduls, Story, UI und Datenformate unverändert; SQLite 3 und JSON 1 ohne Migration. SRD 5.2.1 CC BY 4.0; Requirement `CLASS-HEXENMEISTER-2-BASE-MAGICAL-CUNNING-0` bleibt `partial` (keine echte Ritual-Uhr/Unterbrechungsbestätigung). Basis-main `c8f25132`, Code-/Testcommit `86c83b5c`; gemeinsame Dokumentation wird durch Chat D additiv integriert.
+
+---
+
+---
+
+## Chat D – Korrekte Java-Properties-Zeilentrennung bei Gradle-Uploadprüfung (03.11.2026)
+
+Die Python-Übertragungsprüfung `scripts/verify_project.py` wertet physische Zeilen der Gradle-Wrapper-Konfiguration nun wie Java Properties ausschließlich an CR/LF/CRLF aus. Unicode-Zeichen U+0085, vertikaler Tab und U+2028/U+2029 innerhalb eines Kommentars erzeugen keine vorgetäuschten gültigen `distributionUrl`- oder `distributionSha256Sum`-Einträge und keine fälschlichen Doppelbelegungen mehr. Drei Regressionstest-Gruppen in `scripts/tests/test_verify_project.py` decken fehlende Pflichtwerte, erlaubte Kommentarinhalte und echte Zeilenenden ab. Separater Draft-[PR #528](https://github.com/ManuEtt/Dnd/pull/528), Basis `7be2135`, Fachcommit `ab0a8c8`. **Vollständige CI auf ursprünglichem PR-HEAD `1e04364` erfolgreich:** [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451). Auf dem konsolidierten Integrations-HEAD ist erneut eine vollständige CI erforderlich. Keine SQLite-/JSON-/Versionsmigration.
+
+
+---
+
+## Chat D – JSON-Spielstandimport auf 10 MiB UTF-8 begrenzen (02.11.2026)
+
+[PR #502](https://github.com/ManuEtt/Dnd/pull/502) prüft in der bestehenden
+SQLite-Importgrenze nun die tatsächlichen UTF-8-Bytes statt ausschließlich
+Darts UTF-16-`String.length`. Die billige Zeichenlängenprüfung bleibt vor
+der Bytezählung erhalten. Zwei SQLite-FFI-Regressionstests schützen die
+Ablehnung eines mehrbyteigen Übergrößenimports ohne Datenbankänderungen und
+den regulären Unicode-Roundtrip. SQLite 3, JSON-Format 1, App-Version,
+vorhandene Spielstände und Exportformat bleiben unverändert.
+Flutter-/Android-Build und CI auf dem finalen PR-HEAD müssen noch bestätigt
+werden; kein Realgerätetest behauptet.
+
+---
+
+
+## Chat C – Mehrgegner-Initiative bei 200 % Schrift und IME (02.11.2026)
+
+[Draft-PR #488](https://github.com/ManuEtt/Dnd/pull/488) verbessert den
+unabhängigen `TrackedCreatureInitiativeDialog`: Der gesamte Dialog scrollt
+ohne verschachtelte Scrollflächen, Bestätigungen bleiben auf schmalen
+Android-Displays bedienbar, die ursprünglichen ausführlichen
+Screenreader-Texte bleiben trotz kürzerer sichtbarer Labels erhalten.
+Fünf Widgettests prüfen 320/360 dp bei 200 % Schrift und 220 dp
+Tastatureinblendung einschließlich Abbruch, unvollständiger/ungültiger
+Initiative und rein unverbindlicher Auswahl. Keine Kampfregel-, 
+SQLite-/JSON-, Spielstands- oder Versionsänderungen. Vollständige CI
+auf dem finalen PR-HEAD und reale TalkBack-/IME-Geräteprüfung noch offen;
+keine automatische Mergefreigabe.
+
+---
+
+---
+
+## Chat D – portable APK-ZIP-Pfade vor Alpha-Veröffentlichung prüfen (05.11.2026)
+
+[Draft-PR #563](https://github.com/ManuEtt/Dnd/pull/563) weist innerhalb der ARM64-APK-Prüfung jetzt ZIP-Mitgliedsnamen zurück, deren Datei- oder Verzeichnisbestandteile mit Punkt oder Leerzeichen enden. Diese können auf Windows-kompatiblen Dateisystemen beim Entpacken mit anderen Namen kollidieren. Sechs negative Pfadvarianten, ein gültiger Pfad mit innerem Punkt/Leerzeichen und ein Release-Abbruchtest sichern die Vorabprüfung vor ZIP-CRC und Veröffentlichung ab. Keine SQLite-/JSON-/Spielstands- oder Android-Versionsänderung. Die vollständige GitHub-CI auf dem finalen PR-HEAD ist getrennt abzunehmen; die erfolgreiche Main-CI [#42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539) beweist diese neue Änderung noch nicht.
+
+---
+
+### 2026-11-05 – Chat D: Gradle-Wrapper-JAR-ZIP-Pfade absichern
+
+Die Vorabprüfung in `scripts/verify_project.py` weist bei der Gradle-Wrapper-JAR ZIP-Mitglieder mit abschließendem Punkt oder Leerzeichen in Datei- oder Verzeichniskomponenten zurück, bevor ZIP-Daten per CRC gelesen werden. `scripts/tests/test_verify_project.py` ergänzt acht Negativvarianten (inklusive expliziter Verzeichnisse) und einen Positivtest mit zulässigen inneren Punkten/Leerzeichen; fehlerhafte Prüfungen verändern das Quell-JAR nicht.
+
+- **Branch:** `fix/chat-d/wrapper-jar-portable-paths-20261105`; **Fach-/Testcommit:** `4c699c5317364d5db424cdd453ecb781edb92aa1`; **Pull Request:** [#567](https://github.com/ManuEtt/Dnd/pull/567).
+- **Tests:** Python-Projektstruktur, Domänengrenzen, SRD, Backend, Dart-Formatierung, Flutter-Analyse, Dialogtests, vollständige Flutter-Tests, Android-Debug und native Sicherungstests sind auf dem bisherigen PR-Head im [CI-Lauf #42062618047](https://github.com/ManuEtt/Dnd/actions/runs/42062618047) erfolgreich durchgelaufen. Die abschließende CI auf dem neuen, mit der README-Struktur zusammengeführten Commit sowie alle ABI-/Release-Gates sind separat abzunehmen.
+- **Kompatibilität:** Keine Änderungen an Spielständen, SQLite 3, JSON 1, Backups, Gradle-Einstellungen, Android-Version oder Regeln. Reales Android-Gerät und Altdatenupgrade nicht getestet.
+- **Koordination:** Nach [PR #572](https://github.com/ManuEtt/Dnd/pull/572) nur ans absolute README-Ende angefügt; bestehender Projekteinstieg und sämtliche früheren Nachträge unverändert übernommen.
+
