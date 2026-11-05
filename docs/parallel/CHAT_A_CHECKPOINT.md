@@ -1,3 +1,23 @@
+# Chat A – Fighter/Second Wind/Action Surge Profil-Preflight (05.11.2026, PR #559)
+
+**Basis-main:** `c8fa5ae32fac740dff4ff677d2141ddfd1c81a6e`. **Branch:** `feat/chat-a/fighter-resource-class-profile-20261105`. **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/559.
+
+**Problem:** `fighterLevel` zählt bei direkt konstruierten/älteren Klassenkombinationen Fighter/Kämpfer doppelt und akzeptiert auch ansonsten inkonsistente zweite Klassen und Stufen. Entsprechend konnten Second Wind oder Action Surge zu früh verfügbar sein.
+
+**Implemented:** Lokale, reine Ganzprofilprüfung in `app/lib/domain/class_feature_resources.dart` vor der Berechnung von Kämpferstufen. Unbekannte Klassen, gleiche SRD-Klasse trotz Alias, Gesamtstufen außerhalb 1–20 und falsche Nebenkombinationen liefern 0. Fähigkeiten dürfen dann weder Würfel noch Zähler verbuchen. Ungültiger vorhandener Verbrauch verursacht `FormatException` in `ClassFeatureResources.validate` vor Regeneration.
+
+**Testdatei:** `app/test/srd_fighter_resource_class_preflight_test.dart` – 14 deterministische Fälle inklusive neun inkonsistenten Profilen, 5 Positiv-/Ressourcenfällen, kein RNG bei Ablehnung, Fighter-17, Wizard3/Fighter10, Fighter1, Nichtkämpfer und JSON-Roundtrip. `app/test/class_feature_resources_test.dart` als bestehende Vollsuite-Regression.
+
+**Qualität:** Tests und Fachcode gesichert; Dart/Flutter SDK lokal nicht verfügbar. CI-Endnachweis auf finalem Branch-Commit, Android-Debug/ABIs und Realgerät noch nicht bestätigt. Kein Test deaktiviert.
+
+**Kompatibilität/Koordination:** Änderungen an genau einem spezialisierten Domainmodul, einem neuen Test und additiv drei Doku-Dateien. Keine SQLite-/JSON-Migration, Version unverändert, keine Änderungen an `models.dart`, `game_engine.dart`, UI/Story oder eigenen Dateien der Chats B/C/D. Offene PRs bei Start auf Überschneidung geprüft; Chat D integriert README/Checkpoint additiv. Kein Main-Merge durch A.
+
+**Quellbeleg:** Wizards of the Coast LLC, D&D SRD 5.2.1 (CC BY 4.0), *Fighter: Second Wind and Action Surge*, https://www.dndbeyond.com/srd. Status bleibt partial.
+
+**Nächster unabhängiger Schritt:** nach CI und D-Review verbleibende Klassenressourcenpfade mit unvalidierten Fighter-Level-Quellen anhand der Live-PR-Lage analysieren und ein einzelnes konfliktfreies Paket wählen.
+
+---
+
 ## Chat-A-Konsolidierung – 04.11.2026
 
 Die Beiträge zu Waldläufer-Unermüdlich (#538) und Hexenmeister-Magische-List (#539) werden im gemeinsamen Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` vereint; die originale Commit-Historie und beide individuellen Belege werden beibehalten. Kombinierte CI vor Main-Merge gesondert nachweisen.

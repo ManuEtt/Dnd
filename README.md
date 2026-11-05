@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Kämpfer-Ressourcen nur bei konsistentem Klassenprofil (05.11.2026)
+
+[Draft-PR #559](https://github.com/ManuEtt/Dnd/pull/559) verhindert, dass direkte oder ältere Charakter-Snapshots mit doppelten Klassenaliasen (*Fighter/Kämpfer*), unbekannten Klassen, ungültiger Haupt-/Zweitklassenstufe oder Gesamtlevel außerhalb 1–20 unberechtigt „Zweite Luft“ und „Aktionsschub“ freischalten. `ClassFeatureResources.fighterLevel` prüft dazu das vollständige SRD-Klassenprofil vor der Kämpferstufe; unplausible Profile liefern 0 Kämpferstufen, 0 Nutzungen und keine Würfel-/Ressourcenbuchung. Vorhandene unberechtigte Ausgaben werden beim Klassenressourcen-/Rastpreflight mit `FormatException` abgewiesen. **14 deterministische neue Tests:** neun ungültige Profile und fünf Sicherheits-/Positiv-/Grenzfälle, gültige deutsche/englische Aliase, Fighter-17, Wizard-3/Fighter-10, Fighter-1, Fremdklasse, Original-JSON unverändert und ohne RNG bei Ablehnung. `models.dart`, GameEngine, UI/Story, SQLite 3, JSON 1 und App-Version unverändert. **Fach-/Testpaket:** Basis-main `c8fa5ae32fac740dff4ff677d2141ddfd1c81a6e`; GitHub-CI auf finalem PR-HEAD noch nachzuweisen. Quelle: SRD 5.2.1, *Fighter (Second Wind / Action Surge)*, Wizards of the Coast LLC (CC BY 4.0), https://www.dndbeyond.com/srd.
+
+---
+
+
 ## Chat D – validierte Android-APK sicher in das Release übernehmen (05.11.2026)
 
 Der Alpha-Release-Builder `scripts/prepare_alpha_release.py` bindet die Quell-APK jetzt beim Kopieren an die vor dem ZIP-Validierungslauf aufgezeichnete Identität (Gerät, Inode, Größe, Änderungs- und Statuszeit). Unter POSIX öffnet er außerdem jeden Quellpfad-Bestandteil ohne Verfolgung symbolischer Links und prüft die tatsächlich geöffnete APK vor und nach dem Kopieren. Eine spät eingefügte symbolische Datei/ein Elternordnerlink oder der Austausch gegen eine andere reguläre APK kann so keine fremde, unvalidierte Installationsdatei in ein fertiges Release schleusen. Drei zusätzliche Regressionen sichern die Austauschzeitfenster ab; der normale APK-Releasefall bleibt bestehen. [Draft-PR #552](https://github.com/ManuEtt/Dnd/pull/552), Fach-/Testcommit `333d00776672`; vollständige CI auf dem finalen Head noch offen. Keine Änderung an SQLite-/JSON-Spielständen, App-Version oder Release-Namen.
