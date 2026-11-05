@@ -79,10 +79,7 @@ void main() {
       for (final hero in invalid) {
         final before = hero.toJson();
         expect(
-          () => SrdBardFontOfInspirationRules.propose(
-            hero: hero,
-            slotLevel: 1,
-          ),
+          () => SrdBardFontOfInspirationRules.propose(hero: hero, slotLevel: 1),
           throwsFormatException,
         );
         final fabricated = SrdBardFontProposal(
@@ -128,10 +125,7 @@ void main() {
         expect(after.spentClassResources['bardicInspiration'], isNull);
         expect(after.spentSpellSlots['1'], 1);
         expect(hero.toJson(), before);
-        expect(
-          HeroCharacter.fromJson(after.toJson()).toJson(),
-          after.toJson(),
-        );
+        expect(HeroCharacter.fromJson(after.toJson()).toJson(), after.toJson());
         expect(() => proposal.applyTo(after), throwsFormatException);
       }
     });
@@ -140,10 +134,7 @@ void main() {
       final early = _bard(level: 4);
       final before = early.toJson();
       expect(
-        () => SrdBardFontOfInspirationRules.propose(
-          hero: early,
-          slotLevel: 1,
-        ),
+        () => SrdBardFontOfInspirationRules.propose(hero: early, slotLevel: 1),
         throwsStateError,
       );
       expect(early.toJson(), before);
