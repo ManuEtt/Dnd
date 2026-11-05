@@ -1399,3 +1399,18 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 05.11.2026 – CHAT A: „Quelle der Inspiration“ nur mit konsistenten Klassen
+
+**Basis:** `main` `0e4474c55ce80f625f373394d6f7855b4a2487ad`; **Arbeitsbranch:** `fix/chat-a/bard-font-class-profile-20261105`; **Fach-/Testcommit:** `89a97c89cf1fb3408c7b7cf27f4d3fc697f443bf`.
+
+**Problem:** `SrdBardFontOfInspirationRules._validate` verließ sich auf den additiven Klassenlevel-Helfer, ohne beide Klassen und die Stufenverteilung abzusichern. Der Platztausch war daher aus inkonsistenten Alt-/Direktsnapshots möglich.
+
+**Umsetzung:** Klasse und Stufen 1–20, bestätigte kanonische Haupt-/ggf. Zweitklasse, keine Doppelaliase, keine fehlende Zweitklassenstufe oder verwaiste Nebenstufe. Bei ungültigem Profil `FormatException` bereits vor Buchung; sowohl `propose` als auch `SrdBardFontProposal.applyTo` wiederholen die Validierung. 12 negative Snapshotfälle, 5 positive Alias-/Mehrklassenfälle, Replay-/Stufe-4-/JSON-Tests in `app/test/srd_bard_font_class_preflight_test.dart`. Bestehende bestätigte Regelaktion/Controller-CAS bleibt unverändert.
+
+**SRD-Provenienz:** Wizards of the Coast LLC, SRD 5.2.1, Bard Level 5 / Font of Inspiration, CC BY 4.0, <https://www.dndbeyond.com/srd>. Requirement `CLASS-BARDE-5-BASE-FONT-OF-INSPIRATION-0` bleibt `partial` und nicht als vollständig markiert.
+
+**Getestet:** Quellcode-, Test- und PR-Überlappungen auf GitHub geprüft, Änderungen gespeichert. **Noch nicht getestet:** lokale Dart-/Flutter-Analyse/Tests (kein SDK), Android-Build/-Gerät; CI für den finalen Branch-HEAD ausdrücklich abzuwarten. Keine Daten-/JSON-/SQLite-Migration, keine Änderungen in anderen Fachbereichen. README nur additiv am Dateiende; parallele Checkpoint-Ergänzungen bei Integration erhalten.
+
+**Nächster Schritt:** CI-Dart-Format, Analyzer, Flutter-Tests, Android-Builds prüfen und bei Fehlern im selben Branch korrigieren; Chat D übernimmt die gemeinsame Integration nach Freigabe.
