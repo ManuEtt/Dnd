@@ -1,3 +1,11 @@
+## Chat A – Entrinnen nur mit gültigem Klassenprofil (05.11.2026)
+
+Die reine SRD-5.2.1-Regel `SrdEvasionRules.unlocked` prüft jetzt Haupt- und Nebenklasse auf gültige kanonische Klassen, unterschiedliche DE-/EN-Aliase, positive Hauptklassenstufe, konsistente Zweitklassenstufe und Gesamtlevel 1–20. Ungültige Profile gewähren kein Entrinnen; bestätigte GE-Rettungswurf-Vorschauen werden abgewiesen, ohne Heldenwerte zu ändern. Gültige Mönch-/Schurke-Mehrklassen behalten ihre Wirkung (Erfolg 0 Schaden, Fehlschlag halber Schaden).
+
+**[Draft-PR #568](https://github.com/ManuEtt/Dnd/pull/568)** · Basis-main `7d7bb421261af0f690fd0af9012996e45b95ff95` · Branch `feat/chat-a/evasion-class-profile-20261105` · Fach-/Testcommit `67e48593e677cd93ad277766091eb3aa14e510e7`. Neue deterministische Tests `app/test/srd_evasion_class_profile_preflight_test.dart`. GitHub-CI auf finalem Dokumentations-HEAD ist noch abzunehmen; kein automatischer Merge. Keine SQLite-/JSON-/Versionsmigration. SRD 5.2.1 Monk/Rogue Level 7 Evasion, WotC, CC BY 4.0, <https://www.dndbeyond.com/srd>. Anforderungen `CLASS-M-NCH-7-BASE-EVASION-0` und `CLASS-SCHURKE-7-BASE-EVASION-0` bleiben `partial`. Gemeinsam bearbeitete README-/Checkpoint-Abschnitte nur additiv integrieren.
+
+---
+
 ## Chat D – portable APK-ZIP-Pfade vor Alpha-Veröffentlichung prüfen (05.11.2026)
 
 [Draft-PR #563](https://github.com/ManuEtt/Dnd/pull/563) weist innerhalb der ARM64-APK-Prüfung jetzt ZIP-Mitgliedsnamen zurück, deren Datei- oder Verzeichnisbestandteile mit Punkt oder Leerzeichen enden. Diese können auf Windows-kompatiblen Dateisystemen beim Entpacken mit anderen Namen kollidieren. Sechs negative Pfadvarianten, ein gültiger Pfad mit innerem Punkt/Leerzeichen und ein Release-Abbruchtest sichern die Vorabprüfung vor ZIP-CRC und Veröffentlichung ab. Keine SQLite-/JSON-/Spielstands- oder Android-Versionsänderung. Die vollständige GitHub-CI auf dem finalen PR-HEAD ist getrennt abzunehmen; die erfolgreiche Main-CI [#42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539) beweist diese neue Änderung noch nicht.
