@@ -126,7 +126,10 @@ void main() {
         tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable,
         isTrue,
       );
-      expect(tester.widget<SelectableText>(find.byType(SelectableText)).data, json);
+      expect(
+        tester.widget<SelectableText>(find.byType(SelectableText)).data,
+        json,
+      );
       expect(closed, isEmpty);
 
       await _tapVisible(tester, _button('Kopieren'));
@@ -168,49 +171,56 @@ void main() {
     });
   }
 
-  testWidgets('320 dp: ausstehender Export sperrt doppelte Aktionen und Zurück', (
-    tester,
-  ) async {
-    final pending = Completer<bool>();
-    final files = _FakeBackupFiles()..save = () => pending.future;
-    final closed = <bool>[];
-    final json = _longJson();
-    await _openExport(
-      tester,
-      width: 320,
-      json: json,
-      files: files,
-      closed: closed,
-    );
+  testWidgets(
+    '320 dp: ausstehender Export sperrt doppelte Aktionen und Zurück',
+    (tester) async {
+      final pending = Completer<bool>();
+      final files = _FakeBackupFiles()..save = () => pending.future;
+      final closed = <bool>[];
+      final json = _longJson();
+      await _openExport(
+        tester,
+        width: 320,
+        json: json,
+        files: files,
+        closed: closed,
+      );
 
-    await tester.ensureVisible(_button('Als Datei speichern'));
-    await tester.pumpAndSettle();
-    await tester.tap(_button('Als Datei speichern'));
-    // The pending file operation keeps a progress indicator animating.
-    await tester.pump();
+      await tester.ensureVisible(_button('Als Datei speichern'));
+      await tester.pumpAndSettle();
+      await tester.tap(_button('Als Datei speichern'));
+      // The pending file operation keeps a progress indicator animating.
+      await tester.pump();
 
-    expect(find.byType(LinearProgressIndicator), findsOneWidget);
-    for (final label in ['Als Datei speichern', 'Schließen', 'Kopieren']) {
-      expect(tester.widget<FantasyTextButton>(_button(label)).onPressed, isNull);
-    }
-    expect(files.saveCalls, 1);
-    await tester.binding.handlePopRoute();
-    await tester.pump();
-    expect(find.byType(AlertDialog), findsOneWidget);
-    expect(closed, isEmpty);
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+      for (final label in ['Als Datei speichern', 'Schließen', 'Kopieren']) {
+        expect(
+          tester.widget<FantasyTextButton>(_button(label)).onPressed,
+          isNull,
+        );
+      }
+      expect(files.saveCalls, 1);
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(closed, isEmpty);
 
-    pending.complete(false);
-    await tester.pumpAndSettle();
-    expect(
-      find.text('Speichern abgebrochen. Dein Spielstand bleibt unverändert.'),
-      findsOneWidget,
-    );
-    expect(tester.widget<FantasyTextButton>(_button('Kopieren')).onPressed, isNotNull);
-    expect(files.savedJson, json);
-    await _tapVisible(tester, _button('Schließen'));
-    expect(closed, [true]);
-    expect(tester.takeException(), isNull);
-  });
+      pending.complete(false);
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Speichern abgebrochen. Dein Spielstand bleibt unverändert.'),
+        findsOneWidget,
+      );
+      expect(
+        tester.widget<FantasyTextButton>(_button('Kopieren')).onPressed,
+        isNotNull,
+      );
+      expect(files.savedJson, json);
+      await _tapVisible(tester, _button('Schließen'));
+      expect(closed, [true]);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('360 dp: Dateifehler sicher als Screenreader-Live-Region', (
     tester,
@@ -242,7 +252,10 @@ void main() {
           .any((widget) => widget.properties.liveRegion ?? false),
       isTrue,
     );
-    expect(tester.widget<FantasyTextButton>(_button('Kopieren')).onPressed, isNotNull);
+    expect(
+      tester.widget<FantasyTextButton>(_button('Kopieren')).onPressed,
+      isNotNull,
+    );
     expect(closed, isEmpty);
     await _tapVisible(tester, _button('Schließen'));
     expect(closed, [true]);
