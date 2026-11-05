@@ -692,9 +692,9 @@ class VerifyProjectTests(unittest.TestCase):
         original = properties.read_text(encoding='utf-8')
         for newline in ('\n', '\r', '\r\n'):
             with self.subTest(newline=repr(newline)):
-                content = original.replace(
+                content = original.replace('\n', newline).replace(
                     'distributionUrl=', 'distributionUr\\' + newline + '  l='
-                ).replace('\n', newline)
+                )
                 properties.write_bytes(content.encode('utf-8'))
                 self.assertEqual([], verify_project(self.root))
 
