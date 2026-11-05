@@ -51,7 +51,7 @@ Campaign _campaign({
 void main() {
   sqfliteFfiInit();
 
-  test('reader snapshot accepts unchanged JSON and rejects foreign identity', () {
+  test('reader snapshot validates JSON and rejects foreign IDs', () {
     final campaign = _campaign();
     final snapshot = CampaignResumeReader.read(campaign);
     final before = jsonEncode(campaign.toJson());
@@ -208,14 +208,10 @@ void main() {
       confirmedFacts: const ['tor: Angeblich offen.'],
       openLeads: const ['Neuer Schatz: 999 Gold.'],
     );
-    expect(
-      () => forged.requireCurrent(_campaign()),
-      throwsFormatException,
-    );
+    expect(() => forged.requireCurrent(_campaign()), throwsFormatException);
   });
 
-  test('SQLite restart validates raw source and preserves original state',
-      () async {
+  test('SQLite restart checks source without rewriting saves', () async {
     final folder = await Directory.systemTemp.createTemp('resume-stamp-');
     final path = paths.join(folder.path, 'campaign.sqlite');
     final campaign = _campaign(revision: 0);
