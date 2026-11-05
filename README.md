@@ -1327,3 +1327,8 @@ Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt
 ## Chat B – alte unsichtbare Zeichen in bestätigten Ortsrückblicken (05.11.2026)
 
 [Draft-PR #555](https://github.com/ManuEtt/Dnd/pull/555) erweitert die rein darstellende Ortsbereinigung um Soft Hyphen (U+00AD) und die sechs früheren Bidi-Formatsteuerzeichen U+206A–U+206F. Namen bleiben lesbar, Beschreibungen einzeilig; eine nur scheinbar andere Ortsbezeichnung erhält weiterhin ihre echte Orts-ID. Drei Flutter-Regressionsgruppen prüfen alle sieben Zeichen in beiden Textfeldern, gleiche sichtbare Namen mit unterschiedlichen IDs, veraltete Schnappschüsse trotz gleicher Revision sowie JSON-/SQLite-Neustart mit unveränderten Rohdaten. Keine Änderung an gespeichertem Ort, Schema, Quest, Regelwert oder Versionsnummer. Vollständige CI auf finalem Commit und Android-Realgerät werden gesondert abgenommen.
+
+### Chat B – KI-Erzählergedächtnis gegen Legacy-Unicode absichern (05.11.2026)
+
+[Draft-PR #569](https://github.com/ManuEtt/Dnd/pull/569) erweitert die schreibgeschützte `NpcNarratorMemory`-Projektion um U+00AD, U+034F, U+180E und U+206A–U+206F. Identisch aussehende NPC-Namen bleiben in freier Sprache mehrdeutig; bestätigte Notizen und allgemeine Erzähler-Erinnerungen werden ausschließlich im Transport von versteckten Zeichen bereinigt. Vier neue Testgruppen prüfen Identitätskollisionen, reguläre Namen, zulässige Speicherprojektionen und echten SQLite-Neustart. Originale und Regelzustand, JSON-/SQLite-Schemata, Anbieterprotokoll und App-Version bleiben unverändert. CI auf finalem #569-HEAD und Geräteprüfung sind gesondert nachzuweisen. Gemeinsame Dokumentationsänderungen nur additiv integrieren.
+
