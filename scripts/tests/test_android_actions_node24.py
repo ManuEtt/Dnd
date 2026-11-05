@@ -88,5 +88,16 @@ class AndroidActionsNode24Tests(unittest.TestCase):
                 self.assertIn(token, self.workflow)
 
 
+    def test_android_sdk_setup_runs_node24_with_pinned_sdk_configuration(self):
+        step = "uses: android-actions/setup-android@v4"
+        self.assertEqual(self.workflow.count(step), 2)
+        self.assertNotIn("uses: android-actions/setup-android@v3", self.workflow)
+        self.assertEqual(self.workflow.count("cmdline-tools-version: '12266719'"), 2)
+        self.assertEqual(self.workflow.count("packages: 'platform-tools'"), 2)
+        self.assertEqual(self.workflow.count("log-accepted-android-sdk-licenses: 'false'"), 2)
+        downgraded = self.workflow.replace(step, "uses: android-actions/setup-android@v3", 1)
+        self.assertNotEqual(downgraded.count(step), 2)
+
+
 if __name__ == "__main__":
     unittest.main()
