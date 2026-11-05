@@ -933,3 +933,22 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **Migration:** keine, keine Änderungen an Regeln, Quests, HP/XP, JSON/SQLite-Schema, Version oder Generierungsprovider.
 - **Konfliktkontrolle:** Kein neuer Storyfachpfad in den parallel offenen PRs #545, #546, #550; gemeinsame Docs beim Merge nur additiv konsolidieren.
 - **Genau nächster Schritt:** CI auf dem finalen Dokumentations-HEAD prüfen; etwaige Fehler beheben und Integration über Chat D abstimmen.
+
+
+---
+
+## CHAT B – 05.11.2026: Legacy-Unicode in bestätigtem NPC-Rückblick (PR #565)
+
+- **Ausgangs-main:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4`.
+- **Eigener Branch:** `feat/chat-b/npc-continuity-legacy-format-20261105`.
+- **Fachcommits:** `1831ddb8d3bb70b9f289fb57c18d3de458906a93` (Produktivcode), `00d78f1b84fbdd5e6b75a9ba7dc8e3498e133841` (Regressionen).
+- **Pull Request:** [#565](https://github.com/ManuEtt/Dnd/pull/565), Draft zur CI-/Integrationsprüfung.
+- **Ausgangsproblem:** Soft Hyphen (U+00AD), Combining Grapheme Joiner (U+034F), Mongolian Vowel Separator (U+180E) und alte Bidi-Formatcodes U+206A–U+206F wurden in `NpcContinuityReader` weder für den sichtbaren Namensvergleich noch für den bestätigten Kontext vollständig neutralisiert. Optisch identische Namen konnten daher ohne sichere NPC-ID unterschieden werden.
+- **IMPLEMENTIERT:** Diese Formate werden nur bei der schreibgeschützten NPC-Kontextprojektion aus Namen entfernt beziehungsweise in Notizen/Beziehungen durch sichtbare Trennungen ersetzt. Identische angezeigte Namen tragen künftig die eindeutige sichere Original-ID; unsichere IDs werden weiterhin verweigert. Keine Änderungen an Regelwerten, KI-Provider, bestätigten Spielständen, SQLite-/JSON-Format oder App-Version.
+- **DATEIEN:** `app/lib/story/npc_continuity_reader.dart`, `app/test/npc_continuity_legacy_format_marks_test.dart`, additive README-/CODEX-/CHAT_B-Dokumentation.
+- **TESTS ERGÄNZT:** Vier neue Gruppen: neun Namensvarianten, text- und notizsichere Darstellung, Negativfall unsichere IDs und reguläre Unicode-Namen, SQLite-Schließen/Wiederöffnen/Journalkonsistenz.
+- **GETESTET:** GitHub-Main-/PR-/Branch-Inspektion; Pfadkonfliktprüfung: keine offenen fremden PRs bearbeiteten die zwei neuen Fachdateien. Commit-/Compare-Nachweis: zwei Fachdateien geändert.
+- **NICHT GETESTET:** Die neue Dart-/Flutter-Suite, Android-Build, Backend, Python-Repo-Tests und finale GitHub-Actions-CI sind bis zu nachgewiesenem Lauf offen. Lokales Flutter/Dart-SDK fehlt; GitHub-Klon via DNS nicht möglich. Kein Realgerät, Alt-APK-Upgrade oder produktiver KI-Anbieter geprüft.
+- **BLOCKIERT:** Finale CI-Prüfung und Integrationsreview; gemeinsame README-/CODEX-/CHAT_B-Dokumentation anderer paralleler PRs muss Chat D additiv konsolidieren.
+- **MIGRATIONEN:** keine; Rohdaten und Regelzustand bleiben exakt unverändert.
+- **NÄCHSTER SCHRITT:** GitHub Actions auf finalem PR-HEAD auswerten, mögliche Dart-Format-/Testfehler auf demselben Branch korrigieren und danach zur konfliktfreien D-Integration vorlegen.
