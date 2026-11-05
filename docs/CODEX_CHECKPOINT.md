@@ -2100,3 +2100,17 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## JSON-Export bei 200 % Schrift und langen JSON-Spielständen (05.11.2026)
+
+- **Zuständigkeit:** CHAT C – reine Flutter-Oberfläche/Widgettests; **Ausgangs-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`.
+- **Branch:** `feat/chat-c/backup-export-large-text-20261105`; **PR:** [#583](https://github.com/ManuEtt/Dnd/pull/583), Draft.
+- **IMPLEMENTIERT:** `app/lib/ui/backup_dialogs.dart` verwendet für den Export nun `AlertDialog(scrollable: true)` statt eigenem Content-Scrollbereich; kompakte Außenränder. Keine Änderung am Importdialog, JSON-Text, Aktionen oder Busy-/Fehler-/Navigationslogik.
+- **TESTS HINZUGEFÜGT:** `app/test/backup_export_large_text_accessibility_test.dart` mit 320/360-dp-Tests bei 200 % Schrift und 220-dp-IME: unverändertes vollständiges Datei- und Zwischenablage-JSON, Bedienbarkeit und Schließen, asynchrone Busy-Sperre, Dateiabbruch und Live-Fehlermeldung ohne private Pfade.
+- **GETESTET:** GitHub-main, offen gebliebene #579/#580/#581 einschließlich Dateipfade, vorhandene Import- und Exportintegration sowie neue Code- und Widgettestdatei auf Branch geprüft.
+- **NICHT GETESTET:** Flutter-/Dart-Formatter, Analyse, echte Widget-/Gesamttests, Android-/Native-/ABI-Build auf finalem Branch, reales Android/TalkBack/IME; korrekte CI-Ergebnisse nach Lauf nachtragen.
+- **BLOCKIERT:** Kein lokales Dart-/Flutter-SDK; GitHub-Actions-Prüfung und Review vor Merge nötig. Gemeinsame README-/Checkpoint-Abschnitte bei parallelen PRs additiv konsolidieren.
+- **Migration:** Nicht erforderlich; BackupFiles-/Controller-/Speicherformate, Spielregeln und Android-Berechtigungen unverändert.
+- **NÄCHSTER SCHRITT:** Finalen PR-HEAD samt Flutter-/Android-CI auswerten und erforderliche Korrekturen durch erneute Tests absichern.
+
+---
