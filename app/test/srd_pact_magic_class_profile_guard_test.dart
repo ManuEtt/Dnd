@@ -60,9 +60,7 @@ void main() {
         secondaryLevel: 5,
         level: 5,
       ),
-      'negative Zweitklassenstufe': _pactHero(
-        secondaryLevel: -1,
-      ),
+      'negative Zweitklassenstufe': _pactHero(secondaryLevel: -1),
       'Gesamtlevel null': _pactHero(level: 0),
       'Gesamtlevel über zwanzig': _pactHero(level: 21),
     };
