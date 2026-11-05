@@ -1426,3 +1426,9 @@ Regressionen gegen Downgrades: `scripts/tests/test_android_actions_node24.py` un
 ### 2026-11-05 – Unbezwingbare Stärke: gültige Klassenprofile
 
 Der Mindestwert für Stärkeproben und Stärkerettungswürfe ab Barbarenstufe 18 wird bei widersprüchlichen Haupt-/Nebenklassen, doppelten Alias-Klassen, ungültigen Stufen oder unbekannten Klassen nicht mehr freigeschaltet. Gültige deutsche/englische Aliase und Mehrklassenprofile bleiben unterstützt. Betroffen: `srd_indomitable_might_rules.dart` und neue deterministische Profiltests. Branch `feat/chat-a/indomitable-might-class-preflight-20261105`; PR/CI siehe GitHub. Kein JSON-/SQLite-Schemawechsel und keine Migration. SRD 5.2.1, Barbarian 18 / Indomitable Might, CC BY 4.0.
+
+### 2026-11-05 – JSON-Export bei großer Schrift und langen Spielständen
+
+Der JSON-Exportdialog zeigt Titel, Speichern-Aktion, Status und vollständigen auswählbaren JSON-Text auf einer gemeinsamen scrollbaren Dialogfläche. Die zwei vorhandenen Aktionen „Schließen“ und „Kopieren“ sowie Schutz während laufender Dateiauswahl bleiben erhalten. Kompaktere Dialogränder helfen auf 320/360-dp-Android-Anzeigen bei 200 % Schrift und eingeschränktem Platz durch die Bildschirmtastatur.
+
+Sechs neue Widgettests für lange JSON-Texte prüfen vollständiges Kopieren und Dateispeichern, explizites Schließen, laufende Dateidialog-Sperren, Dateiabbruch und sichere Screenreader-Live-Fehleransagen. Branch `feat/chat-c/backup-export-large-text-20261105`, [PR #583](https://github.com/ManuEtt/Dnd/pull/583) (Draft). GitHub-Flutter-/Android-CI zum Zeitpunkt dieses Nachtrags noch offen, kein reales Android/TalkBack abgenommen. Kein Eingriff in SQLite-/JSON-Format, BackupFiles, Regelengine, App-Version oder Berechtigungen und keine Migration.
