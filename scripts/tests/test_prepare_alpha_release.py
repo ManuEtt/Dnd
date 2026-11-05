@@ -287,6 +287,39 @@ class AlphaReleaseTests(unittest.TestCase):
             release.prepare_release(self.root, self.out)
         self.assertFalse(self.out.exists())
 
+    def test_apk_rejects_windows_invalid_zip_characters_before_crc(self):
+        # Windows-invalid characters are unsafe even without ZIP traversal
+        # or collisions. Validate names before any expensive ZIP CRC work.
+        for char in ('<', '>', ':', '"', '|', '?', '*'):
+            for bad_name in (
+                f'assets/scene{char}1.json',
+                f'assets/folder{char}/scene.json',
+                f'assets/folder{char}/',
+            ):
+                with self.subTest(name=bad_name):
+                    self.create_apk()
+                    with zipfile.ZipFile(self.apk, 'a') as archive:
+                        archive.writestr(bad_name, b'unsafe member')
+                    with mock.patch.object(
+                        zipfile.ZipFile, 'testzip',
+                        side_effect=AssertionError('CRC reached before path guard'),
+                    ):
+                        with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+                            release.validate_arm64_apk(self.apk)
+
+    def test_apk_accepts_safe_punctuation_and_unicode(self):
+        self.create_apk()
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/Karte @2+Rätsel #7.json', b'valid')
+        release.validate_arm64_apk(self.apk)
+
+    def test_windows_invalid_apk_path_never_publishes_release(self):
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/scene?final.json', b'unsafe')
+        with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+            release.prepare_release(self.root, self.out)
+        self.assertFalse(self.out.exists())
+
     def test_apk_rejects_windows_reserved_device_names_before_crc(self):
         # Windows treats these basenames as device names even when a ZIP
         # member has a normal extension or lives in a nested directory.
