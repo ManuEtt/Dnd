@@ -222,7 +222,8 @@ def verify_project(root: Path) -> list[str]:
                     mode = member.external_attr >> 16
                     if (not name or name.startswith('/') or '\\' in name
                             or re.match(r'^[A-Za-z]:', name)
-                            or any(segment in ('', '.', '..') for segment in segments)
+                            or any(segment in ('', '.', '..') or segment.endswith((' ', '.'))
+                                   for segment in segments)
                             or any(unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
                                    for char in name)
                             or stat.S_ISLNK(mode)):
