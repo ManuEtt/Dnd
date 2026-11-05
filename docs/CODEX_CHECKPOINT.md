@@ -2095,3 +2095,8 @@ Umfang: Paktmagie, vorbereitete Zauber, Klassenressourcen und -profile, Rettungs
 Einzel-PR-CI wurde geprüft, aber **die gemeinsame CI des Integrationsstands ist noch ausstehend**. Keine Aussage über erfolgreichen `main`-Merge, Branchlöschungen, Geräteabnahme oder Signierung.
 Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen und Cleanup-Sicherheitsregeln: `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md`.
 
+
+
+## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
+
+Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
