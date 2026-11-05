@@ -40,17 +40,29 @@ void main() {
   group('SRD 5.2.1 Zauberkraftregeneration: Klassenprofil', () {
     test('Ungültige direkte Klassenprofile gewähren keine Regeneration', () {
       final invalid = <HeroCharacter>[
-        _hero(primary: 'Zauberer', secondary: 'Sorcerer', level: 12,
-            secondaryLevel: 6),
-        _hero(primary: 'Zauberin', secondary: 'Zauberer', level: 12,
-            secondaryLevel: 6),
+        _hero(
+          primary: 'Zauberer',
+          secondary: 'Sorcerer',
+          level: 12,
+          secondaryLevel: 6,
+        ),
+        _hero(
+          primary: 'Zauberin',
+          secondary: 'Zauberer',
+          level: 12,
+          secondaryLevel: 6,
+        ),
         _hero(primary: 'Unbekannt'),
         _hero(primary: 'Zauberer', secondary: 'Unbekannt', secondaryLevel: 2),
         _hero(primary: 'Zauberer', secondary: 'Kämpfer', secondaryLevel: 0),
         _hero(primary: 'Zauberer', secondaryLevel: 3),
         _hero(primary: 'Zauberer', secondary: 'Kämpfer', secondaryLevel: -1),
-        _hero(primary: 'Zauberer', secondary: 'Kämpfer', level: 3,
-            secondaryLevel: 3),
+        _hero(
+          primary: 'Zauberer',
+          secondary: 'Kämpfer',
+          level: 3,
+          secondaryLevel: 3,
+        ),
         _hero(level: 0),
         _hero(level: 21),
       ];
@@ -118,8 +130,10 @@ void main() {
         expect(result.spentAfter, 0);
         expect(result.hero.spentClassResources['sorcerousRestoration'], 1);
         expect(hero.toJson(), before);
-        expect(HeroCharacter.fromJson(result.hero.toJson()).toJson(),
-            result.hero.toJson());
+        expect(
+          HeroCharacter.fromJson(result.hero.toJson()).toJson(),
+          result.hero.toJson(),
+        );
       }
     });
 
