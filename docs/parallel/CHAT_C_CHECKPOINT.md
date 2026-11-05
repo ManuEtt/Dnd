@@ -1,3 +1,19 @@
+## 05.11.2026 – Chat C: Tastaturfeste Fertigkeitensuche im Charakterbogen
+
+- **Ausgangs-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`.
+- **Branch:** `feat/chat-c/skill-search-ime-safe-sheet-20261105`.
+- **PR:** [#549](https://github.com/ManuEtt/Dnd/pull/549) (Draft).
+- **Problem:** Das suchbare Detailsheet im Charakterbogen begrenzte seine Höhe auf 72 % des gesamten Viewports, ohne den Platz der geöffneten Android-Tastatur abzuziehen. Dadurch konnte das Suchfeld bei großer Schrift verdeckt werden.
+- **IMPLEMENTIERT:** Das Modal reserviert den tatsächlichen unteren `viewInsets.bottom` und begrenzt seinen Inhalt anhand der verbleibenden Bildschirmhöhe; Such-/Filter- und Datenvertrag bleiben unverändert.
+- **Fachdateien:** `app/lib/ui/fantasy_character_overview.dart`, `app/test/fantasy_skill_search_ime_test.dart`.
+- **Tests ergänzt:** Zwei Widgettests (320/360 dp, 200 % Schrift, 280 dp simulierte IME), positive Suchtreffer, negative Leersuche, Sicht-/Touch-Erreichbarkeit und unverändertes `HeroCharacter.toJson()`.
+- **GETESTET:** Main-HEAD, alle offenen PRs und betroffene UI/Widgettests geprüft; Branch, Code- und Testcommits, Draft-PR erstellt.
+- **NICHT GETESTET:** Vollständige Flutter-/Android-CI auf endgültigem HEAD, reales Android-Gerät, echte IME und TalkBack.
+- **Migration:** Keine; Regelengine, Story, Controller, SQLite/JSON, Altspielstände, Version und Berechtigungen unverändert.
+- **NÄCHSTER SCHRITT:** Formatter- und Widget-CI auf dem Branch auswerten, Fehler korrigieren, temporären Diagnoseworkflow entfernen und vollständige PR-CI abnehmen. Gemeinsame README-/Checkpoint-Hunks bei Integration additiv konsolidieren.
+
+---
+
 ## Konsolidierung 04.11.2026 – PR #535
 
 Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
