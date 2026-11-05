@@ -16,7 +16,7 @@ WORKFLOW = (
 )
 
 ACTION_USES = re.compile(
-    r"^[ \t]*uses:[ \t]*actions/github-script@([^\s#]+)[ \t]*(?:#.*)?$",
+    r"^[ \t]*(?:-[ \t]*)?uses:[ \t]*actions/github-script@([^\s#]+)[ \t]*(?:#.*)?$",
     re.MULTILINE,
 )
 
