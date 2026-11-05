@@ -124,7 +124,9 @@ class _ImportBackupDialogState extends State<_ImportBackupDialog> {
             TextField(
               controller: _text,
               readOnly: _busy,
-              minLines: MediaQuery.textScalerOf(context).scale(1) >= 1.8 ? 3 : 6,
+              minLines: MediaQuery.textScalerOf(context).scale(1) >= 1.8
+                  ? 3
+                  : 6,
               maxLines: 12,
               decoration: const InputDecoration(
                 labelText: 'JSON-Spielstand',
