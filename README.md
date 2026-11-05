@@ -1,5 +1,11 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Materialauswahl vor mehrdeutigen Inventar-IDs schützen (05.11.2026)
+
+Der Material-Inventardialog verhindert jetzt mehrdeutige Dropdown-Auswahlen mit doppelten, unsicheren oder leeren Stapel-IDs. Er sperrt bei ungültigem Inventar die Auswahl und Bestätigung mit einer zugänglichen Fehlermeldung, statt erst beim Dropdown-Rebuild abzustürzen. Drei neue Widgetregressionen prüfen doppelte IDs, unsichtbare Unicode-Zeichen und einen Stapel mit Menge 0 einschließlich unverändertem Spielstand. [Draft-PR #566](https://github.com/ManuEtt/Dnd/pull/566), Code-/Testcommit `1714476441e52922d97396b0ce8238ec39a4fc6b`; finale CI und Android-Geräteabnahme noch offen. Keine Regel-, Speicher- oder Schemamigration.
+
+---
+
 ## Chat D – validierte Android-APK sicher in das Release übernehmen (05.11.2026)
 
 Der Alpha-Release-Builder `scripts/prepare_alpha_release.py` bindet die Quell-APK jetzt beim Kopieren an die vor dem ZIP-Validierungslauf aufgezeichnete Identität (Gerät, Inode, Größe, Änderungs- und Statuszeit). Unter POSIX öffnet er außerdem jeden Quellpfad-Bestandteil ohne Verfolgung symbolischer Links und prüft die tatsächlich geöffnete APK vor und nach dem Kopieren. Eine spät eingefügte symbolische Datei/ein Elternordnerlink oder der Austausch gegen eine andere reguläre APK kann so keine fremde, unvalidierte Installationsdatei in ein fertiges Release schleusen. Drei zusätzliche Regressionen sichern die Austauschzeitfenster ab; der normale APK-Releasefall bleibt bestehen. [Draft-PR #552](https://github.com/ManuEtt/Dnd/pull/552), Fach-/Testcommit `333d00776672`; vollständige CI auf dem finalen Head noch offen. Keine Änderung an SQLite-/JSON-Spielständen, App-Version oder Release-Namen.
