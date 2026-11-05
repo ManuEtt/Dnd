@@ -1,3 +1,18 @@
+## Chat C – Fertigkeiten-Detailsheet mit Android-IME (05.11.2026)
+
+[Draft-PR #549](https://github.com/ManuEtt/Dnd/pull/549), Ausgangs-main
+`d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`, Branch
+`feat/chat-c/skill-search-ime-safe-sheet-20261105`. Das suchbare
+Fertigkeiten-Detailsheet im Charakterbogen zieht den belegten
+Android-Tastaturbereich von seiner maximalen Höhe ab und positioniert
+sich oberhalb der IME. Zwei neue positive/negative Widgettests prüfen
+320/360 dp bei 200 % Schrift, Touch-Erreichbarkeit, Suche und
+unveränderte bestätigte Charakterdaten. Keine Domain-, Speicher- oder
+Versionsänderung, keine Migration. Flutter-/Android-Gesamt-CI auf
+finalem PR-HEAD und reale TalkBack-/IME-Abnahme noch offen.
+
+---
+
 ## Chat D – Exklusive Checkpoint-Namensprüfung nach Lock-Übernahme (05.11.2026)
 
 - **Basis-main:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.
