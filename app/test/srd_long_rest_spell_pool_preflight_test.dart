@@ -87,7 +87,7 @@ void main() {
       expect(reloaded.toJson(), rested.toJson());
     });
 
-    test('Altspielstand ohne Zauberverbrauch bleibt gültig', () {
+    test('Altspielstand ohne verbrauchte Zauberplätze bleibt gültig', () {
       final oldHero = _hero(first: 'Fighter', level: 2);
       final original = oldHero.toJson();
       final loaded = HeroCharacter.fromJson(original);
