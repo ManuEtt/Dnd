@@ -1,5 +1,7 @@
 name: Chat B Dart Formatter Diagnostic (temporary)
 on:
+  pull_request:
+    branches: [main]
   push:
     branches:
       - feat/chat-b/npc-narrator-legacy-unicode-main-sync-20261105
