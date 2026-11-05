@@ -213,7 +213,7 @@ class VerifyProjectTests(unittest.TestCase):
         ):
             with self.subTest(name=unsafe):
                 with zipfile.ZipFile(jar, 'w') as archive:
-                    archive.writestr(WRAPPER_MAIN, b'\\xca\\xfe\\xba\\xbevalid')
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
                     archive.writestr(unsafe, b'unportable')
                 before = jar.read_bytes()
                 with mock.patch.object(
@@ -229,7 +229,7 @@ class VerifyProjectTests(unittest.TestCase):
     def test_wrapper_keeps_internal_spaces_and_dots_portable(self):
         jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
         with zipfile.ZipFile(jar, 'w') as archive:
-            archive.writestr(WRAPPER_MAIN, b'\\xca\\xfe\\xba\\xbevalid')
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
             archive.writestr('META-INF/alte karten.v2/karte 2.json', b'valid')
         self.assertEqual([], verify_project(self.root))
 
