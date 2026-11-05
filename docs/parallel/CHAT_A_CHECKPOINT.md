@@ -1399,3 +1399,22 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 05.11.2026 – CHAT A: Mönch „Sanfter Fall“ auf gültiges Klassenprofil begrenzen
+
+**Ausgangs-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`. **Arbeitsbranch:** `feat/chat-a/monk-slow-fall-class-preflight-20261105`. **Fach-/Test-Commit:** `50155e3ab83a427b16d8afb5098e7908982effc0`. **PR:** [#579](https://github.com/ManuEtt/Dnd/pull/579).
+
+**Problem:** Direkt konstruierte oder historische, inkonsistente Klassenprofile konnten trotz SRD-widriger Aliasdoppelungen, unbekannter Klasse oder widersprüchlicher Gesamt-/Zweitstufe die Mönchsreaktion „Slow Fall“ ab Stufe 4 freigeben.
+
+**Implementiert:** `app/lib/domain/srd_monk_slow_fall_rules.dart` validiert Stufen 1–20, primäre Klassenstufe mindestens 1, bestätigte kanonische Haupt-/Nebenklasse, Zweitklassenstufen und verschiedene Klassenidentitäten. Ungültig: Lesewert `null`, bestätigte Reaktionsvorschau wirft bestehende `FormatException`. Bestehende Reaktions-/Fallschadens- und Unfähigkeitsbedingungen bleiben. Gültige Kombinationen und Fremdklassennamen mit offizieller Aliasauflösung bleiben zulässig.
+
+**Testdatei:** `app/test/srd_monk_slow_fall_class_preflight_test.dart`: elf negative, fünf positive Profilvarianten, Stufengrenze, unveränderte gespeicherte Helden-JSONs und bestätigter Schaden. Vorhandene `srd_monk_slow_fall_rules_test.dart` und Commit-/UI-Tests bleiben als Regressionen erhalten.
+
+**Source / Register:** SRD 5.2.1, Classes / Monk / Level 4 Slow Fall, Wizards of the Coast LLC, CC BY 4.0, <https://www.dndbeyond.com/srd>. `CLASS-M-NCH-4-BASE-SLOW-FALL-1` bleibt `partial`; keine globale Fertigstellung behaupten.
+
+**GETESTET:** GitHub-Live-Zustand, offene PRs, Source- und Schnittstellengrenzen geprüft. **NICHT GETESTET:** Dart-Formatierung, Flutter-Analyse, Flutter-Tests, Debug-/ABI-Build und Gerät auf dem finalen Commit; lokale Flutter-/Dart-SDKs fehlen; aktuelle Actions nachsehen.
+
+**Kompatibilität:** Keine Änderungen an `models.dart`, `game_engine.dart`, `game_controller.dart`, Speicher/SQLite/JSON, anderen Zuständigkeiten und Version. Keine Migration. README ausschließlich am Ende mit fachlich neutraler Überschrift ergänzt; historischer Inhalt erhalten.
+
+**Nächster Schritt:** finalen PR-#579-Gesamttest einschließlich aller Android-Jobs prüfen und nötige Fehler auf eigenem Branch korrigieren; Integration separat koordinieren.
