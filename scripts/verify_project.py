@@ -10,6 +10,8 @@ import unicodedata
 import zipfile
 import zlib
 
+from package_project import WINDOWS_INVALID_CHARACTERS
+
 ROOT = Path(__file__).resolve().parent.parent
 REQUIRED_FILES = (
     'README.md', '.gitattributes', '.gitignore',
@@ -220,7 +222,8 @@ def verify_project(root: Path) -> list[str]:
                     name = member.filename
                     segments = name.rstrip('/').split('/')
                     mode = member.external_attr >> 16
-                    if (not name or name.startswith('/') or '\\' in name
+                    if (not name or name.startswith('/')
+                            or any(char in WINDOWS_INVALID_CHARACTERS for char in name)
                             or re.match(r'^[A-Za-z]:', name)
                             or any(segment in ('', '.', '..') or segment.endswith((' ', '.'))
                                    for segment in segments)
