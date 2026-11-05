@@ -1,3 +1,20 @@
+## 05.11.2026 – Chat C: JSON-Importdialog bei 200 % Text und geöffneter IME
+
+- **Ausgangs-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95`.
+- **Branch:** `feat/chat-c/backup-import-ime-accessible-20261105`.
+- **PR:** [#570](https://github.com/ManuEtt/Dnd/pull/570), Draft.
+- **Problem:** Ein nur innen scrollbarer Importdialog konnte bei kleiner Android-Anzeige und geöffnetem Tastaturinset die Erreichbarkeit des JSON-Felds und der ausdrücklich bestätigenden Dialogaktion beeinträchtigen.
+- **IMPLEMENTIERT:** Scrollbarer `AlertDialog` mit unverändert expliziten Import-/Abbruchaktionen; inneren `SingleChildScrollView` entfernt und Editor-Startzeilen ab 180 % Text von sechs auf drei reduziert. Felder bleiben editierbar, Import erfolgt weiterhin ausschließlich im aufrufenden Controller nach Rückgabe des bestätigten JSON-Texts.
+- **Dateien:** `app/lib/ui/backup_dialogs.dart`, `app/test/backup_import_ime_accessibility_test.dart`, additive `README.md`- und Checkpoint-Dokumentation.
+- **Tests ergänzt:** Sechs Widgetfälle: 320/360 dp positive und negative Aktion bei 200 % Text und 220-dp-IME; asynchrone Dateiauswahl, Sperre während Busy, Entwurfserhalt bei Abbruch; lesbare Live-Fehleranzeige. Bestehende echte SQLite-/Backup-Integrationstests nicht abgeschwächt.
+- **GETESTET:** Offene PRs und betroffene Dateien geprüft; keine fachliche Überschneidung mit den UI-PRs #549, #556 und #566.
+- **NICHT GETESTET:** Flutter-/Dart-Format, Analyse, Widget- und Gesamtsuite, Android-Debug/optimierte APK, Realgerät/TalkBack und Altversions-Upgrade noch nicht nachgewiesen.
+- **BLOCKIERT:** Lokale Flutter-/Dart-SDKs fehlen; erfolgreiche GitHub-CI und Review stehen aus. Keine automatische Integration.
+- **Migration:** Keine Schema-, Importformat-, Ressourcen-, Controller-, Berechtigungs- oder Versionsänderung.
+- **NÄCHSTER SCHRITT:** Finale CI auswerten und Dart-/Widgetfehler gegebenenfalls korrigieren.
+
+---
+
 ## Konsolidierung 04.11.2026 – PR #535
 
 Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
