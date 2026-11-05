@@ -1297,3 +1297,19 @@ Finale GitHub-CI und reale Geräteabnahme getrennt nachweisen; kein Auto-Merge.
 Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt auch symbolische Links innerhalb von `app/lib/story/` und `app/lib/domain/` zurück (Dateien und Unterordner), bevor externe Dart-Dateien gelesen werden. Drei ergänzende Python-Regressionen sichern verschachtelte Datei- und Verzeichnislinks sowie Nicht-Dart-Links ab. Die Änderung enthält keine Regel-/Story-/UI-Anpassung oder Speicherformatmigration. Separate Chat-D-Abnahme auf `fix/chat-d/domain-symlink-source-guard-20261103`; vollständige CI auf finalem Commit noch ausstehend.
 
 ---
+
+---
+
+## Chat B – gleichnamige Orte im Langzeitgedächtnis unterscheiden (05.11.2026)
+
+[Draft-PR #546](https://github.com/ManuEtt/Dnd/pull/546) schützt den
+bestätigten Ortsgedächtnisabruf vor der Verwechslung zweier unterschiedlicher,
+aber gleich benannter Orte. Bei gleichen sichtbaren Namen trägt jede
+Erinnerung ihre eindeutige gespeicherte `Ort-ID`; unsichere/doppelte IDs
+werden nicht als eindeutige Ortsbelege ausgegeben. Alte eindeutige Namen
+bleiben unverändert, Unicode-Formatsteuerzeichen werden ausschließlich im
+Lesetext entfernt und eine gekürzte Erinnerung darf die unterscheidende ID
+nicht abschneiden. Sechs neue Flutter-Regressionen prüfen Langzeitabruf,
+aktive `GameEngine`-Erinnerung, Alt-JSON und SQLite-Neustart.
+Keine App-Version, Daten-/Schema-/Regel-/Quest- oder Provideränderung.
+Vollständige GitHub-CI auf finalem PR-HEAD und Geräteabnahme separat prüfen.

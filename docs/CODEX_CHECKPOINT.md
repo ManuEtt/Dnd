@@ -1993,3 +1993,18 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **Nächster Schritt:** finale vollständige CI dieses Branches und anschließende konfliktfreie Integration abnehmen.
 
 ---
+
+---
+
+## 05.11.2026 – Chat B: bestätigte Orts-Erinnerungen mit eindeutiger ID (#546)
+
+- **Ausgangs-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`.
+- **Branch:** `feat/chat-b/place-recall-id-continuity-20261105`; [Draft-PR #546](https://github.com/ManuEtt/Dnd/pull/546).
+- **IMPLEMENTIERT:** `app/lib/story/story_memory_engine.dart` unterscheidet visuell gleichnamige gespeicherte Orte durch eindeutige kanonische `Ort-ID`, verwirft leere/unsichere/doppelte IDs vor dem bestätigten Erinnerungstext, normalisiert nur die Anzeige unsichtbarer Unicode-/Richtungskontrollzeichen und lässt unsichere Kurztrunkierung weg, statt eine entscheidende ID zu verlieren.
+- **Positive/negative Tests:** `app/test/memory_recall_place_identity_test.dart` mit sechs Fällen für gleichnamige Orte, Legacy-Formatsteuerzeichen, ID-Konflikte, kurze Abrufe, echte `GameEngine.act`-Erinnerung sowie JSON-/SQLite-Neustart und unveränderte Helden-/Kampagnendaten.
+- **Fachcommit:** `d146cb96567dfd3951113bf654319048afbe1b74`; **Testcommit:** `e0f61a532be7881d263f721604296eb14170a905`. Dokumentationscommit und finalen HEAD separat prüfen.
+- **GETESTET:** Live-main und PR-Dateilisten der parallel offenen #543/#545 geprüft, keine Überschneidung mit `story_memory_engine.dart`. Bestehende reguläre NPC-/Orts-Regressionen gelesen. Grüner Main-Workflow ist **kein** CI-Nachweis dieses neuen Branches.
+- **NICHT GETESTET:** Neue vollständige Python-/Backend-/Flutter-/Android-CI auf finalem PR-HEAD bis zum Abschluss; echte Geräteinstallation, Release-Signatur, Upgrade und produktive KI. Lokales Flutter-/Dart-SDK nicht verfügbar.
+- **BLOCKIERT:** Abschließende GitHub-CI und Chat-D-Integration. Gemeinsame Dokumentation nur additiv konsolidieren; kein automatisches Merge.
+- **MIGRATION:** Keine; unveränderte SQLite-/JSON-Felder, Regel-/HP-/XP-/Questzustände und Versionsnummer.
+- **NÄCHSTER SCHRITT:** CI auf exakt finalem PR-HEAD prüfen, Fehler im selben Branch beheben und nach allen grünen Gates separat integrieren.

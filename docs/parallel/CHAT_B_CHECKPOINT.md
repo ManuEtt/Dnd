@@ -901,3 +901,19 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **Migration:** Keine; persistente SQLite- und JSON-Strukturen, Regeln, Quest-/HP-/XP-Zustände, Provider und App-Version unverändert.
 - **Konflikte:** Andere offene Chat-B-/D-PRs ändern teils andere Storymodule, jedoch nicht diese neue Fach-/Testdatei. README und zentraler Checkpoint sind gemeinsame Pfade: Additive Konsolidierung ausschließlich bei Chat-D-Integration. Kein Merge, Force-Push oder fremdes Branch-Löschen.
 - **Nächster Schritt:** CI/Android auf dem finalen PR-HEAD verifizieren; fehlschlagende Schritte gezielt auf eigenem Branch reparieren und danach von Chat D konfliktfrei integrieren lassen.
+
+---
+
+## Chat B – 05.11.2026: gespeicherte Orte im Erinnerungsabruf unterscheiden (#546)
+
+- **Basis-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`.
+- **Branch:** `feat/chat-b/place-recall-id-continuity-20261105`; [PR #546](https://github.com/ManuEtt/Dnd/pull/546), Draft.
+- **Fachcommit:** `d146cb96567dfd3951113bf654319048afbe1b74`; **Testcommit:** `e0f61a532be7881d263f721604296eb14170a905`. Finalen Dokumentations-HEAD ermitteln.
+- **Problem:** `MemoryEngine.retrieve` gab Orte ausschließlich unter sichtbaren Namen aus; visuell gleiche aber verschiedene bestätigte Orte konnten in Erzählung und Deduplizierung verschmelzen. Ungültige IDs wurden bislang nicht geprüft.
+- **IMPLEMENTIERT:** `story_memory_engine.dart` zählt sichtbare normalisierte Namen und gespeicherte IDs über die gesamte Ortsliste. Gleichnamige unterschiedliche Orte erhalten `(Ort-ID: ...)`; doppelte oder unkanonische IDs werden nicht ausgegeben. Bei `maxCharacters` lieber mehrdeutige Orts-Erinnerung auslassen als die ID abschneiden. Keine Auswirkung auf NPC- oder Quest-Erinnerungen und keine gespeicherte Änderung.
+- **Tests:** `memory_recall_place_identity_test.dart` (6): identische Namen, Zero-Width-/Bidi-Legacy, Dubletten/ungültige IDs, 40-Zeichen-Limit, reale GameEngine-Erinnerung, JSON-/SQLite-Restart. Positiv und negativ.
+- **GETESTET:** vor Änderungen main, andere Chat-PRs, relevanter Story-Code und Tests abgerufen; eigene Code-/Testcommits in GitHub gesichert. CI des neuen PRs noch nicht abschließend belegt.
+- **NICHT GETESTET:** Finale vollständige Actions samt ARM64/ARMv7/x86_64, Realgerät, manuelles Upgrade, produktive KI; kein lokales Flutter-/Dart-SDK.
+- **BLOCKIERT:** CI/Review, separater Chat-D-Merge nach Prüfung; README und zentralen Checkpoint additiv konsolidieren.
+- **MIGRATION:** Keine SQLite-/JSON-/App-Versionsänderung, keine Regel-, TP-, XP- oder Questmodifikation.
+- **NÄCHSTER SCHRITT:** Finale CI #546 kontrollieren, eventuelle Fehler im Branch korrigieren und Chat-D-Integrationsfreigabe vorbereiten.
