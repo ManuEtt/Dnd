@@ -52,12 +52,7 @@ void main() {
           level: 7,
           secondaryLevel: 2,
         ),
-        _monk(
-          primary: 'Mönch',
-          secondary: 'Monk',
-          level: 8,
-          secondaryLevel: 4,
-        ),
+        _monk(primary: 'Mönch', secondary: 'Monk', level: 8, secondaryLevel: 4),
         _monk(
           primary: 'Monk',
           secondary: 'Mönchin',
