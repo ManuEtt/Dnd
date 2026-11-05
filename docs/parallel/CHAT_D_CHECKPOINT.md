@@ -1,3 +1,19 @@
+## CHAT D – Node.js-24-Action im sicheren Branch-Cleanup (05.11.2026)
+
+- **Main-Ausgangscommit:** `7d7bb421261af0f690fd0af9012996e45b95ff95`.
+- **Branch:** `fix/chat-d/github-script-node24-20261105`; **Pull Request:** [#571](https://github.com/ManuEtt/Dnd/pull/571) (Draft); **Code-/Testcommit:** `c9244ae9e6350005907226cd033da44ace54485c`.
+- **Ausgangsproblem:** Veraltete Runtime-Definition durch `actions/github-script@v7` trotz GitHub-Node-24-Migration.
+- **IMPLEMENTIERT:** Aktiven GitHub-Script-Schritt auf `@v8` aktualisiert; 3 Python-Regressionstests gegen v7, entfernte/duplizierte Steps sowie kommentierte Scheineinträge.
+- **Akzeptanzkriterien:** Genau eine echte `@v8`-Referenz, kein Node-20-Opt-out; bestehende Tests für aktuelle Main-CI, geschützte/offene PR-Branches, Vorfahren/SHA/Archivtags bleiben grün; vollständige Workflow-CI auf finalem Head.
+- **Betroffene Dateien:** `.github/workflows/cleanup-merged-safe-20261027.yml`, `scripts/tests/test_cleanup_github_script_runtime.py`, README und die beiden Checkpoints.
+- **GETESTET:** Dateikonflikte aller 18 beim Beginn offenen PRs geprüft – keine Überschneidung mit dem Cleanup-Workflow oder neuem Regressionstest. Branch und PR veröffentlicht; frühere Main-CI für einen anderen Commit grün, nicht auf diesen PR übertragbar.
+- **NICHT GETESTET:** Neue Python-Suite, vollständige Flutter-/Backend-/Android-PR-CI, echter Cleanup-Lauf auf `@v8`, reale Android-Hardware.
+- **BLOCKIERT:** Finalen CI-Nachweis abwarten und erneuten Main-HEAD-Abgleich ausführen, bevor dieser Draft gemergt werden darf.
+- **Migrationen:** keine; Spielstände, JSON/SQLite, App-Version, SRD- und Story-APIs unverändert.
+- **Nächster Schritt:** Alle CI-Jobs von PR #571 auf dem letzten Commit kontrollieren und bei Fehlern gezielt im eigenen Branch korrigieren.
+
+---
+
 ## Chat D – portables Alpha-APK-ZIP vor Veröffentlichung (05.11.2026)
 
 - **Ausgangs-Main-SHA:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4`.
