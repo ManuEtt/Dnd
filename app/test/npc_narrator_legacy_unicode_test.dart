@@ -22,7 +22,10 @@ Campaign _campaign({
   npcRelationshipNotes: notes,
 );
 
-NpcRelationshipNote _note(String id, String npcId, String value, {
+NpcRelationshipNote _note(
+  String id,
+  String npcId,
+  String value, {
   String relationship = 'freundlich',
 }) => NpcRelationshipNote(
   id: id,
