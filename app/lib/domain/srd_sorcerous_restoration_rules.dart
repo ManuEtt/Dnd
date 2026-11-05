@@ -11,16 +11,33 @@ class SrdSorcerousRestorationRules {
 
   static const resourceKey = 'sorcerousRestoration';
 
-  static int sorcererClassLevel(HeroCharacter hero) {
-    final first = findSrdClass(hero.className)?.name == 'Zauberer'
-        ? hero.primaryClassLevel
-        : 0;
-    final second =
-        hero.hasSecondClass &&
-            findSrdClass(hero.secondaryClassName)?.name == 'Zauberer'
-        ? hero.secondaryClassLevel
-        : 0;
-    return first + second;
+  /// Legacy or directly constructed inconsistent multiclass profiles must
+  /// never unlock Sorcerous Restoration or inflate its class-level cap.
+  /// Read-only queries fail closed; the explicit Short Rest rejects them.
+  static int sorcererClassLevel(HeroCharacter hero) =>
+      _sorcererClassLevel(hero) ?? 0;
+
+  static int? _sorcererClassLevel(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return null;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return null;
+    }
+    return (primary == 'Zauberer' ? hero.primaryClassLevel : 0) +
+        (secondary == 'Zauberer' ? hero.secondaryClassLevel : 0);
   }
 
   static int maximumUses(HeroCharacter hero) =>
@@ -34,7 +51,12 @@ class SrdSorcerousRestorationRules {
   static SrdSorcerousRestorationResult restoreAfterCompletedShortRest(
     HeroCharacter hero,
   ) {
-    final classLevel = sorcererClassLevel(hero);
+    final classLevel = _sorcererClassLevel(hero);
+    if (classLevel == null) {
+      throw const FormatException(
+        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+      );
+    }
     if (classLevel < 5) {
       throw StateError('Zauberkraftregeneration erfordert Zaubererstufe 5.');
     }

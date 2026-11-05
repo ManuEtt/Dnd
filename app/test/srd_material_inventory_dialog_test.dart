@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/data/srd_spell_catalog_loader.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/srd_spell_catalog.dart';
+import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:lebendiger_spielleiter/ui/srd_material_inventory_dialog.dart';
 
 HeroCharacter _hero(List<InventoryItem> inventory) => HeroCharacter(
@@ -213,6 +214,94 @@ void main() {
     );
     expect(find.byKey(const ValueKey('material-setup-error')), findsOneWidget);
     expect(selected, isNull);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Doppelte Stapel-ID blockiert Dropdown vor Auswahl und Buchung', (
+    tester,
+  ) async {
+    final hero = _hero(const [
+      InventoryItem(id: 'same', name: 'Truhe'),
+      InventoryItem(id: 'same', name: 'Miniatur'),
+    ]);
+    final snapshot = hero.toJson();
+    final results = <SrdMaterialInventoryChoice?>[];
+    await _open(tester, hero, catalog.find('Secret Chest')!, results.add);
+
+    expect(
+      find.text('Inventar enthält ungültige oder doppelte Stapel-IDs.'),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('material-setup-error')), findsOneWidget);
+    expect(find.text('Truhe (1×) · same'), findsNothing);
+    expect(find.text('Miniatur (1×) · same'), findsNothing);
+    expect(
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('material-confirm')),
+          )
+          .onPressed,
+      isNull,
+    );
+    await _tapVisible(tester, find.text('Abbrechen'));
+    expect(results, [null]);
+    expect(hero.toJson(), snapshot);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Unsichtbare Inventar-ID wird im Dialog sicher abgelehnt', (
+    tester,
+  ) async {
+    final hero = _hero(const [
+      InventoryItem(id: 'same\u200b', name: 'Versteckte ID'),
+      InventoryItem(id: 'other', name: 'Miniatur'),
+    ]);
+    final snapshot = hero.toJson();
+    final results = <SrdMaterialInventoryChoice?>[];
+    await _open(tester, hero, catalog.find('Secret Chest')!, results.add);
+
+    expect(
+      find.text('Inventar enthält ungültige oder doppelte Stapel-IDs.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Versteckte ID (1×)'), findsNothing);
+    expect(
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('material-confirm')),
+          )
+          .onPressed,
+      isNull,
+    );
+    await _tapVisible(tester, find.text('Abbrechen'));
+    expect(results, [null]);
+    expect(hero.toJson(), snapshot);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Leerer Inventarstapel bleibt auch visuell gesperrt', (
+    tester,
+  ) async {
+    final hero = _hero(const [
+      InventoryItem(id: 'empty', name: 'Leerer Stapel', quantity: 0),
+      InventoryItem(id: 'other', name: 'Miniatur'),
+    ]);
+    final snapshot = hero.toJson();
+    final results = <SrdMaterialInventoryChoice?>[];
+    await _open(tester, hero, catalog.find('Secret Chest')!, results.add);
+
+    expect(find.byKey(const ValueKey('material-setup-error')), findsOneWidget);
+    expect(
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('material-confirm')),
+          )
+          .onPressed,
+      isNull,
+    );
+    await _tapVisible(tester, find.text('Abbrechen'));
+    expect(results, [null]);
+    expect(hero.toJson(), snapshot);
     expect(tester.takeException(), isNull);
   });
 }
