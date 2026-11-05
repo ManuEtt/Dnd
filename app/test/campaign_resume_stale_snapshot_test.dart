@@ -168,9 +168,7 @@ void main() {
     expect(snapshot.confirmedFacts, [
       'visible: Das Stadttor wurde verschlossen.',
     ]);
-    expect(snapshot.openLeads, [
-      'Die Brücke: Die Brücke beobachten.',
-    ]);
+    expect(snapshot.openLeads, ['Die Brücke: Die Brücke beobachten.']);
     for (final changed in changes) {
       expect(
         CampaignResumeReader.read(
