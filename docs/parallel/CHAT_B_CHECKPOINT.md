@@ -901,3 +901,18 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **Migration:** Keine; persistente SQLite- und JSON-Strukturen, Regeln, Quest-/HP-/XP-Zustände, Provider und App-Version unverändert.
 - **Konflikte:** Andere offene Chat-B-/D-PRs ändern teils andere Storymodule, jedoch nicht diese neue Fach-/Testdatei. README und zentraler Checkpoint sind gemeinsame Pfade: Additive Konsolidierung ausschließlich bei Chat-D-Integration. Kein Merge, Force-Push oder fremdes Branch-Löschen.
 - **Nächster Schritt:** CI/Android auf dem finalen PR-HEAD verifizieren; fehlschlagende Schritte gezielt auf eigenem Branch reparieren und danach von Chat D konfliktfrei integrieren lassen.
+
+---
+
+## 05.11.2026 – Chat B: KI-Abenteuervorschläge gegen versteckte Steuerzeichen (#550)
+
+- **Basis-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`. **Branch:** `feat/chat-b/ai-offer-untrusted-format-20261105`. **Draft-PR:** [#550](https://github.com/ManuEtt/Dnd/pull/550).
+- **Fachcommits:** `034796935dbd08083108fa09a5a59a137baca20d` (Validierung), `bdba116f07fcef44421df941bd1d3e2d7984a03a` (Regression), `e6b05ddc1cee096fb985273bba9a93a897a8508e` (Stil). Dokumentations-HEAD danach separat prüfen.
+- **Problem:** `AdventureOffer.fromJson` ist ein Speicherparser, aber ein KI-Vorschlag braucht dieselbe unsichtbare-Zeichen-Policy wie andere generierte Erzählfelder. Bidi/Soft-Hyphen/Combining-Grapheme-Joiner konnten sonst in KI-Questtiteln stehen.
+- **IMPLEMENTIERT:** Vier Textfelder von neuen optionalen KI-Angeboten zusätzlich mit `_text` prüfen. Gültige Angebote weitergeben, blockierte bei vorhandener Kampagnenofferte weiter ignorieren. Keine Speicher- oder Regeländerung.
+- **Tests:** Vier neue deterministische Gruppen: positives Angebot, 20 negative Kombinationen über vier Felder und fünf Formatzeichen, Akzente/Emoji/Mehrzeiligkeit, ignorierte ungültige Provider-Offerte bei bereits vorhandenem gespeichertem Angebot. Spielstand/Revision/HP/Quests unverändert.
+- **Dateien:** `app/lib/story/ai_story.dart`, `app/test/ai_story_adventure_offer_format_guard_test.dart`, README, zentraler und Chat-B-Checkpoint.
+- **GETESTET:** Main-Stand und alle offenen PRs/Fachdateien sowie vorhandene Domänenvalidierung geprüft. **NICHT GETESTET:** finale Flutter-/Backend-/Android-CI und Realgerät/Produktiv-KI; kein lokales Dart/Flutter verfügbar.
+- **BLOCKIERT:** vollständige CI-Abnahme auf finalem Commit und Chat-D-Integration. **Migration:** keine; bestehende gespeicherte Angebote bleiben gültig.
+- **Koordination:** Keine Fachdatei-Überschneidung mit offenen Chat-B-PRs #545/#546; README/zentralen Checkpoint nur additiv integrieren.
+- **Nächster Schritt:** Finalen CI-Status abwarten, bei roten Prüfungen denselben Branch korrigieren, nach Grün an Chat D übergeben.
