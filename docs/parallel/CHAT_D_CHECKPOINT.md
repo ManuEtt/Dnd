@@ -1,3 +1,20 @@
+## Chat D – Windows-Gerätenamen aus Release-APKs ausschließen (05.11.2026)
+
+- **Ausgangs-Main-SHA:** `17875331a9d32c05deb02868f2a69b4bcb993f02`.
+- **Eigener Branch:** `fix/chat-d/apk-windows-device-names-20261105`.
+- **Fach-/Testcommit:** `158f1a7ab905d643291be3642671dd7d1db18b7d`; **PR:** [#573](https://github.com/ManuEtt/Dnd/pull/573), Draft bis vollständige CI.
+- **Problem:** Die Alpha-APK-ZIP-Prüfung erlaubte Windows-reservierte Gerätebasen wie `CON`, `PRN`, `AUX`, `NUL`, `COM1` bis `COM9` und `LPT1` bis `LPT9` auch als ZIP-Dateinamen/Elternordner.
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` nutzt die bereits vorhandenen `WINDOWS_RESERVED_STEMS` aus `scripts/package_project.py`; Prüfung erfolgt in der ZIP-Metadatenvalidierung vor CRC, ohne die APK umzuschreiben.
+- **Akzeptanzkriterien/Regressionen:** Elf negative Mitglieder (Groß-/Kleinschreibung, Dateiendung, Elternverzeichnisse, explizites Verzeichnis) werden vor `testzip()` abgewiesen; vier gültige ähnlich benannte Dateien bleiben erlaubt; kein Release-Output bei unsicherer APK. Drei neue Tests in `scripts/tests/test_prepare_alpha_release.py`.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktkontrolle:** Offene A/B/C-/D-PRs inklusive #567 und #571 samt Dateipfaden geprüft; kein offener PR ändert die zwei Fachdateien. Gemeinsame Dokumentation nur additiv; README-Nachtrag ausschließlich am absoluten Dateiende nach Masterprompt.
+- **GETESTET:** Repository/Main/PR-Prüfung und GitHub-Code-/Testcommits. **NICHT GETESTET:** vollständige GitHub Actions auf finalem Commit, lokale Tests mangels GitHub-DNS, Android-Gerät, Altdatenupgrade.
+- **BLOCKIERT:** vollständige CI-Abnahme und spätere Integration; keine lokale Checkout-/Flutter-Testumgebung.
+- **Migrationen:** keine. SQLite 3, JSON 1, Spielstände, Backups, Android-Version und SRD-Regeln unverändert.
+- **Nächster Schritt:** vollständige CI auf PR #573 prüfen und bei grüner Abnahme frische Main-/PR-Konfliktprüfung mit verlustfreier README-/Checkpoint-Zusammenführung durchführen.
+
+---
+
 ## Chat D – portables Alpha-APK-ZIP vor Veröffentlichung (05.11.2026)
 
 - **Ausgangs-Main-SHA:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4`.

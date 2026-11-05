@@ -1368,3 +1368,12 @@ keine automatische Mergefreigabe.
 [Draft-PR #563](https://github.com/ManuEtt/Dnd/pull/563) weist innerhalb der ARM64-APK-Prüfung jetzt ZIP-Mitgliedsnamen zurück, deren Datei- oder Verzeichnisbestandteile mit Punkt oder Leerzeichen enden. Diese können auf Windows-kompatiblen Dateisystemen beim Entpacken mit anderen Namen kollidieren. Sechs negative Pfadvarianten, ein gültiger Pfad mit innerem Punkt/Leerzeichen und ein Release-Abbruchtest sichern die Vorabprüfung vor ZIP-CRC und Veröffentlichung ab. Keine SQLite-/JSON-/Spielstands- oder Android-Versionsänderung. Die vollständige GitHub-CI auf dem finalen PR-HEAD ist getrennt abzunehmen; die erfolgreiche Main-CI [#42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539) beweist diese neue Änderung noch nicht.
 
 ---
+
+### 2026-11-05 – Chat D: Windows-Gerätenamen in Alpha-APK-ZIP sperren
+
+Der Alpha-Release-Validator `scripts/prepare_alpha_release.py` lehnt jetzt auch unter Windows reservierte Datei- und Verzeichnisnamen (z. B. `CON`, `NUL.txt`, `COM1.dll` und `LPT9`) innerhalb einer APK-ZIP ab, bevor ZIP-CRC gelesen oder ein Release veröffentlicht wird. Die zentrale bereits existierende `WINDOWS_RESERVED_STEMS`-Liste wird wiederverwendet. Drei Python-Regressionstestmethoden sichern elf negative, vier positive Fälle und den schreibfreien Abbruch vor Veröffentlichung.
+
+- **Branch:** `fix/chat-d/apk-windows-device-names-20261105`; **Fach-/Testcommit:** `158f1a7ab905d643291be3642671dd7d1db18b7d`; **[Draft-PR #573](https://github.com/ManuEtt/Dnd/pull/573)**.
+- **Tests:** Neue Regressionen committed; vollständige CI auf dem finalen Dokumentations-HEAD noch ausstehend. Lokale Projekt-/Flutter-Tests mangels GitHub-DNS nicht ausführbar, kein Testerfolg behauptet.
+- **Kompatibilität:** Keine Änderungen an SQLite-/JSON-Spielständen, Backups, Flutter/Android-Builds, Regeln oder Versionsnummer. Android-Realgerätetest weiterhin offen.
+

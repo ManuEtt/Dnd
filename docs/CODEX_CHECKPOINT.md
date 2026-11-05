@@ -1,3 +1,18 @@
+## Chat D – Windows-Gerätenamen in APK-ZIP-Mitgliedern zurückweisen (05.11.2026)
+
+- **Basis-main:** `17875331a9d32c05deb02868f2a69b4bcb993f02` nach README-PR #572.
+- **Branch:** `fix/chat-d/apk-windows-device-names-20261105`; **Fach-/Testcommit:** `158f1a7ab905d643291be3642671dd7d1db18b7d`; **PR:** [#573](https://github.com/ManuEtt/Dnd/pull/573) (Draft).
+- **Problem:** Gültige ZIP-CRCs können Dateien mit Windows-reservierten Gerätenamen wie `CON`, `NUL.txt`, `COM9.dll`, `LPT1` enthalten, die auf entsprechenden Extraktionszielen nicht portable Dateinamen darstellen. Der Alpha-Validator erkannte sie noch nicht.
+- **Implementiert:** `validate_arm64_apk` nutzt `package_project.WINDOWS_RESERVED_STEMS` an der bestehenden ZIP-Pfad-Metadatengrenze vor CRC-Entpackung. Gültige Namen mit ähnlicher Schreibweise bleiben erlaubt.
+- **Regressionen:** `scripts/tests/test_prepare_alpha_release.py` ergänzt drei Methoden: elf negative Namen in Datei-/Parent-/Verzeichnis-Pfaden, vier zulässige Vergleichsnamen, abgelehnte Release-Veröffentlichung ohne Artefakte.
+- **Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Main-HEAD, alle offenen PRs und Fachpfade auf Konflikte geprüft; Branch, Fachcode, Tests und PR in GitHub gesichert. Keine lokale Projekt-Testsuite als bestanden ausgegeben.
+- **NICHT GETESTET:** vollständige CI auf finalem PR-HEAD, realer Android-Test, Altdatenupgrade. Lokaler GitHub-Checkout wegen DNS blockiert.
+- **Migrationen:** keine; SQLite 3, JSON 1, Spielstände, Backups, SRD-Regeln, Android-Version unverändert.
+- **Nächster Schritt:** GitHub-CI des finalen PR-HEADs kontrollieren, Fehler ursächlich beheben, erst nach frischer Konfliktprüfung integrieren. Offenen separaten Chat-D-PR #567 nicht überschreiben.
+
+---
+
 ## Chat D – APK-ZIP-Komponenten mit abschließendem Punkt/Leerzeichen sperren (05.11.2026)
 
 - **Basis-main:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4` (Main-CI [42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539): erfolgreich, unabhängig vom neuen Patch).
