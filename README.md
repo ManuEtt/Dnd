@@ -1415,3 +1415,9 @@ Integration: `integration/open-prs-20261105-reviewed`, ausgehend von `main` `7b7
 
 Verifizierung: Vorherige Main-CI [#42072388815](https://github.com/ManuEtt/Dnd/actions/runs/42072388815) erfolgreich. Die Einzel-PRs besitzen eigene Testergebnisse; der **neue gemeinsame Stand muss noch durch GitHub Actions geprüft werden**. Gemeinsame CI, `main`-Merge, Archiv-Tags, Branchlöschungen und ein abschließender Issue-Nachweis bleiben bis zur tatsächlichen Ausführung offen. Details und alle Original-SHAs: [`docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md`](docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md).
 
+### 2026-11-05 – Konsistente Node-24-Actions in allen aktiven Workflows
+
+Die Android-Pipeline, die spezialisierten Regeltests, die manuelle Dart-Formatierungsreparatur und die sichere Altbranch-Bereinigung verwenden jetzt kompatible Action-Runtimes. Alle direkten First-Party-Aufrufe nutzen je nach Action `checkout@v6`, `setup-java@v6`, `setup-node@v6`, `upload-artifact@v6`, `download-artifact@v7` und `github-script@v8`. Die zwei Android-SDK-Setups wurden von `android-actions/setup-android@v3` auf `v4` angehoben, während die expliziten SDK-Werkzeug-/Paket-Pins unverändert blieben. Die Flutter-Composite-Action bleibt auf ihrem bestehenden kompatiblen Release.
+
+Regressionen gegen Downgrades: `scripts/tests/test_android_actions_node24.py` und `scripts/tests/test_first_party_actions_node24.py`. Vorherige Projekt-Toolchains, Buildmatrix, APK-Dateinamen, Release-Archivierung und Cleanup-Ancestry-Schutz werden nicht bewusst verändert. Integrations-PR: [#577](https://github.com/ManuEtt/Dnd/pull/577). Die kombinierte CI des finalen Heads und die Main-/Geräteabnahme bleiben bis zur tatsächlichen Prüfung offen.
+

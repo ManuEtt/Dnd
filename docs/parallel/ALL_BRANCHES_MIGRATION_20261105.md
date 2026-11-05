@@ -55,3 +55,12 @@
 - Individuelle PR-Workflows wurden geprüft; der Großteil war erfolgreich, bei der Bestandserhebung liefen jüngste Prüfungen noch.
 - **Gesamttests des Integrationsheads:** ausstehend, bis der neue PR-Workflow sie wirklich durchgeführt hat.
 - Echte Android-Geräteabnahme, Signierung und Altversionsupgrade sind weiterhin nicht durch diese Integration abgedeckt.
+
+## Ergänzende Bereinigung der aktiven GitHub Actions
+
+- Alle direkten First-Party-Actions über alle fünf vorhandenen Workflows gegen aktuelle Node-24-Versionen geprüft und angepasst.
+- Die zwei Android-SDK-Aufrufe verwenden `android-actions/setup-android@v4` (Node24 statt Node20); vorhandene `cmdline-tools-version`, Paket- und Lizenzprotokollparameter bleiben identisch.
+- Die Flutter-Action `subosito/flutter-action@v2` ist ein Composite-Workflow und verwendet aktuell `actions/cache@v5`; keine unkontrollierte Änderung der Flutter-Version.
+- Regressionstests für die Action-Majors, Downgrades, Kommentarfilterung und unveränderte Qualitätsschranken ergänzt.
+- Diese nachträglichen Workflow-Fixes benötigen auf dem finalen PR-HEAD eine **erneute vollständige kombinierte CI**. Ältere grüne PR-Runs sind kein Ersatz.
+
