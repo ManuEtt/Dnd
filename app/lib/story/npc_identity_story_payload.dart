@@ -187,7 +187,9 @@ class NpcIdentityStoryPayload {
   // _validText rejects it on the structured wire (fail closed).
   static String _fold(String value) => value
       .replaceAll(
-        RegExp(r'[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]'),
+        RegExp(
+          r'[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]',
+        ),
         '',
       )
       .toLowerCase()
