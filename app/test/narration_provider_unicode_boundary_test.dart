@@ -149,7 +149,7 @@ void main() {
 
       expect(restored.messages.last.text, accepted.narration);
       expect(restored.hero.toJson(), seed.hero.toJson());
-      expect(restored.quests, seed.quests);
+      expect(restored.toJson()['quests'], seed.toJson()['quests']);
       expect(restored.events.last.payload['narrationProvider'], 'openai');
       expect(
         MemoryEngine.replay(seed, restored.events).toJson(),
