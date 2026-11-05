@@ -1,3 +1,17 @@
+## Chat A – 05.11.2026: Vor der langen Rast Zauber- und Paktverbrauch validieren (PR #553)
+
+- **Basis-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`; **Branch:** `feat/chat-a/long-rest-spell-pool-preflight-20261105`. **Fach-/Testcommit:** `6eb4c4c0cc906cee96b180ac78b6551a14e34a50`. **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/553.
+- **Fehler:** `RestRules.longRest` rief vor Prüfung des Originalzustands `SpellcastingRules.afterLongRest` auf. Damit konnten unverdiente, negative und nichtkanonisch verbuchte Spell-/Pact-Slots als scheinbar gültige Rastfolgen verschwinden, statt an der Übergangsgrenze nachvollziehbar abgewiesen zu werden.
+- **Korrektur:** `app/lib/domain/rest_rules.dart` prüft vor jedem Ressourcenreset die exakten Gradschlüssel 1–9 sowie `SpellcastingRules.availableSlots(hero)` und `SpellcastingRules.availablePactSlots(hero)`. Ungültige Werte scheitern mit `FormatException` ohne Mutation. Nach gültigem Preflight bleiben HP-, Trefferwürfel-, Konzentrations- und Klassenressourcen-Regeneration unverändert; keine Zeit-/Aktionserfindung.
+- **Tests:** neue `app/test/srd_long_rest_spell_pool_preflight_test.dart` mit **11 deterministischen Testfällen**: acht Fehlersnapshots (ungültige/negative/zu viele Zauberplätze und Paktverbrauch, inkl. `01`/`10`), unveränderte Ausgangsressourcen, Wizard3/Warlock3, JSON-Roundtrip, Legacy-Fighter und Warlock-Paktwiederherstellung. Bestehende `app/test/rest_rules_test.dart`, `app/test/spellcasting_rules_test.dart` und weitere Klassen-/Rasttests bleiben aktiv.
+- **GETESTET:** Live-main/PR-Dateilisten/Fachcode geprüft; Quell- und Fachtestcommit erstellt. **Noch nicht bestätigt:** Dart-Format, Flutter-Analyse/Vollsuite, Python-/Backendtests und Android-Debug/ABI-Artefakte auf endgültigem Head; lokal Dart/Flutter-SDK nicht installiert. CI nur nach vollständigem Ergebnis als grün ausweisen.
+- **Parallelität:** Andere PRs #543, #545–#552 berühren `rest_rules.dart` und neuen Fachtest nicht; Chat-A-PR #551 setzt die bestätigte Zauberquelle im **anderen** Turn-Modul um. Gemeinsame README-/Checkpoint-Dateien müssen Chat D additiv konsolidieren. Kein Merge in main durch Chat A.
+- **Kompatibilität:** Keine Modell-, Story-, UI-, Controller-, API-, Versions-, SQLite-/JSON-Schemaänderung; kein automatischer Altspielstand-Rewrite. Prüft bewusst nur Slot-/Paktverbrauch, **nicht** globale Charakterprofil- und sämtliche Trefferwürfelvalidierung.
+- **SRD:** SRD 5.2.1, *Spell Slots, Pact Magic, Long Rest*, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd. Requirement `RULE-SPELLS-SPELL-SLOTS` / `RULE-CORE-RULES-LONG-REST` bleibt **partial**, keine globale Vollständigkeitsfreigabe.
+- **Nächster unabhängiger Schritt:** nach finaler CI/Integration prüfen, ob Long-Rest auch die ursprünglichen `spentHitDice` gegen den Klassentrefferwürfelpool validiert, **bevor** die lange Rast sie leert; valide Legacy-/Mehrklassen-Rasten und unveränderte Originaldaten per deterministischen Tests bewahren.
+
+---
+
 ## Chat D – Exklusive Checkpoint-Namensprüfung nach Lock-Übernahme (05.11.2026)
 
 - **Basis-main:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.

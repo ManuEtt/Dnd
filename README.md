@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Lange Rast prüft ursprüngliche Zauberressourcen (05.11.2026)
+
+[Draft-PR #553](https://github.com/ManuEtt/Dnd/pull/553) ergänzt eine reine Validierung **vor** der langen Rast: `RestRules.longRest` akzeptiert nur kanonische Zaubergrad-Schlüssel 1–9 sowie tatsächlich verfügbare normale und Paktmagieplatz-Pools. Widersprüchliche direkte/ältere Snapshots (ungültiger Grad oder Überverbrauch, Paktverbrauch ohne Klasse, negative Zahlen) werden mit `FormatException` abgewiesen, statt durch die automatisch zurückgesetzten Ressourcen unsichtbar repariert zu werden. Gültige Rastwirkungen bleiben unverändert. **11 neue deterministische Testfälle** (acht ungültige, drei gültige/Kompatibilitätsfälle): keine Mutation bei Ablehnung, Wizard3/Warlock3 samt JSON-Neustart, Legacy-Fighter ohne Zauberressourcen und legitime Warlock-Paktregeneration. **Keine Migration**, SQLite 3, JSON 1 und App-Version unverändert. Fach-/Testcommit `6eb4c4c0cc906cee96b180ac78b6551a14e34a50` ab main `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`. Finale CI/Android-Tests auf letztem Branch-HEAD und Chat-D-Review stehen aus. Quelle SRD 5.2.1, *Long Rest / Spell Slots / Pact Magic*, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd; keine vollständige SRD-Abdeckung behauptet.
+
+---
+
+
 ## Chat D – Checkpoint-Dateien gegen spätes Überschreiben schützen (05.11.2026)
 
 Das Quellcode-Checkpoint-Skript `scripts/create_checkpoint.py` prüft identische Version-/Zeitstempel-/Label-Artefakte jetzt nicht nur vor der aufwendigen Vorbereitung, sondern nochmals unter der exklusiven Veröffentlichungssperre unmittelbar vor der eigentlichen Ausgabe. Dadurch kann ein konkurrierender Lauf nach der frühen Prüfung keine gleichnamigen, bereits veröffentlichten ZIP-/Patch-/Manifest-/Prüfsummendateien mehr unbemerkt ersetzen. Hängende Symlinks zählen ebenfalls als belegte Namen. Zwei neue Regressionen in `scripts/tests/test_create_checkpoint.py` decken spätes Auftauchen einer Archivdatei und eines hängenden Manifest-Symlinks ab. [Draft-PR #544](https://github.com/ManuEtt/Dnd/pull/544), Basis `74548d3d5243`, Fachcommit `021672463075`. Vollständige Actions-CI auf dem finalen dokumentierten HEAD noch ausstehend. SQLite/JSON, Speicherformate, App-Version und bestehende Aliasse bleiben unverändert.
