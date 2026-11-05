@@ -21,6 +21,22 @@ regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
 ## Aktueller Stand und autonome Fortsetzung
 
+## Wiederaufnahme 05.11.2026 – gesicherter, noch ungeprüfter Zwischenstand
+
+Branch `fix/chat-a/manual-save-class-preflight-20261102`, bisherige Basis
+`84437e4e92d735e179bb2585427b46a10451951d`. Vorhandene WIP-Änderung:
+neues manuelles Rettungswurfmodul, minimaler Engine-Aufruf und48Testfälle.
+Der frühere Ziellauf hatte61Pass/10Fehler durch fünf nicht importierbare
+Testprofile plus einen falschen Dateinamen. Das ist keine Abnahme.
+WIP-ZIP/Patch unter `/workspace/artifacts/manual-save-preflight-20261105/wiederaufnahme/`.
+Aktueller Main `74548d3d` wird zunächst regulär übernommen. Er enthält jetzt
+den reinen Klassen-/Übungsvalidator, der die duplizierte WIP-Prüfung ersetzen soll.
+Keine erfolgreichen neuen Builds/CI behauptet. Nächster Schritt: aktualisieren,
+Domain-/Speichertests trennen und die tatsächlichen Spielabläufe prüfen.
+
+---
+
+
 ## 02.11.2026 – aktualisierte Arbeitsbasis nach Wiederaufnahme
 
 Main ist inzwischen auf `84437e4e92d735e179bb2585427b46a10451951d`
