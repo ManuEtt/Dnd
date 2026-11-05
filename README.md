@@ -1421,3 +1421,8 @@ Die Android-Pipeline, die spezialisierten Regeltests, die manuelle Dart-Formatie
 
 Regressionen gegen Downgrades: `scripts/tests/test_android_actions_node24.py` und `scripts/tests/test_first_party_actions_node24.py`. Vorherige Projekt-Toolchains, Buildmatrix, APK-Dateinamen, Release-Archivierung und Cleanup-Ancestry-Schutz werden nicht bewusst verändert. Integrations-PR: [#577](https://github.com/ManuEtt/Dnd/pull/577). Die kombinierte CI des finalen Heads und die Main-/Geräteabnahme bleiben bis zur tatsächlichen Prüfung offen.
 
+
+
+### 2026-11-05 – Unbezwingbare Stärke: gültige Klassenprofile
+
+Der Mindestwert für Stärkeproben und Stärkerettungswürfe ab Barbarenstufe 18 wird bei widersprüchlichen Haupt-/Nebenklassen, doppelten Alias-Klassen, ungültigen Stufen oder unbekannten Klassen nicht mehr freigeschaltet. Gültige deutsche/englische Aliase und Mehrklassenprofile bleiben unterstützt. Betroffen: `srd_indomitable_might_rules.dart` und neue deterministische Profiltests. Branch `feat/chat-a/indomitable-might-class-preflight-20261105`; PR/CI siehe GitHub. Kein JSON-/SQLite-Schemawechsel und keine Migration. SRD 5.2.1, Barbarian 18 / Indomitable Might, CC BY 4.0.
