@@ -567,11 +567,15 @@ class AlphaReleaseTests(unittest.TestCase):
         stem = 'Wuerfelraunen_v0.5.4_24'
         lock = self.out / f'.{stem}_Release.lock'
 
-        def interrupt_during_copy(_source, target):
-            Path(target).write_bytes(b'PARTIAL_APK')
+        def interrupt_during_copy(_source, target, *, length=None):
+            target.write(b'PARTIAL_APK')
             raise KeyboardInterrupt()
 
-        with mock.patch.object(release.shutil, 'copy2', side_effect=interrupt_during_copy):
+        # Publication now uses a pinned source descriptor and copyfileobj,
+        # not shutil.copy2(path, path). Interrupt the actual copy boundary.
+        with mock.patch.object(
+            release.shutil, 'copyfileobj', side_effect=interrupt_during_copy,
+        ):
             with self.assertRaises(KeyboardInterrupt):
                 release.prepare_release(self.root, self.out)
         self.assertFalse(lock.exists())
