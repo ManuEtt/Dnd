@@ -47,7 +47,7 @@ void main() {
     expect(jsonEncode(campaign.toJson()), before);
   });
 
-  test('provider offer rejects invisible marks in every player-facing field', () {
+  test('provider offer rejects invisible marks in all offer fields', () {
     final campaign = _campaign();
     final before = jsonEncode(campaign.toJson());
     for (final field in [
@@ -83,7 +83,7 @@ void main() {
     expect(parsed.questTitle, 'Élises Prüfung');
   });
 
-  test('blocked offers remain ignored without touching saved campaign state', () {
+  test('blocked offers stay ignored without changing saved state', () {
     final original = _campaign();
     final existing = AdventureOffer.fromJson(_offer());
     final campaign = original.copyWith(adventureOffer: existing);
