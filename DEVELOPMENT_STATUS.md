@@ -1,3 +1,9 @@
+## 05.11.2026 – Chat A: Zauberkraftregeneration-Freischaltung gehärtet (PR #564, Draft)
+
+`SrdSorcerousRestorationRules` validiert jetzt vor der Levelermittlung die ganze Haupt-/Zweitklassenkombination einschließlich kanonischer deutscher/englischer Aliase. Ungültige Klassenprofile ermöglichen keine zusätzliche Regeneration und werden vor einer bestätigten kurzen Rast ohne Ressourcenänderung abgelehnt. Neue deterministische Positiv-/Negativregressionen in `app/test/srd_sorcerous_restoration_class_preflight_test.dart`. Basis-main `f11701efd46d0fee058f5f8e80b57f38ed4f7af4`, Branch `feat/chat-a/sorcerous-restoration-class-profile-20261105`, [Draft-PR #564](https://github.com/ManuEtt/Dnd/pull/564). **CI auf finalem PR-HEAD noch zu prüfen, nicht freigegeben.** Kein Schema-, JSON-, Speicherstands-, Versions- oder UI-Wechsel. Grundlage: SRD 5.2.1 Sorcerer / Level 5, CC BY 4.0.
+
+---
+
 ## 31.10.2026 – Migration abgenommen, Alpha 0.8.49+99
 
 Gesamtintegration #440 und Herkunftsnachtrag #444 sind regulär integriert.
