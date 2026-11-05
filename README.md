@@ -1426,3 +1426,8 @@ Regressionen gegen Downgrades: `scripts/tests/test_android_actions_node24.py` un
 ### 2026-11-05 – Unbezwingbare Stärke: gültige Klassenprofile
 
 Der Mindestwert für Stärkeproben und Stärkerettungswürfe ab Barbarenstufe 18 wird bei widersprüchlichen Haupt-/Nebenklassen, doppelten Alias-Klassen, ungültigen Stufen oder unbekannten Klassen nicht mehr freigeschaltet. Gültige deutsche/englische Aliase und Mehrklassenprofile bleiben unterstützt. Betroffen: `srd_indomitable_might_rules.dart` und neue deterministische Profiltests. Branch `feat/chat-a/indomitable-might-class-preflight-20261105`; PR/CI siehe GitHub. Kein JSON-/SQLite-Schemawechsel und keine Migration. SRD 5.2.1, Barbarian 18 / Indomitable Might, CC BY 4.0.
+
+
+### 2026-11-05 – Mönch: Sanfter Fall mit geprüften Klassenprofilen
+
+Die Stufe-4-Reaktion **Sanfter Fall** berechnet den Schadensschutz weiterhin aus der tatsächlichen Mönchsstufe, lehnt jetzt aber ungültige Haupt-/Nebenklassen, doppelte Alias-Klassen, unbekannte Klassen und widersprüchliche Stufen ab. Gültige deutsche/englische Namen und Mehrklassen bleiben wirksam; eine bloße Erzählung löst keine Reaktion aus. Geändert: `app/lib/domain/srd_monk_slow_fall_rules.dart`, neu: `app/test/srd_monk_slow_fall_class_preflight_test.dart`. [PR #579](https://github.com/ManuEtt/Dnd/pull/579), Branch `feat/chat-a/monk-slow-fall-class-preflight-20261105`. Regelquelle: SRD 5.2.1, Monk / Level 4 Slow Fall, CC BY 4.0. Requirement `CLASS-M-NCH-4-BASE-SLOW-FALL-1` bleibt `partial` (keine vollständige End-to-End-Automatik). Keine JSON-/SQLite-Migration. CI-Prüfung des finalen PR-HEAD noch offen; lokale Dart-/Flutter-Tests mangels SDK nicht ausgeführt.
