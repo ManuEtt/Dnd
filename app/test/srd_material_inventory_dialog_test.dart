@@ -232,16 +232,15 @@ void main() {
       find.text('Inventar enthält ungültige oder doppelte Stapel-IDs.'),
       findsOneWidget,
     );
-    expect(
-      find.byKey(const ValueKey('material-setup-error')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('material-setup-error')), findsOneWidget);
     expect(find.text('Truhe (1×) · same'), findsNothing);
     expect(find.text('Miniatur (1×) · same'), findsNothing);
     expect(
-      tester.widget<FantasyTextButton>(
-        find.byKey(const ValueKey('material-confirm')),
-      ).onPressed,
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('material-confirm')),
+          )
+          .onPressed,
       isNull,
     );
     await _tapVisible(tester, find.text('Abbrechen'));
@@ -267,9 +266,11 @@ void main() {
     );
     expect(find.textContaining('Versteckte ID (1×)'), findsNothing);
     expect(
-      tester.widget<FantasyTextButton>(
-        find.byKey(const ValueKey('material-confirm')),
-      ).onPressed,
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('material-confirm')),
+          )
+          .onPressed,
       isNull,
     );
     await _tapVisible(tester, find.text('Abbrechen'));
@@ -289,14 +290,13 @@ void main() {
     final results = <SrdMaterialInventoryChoice?>[];
     await _open(tester, hero, catalog.find('Secret Chest')!, results.add);
 
+    expect(find.byKey(const ValueKey('material-setup-error')), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('material-setup-error')),
-      findsOneWidget,
-    );
-    expect(
-      tester.widget<FantasyTextButton>(
-        find.byKey(const ValueKey('material-confirm')),
-      ).onPressed,
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('material-confirm')),
+          )
+          .onPressed,
       isNull,
     );
     await _tapVisible(tester, find.text('Abbrechen'));
