@@ -102,7 +102,7 @@ void main() {
       });
     }
 
-    test('invalid profile with spent resource fails before rest recovery', () {
+    test('invalid spent fighter resource blocks rest recovery', () {
       final hero = _hero(
         primary: 'Fighter',
         secondary: 'Kämpfer',
@@ -145,7 +145,8 @@ void main() {
       final surged = ClassFeatureResources.spendActionSurge(healed.hero);
       expect(surged.spentActionSurge, 1);
       expect(hero.toJson(), original);
-      expect(HeroCharacter.fromJson(surged.toJson()).toJson(), surged.toJson());
+      final reloaded = HeroCharacter.fromJson(surged.toJson());
+      expect(reloaded.toJson(), surged.toJson());
     });
 
     test('Fighter als zweite Klasse nutzt nur deren Stufen', () {
