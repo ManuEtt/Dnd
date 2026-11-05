@@ -60,6 +60,10 @@ class SrdSpellTurnTransactionRules {
     required bool somaticComponentConfirmed,
     required bool materialComponentConfirmed,
     bool pactMagic = false,
+    // Legacy multiclass heroes have a flat spell list. Preserve the player's
+    // explicit preparing-class choice in the composed turn preflight; never
+    // infer this confirmation from the spell name or the selected slot pool.
+    bool preparedForCastingClassConfirmed = false,
     bool noSlotSpentOutsideEncounterConfirmed = false,
     SrdSpellTargetFacts? targetFacts,
     SrdSpellGridTargetRequest? gridTarget,
@@ -98,6 +102,7 @@ class SrdSpellTurnTransactionRules {
       castingClass: castingClass,
       slotLevel: slotLevel,
       pactMagic: pactMagic,
+      preparedForCastingClassConfirmed: preparedForCastingClassConfirmed,
       actionAvailableConfirmed: true,
       targetRulesConfirmed: targetRulesConfirmed,
       targetFacts: targetFacts,
