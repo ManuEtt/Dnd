@@ -1,6 +1,6 @@
-## Chat A – 05.11.2026: ungültige Kämpfer-Klassenprofile sperren (PR #559)
+## Chat A – 05.11.2026: ungültige Kämpfer-Klassenprofile sperren (PR #561)
 
-- **Basis-main:** `c8fa5ae32fac740dff4ff677d2141ddfd1c81a6e`; **Branch:** `feat/chat-a/fighter-resource-class-profile-20261105`; **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/559.
+- **Basis-main:** `c8fa5ae32fac740dff4ff677d2141ddfd1c81a6e`; **Branch:** `feat/chat-a/fighter-resource-class-profile-20261105`; **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/561.
 - **Fehler:** `ClassFeatureResources.fighterLevel` summierte früher Primär-/Sekundärstufen allein anhand des Klassennamens. Syntaktische Doppelaliases wie Kämpfer/Fighter sowie ungültige unbekannte Klassen und unplausible Stufensummen konnten Second Wind und Action Surge freischalten.
 - **Implementierung:** `app/lib/domain/class_feature_resources.dart` prüft kanonische Klassenidentität, unterschiedliche Haupt-/Zweitklasse, Hauptstufe mindestens 1, konsistente Nebenklasse/-stufe und Charakterlevel 1–20. Invalides Profil liefert 0 Kämpferlevel; Lesefunktionen zeigen 0 Nutzung, Bestätigungsaktionen scheitern vor Zufalls-/Ressourcenverbrauch, bereits unberechtigte Zähler beim `validate`/Rast-Preflight mit FormatException.
 - **Tests:** neue `app/test/srd_fighter_resource_class_preflight_test.dart` mit 14 deterministischen Fällen (neun negative Profile, fünf positive/Ressourcen-Grenzfälle), darunter Doppelaliases, unbekannte Klassen, negative/verwaiste Nebenstufe, Gesamtlevel 0/21, RNG vor Ablehnung unverändert, gültiger Fighter-17-Bonus, Wizard3/Fighter10, Fighter1 und Fremdklasse. Bestehender `class_feature_resources_test.dart` bleibt unverändert.

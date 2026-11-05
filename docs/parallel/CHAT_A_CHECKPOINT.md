@@ -1,6 +1,6 @@
-# Chat A – Fighter/Second Wind/Action Surge Profil-Preflight (05.11.2026, PR #559)
+# Chat A – Fighter/Second Wind/Action Surge Profil-Preflight (05.11.2026, PR #561)
 
-**Basis-main:** `c8fa5ae32fac740dff4ff677d2141ddfd1c81a6e`. **Branch:** `feat/chat-a/fighter-resource-class-profile-20261105`. **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/559.
+**Basis-main:** `c8fa5ae32fac740dff4ff677d2141ddfd1c81a6e`. **Branch:** `feat/chat-a/fighter-resource-class-profile-20261105`. **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/561.
 
 **Problem:** `fighterLevel` zählt bei direkt konstruierten/älteren Klassenkombinationen Fighter/Kämpfer doppelt und akzeptiert auch ansonsten inkonsistente zweite Klassen und Stufen. Entsprechend konnten Second Wind oder Action Surge zu früh verfügbar sein.
 
