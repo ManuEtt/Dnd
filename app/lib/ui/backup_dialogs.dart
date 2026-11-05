@@ -100,11 +100,12 @@ class _ImportBackupDialogState extends State<_ImportBackupDialog> {
   Widget build(BuildContext context) => PopScope(
     canPop: !_busy,
     child: AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       title: Text(widget.title),
       content: SizedBox(
         width: 600,
-        child: SingleChildScrollView(
-          child: Column(
+        child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -123,7 +124,9 @@ class _ImportBackupDialogState extends State<_ImportBackupDialog> {
               TextField(
                 controller: _text,
                 readOnly: _busy,
-                minLines: 6,
+                minLines: MediaQuery.textScalerOf(context).scale(1) >= 1.8
+                    ? 3
+                    : 6,
                 maxLines: 12,
                 decoration: const InputDecoration(
                   labelText: 'JSON-Spielstand',
@@ -132,7 +135,6 @@ class _ImportBackupDialogState extends State<_ImportBackupDialog> {
               ),
               _BackupStatus(busy: _busy, message: _message),
             ],
-          ),
         ),
       ),
       actions: [
