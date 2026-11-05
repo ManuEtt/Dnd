@@ -8,9 +8,9 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOWS = ROOT / ".github" / "workflows"
 USES = re.compile(
-    r"^[ \\t]*(?:-[ \\t]*)?uses:[ \\t]*actions/"
+    r"^[ \t]*(?:-[ \t]*)?uses:[ \t]*actions/"
     r"(checkout|setup-java|setup-node|upload-artifact|download-artifact)"
-    r"@(v[0-9]+)[ \\t]*(?:#.*)?$",
+    r"@(v[0-9]+)[ \t]*(?:#.*)?$",
     re.MULTILINE,
 )
 EXPECTED = {
@@ -69,8 +69,8 @@ class FirstPartyActionsNode24Tests(unittest.TestCase):
     def test_comments_do_not_count_as_action_steps(self):
         source = self.sources["dart-format-reparieren.yml"]
         commented = source + (
-            "\\n# - uses: actions/checkout@v4"
-            "\\n# uses: actions/upload-artifact@v4\\n"
+            "\n# - uses: actions/checkout@v4"
+            "\n# uses: actions/upload-artifact@v4\n"
         )
         self.assertEqual(
             first_party_actions(commented),
