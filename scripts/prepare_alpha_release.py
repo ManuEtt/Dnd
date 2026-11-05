@@ -17,7 +17,7 @@ import stat
 import unicodedata
 import zipfile
 
-from package_project import WINDOWS_RESERVED_STEMS, create_archive
+from package_project import WINDOWS_INVALID_CHARACTERS, WINDOWS_RESERVED_STEMS, create_archive
 
 ROOT = Path(__file__).resolve().parent.parent
 VERSION = re.compile(r'^version:\s*(\d+)\.(\d+)\.(\d+)\+(\d+)\s*$', re.MULTILINE)
@@ -165,7 +165,8 @@ def validate_arm64_apk(apk: Path) -> None:
         for entry in entries:
             name = entry.filename
             parts = name.rstrip('/').split('/')
-            if (not name or name.startswith('/') or '\\' in name
+            if (not name or name.startswith('/')
+                    or any(char in WINDOWS_INVALID_CHARACTERS for char in name)
                     or re.match(r'^[A-Za-z]:', name)
                     or any(part in ('', '.', '..') or part.endswith((' ', '.'))
                            or part.split('.', 1)[0].upper() in WINDOWS_RESERVED_STEMS
