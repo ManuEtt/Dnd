@@ -66,6 +66,9 @@ class CampaignResumeSnapshot {
 class CampaignResumeReader {
   const CampaignResumeReader._();
 
+  // Saved thread IDs, not their display titles, bind a lead to one identity.
+  static final RegExp _safeThreadId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
+
   static CampaignResumeSnapshot read(
     Campaign campaign, {
     int maxLeads = 3,
@@ -94,9 +97,22 @@ class CampaignResumeReader {
       if (facts.length == maxFacts) break;
     }
 
+    // Old imported saves may contain the same thread ID more than once,
+    // including contradictory open/resolved statuses. No such record can
+    // prove an active lead. Exclude every ambiguous or unsafe identity
+    // rather than resurrecting an older open entry or trusting its position.
+    final threadIdCounts = <String, int>{};
+    for (final thread in campaign.storyThreads) {
+      threadIdCounts[thread.id] = (threadIdCounts[thread.id] ?? 0) + 1;
+    }
+
     final leads = <String>[];
     for (final thread in campaign.storyThreads.reversed) {
-      if (thread.status != 'open') continue;
+      if (thread.status != 'open' ||
+          _safeThreadId.stringMatch(thread.id) != thread.id ||
+          threadIdCounts[thread.id] != 1) {
+        continue;
+      }
       final title = _excerpt(thread.title, 100);
       final note = _excerpt(thread.description, 180);
       if (title.isEmpty || note.isEmpty) continue;

@@ -126,7 +126,11 @@ def unique_gradle_property(text: str, key: str) -> str | None:
         suffix = stripped[index:].lstrip(' \t\f')
         if suffix.startswith(('=', ':')):
             suffix = suffix[1:]
-        candidates.append(suffix.strip())
+        # java.util.Properties discards only leading ASCII space, tab and
+        # form feed after the separator. Trailing whitespace (including plain
+        # ASCII spaces) is part of the actual value and must not be silently
+        # removed: Gradle consumes the preserved URL and checksum bytes.
+        candidates.append(suffix.lstrip(' \t\f'))
     return candidates[0] if len(candidates) == 1 else None
 
 

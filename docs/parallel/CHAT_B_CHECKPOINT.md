@@ -1,3 +1,28 @@
+## Konsolidierung 04.11.2026 – PR #536
+
+Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
+
+---
+
+---
+
+## Chat B – 04.11.2026: Eindeutige offene Story-IDs beim Wiedereinstieg (#536)
+
+- **Ausgangs-main:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`.
+- **Branch:** `feat/chat-b/resume-lead-id-integrity-20261104`, **PR:** [#536](https://github.com/ManuEtt/Dnd/pull/536) (Draft).
+- **Fachcommit:** `0c9243b3d5f8cc1232372081403a963dcf864c09` (Parser/ID-Prüfung korrigiert), **Testcommit:** `d8d12b3ee2aae27e1b415190fd0353ce73969284` (nach CI-Testbefunden); Dart-Formatcommit `351f5a5c97af2387e3b9704b169ca90011a18487`. Finalen Branch-HEAD nach Dokumentationscommit ermitteln.
+- **Ausgangsproblem:** `CampaignResumeReader.read` nahm alle `status == open`-Einträge ohne Prüfung der gespeicherten Thread-ID als bestätigte offene Spur. Ein nicht validierter In-Memory-Spielstand mit identischer ID für `open` und `resolved`/`abandoned` kann abgeschlossene Spuren wieder anzeigen. Reguläre JSON-Importe lehnen doppelte IDs bereits korrekt ab.
+- **IMPLEMENTIERT:** Identitäten vor Auswahl zählen; nur exakt einmalige kanonische IDs mit 1–64 ASCII-Zeichen (Buchstaben, Ziffern, Unterstrich, Bindestrich) zulassen. Doppelte und unsichere IDs konsequent aus der reinen Anzeige ausschließen. Gültige offene Spuren behalten ihre bisherigen Prioritäten, ihre Reihenfolge und das `maxLeads`-Limit.
+- **Neue Regressionstests:** `app/test/campaign_resume_lead_id_integrity_test.dart` mit vier Tests zu widersprüchlichen und identischen Dubletten, unsicheren Unicode-/Zeilenende-IDs, Auswahlgrenzen, Ablehnung von Dubletten beim JSON-Import sowie SQLite-Schließen/Neuöffnen mit gültiger eindeutiger ID, unveränderten Heldenwerten und Journal-Rekonstruktion.
+- **Dateien:** `app/lib/story/campaign_resume_context.dart`, neuer Test, additive README-/CODEX-/Chat-B-Checkpoint-Abschnitte.
+- **GETESTET:** Live-GitHub-/Masterprompt-/PR-Prüfung; eigener Fachcode und Tests versioniert. [CI #41783012878](https://github.com/ManuEtt/Dnd/actions/runs/41783012878) auf vorherigem HEAD: Python, Backend, Dart-Format und Flutter-Analyse erfolgreich; 3095 Flutter-Tests bestanden, zwei neue Tests mit unzutreffenden Erwartungen fehlgeschlagen. Die Tests wurden in `d8d12b3` korrigiert, erneute vollständige CI noch nicht belegt. Main-Android-CI auf `c8f25132a82bcf55368a79100e0c2ea5595140b6` bei Prüfung erfolgreich; **nicht** gleichzusetzen mit PR-CI #536.
+- **NICHT GETESTET:** Neues vollständiges CI auf finalem PR-HEAD; reales Android-Gerät/Upgrade, produktive KI; lokal kein Flutter-/Dart-SDK.
+- **BLOCKIERT:** Finale CI-Gates und Review. README und zentraler Checkpoint müssen mit anderen PRs additiv integriert werden, nicht überschrieben. PR #535 bearbeitet andere UI-Fachpfade.
+- **Datenkompatibilität:** Keine Migration oder Mutation; unveränderte Originale, Schema, Regelwerte, Questzustände, KI-Provider und App-Version.
+- **Nächster konkreter Schritt:** Finalen CI-Lauf #536 prüfen und bei Fehlern im eigenen Branch korrigieren; anschließend von Chat D integrieren lassen.
+
+---
+
 # Chat B – NPC-Kontext ohne Steuerzeichen (30.10.2026)
 
 ## Chat B – verspätete Story-Antwort nach SQLite-Neustart (31.10.2026)

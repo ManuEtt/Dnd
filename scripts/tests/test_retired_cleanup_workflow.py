@@ -1,8 +1,8 @@
-"""Ensure the retired cleanup workflow cannot race with its successor.
+"""Guard against reintroducing a retired, competing cleanup workflow.
 
-The older Actions workflow hit a 404 after another cleanup had removed a
-branch (Actions run 40589220593). Keep its historical path available as a
-manual, read-only notice, with no branch/tag mutation API at all.
+The legacy workflow is removed from .github/workflows after migration.
+Only the maintained SHA-/archive-checked cleanup may delete branch refs.
+A synthetic read-only example keeps negative mutation-guard tests active.
 """
 from pathlib import Path
 import unittest
@@ -42,14 +42,23 @@ def retired_workflow_is_inert(content: str) -> bool:
 
 
 class RetiredCleanupWorkflowTests(unittest.TestCase):
-    def test_legacy_cleanup_is_read_only_and_manual_only(self):
-        self.assertTrue(RETIRED.is_file())
-        self.assertTrue(retired_workflow_is_inert(
-            RETIRED.read_text(encoding="utf-8")
-        ))
+    def test_retired_cleanup_entrypoint_is_absent(self):
+        self.assertFalse(RETIRED.exists())
 
     def test_unsafe_trigger_and_branch_writes_are_rejected(self):
-        original = RETIRED.read_text(encoding="utf-8")
+        original = (
+            "name: Historischer inaktiver Workflow\n"
+            "on:\n"
+            "  workflow_dispatch:\n"
+            "permissions:\n"
+            "  contents: read\n"
+            "jobs:\n"
+            "  disabled:\n"
+            "    runs-on: ubuntu-latest\n"
+            "    steps:\n"
+            "      - run: echo disabled\n"
+        )
+        self.assertTrue(retired_workflow_is_inert(original))
         self.assertFalse(retired_workflow_is_inert(
             original.replace(
                 "  workflow_dispatch:",

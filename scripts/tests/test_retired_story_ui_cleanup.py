@@ -1,8 +1,8 @@
-"""Prevent PR301's historical cleanup from becoming a competing writer again.
+"""Prevent historical PR301 cleanup from returning as a competing writer.
 
-The archived workflow is retained verbatim for migration provenance. Only its
-read-only notice can remain executable; reference deletion belongs to the
-maintained workflow after exact-current-main Android CI.
+Its original source remains checksum-verified in docs/history. The old
+executable entrypoint is removed from .github/workflows; only the safe
+current-main CI-gated cleanup remains active.
 """
 import hashlib
 import json
@@ -18,6 +18,20 @@ ARCHIVE = ROOT / (
     "pr301-c190227--retire-verified-story-ui-branches-20261027.yml"
 )
 ACTIVE = ROOT / ".github/workflows/cleanup-merged-safe-20261027.yml"
+INERT_EXAMPLE = (
+    'name: Alte Story/UI-Branchbereinigung (deaktiviert)\n'
+    'on:\n'
+    '  workflow_dispatch:\n'
+    'permissions:\n'
+    '  contents: read\n'
+    'jobs:\n'
+    '  deprecated:\n'
+    '    runs-on: ubuntu-latest\n'
+    '    steps:\n'
+    '      - name: Nachfolger anzeigen\n'
+    '        run: |\n'
+    '          echo "Dieser historische PR301-Workflow ist deaktiviert."\n'
+)
 
 
 def is_read_only_notice(text: str) -> bool:
@@ -46,8 +60,9 @@ def is_read_only_notice(text: str) -> bool:
 
 
 class RetiredStoryUiCleanupTests(unittest.TestCase):
-    def test_historical_entrypoint_is_dispatch_only_read_only_notice(self):
-        self.assertTrue(is_read_only_notice(RETIRED.read_text(encoding="utf-8")))
+    def test_historical_entrypoint_removed_and_synthetic_notice_safe(self):
+        self.assertFalse(RETIRED.exists())
+        self.assertTrue(is_read_only_notice(INERT_EXAMPLE))
 
     def test_original_pr301_writer_cannot_pass_as_inert(self):
         original = ARCHIVE.read_text(encoding="utf-8")
@@ -56,7 +71,7 @@ class RetiredStoryUiCleanupTests(unittest.TestCase):
         self.assertFalse(is_read_only_notice(original))
 
     def test_reintroduced_automatic_trigger_writer_or_action_is_rejected(self):
-        notice = RETIRED.read_text(encoding="utf-8")
+        notice = INERT_EXAMPLE
         replacements = (
             notice.replace("  workflow_dispatch:", "  push:\n  workflow_dispatch:"),
             notice.replace("contents: read", "contents: write"),
