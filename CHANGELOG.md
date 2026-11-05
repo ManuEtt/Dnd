@@ -1,3 +1,9 @@
+## 2026-11-05 – konsistente Klassen für Überlegene Inspiration
+
+- Barde 18 erhält bei Initiative nur aus bekannten, unterschiedlichen Klassen und gültigen Klassenstufen automatisch Inspiration zurück; widersprüchliche Altprofile bleiben unverändert.
+- 32 neue Domain-/SQLite-/UI-Fälle und zehn bisherige Fachtests gezielt bestanden. Finale Gesamtprüfung und Android-CI siehe PR #576; reale Geräteabnahme bleibt offen.
+- App-Version 0.8.51+101, SQLite 3 und JSON 1 unverändert; keine Migration. SRD 5.2.1 S. 33, CC BY 4.0, Requirement weiter partial.
+
 ## 31.10.2026 – Migration abgenommen, Alpha 0.8.49+99
 
 Gesamtintegration #440 und Herkunftsnachtrag #444 sind regulär integriert.

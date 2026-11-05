@@ -849,7 +849,10 @@
       "unlocks_catalogued": true,
       "rule_implemented": "partial",
       "tests": [
-        "app/test/srd_bard_superior_inspiration_rules_test.dart"
+        "app/test/srd_bard_superior_inspiration_rules_test.dart",
+        "app/test/srd_bard_superior_inspiration_profile_test.dart",
+        "app/test/srd_bard_superior_inspiration_profile_flow_test.dart",
+        "app/test/srd_bard_superior_inspiration_profile_ui_test.dart"
       ],
       "code": [
         "app/lib/domain/srd_class_feature_catalog.dart",
@@ -857,7 +860,7 @@
         "app/lib/domain/game_engine.dart",
         "app/lib/domain/srd_class_automation.dart"
       ],
-      "note": "SRD-Barde-18: Wiederherstellung zuvor verbrauchter Inspirationsnutzungen auf bis zu zwei verfügbare Nutzungen bei bestätigter Initiative. Deckt die drei bestehenden Kampfstartpfade ab und nutzt Barden-Klassenstufe statt Gesamtstufe. Unbekanntes Charisma/überzogene Ressourcen fail-closed; Quelle SRD 5.2.1 CC BY 4.0. Tests und GitHub CI noch nicht vollständig abgenommen; deshalb partial."
+      "note": "SRD 5.2.1 S.33, CC BY 4.0: Barde18 regeneriert bei tatsächlicher Initiative verbrauchte Inspiration auf bis zu zwei vorhandene Nutzungen, höchstens bestätigtes Maximum. Bekannte unterschiedliche Klassen und gültige Stufen vorausgesetzt; inkonsistente lesbare Altprofile bleiben ohne Gutschrift unverändert. Alle drei Kampfstartpfade, 24 neue Domain-, 6 SQLite- und 2 echte App-UI-Fälle gezielt bestanden: Aliase/Mehrklassen, Export/Import, Neustart, Replay, stale Revision und später SQL-Rollback. Reguläre Initiativewürfe bleiben; keine RNG-freie Kampfabweisung. Finale Gesamt-/Android-CI und Geräteabnahme separat im PR576 dokumentiert; übrige Feature-/Regelwirkungen nicht als vollständig bewertet, Status partial."
     },
     {
       "id": "CLASS-BARDE-19-BASE-EPIC-BOON-0",
