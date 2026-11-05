@@ -41,75 +41,98 @@ HeroCharacter _hero({
   spentActionSurge: spentSurge,
 );
 
+void _reject(HeroCharacter hero) {
+  final before = hero.toJson();
+  final random = _CountingRandom();
+  expect(ClassFeatureResources.fighterLevel(hero), 0);
+  expect(ClassFeatureResources.secondWindMaximum(hero), 0);
+  expect(ClassFeatureResources.actionSurgeMaximum(hero), 0);
+  expect(ClassFeatureResources.remainingSecondWind(hero), 0);
+  expect(ClassFeatureResources.remainingActionSurge(hero), 0);
+  expect(
+    () => ClassFeatureResources.useSecondWind(
+      hero,
+      DiceEngine(random: random),
+    ),
+    throwsStateError,
+  );
+  expect(
+    () => ClassFeatureResources.spendActionSurge(hero),
+    throwsStateError,
+  );
+  expect(random.calls, 0);
+  expect(hero.toJson(), before);
+  expect(hero.spentSecondWind, 0);
+  expect(hero.spentActionSurge, 0);
+}
+
 void main() {
-  group('Kämpfer-Ressourcen nur bei gültigem SRD-Klassenprofil', () {
-    final invalid = <String, HeroCharacter>{
-      'Fighter und Kämpfer als doppelte Klasse': _hero(
-        primary: 'Fighter',
-        secondary: 'Kämpfer',
-        secondaryLevel: 6,
-        level: 12,
-      ),
-      'unbekannte Hauptklasse vor Fighter': _hero(
-        primary: 'Unbekannt',
-        secondary: 'Fighter',
-        secondaryLevel: 5,
-        level: 10,
-      ),
-      'unbekannte Nebenklasse nach Fighter': _hero(
-        secondary: 'Unbekannt',
-        secondaryLevel: 2,
-      ),
-      'fehlender Name für die Nebenklassenstufe': _hero(secondaryLevel: 2),
-      'Nebenklasse ohne eigene Stufe': _hero(secondary: 'Wizard'),
-      'Hauptklasse ohne eigene Stufe': _hero(
-        primary: 'Wizard',
-        secondary: 'Fighter',
-        secondaryLevel: 6,
-        level: 6,
-      ),
-      'negative Nebenklassenstufe': _hero(secondaryLevel: -1),
-      'Gesamtlevel null': _hero(level: 0),
-      'Gesamtlevel über zwanzig': _hero(level: 21),
-    };
+  group('Kämpfer-Ressourcen mit gültigem SRD-Klassenprofil', () {
+    test('Fighter und Kämpfer als doppelte Klasse', () {
+      _reject(
+        _hero(
+          primary: 'Fighter',
+          secondary: 'Kämpfer',
+          secondaryLevel: 6,
+          level: 12,
+        ),
+      );
+    });
 
-    for (final entry in invalid.entries) {
-      test('${entry.key}: keine Kämpferfähigkeiten oder Würfel', () {
-        final hero = entry.value;
-        final before = hero.toJson();
-        final random = _CountingRandom();
+    test('unbekannte Hauptklasse vor Fighter', () {
+      _reject(
+        _hero(
+          primary: 'Unbekannt',
+          secondary: 'Fighter',
+          secondaryLevel: 5,
+          level: 10,
+        ),
+      );
+    });
 
-        expect(ClassFeatureResources.fighterLevel(hero), 0);
-        expect(ClassFeatureResources.secondWindMaximum(hero), 0);
-        expect(ClassFeatureResources.actionSurgeMaximum(hero), 0);
-        expect(ClassFeatureResources.remainingSecondWind(hero), 0);
-        expect(ClassFeatureResources.remainingActionSurge(hero), 0);
-        expect(
-          () => ClassFeatureResources.useSecondWind(
-            hero,
-            DiceEngine(random: random),
-          ),
-          throwsStateError,
-        );
-        expect(
-          () => ClassFeatureResources.spendActionSurge(hero),
-          throwsStateError,
-        );
-        expect(random.calls, 0);
-        expect(hero.toJson(), before);
-        expect(hero.spentSecondWind, 0);
-        expect(hero.spentActionSurge, 0);
-      });
-    }
+    test('unbekannte Nebenklasse nach Fighter', () {
+      _reject(_hero(secondary: 'Unbekannt', secondaryLevel: 2));
+    });
 
-    test('invalid spent fighter resource blocks rest recovery', () {
+    test('Nebenklassenstufe ohne Name', () {
+      _reject(_hero(secondaryLevel: 2));
+    });
+
+    test('Nebenklasse ohne eigene Stufe', () {
+      _reject(_hero(secondary: 'Wizard'));
+    });
+
+    test('Hauptklasse ohne eigene Stufe', () {
+      _reject(
+        _hero(
+          primary: 'Wizard',
+          secondary: 'Fighter',
+          secondaryLevel: 6,
+          level: 6,
+        ),
+      );
+    });
+
+    test('negative Nebenklassenstufe', () {
+      _reject(_hero(secondaryLevel: -1));
+    });
+
+    test('Gesamtlevel null', () {
+      _reject(_hero(level: 0));
+    });
+
+    test('Gesamtlevel über zwanzig', () {
+      _reject(_hero(level: 21));
+    });
+
+    test('invalid spent resource blocks rest recovery', () {
       final hero = _hero(
         primary: 'Fighter',
         secondary: 'Kämpfer',
         secondaryLevel: 3,
         spentWind: 1,
       );
-      final snapshot = hero.toJson();
+      final before = hero.toJson();
       expect(
         () => ClassFeatureResources.validate(hero),
         throwsFormatException,
@@ -122,18 +145,18 @@ void main() {
         () => ClassFeatureResources.afterLongRest(hero),
         throwsFormatException,
       );
-      expect(hero.toJson(), snapshot);
+      expect(hero.toJson(), before);
       expect(hero.spentSecondWind, 1);
     });
 
-    test('englischer Fighter-Alias Stufe 17 behält beide Ressourcen', () {
+    test('englischer Fighter Stufe 17 behält beide Ressourcen', () {
       final hero = _hero(primary: 'Fighter', level: 17);
-      final original = hero.toJson();
+      final before = hero.toJson();
       final random = _CountingRandom();
-
       expect(ClassFeatureResources.fighterLevel(hero), 17);
       expect(ClassFeatureResources.secondWindMaximum(hero), 4);
       expect(ClassFeatureResources.actionSurgeMaximum(hero), 2);
+
       final healed = ClassFeatureResources.useSecondWind(
         hero,
         DiceEngine(random: random),
@@ -144,9 +167,9 @@ void main() {
       expect(healed.hero.spentSecondWind, 1);
       final surged = ClassFeatureResources.spendActionSurge(healed.hero);
       expect(surged.spentActionSurge, 1);
-      expect(hero.toJson(), original);
-      final reloaded = HeroCharacter.fromJson(surged.toJson());
-      expect(reloaded.toJson(), surged.toJson());
+      expect(hero.toJson(), before);
+      final loaded = HeroCharacter.fromJson(surged.toJson());
+      expect(loaded.toJson(), surged.toJson());
     });
 
     test('Fighter als zweite Klasse nutzt nur deren Stufen', () {
@@ -156,7 +179,7 @@ void main() {
         secondaryLevel: 10,
         level: 13,
       );
-      final original = hero.toJson();
+      final before = hero.toJson();
       expect(ClassFeatureResources.fighterLevel(hero), 10);
       expect(ClassFeatureResources.secondWindMaximum(hero), 4);
       expect(ClassFeatureResources.actionSurgeMaximum(hero), 1);
@@ -166,10 +189,10 @@ void main() {
       final rested = ClassFeatureResources.afterShortRest(surged);
       expect(rested.spentActionSurge, 0);
       expect(rested.spentSecondWind, 0);
-      expect(hero.toJson(), original);
+      expect(hero.toJson(), before);
     });
 
-    test('eine andere Klasse bekommt keine Kämpferressourcen', () {
+    test('eine andere Klasse erhält keine Kämpferressourcen', () {
       final hero = _hero(primary: 'Magier', level: 5);
       expect(ClassFeatureResources.fighterLevel(hero), 0);
       expect(ClassFeatureResources.secondWindMaximum(hero), 0);
@@ -180,7 +203,7 @@ void main() {
       );
     });
 
-    test('Kämpfer Stufe eins bekommt nur Zweite Luft', () {
+    test('Kämpfer Stufe eins erhält nur Zweite Luft', () {
       final hero = _hero(level: 1);
       expect(ClassFeatureResources.fighterLevel(hero), 1);
       expect(ClassFeatureResources.secondWindMaximum(hero), 2);
