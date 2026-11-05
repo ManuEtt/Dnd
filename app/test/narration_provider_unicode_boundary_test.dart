@@ -90,20 +90,14 @@ void main() {
     final original = gm.act(gm.createDemo(), 'Ich lausche dem Fluss.');
 
     expect(
-      gm.replaceNarration(
-        original,
-        text: 'ä' * 4000,
-        provider: 'mock',
-      ).narration,
+      gm
+          .replaceNarration(original, text: 'ä' * 4000, provider: 'mock')
+          .narration,
       'ä' * 4000,
     );
     for (final text in ['', '  \n ', 'ä' * 4001]) {
       expect(
-        () => gm.replaceNarration(
-          original,
-          text: text,
-          provider: 'mock',
-        ),
+        () => gm.replaceNarration(original, text: text, provider: 'mock'),
         throwsFormatException,
       );
     }
@@ -145,10 +139,7 @@ void main() {
         text: 'Die Kartografin nickt.\n„Was möchtest du wissen?“',
         provider: 'openai',
       );
-      await repository.saveCampaign(
-        accepted.campaign,
-        events: accepted.events,
-      );
+      await repository.saveCampaign(accepted.campaign, events: accepted.events);
       await repository.close();
       repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
