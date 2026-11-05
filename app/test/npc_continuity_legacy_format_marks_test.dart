@@ -85,30 +85,30 @@ void main() {
   test(
     'relationships and saved notes render without legacy format controls',
     () {
-    final campaign = _campaign(
-      npcs: const [
-        WorldNpc(
-          id: 'mira',
-          name: 'Mi\u034fra',
-          relationship: 'ver\u00adtraut',
-        ),
-      ],
-      notes: [_note('first', 'mira', 'Das\u180e Geheimnis\u206a bleibt.')],
-    );
-    final before = jsonEncode(campaign.toJson());
-    final snapshot = NpcContinuityReader.read(campaign, npcId: 'mira');
-    final context = snapshot.confirmedContext;
+      final campaign = _campaign(
+        npcs: const [
+          WorldNpc(
+            id: 'mira',
+            name: 'Mi\u034fra',
+            relationship: 'ver\u00adtraut',
+          ),
+        ],
+        notes: [_note('first', 'mira', 'Das\u180e Geheimnis\u206a bleibt.')],
+      );
+      final before = jsonEncode(campaign.toJson());
+      final snapshot = NpcContinuityReader.read(campaign, npcId: 'mira');
+      final context = snapshot.confirmedContext;
 
-    expect(snapshot.name, 'Mi\u034fra');
-    expect(snapshot.disambiguateName, isFalse);
-    expect(context, startsWith('NPC: Mira\nStatus: lebendig\n'));
-    expect(context, contains('Aktuelle Beziehung: ver traut'));
-    expect(context, contains('Das Geheimnis bleibt.'));
-    expect(context.split('\n'), hasLength(4));
-    for (final mark in ['\u00ad', '\u034f', '\u180e', '\u206a']) {
-      expect(context, isNot(contains(mark)));
-    }
-    expect(jsonEncode(campaign.toJson()), before);
+      expect(snapshot.name, 'Mi\u034fra');
+      expect(snapshot.disambiguateName, isFalse);
+      expect(context, startsWith('NPC: Mira\nStatus: lebendig\n'));
+      expect(context, contains('Aktuelle Beziehung: ver traut'));
+      expect(context, contains('Das Geheimnis bleibt.'));
+      expect(context.split('\n'), hasLength(4));
+      for (final mark in ['\u00ad', '\u034f', '\u180e', '\u206a']) {
+        expect(context, isNot(contains(mark)));
+      }
+      expect(jsonEncode(campaign.toJson()), before);
     },
   );
 
@@ -150,49 +150,51 @@ void main() {
   test(
     'SQLite restart keeps raw legacy names and confirmed NPC identities',
     () async {
-    final folder = await Directory.systemTemp.createTemp('npc-legacy-format-');
-    final file = paths.join(folder.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: file,
-    );
-    try {
-      final campaign = _campaign(
-        npcs: const [
-          WorldNpc(id: 'mira-one', name: 'Mira'),
-          WorldNpc(id: 'mira-two', name: 'Mi\u00adra'),
-        ],
-        notes: [
-          _note('one', 'mira-one', 'Die erste Chronik.'),
-          _note('two', 'mira-two', 'Die zweite Chronik.'),
-        ],
+      final folder = await Directory.systemTemp.createTemp(
+        'npc-legacy-format-',
       );
-      await repository.saveCampaign(campaign);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+      final file = paths.join(folder.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: file,
       );
-      final restored = (await repository.getCampaign(campaign.id))!;
-      final before = jsonEncode(restored.toJson());
-      final snapshot = NpcContinuityReader.read(restored, npcId: 'mira-two');
+      try {
+        final campaign = _campaign(
+          npcs: const [
+            WorldNpc(id: 'mira-one', name: 'Mira'),
+            WorldNpc(id: 'mira-two', name: 'Mi\u00adra'),
+          ],
+          notes: [
+            _note('one', 'mira-one', 'Die erste Chronik.'),
+            _note('two', 'mira-two', 'Die zweite Chronik.'),
+          ],
+        );
+        await repository.saveCampaign(campaign);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: file,
+        );
+        final restored = (await repository.getCampaign(campaign.id))!;
+        final before = jsonEncode(restored.toJson());
+        final snapshot = NpcContinuityReader.read(restored, npcId: 'mira-two');
 
-      expect(snapshot.disambiguateName, isTrue);
-      expect(snapshot.confirmedContext, contains('(NPC-ID: mira-two)'));
-      expect(snapshot.confirmedContext, contains('zweite Chronik'));
-      expect(snapshot.confirmedContext, isNot(contains('erste Chronik')));
-      expect(restored.npcs[1].name, 'Mi\u00adra');
-      expect(restored.hero.toJson(), campaign.hero.toJson());
-      expect(restored.revision, campaign.revision);
-      expect(jsonEncode(restored.toJson()), before);
-      expect(
-        (await repository.reconstructCampaign(campaign.id))!.toJson(),
-        restored.toJson(),
-      );
-    } finally {
-      await repository.close();
-      await folder.delete(recursive: true);
-    }
+        expect(snapshot.disambiguateName, isTrue);
+        expect(snapshot.confirmedContext, contains('(NPC-ID: mira-two)'));
+        expect(snapshot.confirmedContext, contains('zweite Chronik'));
+        expect(snapshot.confirmedContext, isNot(contains('erste Chronik')));
+        expect(restored.npcs[1].name, 'Mi\u00adra');
+        expect(restored.hero.toJson(), campaign.hero.toJson());
+        expect(restored.revision, campaign.revision);
+        expect(jsonEncode(restored.toJson()), before);
+        expect(
+          (await repository.reconstructCampaign(campaign.id))!.toJson(),
+          restored.toJson(),
+        );
+      } finally {
+        await repository.close();
+        await folder.delete(recursive: true);
+      }
     },
   );
 }
