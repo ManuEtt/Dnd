@@ -1798,3 +1798,16 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Nächster Schritt:** gesamte PR-CI auf finalem Commit prüfen und erst danach einen kontrollierten Main-Integrationsreview durchführen.
 
 ---
+
+---
+
+## Chat D – koordinierte Chat-B-Integration für KI-Angebotsvalidierung (05.11.2026)
+
+- **Ursprungs-PR:** [#550](https://github.com/ManuEtt/Dnd/pull/550), geprüfter Fach-HEAD `4eb53f347f1ac4dd2dc5fa06d63ba2926e42cb0f`, CI-Lauf [42000537289](https://github.com/ManuEtt/Dnd/actions/runs/42000537289) vollständig grün.
+- **Integrationsbasis:** Main `36ced64cd6b6b13888bee34f5dd33103edf04dcb` mit integriertem #552; kombinierte Main-CI nach #552 muss separat auf Erfolg kontrolliert werden.
+- **Quelle und Herkunft:** Code und Test aus #550 werden mit unveränderten Git-Blobinhalten übernommen. Die historische PR-Commitkette bleibt als zweiter Elternzweig des Integrationscommits erhalten.
+- **Gemeinsame Dateien:** Originale additive README-, zentrale und Chat-B-Checkpoint-Nachträge aus #550 wurden auf den aktuellen Main-Text aufgesetzt. Keine neueren Chat-D-Einträge werden überschrieben.
+- **Fachwirkung:** Gegen nicht sichtbare Unicode-Formatierung in vier KI-generierten Angebots-/Questtextfeldern; keine automatische Änderung bestätigter Quests, Heldenwerte oder Ressourcen.
+- **Akzeptanz:** kombinierte CI auf dem Integrations-HEAD muss inklusive Python, Backend, Dart, Flutter, Android-Debug/ABI-APKs und Release-Artefakten vollständig grün sein.
+- **NICHT GETESTET:** Kombinations-CI auf neuem HEAD und reales Android-Gerät (zum Zeitpunkt der Vorbereitung). Keine JSON-/SQLite-/Version-Migration.
+- **Nächster Schritt:** Nach grüner Kombinations-CI und Main-Konfliktprüfung regulär in main integrieren; ursprünglichen #550-Status anhand Git-Ancestry prüfen, nicht ungeprüft schließen.

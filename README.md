@@ -1309,3 +1309,9 @@ Finale GitHub-CI und reale Geräteabnahme getrennt nachweisen; kein Auto-Merge.
 Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt auch symbolische Links innerhalb von `app/lib/story/` und `app/lib/domain/` zurück (Dateien und Unterordner), bevor externe Dart-Dateien gelesen werden. Drei ergänzende Python-Regressionen sichern verschachtelte Datei- und Verzeichnislinks sowie Nicht-Dart-Links ab. Die Änderung enthält keine Regel-/Story-/UI-Anpassung oder Speicherformatmigration. Separate Chat-D-Abnahme auf `fix/chat-d/domain-symlink-source-guard-20261103`; vollständige CI auf finalem Commit noch ausstehend.
 
 ---
+
+---
+
+## Chat B – KI-Abenteuervorschläge ohne unsichtbare Formatzeichen (05.11.2026)
+
+[Draft-PR #550](https://github.com/ManuEtt/Dnd/pull/550) schließt eine Vertrauenslücke in `AiStoryStep.fromJson`: optionale generierte Abenteuerangebote werden nach der bestehenden Domänenprüfung auch für alle vier nutzerseitigen Textfelder (`title`, `description`, `questTitle`, `questDescription`) auf Bidi-, Legacy- und Steuerzeichen geprüft. Normale Umlaute, Akzente, Emoji und Zeilenumbrüche bleiben zulässig. Vier neue Testgruppen prüfen 20 verbotene Kombinationen, gültige Angebote und den unveränderten Spielstand. Gespeicherte Angebote und JSON-/SQLite-Schema bleiben kompatibel; keine Regel- oder Queständerung. Finale CI ist gesondert zu prüfen.

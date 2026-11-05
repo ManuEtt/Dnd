@@ -2027,3 +2027,16 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **Nächster Schritt:** finale vollständige CI dieses Branches und anschließende konfliktfreie Integration abnehmen.
 
 ---
+
+---
+
+## Chat B – 05.11.2026: Provider-Abenteuerangebot-Formatvalidierung (PR #550)
+
+- **Basis-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`. **Branch:** `feat/chat-b/ai-offer-untrusted-format-20261105`. **Draft-PR:** [#550](https://github.com/ManuEtt/Dnd/pull/550).
+- **IMPLEMENTIERT:** `app/lib/story/ai_story.dart` prüft nach `AdventureOffer.fromJson` alle vier KI-generierten Angebots-/Questtextfelder mit der bereits vorhandenen `_text`-Provider-Policy. Verhindert versteckte Bidi-/Formatmarken in bestätigungsbedürftigen Angeboten, ohne gespeicherte Altdaten abzulehnen.
+- **Regression:** `app/test/ai_story_adventure_offer_format_guard_test.dart`, vier Gruppen mit positiven Angeboten, 20 negativen Feld-/Marken-Kombinationen, Unicode/Emoji/Zeilenumbruch und weiterhin ignorierten Angeboten bei bestehendem Vorschlag. Kampagne, Held, Revision und Quests unverändert.
+- **Fachcommits:** `034796935dbd08083108fa09a5a59a137baca20d`, `bdba116f07fcef44421df941bd1d3e2d7984a03a`, `e6b05ddc1cee096fb985273bba9a93a897a8508e`; finalen Dokumentations-HEAD neu prüfen.
+- **GETESTET:** aktueller Main, offene PRs und deren Fachpfade, vorhandene Provider-/Domänenvalidierung geprüft. **NICHT GETESTET:** vollständige GitHub-CI auf finalem HEAD zum Dokumentationszeitpunkt, reales Android-Gerät, produktive KI, Upgrade-Test. Lokal kein Flutter/Dart-SDK.
+- **Migration:** Keine. Bestehende gespeicherte AdventureOffer-Daten bleiben unangetastet; keine Schema-, Quest-, Regel-, XP-, HP-, Provider- oder Versionsänderung.
+- **Konfliktkontrolle:** Offene #545 (Kampagnenrückblick) und #546 (Ortsgedächtnis) ändern andere Storyfachdateien; #543/#548 Regeln, #547 Qualität, #549 UI. README/zentraler Checkpoint bei Integration additiv durch Chat D konsolidieren.
+- **Nächster Schritt:** CI auf finalem HEAD einschließlich Flutter-Tests/Android/Alpha prüfen und Fehler im eigenen Branch beheben; danach an Chat D übergeben.
