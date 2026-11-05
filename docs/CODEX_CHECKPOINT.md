@@ -1,3 +1,18 @@
+## Chat D – APK-ZIP-Komponenten mit abschließendem Punkt/Leerzeichen sperren (05.11.2026)
+
+- **Basis-main:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4` (Main-CI [42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539): erfolgreich, unabhängig vom neuen Patch).
+- **Branch:** `fix/chat-d/apk-portable-trailing-paths-20261105`; **Fach-/Testcommit:** `cbc9f90d0d28c99097c3551d9c553f0ee84f4fc2`; **PR:** [#563](https://github.com/ManuEtt/Dnd/pull/563) (Draft).
+- **Problem:** Der Alpha-APK-Validator erkannte Unicode-/Casefold- und Datei-/Verzeichnis-Kollisionen, ließ aber vor ZIP-CRC Pfadteile wie `assets.` oder `map.json ` zu. Windows-kompatible Verarbeitung kann diese Namen mit anderen gleichsetzen.
+- **Lösung:** `validate_arm64_apk` lehnt jeden Pfadbestandteil mit abschließendem Punkt oder Leerzeichen ab. Unveränderte positive/negative Pfadregeln bleiben bestehen.
+- **Tests ergänzt:** sechs negative Mitgliedsnamen in Datei- und Verzeichniskomponenten, positiver Name mit innerem Punkt/Leerzeichen, Abbruch ohne Release-Artefakte.
+- **Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Alle 11 bei Paketbeginn offenen PRs inklusive Dateilisten und GitHub-main-HEAD auf Überschneidungen geprüft; Quellcode und Tests in eigenen GitHub-Commits abgelegt; bestehende Main-CI erfolgreich. **Keine lokale Python-Suite und kein Flutter-/Android-Test auf dem neuen PR-HEAD als bestanden behauptet.**
+- **NICHT GETESTET:** Python-Projektsuite und vollständige Backend-/Flutter-/Android-CI des endgültigen PR-HEADs; reale APK-Installation.
+- **Kompatibilität:** Kein SQLite-, JSON-, Spielstands-, Export-, Backup- oder Android-Versionseingriff; reguläre APK-Elementnamen unverändert.
+- **Nächster Schritt:** Actions des endgültigen PR-HEADs auf alle Gates prüfen, bei Fehlschlag ursächlich im selben Branch korrigieren; erst danach Review-/Integrationsentscheidung treffen.
+
+---
+
 ## Chat D – TOCTOU-Abwehr beim Kopieren geprüfter ARM64-Release-APKs (05.11.2026)
 
 - **Ausgangs-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9` (vollständig grüne Main-CI [41998020622](https://github.com/ManuEtt/Dnd/actions/runs/41998020622)).
