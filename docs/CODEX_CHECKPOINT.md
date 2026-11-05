@@ -2040,3 +2040,19 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **Migration:** Keine. Bestehende gespeicherte AdventureOffer-Daten bleiben unangetastet; keine Schema-, Quest-, Regel-, XP-, HP-, Provider- oder Versionsänderung.
 - **Konfliktkontrolle:** Offene #545 (Kampagnenrückblick) und #546 (Ortsgedächtnis) ändern andere Storyfachdateien; #543/#548 Regeln, #547 Qualität, #549 UI. README/zentraler Checkpoint bei Integration additiv durch Chat D konsolidieren.
 - **Nächster Schritt:** CI auf finalem HEAD einschließlich Flutter-Tests/Android/Alpha prüfen und Fehler im eigenen Branch beheben; danach an Chat D übergeben.
+
+---
+
+## Chat B – 05.11.2026: veraltete Unicode-Formatmarken im bestätigten Ortsrückblick (PR #555)
+
+- **Basis-main:** `36ced64cd6b6b13888bee34f5dd33103edf04dcb`; **Branch:** `feat/chat-b/place-resume-legacy-format-marks-20261105`; **Draft-PR:** [#555](https://github.com/ManuEtt/Dnd/pull/555).
+- **Problem:** `ConfirmedPlaceResumeSelector._oneLine` normalisierte bereits verschiedene Bidi-/Unicode-Markierungen, aber weder U+00AD noch die sechs älteren U+206A–U+206F. Diese blieben in einer als bestätigt gezeigten Ortsansicht unsichtbar erhalten.
+- **IMPLEMENTIERT:** `app/lib/story/confirmed_place_resume_selection.dart` erweitert nur das vorhandene RegExp um diese sieben Zeichen. Für den Namen werden unsichtbare Zeichen entfernt, für Beschreibungstext zu einem Wortabstand. Die quellgebundene Auswahl mit ID, Grenzwerten und `requireCurrent` bleibt unverändert. Keine schreibende Funktion, keine Regel-/Datenbankänderung.
+- **Neue Regressionen:** `app/test/confirmed_place_resume_legacy_format_marks_test.dart` mit drei deterministischen Flutter-Gruppen (sieben fehlende Zeichen in Namen und Beschreibungen, zwei gleichnamige Ortsdatensätze mit unterschiedlicher ID plus Same-Revision-Änderung, Legacy-JSON und vollständiger SQLite-Schließen/Neustart mit Bestands-/Journalabgleich). Helden-TP und gespeicherte Rohdaten bleiben erhalten.
+- **Fachcommits:** `085a003aa529c4016b5e179827f279ab42564342`, `7328f0722c4f1c5ef7fbcf053acd869a06f377fb`, `185059e4d0a9d7ce82f6d0576df7f35c91e149da`. Endgültigen HEAD nach Dokumentation neu prüfen.
+- **GETESTET:** GitHub-Main vor Branchstart und vor PR, offene PRs samt Fachdateien auf Überschneidung geprüft. Vorheriger Chat-B-PR #550 auf genauem HEAD `4eb53f347f1ac4dd2dc5fa06d63ba2926e42cb0f` in [Actions #42000537289](https://github.com/ManuEtt/Dnd/actions/runs/42000537289) vollständig erfolgreich; das ist **kein** Testnachweis für #555.
+- **NICHT GETESTET:** Finale vollständige GitHub-CI für #555 (Python, Backend, Formatter, Flutter, Android), Realgerät, Altversions-Upgrade und Produktiv-KI; lokales Flutter/Dart nicht vorhanden.
+- **BLOCKIERT:** Abschließende unabhängige CI/Review und Chat-D-Integration.
+- **MIGRATION:** Keine; JSON, SQLite, World/Quest/HP/XP/Regeln, App-Version und Provider bleiben unverändert. Herkunftsstempel prüft weiterhin alle ungekürzten gespeicherten Orte.
+- **Konfliktkontrolle:** Chat-B-PR #545 (Kampagnenrückblick), #546 (Langzeit-Ortsgedächtnis) und #550 (generierte Abenteuerangebote) berühren andere Fachdateien. Andere aktive PRs aus A, C, D ebenfalls abgeglichen; gemeinsame README/Checkpoints nur additiv bei Integration konsolidieren.
+- **Nächster Schritt:** Vollständige CI auf finalem PR-HEAD prüfen; Format-/Testfehler im selben Branch beheben; grünen PR zur kontrollierten Integration an Chat D übergeben.
