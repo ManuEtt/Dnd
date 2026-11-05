@@ -933,3 +933,18 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **Migration:** keine, keine Änderungen an Regeln, Quests, HP/XP, JSON/SQLite-Schema, Version oder Generierungsprovider.
 - **Konfliktkontrolle:** Kein neuer Storyfachpfad in den parallel offenen PRs #545, #546, #550; gemeinsame Docs beim Merge nur additiv konsolidieren.
 - **Genau nächster Schritt:** CI auf dem finalen Dokumentations-HEAD prüfen; etwaige Fehler beheben und Integration über Chat D abstimmen.
+
+## CHAT B – 05.11.2026: Erzählergedächtnis und ältere unsichtbare Zeichen (PR #569)
+
+- **Ausgangs-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95` (nach zeitgleichem Chat-D-Merge aktualisiert).
+- **Branch:** `feat/chat-b/npc-narrator-legacy-unicode-main-sync-20261105`, **PR:** [#569](https://github.com/ManuEtt/Dnd/pull/569) (Draft, kein Auto-Merge).
+- **Code-Commit:** `dc205e0b6238f78d137d252dfb1abec27a753e2f`, **Test-Commit:** `3d32639f57ad4c838729ee70a1cc053dbd4aebc9`. Weitere Dokumentationscommits folgen; finalen GitHub-HEAD stets live ermitteln.
+- **Ausgangsproblem:** `NpcNarratorMemory` ignorierte Soft Hyphen (U+00AD), Combining Grapheme Joiner (U+034F), Mongolian Vowel Separator (U+180E), alte Bidi-Zeichen U+206A–U+206F bei NPC-Namensgleichheit und bei der an den Erzähler weitergegebenen schreibgeschützten `memories`-Liste nicht vollständig. Visuell identische NPCs könnten anhand freien Texts fälschlich als eindeutig gelten.
+- **IMPLEMENTIERT:** Nur `app/lib/story/npc_narrator_memory.dart`: Namensvergleich und einzeilige Transportprojektion werden um diese Formatzeichen erweitert. Freier Spielertext darf bei doppelten sichtbaren NPC-Namen keine unklare Identität auswählen; bei eindeutigem NPC bleiben erlaubte Notizen und allgemeine Fakten lesbar. Keine unbestätigten Erzählbehauptungen als Regelwerte.
+- **TESTS ERGÄNZT:** `app/test/npc_narrator_legacy_unicode_test.dart`, vier neue Gruppen: neun unsichtbare Namensvarianten mit negativen Identitätstests; eindeutige, formatbereinigte NPC- und allgemeine Erinnerungen einschließlich Zeichenbudget/Immutability; reguläre Namen/Emoji und ungültige Limits; JSON-/SQLite-Schließen/Neuöffnen/Journalkonsistenz ohne gespeicherte Text- oder Regeländerung.
+- **GETESTET:** Live-GitHub-`main`, alle offenen PR-Fachdateien und bestehende Story-Modulgrenzen auf Nichtüberschneidung geprüft; neue Fach- und Testdatei auf eigenem Branch committed. Vorgänger-PR #565: [Actions #42059286752](https://github.com/ManuEtt/Dnd/actions/runs/42059286752), sechs Jobs `completed/success` (anderes Paket, nicht als Beleg für #569 gewertet).
+- **NICHT GETESTET:** Vollständige Dart-Formatierung, Flutter-, Python-, Backend-, Android- und Native-Tests auf finalem PR-HEAD bis zur CI-Abnahme offen. Reales Android-Gerät, Android-Upgrade und produktive KI fehlen.
+- **BLOCKIERT:** Vor Integration finalen CI-Status prüfen und eventuelle Format-/Regressionstests im selben PR korrigieren. Lokales Flutter/Dart-SDK nicht verfügbar; gemeinsame README-/CODEX-Dokumentation mit anderen PRs nur additiv durch Chat D zusammenführen.
+- **MIGRATION:** Keine; JSON, SQLite, Heldenwerte, Inventar, Quests, Ereignisse, Bestätigungen, App-Version und gespeicherte Originalstrings unverändert.
+- **NÄCHSTER SCHRITT:** CI auf finalem #569-HEAD vollständig abnehmen und bei Fehlern im selben Branch korrigieren; danach Chat-D-Integrationsreview.
+
