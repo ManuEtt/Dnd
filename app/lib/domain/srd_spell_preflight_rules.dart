@@ -97,12 +97,31 @@ class SrdSpellPreflightRules {
         'Zauber ist für diese eigene Klasse und deren Stufe nicht bestätigt.',
       );
     }
-    // Multiclass preparations are class-specific in SRD 5.2.1, even when a
-    // spell appears on both lists. Historic hero.spells has no class owner.
-    // Require an explicit declaration only when BOTH actual class levels
-    // independently permit this spell, so a single eligible class needs no
-    // invented migration or extra choice.
-    if (hero.hasSecondClass && !preparedForCastingClassConfirmed) {
+    // An explicitly confirmed class-owned ledger takes precedence over a
+    // transient yes/no approval. Recheck the stored source snapshot before
+    // accepting the preparing class and the exact legacy spell-list entry.
+    // Pact slots may fund a prepared Wizard spell (and conversely); the
+    // selected slot pool is not evidence of which class prepared the spell.
+    final preparationRecord = hero.preparedSpellRecord;
+    if (preparationRecord != null &&
+        (!preparationRecord.matchesSource(
+              className: hero.className,
+              level: hero.level,
+              secondaryClassName: hero.secondaryClassName,
+              secondaryClassLevel: hero.secondaryClassLevel,
+              spells: hero.spells,
+            ) ||
+            !(preparationRecord.spellsByClass[chosenClass]?.contains(knownName) ??
+                false))) {
+      throw const FormatException(
+        'Der gespeicherte Zaubernachweis bestätigt diese Klassenquelle nicht.',
+      );
+    }
+    // Legacy characters without a class-owned record retain the existing
+    // explicit choice for ambiguous spells. Do not invent a preparation.
+    if (preparationRecord == null &&
+        hero.hasSecondClass &&
+        !preparedForCastingClassConfirmed) {
       final first = findSrdClass(hero.className)?.name;
       final second = findSrdClass(hero.secondaryClassName)?.name;
       if (first != null &&
