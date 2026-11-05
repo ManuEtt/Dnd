@@ -167,7 +167,8 @@ def validate_arm64_apk(apk: Path) -> None:
             parts = name.rstrip('/').split('/')
             if (not name or name.startswith('/') or '\\' in name
                     or re.match(r'^[A-Za-z]:', name)
-                    or any(part in ('', '.', '..') for part in parts)
+                    or any(part in ('', '.', '..') or part.endswith((' ', '.'))
+                           for part in parts)
                     or any(unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
                            for char in name)):
                 raise ValueError('Die ARM64-APK enthält unsichere ZIP-Pfade.')
