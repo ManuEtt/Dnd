@@ -59,6 +59,12 @@ def _gradle_logical_lines(text: str):
     pending = ''
     continued = False
     for physical in re.split(r'\r\n|\r|\n', text):
+        # Java Properties does not continue comment lines, even when they
+        # end with an odd number of backslashes. A following physical line
+        # must remain visible: it may redefine a security-sensitive key.
+        if not continued and physical.lstrip(' \t\f').startswith(('#', '!')):
+            yield physical
+            continue
         fragment = physical.lstrip(' \t\f') if continued else physical
         trailing = len(fragment) - len(fragment.rstrip('\\'))
         if trailing % 2:
