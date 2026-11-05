@@ -933,3 +933,16 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **Migration:** keine, keine Änderungen an Regeln, Quests, HP/XP, JSON/SQLite-Schema, Version oder Generierungsprovider.
 - **Konfliktkontrolle:** Kein neuer Storyfachpfad in den parallel offenen PRs #545, #546, #550; gemeinsame Docs beim Merge nur additiv konsolidieren.
 - **Genau nächster Schritt:** CI auf dem finalen Dokumentations-HEAD prüfen; etwaige Fehler beheben und Integration über Chat D abstimmen.
+
+## 2026-11-05 – Quellenhistorien im zentralen Integrationsbranch
+
+Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-20261105-reviewed` als unveränderte Git-Merge-Vorfahren eingebunden, einschließlich ihrer fachlichen Dateien und Regressionstests:
+
+- [PR #545](https://github.com/ManuEtt/Dnd/pull/545)
+- [PR #546](https://github.com/ManuEtt/Dnd/pull/546)
+- [PR #560](https://github.com/ManuEtt/Dnd/pull/560)
+- [PR #565](https://github.com/ManuEtt/Dnd/pull/565)
+- [PR #569](https://github.com/ManuEtt/Dnd/pull/569)
+
+Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
+

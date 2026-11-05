@@ -203,10 +203,16 @@ class _PendingActionStatusState extends State<PendingActionStatus> {
           const SizedBox(height: 8),
         ],
         if (error != null)
-          Text(
-            error,
-            key: const ValueKey('adventure-outbox-error'),
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          Semantics(
+            container: true,
+            liveRegion: true,
+            label: 'Fehler bei ausstehender Handlung: $error',
+            excludeSemantics: true,
+            child: Text(
+              error,
+              key: const ValueKey('adventure-outbox-error'),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ),
       ],
     );

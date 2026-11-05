@@ -37,6 +37,7 @@ import 'monk_initiative_features.dart';
 import 'srd_bard_superior_inspiration_rules.dart';
 import 'paladin_lay_on_hands.dart';
 import 'saving_throw_class_actions.dart';
+import 'srd_manual_saving_throw_rules.dart';
 import 'ai_story.dart';
 import '../story/story_campaign_engine.dart';
 import '../story/story_memory_engine.dart';
@@ -3059,8 +3060,8 @@ class GameEngine {
         );
       }
       try {
-        final rule = CharacterRuleEngine.savingThrow(current.hero, ability);
-        if (rule.automaticallyFails) {
+        final rule = SrdManualSavingThrowRules.prepare(current.hero, ability);
+        if (rule == null) {
           return _commit(
             campaign,
             current,
@@ -3141,6 +3142,8 @@ class GameEngine {
           e.message.toString(),
           type: 'rules.blocked',
         );
+      } on FormatException catch (e) {
+        return _commit(campaign, current, e.message, type: 'rules.blocked');
       }
     }
     final retrySave = RegExp(

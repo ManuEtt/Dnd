@@ -123,94 +123,105 @@ class FantasyCharacterOverview extends StatelessWidget {
       showDragHandle: true,
       isScrollControlled: true,
       backgroundColor: FantasyPalette.night,
-      builder: (context) => SafeArea(
-        top: false,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * .72,
-          ),
-          child: StatefulBuilder(
-            builder: (context, setModalState) {
-              final normalized = query.trim().toLowerCase();
-              final visible = normalized.isEmpty
-                  ? lines
-                  : lines
-                        .where(
-                          (line) => line.toLowerCase().contains(normalized),
-                        )
-                        .toList();
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (searchable)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
-                      child: TextField(
-                        key: const ValueKey('sheet-skill-search'),
-                        onChanged: (value) =>
-                            setModalState(() => query = value),
-                        style: const TextStyle(color: ivory),
-                        decoration: InputDecoration(
-                          labelText: 'Fertigkeit suchen',
-                          labelStyle: const TextStyle(color: dim),
-                          hintText: 'Name, Bonus oder geübt',
-                          hintStyle: const TextStyle(color: dim),
-                          prefixIcon: const Icon(Icons.search, color: gold),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: gold.withValues(alpha: .65),
+      builder: (context) {
+        final media = MediaQuery.of(context);
+        final keyboardHeight = media.viewInsets.bottom;
+        // The keyboard is not automatically deducted from the height of an
+        // isScrollControlled modal sheet. Reserve its space explicitly.
+        final availableHeight =
+            (media.size.height - keyboardHeight - media.padding.top)
+                .clamp(0.0, double.infinity)
+                .toDouble();
+        return Padding(
+          padding: EdgeInsets.only(bottom: keyboardHeight),
+          child: SafeArea(
+            top: false,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: availableHeight * .72),
+              child: StatefulBuilder(
+                builder: (context, setModalState) {
+                  final normalized = query.trim().toLowerCase();
+                  final visible = normalized.isEmpty
+                      ? lines
+                      : lines
+                            .where(
+                              (line) => line.toLowerCase().contains(normalized),
+                            )
+                            .toList();
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (searchable)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
+                          child: TextField(
+                            key: const ValueKey('sheet-skill-search'),
+                            onChanged: (value) =>
+                                setModalState(() => query = value),
+                            style: const TextStyle(color: ivory),
+                            decoration: InputDecoration(
+                              labelText: 'Fertigkeit suchen',
+                              labelStyle: const TextStyle(color: dim),
+                              hintText: 'Name, Bonus oder geübt',
+                              hintStyle: const TextStyle(color: dim),
+                              prefixIcon: const Icon(Icons.search, color: gold),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: gold.withValues(alpha: .65),
+                                ),
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: gold, width: 2),
+                              ),
                             ),
                           ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: gold, width: 2),
-                          ),
+                        ),
+                      Flexible(
+                        child: ListView(
+                          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                          shrinkWrap: true,
+                          children: [
+                            Text(
+                              title,
+                              style: const TextStyle(
+                                fontFamily: 'serif',
+                                fontSize: 23,
+                                color: gold,
+                              ),
+                            ),
+                            const Divider(color: gold),
+                            if (visible.isEmpty)
+                              Text(
+                                lines.isEmpty
+                                    ? 'Keine bestätigten Einträge vorhanden.'
+                                    : 'Keine passenden Fertigkeiten.',
+                                key: const ValueKey('sheet-skill-search-empty'),
+                                style: const TextStyle(color: dim),
+                              ),
+                            for (final line in visible)
+                              ListTile(
+                                dense: true,
+                                leading: const Icon(
+                                  Icons.auto_awesome_outlined,
+                                  color: gold,
+                                  size: 19,
+                                ),
+                                title: Text(
+                                  line,
+                                  style: const TextStyle(color: ivory),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
-                    ),
-                  Flexible(
-                    child: ListView(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-                      shrinkWrap: true,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontFamily: 'serif',
-                            fontSize: 23,
-                            color: gold,
-                          ),
-                        ),
-                        const Divider(color: gold),
-                        if (visible.isEmpty)
-                          Text(
-                            lines.isEmpty
-                                ? 'Keine bestätigten Einträge vorhanden.'
-                                : 'Keine passenden Fertigkeiten.',
-                            key: const ValueKey('sheet-skill-search-empty'),
-                            style: const TextStyle(color: dim),
-                          ),
-                        for (final line in visible)
-                          ListTile(
-                            dense: true,
-                            leading: const Icon(
-                              Icons.auto_awesome_outlined,
-                              color: gold,
-                              size: 19,
-                            ),
-                            title: Text(
-                              line,
-                              style: const TextStyle(color: ivory),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

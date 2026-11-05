@@ -107,11 +107,11 @@ class NpcNarratorMemory {
   }
 
   // An invisible name character does not distinguish two saved identities.
-  // Fold Unicode zero-width spaces/joiners, word joiners and BOM in the same
-  // way as direction marks. Never infer one of two visually equal NPC IDs
-  // from unstructured player prose.
+  // Fold invisible legacy soft hyphens, grapheme joiners, deprecated vowel
+  // separators, zero-width controls and bidi marks as one visible name.
+  // Never infer one of two visually equal IDs from unstructured player prose.
   static final RegExp _nameFormat = RegExp(
-    r'[\u061c\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]',
+    r'[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]',
   );
 
   static String _stripNameFormat(String text) =>
@@ -124,14 +124,14 @@ class NpcNarratorMemory {
       .replaceAll('ü', 'ue')
       .replaceAll('ß', 'ss');
 
-  // Legacy imports can contain bidi overrides/isolates and invisible direction
-  // marks. They must neither spoof the identity check nor alter wire-memory
-  // presentation. Only the outbound, read-only projection is normalized.
+  // Legacy imports can contain bidi and other hidden format controls. They
+  // must neither spoof name matching nor reach the outbound memory payload.
+  // Only the outbound, read-only projection is normalized.
   static String _oneLine(String text) => text
       .replaceAll(
         RegExp(
-          r'[\x00-\x1f\x7f-\x9f\u061c\u200b-\u200f'
-          r'\u2028-\u202e\u2060-\u2069\ufeff]',
+          r'[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f'
+          r'\u2028-\u202e\u2060-\u206f\ufeff]',
         ),
         ' ',
       )

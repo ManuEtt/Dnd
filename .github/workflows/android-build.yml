@@ -32,7 +32,7 @@ jobs:
       CI: 'true'
     steps:
       - name: Repository auschecken
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Complete ancestry is required for restorable source bundles/patches.
           fetch-depth: 0
@@ -55,7 +55,7 @@ jobs:
       - name: Paket- und Strukturtests ausführen
         run: python3 -m unittest discover -s scripts/tests -v
       - name: Java 17 installieren
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '17'
@@ -66,7 +66,7 @@ jobs:
           channel: stable
           cache: true
       - name: Node.js 22.14.0 installieren
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22.14.0'
           cache: npm
@@ -107,7 +107,7 @@ jobs:
           RUN_BACKEND_SMOKE: '1'
         run: flutter test
       - name: Android-Kommandozeilenwerkzeuge installieren
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
         with:
           cmdline-tools-version: '12266719'
           packages: 'platform-tools'
@@ -123,7 +123,7 @@ jobs:
         working-directory: app/android
         run: ./gradlew :app:testDebugUnitTest --no-daemon
       - name: APK bereitstellen
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: lebendiger-spielleiter-android-debug
           path: app/build/app/outputs/flutter-apk/app-debug.apk
@@ -150,8 +150,8 @@ jobs:
             target: android-x64
             filename: app-x86_64-alpha.apk
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '17'
@@ -160,7 +160,7 @@ jobs:
           flutter-version: '3.35.7'
           channel: stable
           cache: true
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
         with:
           cmdline-tools-version: '12266719'
           packages: 'platform-tools'
@@ -180,7 +180,7 @@ jobs:
           mkdir -p build/alpha
           cp build/app/outputs/flutter-apk/app-release.apk "build/alpha/${{ matrix.filename }}"
           test -s "build/alpha/${{ matrix.filename }}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: wuerfelraunen-alpha-${{ matrix.abi }}-${{ github.sha }}
           path: app/build/alpha/${{ matrix.filename }}
@@ -194,8 +194,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v7
         with:
           pattern: wuerfelraunen-alpha-*-${{ github.sha }}
           path: app/build/alpha
@@ -205,7 +205,7 @@ jobs:
           test -s app/build/alpha/app-arm64-v8a-alpha.apk
           test -s app/build/alpha/app-armeabi-v7a-alpha.apk
           test -s app/build/alpha/app-x86_64-alpha.apk
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: lebendiger-spielleiter-alpha-kleine-apks
           path: app/build/alpha/app-*-alpha.apk
@@ -219,7 +219,7 @@ jobs:
           python3 scripts/prepare_alpha_release.py "$RUNNER_TEMP/wuerfelraunen-release" \
             --commit "$GITHUB_SHA" \
             --run-url "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: wuerfelraunen-alpha-${{ github.run_number }}-${{ github.sha }}
           path: ${{ runner.temp }}/wuerfelraunen-release/
@@ -234,7 +234,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Vollständigen Quellcode-Checkpoint erstellen (auch bei fehlgeschlagenem Build)
@@ -265,7 +265,7 @@ jobs:
           } > "$RUNNER_TEMP/wuerfelraunen-source/REPORT.txt"
       - name: Quellcode-ZIP, SHA256 und Fehlerbericht bereitstellen
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: wuerfelraunen-source-checkpoint-${{ github.sha }}
           path: ${{ runner.temp }}/wuerfelraunen-source/

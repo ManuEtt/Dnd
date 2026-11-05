@@ -197,6 +197,42 @@ class VerifyProjectTests(unittest.TestCase):
                     'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
                 ))
 
+    def test_wrapper_rejects_nonportable_trailing_space_or_dot_before_crc(self):
+        # Some extraction targets normalize trailing dots and spaces. Reject
+        # all such components before CRC validation, not just exact collisions.
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for unsafe in (
+            'META-INF/notice.txt.',
+            'META-INF/notice.txt ',
+            'META-INF./notice.txt',
+            'META-INF /notice.txt',
+            'META-INF/assets./notice.txt',
+            'META-INF/assets /notice.txt',
+            'META-INF/dir./',
+            'META-INF/dir /',
+        ):
+            with self.subTest(name=unsafe):
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    archive.writestr(unsafe, b'unportable')
+                before = jar.read_bytes()
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before portable path guard'),
+                ):
+                    self.assertTrue(any(
+                        'Gradle-Wrapper-JAR' in error
+                        for error in verify_project(self.root)
+                    ))
+                self.assertEqual(jar.read_bytes(), before)
+
+    def test_wrapper_keeps_internal_spaces_and_dots_portable(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr('META-INF/alte karten.v2/karte 2.json', b'valid')
+        self.assertEqual([], verify_project(self.root))
+
     def test_wrapper_rejects_file_used_as_implicit_directory_before_crc(self):
         jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
         for reversed_order in (False, True):

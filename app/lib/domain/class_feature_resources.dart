@@ -9,16 +9,30 @@ import 'srd_character_classes.dart';
 class ClassFeatureResources {
   const ClassFeatureResources._();
 
+  /// Direct and legacy snapshots must not grant resources from duplicate,
+  /// unknown or inconsistent class levels. The class alias is canonicalized
+  /// before comparing both sides of a multiclass profile.
   static int fighterLevel(HeroCharacter hero) {
-    var level = 0;
-    if (findSrdClass(hero.className)?.name == 'Kämpfer') {
-      level += hero.primaryClassLevel;
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return 0;
     }
-    if (hero.hasSecondClass &&
-        findSrdClass(hero.secondaryClassName)?.name == 'Kämpfer') {
-      level += hero.secondaryClassLevel;
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return 0;
     }
-    return level;
+    return (primary == 'Kämpfer' ? hero.primaryClassLevel : 0) +
+        (secondary == 'Kämpfer' ? hero.secondaryClassLevel : 0);
   }
 
   static int secondWindMaximum(HeroCharacter hero) {

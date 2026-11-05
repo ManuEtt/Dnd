@@ -17,6 +17,15 @@ typedef StoryCommit =
 /// Isolated narrative-state mutations. No random dice and no combat rules.
 /// All changed checkpoints are validated against the shared campaign schema.
 class StoryCampaignEngine {
+  // Free-turn replacements and structured AI story steps must share the
+  // same provider text boundary. Retain ordinary multiline narration,
+  // tabs and RTL letters, but reject invisible controls and bidi spoofing.
+  static final RegExp _unsafeNarrationFormatting = RegExp(
+    r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f'
+    r'\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e'
+    r'\u2060\u2066-\u206f\ufeff]',
+  );
+
   StoryCampaignEngine({
     required String Function(String) nextId,
     required DateTime Function() clock,
@@ -67,7 +76,9 @@ class StoryCampaignEngine {
     required String provider,
   }) {
     final narration = text.trim();
-    if (narration.isEmpty || narration.length > 4000) {
+    if (narration.isEmpty ||
+        narration.length > 4000 ||
+        _unsafeNarrationFormatting.hasMatch(narration)) {
       throw const FormatException(
         'Die Erzählung muss 1 bis 4000 Zeichen enthalten.',
       );

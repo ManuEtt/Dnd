@@ -787,3 +787,15 @@ Der vollständige rein additive Chat-Fachnachtrag aus PR #479 ist nachfolgend er
 - **NÄCHSTER SCHRITT:** Finale GitHub-CI auf exakt dem Dokumentations-HEAD abnehmen, konkrete Fehler auf demselben Branch korrigieren; anschließend echte Android-/TalkBack-/IME-Prüfung.
 
 ---
+
+## 2026-11-05 – Quellenhistorien im zentralen Integrationsbranch
+
+Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-20261105-reviewed` als unveränderte Git-Merge-Vorfahren eingebunden, einschließlich ihrer fachlichen Dateien und Regressionstests:
+
+- [PR #549](https://github.com/ManuEtt/Dnd/pull/549)
+- [PR #556](https://github.com/ManuEtt/Dnd/pull/556)
+- [PR #566](https://github.com/ManuEtt/Dnd/pull/566)
+- [PR #570](https://github.com/ManuEtt/Dnd/pull/570)
+
+Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
+

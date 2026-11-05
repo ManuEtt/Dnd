@@ -100,39 +100,41 @@ class _ImportBackupDialogState extends State<_ImportBackupDialog> {
   Widget build(BuildContext context) => PopScope(
     canPop: !_busy,
     child: AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       title: Text(widget.title),
       content: SizedBox(
         width: 600,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Wähle eine JSON-Datei oder füge den exportierten Text ein. '
-                'Erst „Importieren“ übernimmt geprüfte Daten. Fehlerhafte Daten werden abgewiesen.',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Wähle eine JSON-Datei oder füge den exportierten Text ein. '
+              'Erst „Importieren“ übernimmt geprüfte Daten. Fehlerhafte Daten werden abgewiesen.',
+            ),
+            const SizedBox(height: 12),
+            FantasyTextButton(
+              label: 'Datei wählen',
+              icon: Icons.folder_open_outlined,
+              style: FantasyButtonStyle.iron,
+              onPressed: _busy ? null : _chooseFile,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _text,
+              readOnly: _busy,
+              minLines: MediaQuery.textScalerOf(context).scale(1) >= 1.8
+                  ? 3
+                  : 6,
+              maxLines: 12,
+              decoration: const InputDecoration(
+                labelText: 'JSON-Spielstand',
+                alignLabelWithHint: true,
               ),
-              const SizedBox(height: 12),
-              FantasyTextButton(
-                label: 'Datei wählen',
-                icon: Icons.folder_open_outlined,
-                style: FantasyButtonStyle.iron,
-                onPressed: _busy ? null : _chooseFile,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _text,
-                readOnly: _busy,
-                minLines: 6,
-                maxLines: 12,
-                decoration: const InputDecoration(
-                  labelText: 'JSON-Spielstand',
-                  alignLabelWithHint: true,
-                ),
-              ),
-              _BackupStatus(busy: _busy, message: _message),
-            ],
-          ),
+            ),
+            _BackupStatus(busy: _busy, message: _message),
+          ],
         ),
       ),
       actions: [

@@ -1827,3 +1827,17 @@ Fachnachweis: `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
 Die darunter bewahrten Berichte gelten jeweils für ihren damaligen Stand.
 
 ---
+
+## 05.11.2026 – geprüfte 21-PR-Migration im Integrationsbranch (noch nicht nach main übernommen)
+
+Quellstand: `main` `7b76d34e42f9f536993035876f8789d3405d70f9`. Integrationsbranch: `integration/open-prs-20261105-reviewed`.
+21 historische PR-Heads und drei ersetzte Diagnose-/Vorgängerbranches sind über Merge-Vorfahren gesichert. Fachänderungen, bestehende Regressionstests und neue Testdateien wurden aus den Quell-PRs zusammengeführt, ohne andere `main`-Dateiversionen pauschal durch ältere Branch-Snapshots zu ersetzen.
+Der kombinierte SRD-Regelebene-Audit enthält beide getrennten Ergänzungen aus PR #557 und #576 und wurde als JSON validiert. Die README-Projektbeschreibung wurde unverändert belassen; ein neutraler Nachtrag befindet sich ausschließlich am Dateiende.
+Umfang: Paktmagie, vorbereitete Zauber, Klassenressourcen und -profile, Rettungswürfe, Rast, Erzähl-/NPC-/Ortsgedächtnis, Android-Dialoge und Barrierefreiheit, Gradle-/ZIP-Validatoren sowie Node-24-Action-Updates.
+Einzel-PR-CI wurde geprüft, aber **die gemeinsame CI des Integrationsstands ist noch ausstehend**. Keine Aussage über erfolgreichen `main`-Merge, Branchlöschungen, Geräteabnahme oder Signierung.
+Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen und Cleanup-Sicherheitsregeln: `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md`.
+
+## 05.11.2026 – Sämtliche aktiven Actions auf Node-24-kompatible Versionen konsolidiert
+
+First-Party-Action-Majors in der Android-Pipeline, der manuellen Dart-Reparatur und beiden spezialisierten Regression-Workflows vereinheitlicht; bestehender Cleanup auf `github-script@v8` erhalten. Zwei `setup-android`-Aufrufe von v3/Node20 auf v4/Node24 migriert, ohne die bereits gesetzten Android-SDK-Versionen oder Pakete zu ändern. Positive/negative Python-Regressionen in `scripts/tests/test_android_actions_node24.py` und `scripts/tests/test_first_party_actions_node24.py` hinzugefügt. Integrations-PR #577, kombinierte CI noch offen.
+

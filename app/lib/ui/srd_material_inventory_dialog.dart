@@ -5,6 +5,7 @@ import '../domain/models.dart';
 import '../domain/srd_spell_audited_inventory_rules.dart';
 import '../domain/srd_spell_catalog.dart';
 import '../domain/srd_spell_component_rules.dart';
+import '../domain/srd_spell_inventory_id_rules.dart';
 import 'fantasy_buttons.dart';
 
 /// Read-only declaration for a later, separately authorized cast action.
@@ -60,6 +61,21 @@ class _SrdMaterialInventoryDialogState
       }
     } on FormatException catch (exception) {
       _setupError = exception.message;
+    }
+
+    // Reject an ambiguous inventory before Flutter constructs dropdown menus.
+    // The domain resolver already rejects these IDs at confirmation time, but
+    // a duplicate DropdownMenuItem value can assert on the next UI rebuild.
+    if (_setupError == null) {
+      final ids = <String>{};
+      for (final item in widget.hero.inventory) {
+        if (!SrdSpellInventoryIdRules.isSafe(item.id) ||
+            !ids.add(item.id) ||
+            item.quantity < 1) {
+          _setupError = 'Inventar enthält ungültige oder doppelte Stapel-IDs.';
+          break;
+        }
+      }
     }
   }
 
@@ -191,7 +207,9 @@ class _SrdMaterialInventoryDialogState
               ),
               items: [
                 for (final item in widget.hero.inventory)
-                  if (item.id.isNotEmpty && item.quantity > 0)
+                  if (_setupError == null &&
+                      item.id.isNotEmpty &&
+                      item.quantity > 0)
                     DropdownMenuItem(
                       value: item.id,
                       child: Text(

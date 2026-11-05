@@ -1860,3 +1860,14 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Akzeptanz:** kombinierte CI auf dem Integrations-HEAD muss inklusive Python, Backend, Dart, Flutter, Android-Debug/ABI-APKs und Release-Artefakten vollständig grün sein.
 - **NICHT GETESTET:** Kombinations-CI auf neuem HEAD und reales Android-Gerät (zum Zeitpunkt der Vorbereitung). Keine JSON-/SQLite-/Version-Migration.
 - **Nächster Schritt:** Nach grüner Kombinations-CI und Main-Konfliktprüfung regulär in main integrieren; ursprünglichen #550-Status anhand Git-Ancestry prüfen, nicht ungeprüft schließen.
+
+## 2026-11-05 – Quellenhistorien im zentralen Integrationsbranch
+
+Folgende Fach-PRs von Arbeitsbereich D sind im Branch `integration/open-prs-20261105-reviewed` als unveränderte Git-Merge-Vorfahren eingebunden, einschließlich ihrer fachlichen Dateien und Regressionstests:
+
+- [PR #567](https://github.com/ManuEtt/Dnd/pull/567)
+- [PR #573](https://github.com/ManuEtt/Dnd/pull/573)
+- [PR #575](https://github.com/ManuEtt/Dnd/pull/575)
+
+Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
+

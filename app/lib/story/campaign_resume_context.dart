@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../domain/models.dart';
 
 /// A read-only projection for resuming a campaign after a break.
@@ -14,7 +16,27 @@ class CampaignResumeSnapshot {
     required List<String> confirmedFacts,
     required List<String> openLeads,
   }) : confirmedFacts = List.unmodifiable(confirmedFacts),
-       openLeads = List.unmodifiable(openLeads);
+       openLeads = List.unmodifiable(openLeads),
+       _campaignId = null,
+       _sourceStamp = null;
+
+  // Only a reader-produced snapshot can prove which saved source it describes.
+  // Keep the public constructor compatible, but unbound snapshots fail closed.
+  CampaignResumeSnapshot._saved({
+    required Campaign campaign,
+    this.latestScene,
+    this.latestSavedRecap,
+    required List<String> confirmedFacts,
+    required List<String> openLeads,
+  }) : revision = campaign.revision,
+       sessionId = campaign.sessionId,
+       confirmedFacts = List.unmodifiable(confirmedFacts),
+       openLeads = List.unmodifiable(openLeads),
+       _campaignId = campaign.id,
+       _sourceStamp = CampaignResumeReader._sourceStamp(campaign);
+
+  final String? _campaignId;
+  final String? _sourceStamp;
 
   final int revision;
   final String sessionId;
@@ -30,6 +52,22 @@ class CampaignResumeSnapshot {
 
   /// Only story threads currently saved as open, most recent list entry first.
   final List<String> openLeads;
+
+  /// Recheck against the latest campaign before showing or forwarding a recap.
+  ///
+  /// Even edits hidden behind a truncated line, or outside the selected top
+  /// facts/leads, invalidate the snapshot at the same revision. Rule-only
+  /// changes at that revision do not turn narration into confirmed facts.
+  /// This is a read-only check; it never changes the underlying campaign.
+  void requireCurrent(Campaign campaign) {
+    if (_campaignId == null ||
+        campaign.id != _campaignId ||
+        campaign.sessionId != sessionId ||
+        campaign.revision != revision ||
+        _sourceStamp != CampaignResumeReader._sourceStamp(campaign)) {
+      throw const FormatException('Gespeicherter Rückblick ist veraltet.');
+    }
+  }
 
   /// Line-safe player-facing projection, with source/trust labels intact.
   String get playerOverview {
@@ -68,6 +106,19 @@ class CampaignResumeReader {
 
   // Saved thread IDs, not their display titles, bind a lead to one identity.
   static final RegExp _safeThreadId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
+
+  // Compare the full raw story sources, not only the visible bounded excerpt.
+  // None of these fields is a rule result, and no JSON/SQLite writes occur.
+  static String _sourceStamp(Campaign campaign) => jsonEncode({
+    'scene': campaign.scene,
+    'sessionRecaps': [
+      for (final recap in campaign.sessionRecaps) recap.toJson(),
+    ],
+    'facts': campaign.facts,
+    'storyThreads': [
+      for (final thread in campaign.storyThreads) thread.toJson(),
+    ],
+  });
 
   static CampaignResumeSnapshot read(
     Campaign campaign, {
@@ -120,9 +171,8 @@ class CampaignResumeReader {
       if (leads.length == maxLeads) break;
     }
 
-    return CampaignResumeSnapshot(
-      revision: campaign.revision,
-      sessionId: campaign.sessionId,
+    return CampaignResumeSnapshot._saved(
+      campaign: campaign,
       latestScene: scene.isEmpty ? null : scene,
       latestSavedRecap: recap.isEmpty ? null : recap,
       confirmedFacts: facts,

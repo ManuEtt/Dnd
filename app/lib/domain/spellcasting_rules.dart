@@ -27,15 +27,30 @@ class SpellcastingRules {
     return Map.unmodifiable(available);
   }
 
+  /// Only a coherent SRD class profile grants Pact Magic slots.
+  /// Legacy/direct heroes may contain unconfirmed or duplicate class aliases;
+  /// read-only slot helpers must fail closed without modifying those records.
   static int pactClassLevel(HeroCharacter hero) {
-    var levels = 0;
-    if (findSrdClass(hero.className)?.name == 'Hexenmeister') {
-      levels += hero.primaryClassLevel;
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return 0;
     }
-    if (findSrdClass(hero.secondaryClassName)?.name == 'Hexenmeister') {
-      levels += hero.secondaryClassLevel;
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return 0;
     }
-    return levels;
+    return (primary == 'Hexenmeister' ? hero.primaryClassLevel : 0) +
+        (secondary == 'Hexenmeister' ? hero.secondaryClassLevel : 0);
   }
 
   static int pactSlotCount(HeroCharacter hero) {

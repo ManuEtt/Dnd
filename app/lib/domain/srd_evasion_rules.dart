@@ -1,6 +1,7 @@
 import 'class_resource_rules.dart';
 import 'condition_rules.dart';
 import 'models.dart';
+import 'srd_character_classes.dart';
 
 /// SRD 5.2.1: Monk/Rogue level 7 Evasion (Entrinnen).
 ///
@@ -25,9 +26,31 @@ class SrdEvasionResult {
 class SrdEvasionRules {
   const SrdEvasionRules._();
 
-  static bool unlocked(HeroCharacter hero) =>
-      ClassResourceRules.level(hero, 'Mönch') >= 7 ||
-      ClassResourceRules.level(hero, 'Schurke') >= 7;
+  /// A directly constructed or legacy class combination is not proof of
+  /// a level-seven class feature. Invalid profiles must fail closed without
+  /// changing the saved character or its confirmed Dexterity save.
+  static bool unlocked(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return false;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return false;
+    }
+    return ClassResourceRules.level(hero, 'Mönch') >= 7 ||
+        ClassResourceRules.level(hero, 'Schurke') >= 7;
+  }
 
   /// A creature with Incapacitated (including its explicitly modelled
   /// derived conditions) cannot benefit. HP and conditions are checked
