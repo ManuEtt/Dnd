@@ -137,90 +137,88 @@ class FantasyCharacterOverview extends StatelessWidget {
           child: SafeArea(
             top: false,
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: availableHeight * .72,
-              ),
-          child: StatefulBuilder(
-            builder: (context, setModalState) {
-              final normalized = query.trim().toLowerCase();
-              final visible = normalized.isEmpty
-                  ? lines
-                  : lines
-                        .where(
-                          (line) => line.toLowerCase().contains(normalized),
-                        )
-                        .toList();
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (searchable)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
-                      child: TextField(
-                        key: const ValueKey('sheet-skill-search'),
-                        onChanged: (value) =>
-                            setModalState(() => query = value),
-                        style: const TextStyle(color: ivory),
-                        decoration: InputDecoration(
-                          labelText: 'Fertigkeit suchen',
-                          labelStyle: const TextStyle(color: dim),
-                          hintText: 'Name, Bonus oder geübt',
-                          hintStyle: const TextStyle(color: dim),
-                          prefixIcon: const Icon(Icons.search, color: gold),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: gold.withValues(alpha: .65),
+              constraints: BoxConstraints(maxHeight: availableHeight * .72),
+              child: StatefulBuilder(
+                builder: (context, setModalState) {
+                  final normalized = query.trim().toLowerCase();
+                  final visible = normalized.isEmpty
+                      ? lines
+                      : lines
+                            .where(
+                              (line) => line.toLowerCase().contains(normalized),
+                            )
+                            .toList();
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (searchable)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
+                          child: TextField(
+                            key: const ValueKey('sheet-skill-search'),
+                            onChanged: (value) =>
+                                setModalState(() => query = value),
+                            style: const TextStyle(color: ivory),
+                            decoration: InputDecoration(
+                              labelText: 'Fertigkeit suchen',
+                              labelStyle: const TextStyle(color: dim),
+                              hintText: 'Name, Bonus oder geübt',
+                              hintStyle: const TextStyle(color: dim),
+                              prefixIcon: const Icon(Icons.search, color: gold),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: gold.withValues(alpha: .65),
+                                ),
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: gold, width: 2),
+                              ),
                             ),
                           ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: gold, width: 2),
-                          ),
+                        ),
+                      Flexible(
+                        child: ListView(
+                          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                          shrinkWrap: true,
+                          children: [
+                            Text(
+                              title,
+                              style: const TextStyle(
+                                fontFamily: 'serif',
+                                fontSize: 23,
+                                color: gold,
+                              ),
+                            ),
+                            const Divider(color: gold),
+                            if (visible.isEmpty)
+                              Text(
+                                lines.isEmpty
+                                    ? 'Keine bestätigten Einträge vorhanden.'
+                                    : 'Keine passenden Fertigkeiten.',
+                                key: const ValueKey('sheet-skill-search-empty'),
+                                style: const TextStyle(color: dim),
+                              ),
+                            for (final line in visible)
+                              ListTile(
+                                dense: true,
+                                leading: const Icon(
+                                  Icons.auto_awesome_outlined,
+                                  color: gold,
+                                  size: 19,
+                                ),
+                                title: Text(
+                                  line,
+                                  style: const TextStyle(color: ivory),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
-                    ),
-                  Flexible(
-                    child: ListView(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-                      shrinkWrap: true,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontFamily: 'serif',
-                            fontSize: 23,
-                            color: gold,
-                          ),
-                        ),
-                        const Divider(color: gold),
-                        if (visible.isEmpty)
-                          Text(
-                            lines.isEmpty
-                                ? 'Keine bestätigten Einträge vorhanden.'
-                                : 'Keine passenden Fertigkeiten.',
-                            key: const ValueKey('sheet-skill-search-empty'),
-                            style: const TextStyle(color: dim),
-                          ),
-                        for (final line in visible)
-                          ListTile(
-                            dense: true,
-                            leading: const Icon(
-                              Icons.auto_awesome_outlined,
-                              color: gold,
-                              size: 19,
-                            ),
-                            title: Text(
-                              line,
-                              style: const TextStyle(color: ivory),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
         );
       },
