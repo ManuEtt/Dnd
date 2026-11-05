@@ -201,11 +201,7 @@ void main() {
     expect(result.hero.spentSpellSlots, {'1': 1});
     expect(result.encounter!.spellSlotExpendedThisTurn, isTrue);
     expect(
-      () => _stage(
-        hero: result.hero,
-        encounter: result.encounter!,
-        plan: plan,
-      ),
+      () => _stage(hero: result.hero, encounter: result.encounter!, plan: plan),
       throwsFormatException,
     );
     expect(hero.spentSpellSlots, isEmpty);
