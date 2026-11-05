@@ -16,6 +16,25 @@
 
 ---
 
+# CHAT D – Java-Properties-Kommentare nicht fortsetzen (05.11.2026)
+
+- **Ausgangs-main-SHA:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`.
+- **Eigener Branch:** `fix/chat-d/gradle-comments-continuation-20261105`.
+- **Fach-/Test-HEAD vor Dokumentation:** `9a88f16448b2baa42fa8e75773bd370cfca29987`.
+- **PR:** [#547](https://github.com/ManuEtt/Dnd/pull/547), Draft bis vollständiger CI.
+- **Ausgangsproblem:** Auf `#` oder `!` beginnende physische Properties-Kommentare dürfen trotz abschließendem Backslash keine Folgezeile konsumieren. Der Python-Uploadvalidator tat dies jedoch und konnte eine wirksame zweite `distributionUrl` oder `distributionSha256Sum` übersehen.
+- **IMPLEMENTIERT:** Frühzeitige Kommentarerkennung in `_gradle_logical_lines`; fortgesetzte echte Property-Zeilen bleiben erhalten; unveränderte HTTPS-/SHA256-Eindeutigkeitsprüfung.
+- **Akzeptanzkriterien:** Kommentierte Backslashes verdecken weder gültige Pflichtwerte noch manipulierte doppelte Schlüssel. CR/LF/CRLF gültig. Marker `#`/`!` in wirklich fortgesetzten Werten sind keine Kommentare. Keine Änderung der bereits akzeptierten Wrapper-Datei.
+- **Neue Tests:** vier Methoden, 23 positive/negative Parametervarianten, in `scripts/tests/test_verify_project.py`.
+- **GETESTET:** Echte Java-21-Properties-Dekodierung mit Kommentar + späterer HTTP-URL für CR/LF/CRLF nachgewiesen; GitHub-Branch/Codecommit/PR erstellt.
+- **NICHT GETESTET:** Projekt-Python-Unittests, vollständig kombiniertes GitHub Actions auf endgültigem HEAD, reales Android-Gerät und Altdatenupgrade.
+- **BLOCKIERT:** GitHub-DNS-Zugriff für lokalen Repository-Klon war in vorigen Sitzungen nicht verfügbar; vollständige Abnahme über Projekt-CI.
+- **Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migrationen:** keine. SQLite, JSON-Spielstände, Backups, Android-Release-Version unverändert.
+- **Nächster Schritt:** finalen PR-HEAD in GitHub Actions prüfen, bei CI-Fehlern im selben Branch korrigieren und erst nach erfolgreicher Integrationsprüfung nach main übernehmen.
+
+---
+
 # CHAT D – Wiederholte Versionsnamen vor Checkpoint-Veröffentlichung sperren (05.11.2026)
 
 - **Ausgangs-main-SHA:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.

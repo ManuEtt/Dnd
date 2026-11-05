@@ -6,6 +6,12 @@ Der Alpha-Release-Builder `scripts/prepare_alpha_release.py` bindet die Quell-AP
 
 ---
 
+## Chat D – Gradle-Kommentare mit Backslash verdecken keine Folgewerte (05.11.2026)
+
+Die Python-Uploadprüfung erkennt jetzt, dass Java `Properties.load` **Kommentarzeilen niemals durch einen abschließenden Backslash fortsetzt**. Bisher konnte eine auf `# ignored \\` oder `! ignored \\` endende Zeile den nächsten tatsächlichen `distributionUrl`- oder `distributionSha256Sum`-Eintrag bei der Duplikatprüfung verschlucken. Die Kontrolle behandelt `#`/`!`-Kommentarzeilen jetzt vor dem Fortsetzungsmechanismus; echte, nicht kommentierte Java-Properties-Fortsetzungen bleiben erlaubt. Vier Regressionstestmethoden decken 23 CR/LF/CRLF-, Duplikat- und Kompatibilitätsfälle ab. OpenJDK 21 bestätigt die Kommentarsemantik direkt. [Draft-PR #547](https://github.com/ManuEtt/Dnd/pull/547) auf `fix/chat-d/gradle-comments-continuation-20261105`, Code-/Test-HEAD `9a88f16448b2`, finale GitHub-CI noch nicht vollständig abgenommen. Keine Migration, keine Änderung an SQLite-/JSON-Spielständen oder der App-Version.
+
+---
+
 ## Chat D – Checkpoint-Dateien gegen spätes Überschreiben schützen (05.11.2026)
 
 Das Quellcode-Checkpoint-Skript `scripts/create_checkpoint.py` prüft identische Version-/Zeitstempel-/Label-Artefakte jetzt nicht nur vor der aufwendigen Vorbereitung, sondern nochmals unter der exklusiven Veröffentlichungssperre unmittelbar vor der eigentlichen Ausgabe. Dadurch kann ein konkurrierender Lauf nach der frühen Prüfung keine gleichnamigen, bereits veröffentlichten ZIP-/Patch-/Manifest-/Prüfsummendateien mehr unbemerkt ersetzen. Hängende Symlinks zählen ebenfalls als belegte Namen. Zwei neue Regressionen in `scripts/tests/test_create_checkpoint.py` decken spätes Auftauchen einer Archivdatei und eines hängenden Manifest-Symlinks ab. [Draft-PR #544](https://github.com/ManuEtt/Dnd/pull/544), Basis `74548d3d5243`, Fachcommit `021672463075`. Vollständige Actions-CI auf dem finalen dokumentierten HEAD noch ausstehend. SQLite/JSON, Speicherformate, App-Version und bestehende Aliasse bleiben unverändert.
