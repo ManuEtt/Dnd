@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Lange Rast prüft ursprüngliche Zauberressourcen (05.11.2026)
+
+[Draft-PR #553](https://github.com/ManuEtt/Dnd/pull/553) ergänzt eine reine Validierung **vor** der langen Rast: `RestRules.longRest` akzeptiert nur kanonische Zaubergrad-Schlüssel 1–9 sowie tatsächlich verfügbare normale und Paktmagieplatz-Pools. Widersprüchliche direkte/ältere Snapshots (ungültiger Grad oder Überverbrauch, Paktverbrauch ohne Klasse, negative Zahlen) werden mit `FormatException` abgewiesen, statt durch die automatisch zurückgesetzten Ressourcen unsichtbar repariert zu werden. Gültige Rastwirkungen bleiben unverändert. **11 neue deterministische Testfälle** (acht ungültige, drei gültige/Kompatibilitätsfälle): keine Mutation bei Ablehnung, Wizard3/Warlock3 samt JSON-Neustart, Legacy-Fighter ohne Zauberressourcen und legitime Warlock-Paktregeneration. **Keine Migration**, SQLite 3, JSON 1 und App-Version unverändert. Fach-/Testcommit `6eb4c4c0cc906cee96b180ac78b6551a14e34a50` ab main `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`. Finale CI/Android-Tests auf letztem Branch-HEAD und Chat-D-Review stehen aus. Quelle SRD 5.2.1, *Long Rest / Spell Slots / Pact Magic*, Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd; keine vollständige SRD-Abdeckung behauptet.
+
+---
+
+
 ## Chat D – Gradle-Kommentare mit Backslash verdecken keine Folgewerte (05.11.2026)
 
 Die Python-Uploadprüfung erkennt jetzt, dass Java `Properties.load` **Kommentarzeilen niemals durch einen abschließenden Backslash fortsetzt**. Bisher konnte eine auf `# ignored \\` oder `! ignored \\` endende Zeile den nächsten tatsächlichen `distributionUrl`- oder `distributionSha256Sum`-Eintrag bei der Duplikatprüfung verschlucken. Die Kontrolle behandelt `#`/`!`-Kommentarzeilen jetzt vor dem Fortsetzungsmechanismus; echte, nicht kommentierte Java-Properties-Fortsetzungen bleiben erlaubt. Vier Regressionstestmethoden decken 23 CR/LF/CRLF-, Duplikat- und Kompatibilitätsfälle ab. OpenJDK 21 bestätigt die Kommentarsemantik direkt. [Draft-PR #547](https://github.com/ManuEtt/Dnd/pull/547) auf `fix/chat-d/gradle-comments-continuation-20261105`, Code-/Test-HEAD `9a88f16448b2`, finale GitHub-CI noch nicht vollständig abgenommen. Keine Migration, keine Änderung an SQLite-/JSON-Spielständen oder der App-Version.

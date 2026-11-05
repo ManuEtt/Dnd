@@ -1,3 +1,23 @@
+# Chat A – Lange Rast validiert Zauberplätze vor Regeneration (05.11.2026, PR #553)
+
+**Ausgangs-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`. **Branch:** `feat/chat-a/long-rest-spell-pool-preflight-20261105`. **Fach-/Testcommit:** `6eb4c4c0cc906cee96b180ac78b6551a14e34a50`. **PR:** https://github.com/ManuEtt/Dnd/pull/553 (Draft).
+
+**Problem:** Ungültige ursprüngliche `spentSpellSlots` oder `spentPactSlots` konnten beim langen Rasten ohne Prüfung auf null gesetzt werden. Das löschte Widersprüche eines direkt konstruierten oder fehlerhaften Altcharakters. Kanonisch falsche Gradschlüssel `01`, `10` wurden durch die üblichen Grad-1..9-Lesefunktionen nicht erfasst.
+
+**Implementiert:** `RestRules.longRest` prüft nach lebendem/rasfähigem Charakter den Originalzustand mit kanonischer Schlüsselmenge 1..9 und `SpellcastingRules.availableSlots/availablePactSlots`. Erst danach finden die vorhandenen Rastkopien und Klassenressourcen-Regenerationen statt. Alle Ablehnungen per `FormatException` vor einem `copyWith`; keine neue Regelautorität aus Storytexten.
+
+**Fachdateien:** `app/lib/domain/rest_rules.dart`, neue `app/test/srd_long_rest_spell_pool_preflight_test.dart` plus README, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`.
+
+**Tests:** 11 neue deterministische Fälle (acht fehlerhafte Slot-/Pakt-Snapshots, drei gültige/Legacy-/Mehrklassenfälle) einschließlich Original-JSON ohne Mutation, normaler Slot + Pakt bei Wizard3/Warlock3, altem Fighter und regulärer Paktregeneration. Die alte `rest_rules_test.dart` bleibt unverändert. SDKs lokal nicht verfügbar; **GitHub Actions auf finalem Head noch abzunehmen**. Keine Tests deaktiviert. Eine bereits grüne CI auf PR #543 oder Hauptbranch ersetzt die eigenständige #553-CI nicht.
+
+**Daten/Koordination:** SQLite 3, externes JSON 1, App-Version, Charaktermodell und gespeicherte Werte unverändert; keine Migration. PRs #543, #545–#552 ohne Fachdatei-Konflikt; Chat D muss gemeinsame Dokumente additiv erhalten. Kein direkter Main-Merge.
+
+**Quelle:** Wizards of the Coast LLC, D&D SRD 5.2.1, *Long Rest / Spell Slots / Pact Magic*, CC BY 4.0, https://www.dndbeyond.com/srd. Die zugehörigen SRD-Register bleiben **partial**; dieser Schutz ist kein vollständiger Ruhe-/Ritual-/Charakterprofilbeleg.
+
+**Nächster einzelner Arbeitsschritt:** Nach CI, D-Review und konfliktfreier Main-Integration den unveränderten Originalbestand von Trefferwürfeln vor Long-Rest-Rücksetzung mit vorhandenem `RestRules.availableHitDice` gegen Klassenstufen absichern und mit negativen/positiven Mehrklassen-/Altstand-Tests belegen.
+
+---
+
 ## Chat-A-Konsolidierung – 04.11.2026
 
 Die Beiträge zu Waldläufer-Unermüdlich (#538) und Hexenmeister-Magische-List (#539) werden im gemeinsamen Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` vereint; die originale Commit-Historie und beide individuellen Belege werden beibehalten. Kombinierte CI vor Main-Merge gesondert nachweisen.
