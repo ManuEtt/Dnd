@@ -128,6 +128,45 @@ regelgeprüfte Aktionen und ein optionaler Fastify-/TypeScript-Erzähler.
 
 ## Aktueller Stand und autonome Fortsetzung
 
+## 05.11.2026 – eingefrorene Abnahme: erste manuelle Rettungswürfe
+
+App **0.8.52+102**, Branch `fix/chat-a/manual-save-class-preflight-20261105`.
+Regulär eingebundener Main: `36ced64cd6b6b13888bee34f5dd33103edf04dcb`.
+Laufzeitlogik seit Codecommit6d6207f1 unverändert; danach Main-Integration und
+Testdaten-/Dokumentationskorrekturen. **[PR #557](https://github.com/ManuEtt/Dnd/pull/557)**
+mit **[Checks des jeweils aktuellen Heads](https://github.com/ManuEtt/Dnd/pull/557/checks)**
+ist der verbindliche vollständige Abnahmenachweis. Dieser Eintrag hält den
+beobachteten Stand beim Einfrieren fest; spätere CI-/Artefaktergebnisse stehen
+im PR und im externen Importleitfaden, ohne einen erneuten Status-Commit-Zyklus.
+
+**Implementiert:** erster manueller W20 verwendet vorhandene reine Profilprüfung
+vor Klassenbonus/RNG, verständliche deutsche Ablehnung; automatische Zustands-
+fehlschläge ohne fiktiven Modifier/W20, read-only Charakterbogen unverändert.
+**Gezielt bestanden:**62 neue Fälle (52Domain,8SQLite,2UI), ursprüngliche31
+Regressionsfälle sowie10 weitere Reroll-/UI-Regressionen. Explizite gespeicherte
+Klassenkorrektur, gültiger neuer Wurf und Neustart im echten App-Flow geprüft.
+**Tatsächlicher Prüfverlauf:** erste Vollsuite und CI42037863247 endeten mit
+3173Pass/4Fail. Ausschließlich vier frühere Reroll-Fixtures erzeugten noch
+neue Würfe mit ungültigem Profil. Sie verwenden jetzt ausdrücklich bestätigte
+historische Vorwürfe8/7; alle Ressourcen-/RNG-/Revisions-/Speicherassertionen
+bleiben erhalten. Der nachfolgende gezielte Lauf aller fünf neuen/alten
+Flowdateien bestand72Fälle. Kein Test deaktiviert oder abgeschwächt.
+
+Python321/Backend79,641Dartdateien formatiert, Analyse sauber, ARM64-Debug und
+native Gradle-Prüfung bereits bestanden. Vollsuite wird nach Fixturekorrektur
+erneut ausgeführt, finale PR-CI ist separat zu prüfen. Kein vollständiger neuer
+CI-Erfolg wird vor dessen realem Abschluss behauptet. Reales Androidgerät,
+TalkBack, tatsächliches APK-Upgrade und produktive Signierung weiterhin offen.
+SQLite3/JSON1 ohne Migration, historische Profile unverändert. Core-Saving-Throws
+bleibt partial; vollständiger Charakterassistent/Gesamt-SRD bleiben offen.
+
+**Nächster eigenständiger Schritt nach Paketabnahme:** weitere tatsächliche
+Rettungswurfquellen auf konsistente Profilprüfung vor RNG auditieren; zuerst
+frische Main-/PR-Dateilisten prüfen. Keine globalen read-only Ansichten verschärfen.
+
+---
+
+
 ## 05.11.2026 – Chat A: erste manuelle Rettungswürfe vor Klassenbonus prüfen
 
 **Implementiert auf Codecommit `6d6207f12ae3769475e28cd4751731cb555232df`**, Basis-Main

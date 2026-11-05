@@ -128,17 +128,57 @@ void main() {
     }
   }
 
-  Future<Campaign> prepare(Campaign campaign) async {
+  Future<Campaign> prepare(
+    Campaign campaign, {
+    int? historicalFailedTotal,
+  }) async {
     await repository.saveCampaign(campaign, events: campaign.events);
+    if (historicalFailedTotal != null) {
+      // Imported old failed saves remain readable. Do not produce a *new*
+      // invalid save now that the initial action also validates its profile.
+      // These explicit totals are the confirmed legacy fixtures (Monk 8 /
+      // Fighter 7), not values inferred by the current rules or narration.
+      final snapshot = campaign.copyWith(revision: campaign.revision + 1);
+      final event = GameEvent(
+        id: 'legacy-confirmed-initial-save',
+        campaignId: campaign.id,
+        sessionId: campaign.sessionId,
+        timestamp: DateTime.utc(2026, 11, 1),
+        type: 'saving.roll',
+        entities: [campaign.hero.id],
+        payload: {
+          'ability': 'wisdom',
+          'difficulty': 30,
+          'total': historicalFailedTotal,
+          'failed': true,
+          'manualDifficulty': true,
+          'roll': DiceResult(
+            expression: '1d20+${historicalFailedTotal - 1}',
+            rolls: const [1],
+            modifier: historicalFailedTotal - 1,
+            natural: 1,
+            total: historicalFailedTotal,
+          ).toJson(),
+          'revision': snapshot.revision,
+          'stateAfter': snapshot.copyWith(events: const []).toJson(),
+        },
+      );
+      campaign = snapshot.copyWith(events: [...snapshot.events, event]);
+      await repository.saveCampaign(campaign, events: campaign.events);
+    }
     await controller.openCampaign(campaign.id);
     expect(controller.error, isNull);
-    // This package protects the class reroll. The prior ordinary save remains
-    // a separate, confirmed operation and legitimately consumes its own d20.
-    await controller.sendAction(_initialSave, requestId: 'initial-save');
-    expect(controller.error, isNull);
+    if (historicalFailedTotal == null) {
+      // Valid profiles still prepare the previous failure through the actual
+      // initial save, including its legitimate single d20.
+      await controller.sendAction(_initialSave, requestId: 'initial-save');
+      expect(controller.error, isNull);
+      expect(random.calls, 1);
+    } else {
+      expect(random.calls, 0);
+    }
     expect(controller.currentCampaign!.events.last.type, 'saving.roll');
     expect(controller.currentCampaign!.events.last.payload['failed'], isTrue);
-    expect(random.calls, 1);
     random.calls = 0;
     random.natural = 10;
     return controller.currentCampaign!;
@@ -221,6 +261,7 @@ void main() {
             level: profile.level,
             secondaryLevel: profile.secondaryLevel,
           ),
+          historicalFailedTotal: profile.level == 15 ? 8 : 7,
         );
         final oldRows = await tables();
         final savedHero = _canonical(before.hero.toJson());
