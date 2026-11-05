@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Aktuellen Hauptbranch auschecken
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: main
           persist-credentials: true
@@ -71,7 +71,7 @@ jobs:
           (cd "$OUT" && sha256sum dart_format_reparatur.patch > SHA256SUMS.txt)
       - name: Formatierten Quellcode auch ohne Schreibrechte herunterladen koennen
         if: steps.check.outputs.changed == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: wuerfelraunen-dart-format-reparatur-${{ github.run_id }}
           path: ${{ runner.temp }}/formatreparatur/
