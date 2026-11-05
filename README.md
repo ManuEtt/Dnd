@@ -1376,3 +1376,11 @@ keine automatische Mergefreigabe.
 Die README bleibt die sachliche Einstiegsseite für die Android-Fantasy-App, Regelengine, Speicherung, optionalen Erzähler und Projektprüfungen. Im historischen Entwicklungsprotokoll wurden lesbare Chat-Zuordnungen durch fachliche Änderungstitel ersetzt. Technische Branch-Namen, Checkpoint-Pfade, PR-Links, Testergebnisse und die vorhandene Historie bleiben als Nachweise erhalten.
 
 Der Masterprompt verlangt für künftige Änderungen **ausschließlich neue, sachlich benannte Nachträge am absoluten Ende der README** – ohne Chat-Kennungen und ohne Änderungen an den vorderen Projektabschnitten. App-Quellcode, Backend, Spielstände und Versionen sind davon nicht betroffen.
+
+---
+
+## GitHub-Actions-Cleanup auf Node.js 24 aktualisiert (05.11.2026)
+
+[Draft-PR #571](https://github.com/ManuEtt/Dnd/pull/571) stellt ausschließlich den aktiven archivierenden Branch-Cleanup in `.github/workflows/cleanup-merged-safe-20261027.yml` von `actions/github-script@v7` auf `@v8` um. GitHub hat die Ausführung von JavaScript-Actions auf Node.js 24 umgestellt; v8 unterstützt diese Laufzeit und benötigt GitHub Actions Runner 2.327.1 oder neuer. Drei neue Python-Regressionstests in `scripts/tests/test_cleanup_github_script_runtime.py` verhindern einen Rückfall auf v7, fehlende oder doppelte Einstiegspunkte und das irrtümliche Zählen von Kommentaren als Action-Steps. Die bestehenden SHA-, Vorfahren-, Archivtag-, Schutzbranch- und erfolgreiches-Main-CI-Gates bleiben unverändert. **CI des finalen PR-HEADs steht noch aus; der Workflow wurde nicht manuell ausgelöst.** Keine Android-App-, SQLite-/JSON-, Spielstands- oder Versionsänderung.
+
+---
