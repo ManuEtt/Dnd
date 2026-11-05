@@ -287,6 +287,44 @@ class AlphaReleaseTests(unittest.TestCase):
             release.prepare_release(self.root, self.out)
         self.assertFalse(self.out.exists())
 
+    def test_apk_rejects_windows_reserved_device_names_before_crc(self):
+        # Windows treats these basenames as device names even when a ZIP
+        # member has a normal extension or lives in a nested directory.
+        reserved = (
+            'CON', 'assets/con.txt', 'assets/PRN.json', 'assets/aux',
+            'assets/NUL.bin', 'assets/COM1.dll', 'assets/com9.txt',
+            'assets/LPT1.out', 'assets/lpt9.log', 'assets/CON.txt/sub.dat',
+            'assets/NUL/',
+        )
+        for name in reserved:
+            with self.subTest(name=name):
+                self.create_apk()
+                with zipfile.ZipFile(self.apk, 'a') as archive:
+                    archive.writestr(name, b'unsafe member')
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before reserved-name guard'),
+                ):
+                    with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+                        release.validate_arm64_apk(self.apk)
+
+    def test_apk_accepts_ordinary_names_resembling_windows_devices(self):
+        self.create_apk()
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            for name in (
+                'assets/CONTEXT.txt', 'assets/COM10.txt',
+                'assets/LPT0.txt', 'assets/PRN-archiv/datei.json',
+            ):
+                archive.writestr(name, b'valid member')
+        release.validate_arm64_apk(self.apk)
+
+    def test_apk_device_name_rejects_release_without_publishing(self):
+        with zipfile.ZipFile(self.apk, 'a') as archive:
+            archive.writestr('assets/NUL.dat', b'unsafe member')
+        with self.assertRaisesRegex(ValueError, 'unsichere ZIP-Pfade'):
+            release.prepare_release(self.root, self.out)
+        self.assertFalse(self.out.exists())
+
     def test_apk_rejects_file_used_as_implicit_directory_before_crc(self):
         for reversed_order in (False, True):
             with self.subTest(reversed_order=reversed_order):

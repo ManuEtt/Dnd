@@ -1,5 +1,6 @@
 import 'class_resource_rules.dart';
 import 'models.dart';
+import 'srd_character_classes.dart';
 
 /// SRD 5.2.1, Bard 18: Superior Inspiration (CC BY 4.0).
 ///
@@ -12,7 +13,8 @@ class SrdBardSuperiorInspirationRules {
   const SrdBardSuperiorInspirationRules._();
 
   static SrdBardSuperiorInspirationResult onInitiative(HeroCharacter hero) {
-    if (ClassResourceRules.level(hero, 'Barde') < 18) {
+    if (!_hasConfirmedClassLevels(hero) ||
+        ClassResourceRules.level(hero, 'Barde') < 18) {
       return SrdBardSuperiorInspirationResult(hero: hero, recovered: 0);
     }
     if (hero.abilities['charisma'] == null) {
@@ -37,6 +39,26 @@ class SrdBardSuperiorInspirationRules {
       hero: hero.copyWith(spentClassResources: resources),
       recovered: target - remaining,
     );
+  }
+
+  /// An automatic feature cannot grant resources from contradictory legacy
+  /// class data. Leave that snapshot untouched and preserve the initiative;
+  /// this helper neither validates nor rolls the surrounding combat itself.
+  static bool _hasConfirmedClassLevels(HeroCharacter hero) {
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    return primary != null &&
+        hero.level >= 1 &&
+        hero.level <= 20 &&
+        hero.secondaryClassLevel >= 0 &&
+        hero.secondaryClassLevel < hero.level &&
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel > 0 &&
+                  secondary != null &&
+                  secondary != primary
+            : hero.secondaryClassLevel == 0);
   }
 }
 
