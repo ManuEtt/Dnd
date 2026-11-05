@@ -1,3 +1,18 @@
+## Chat A – 05.11.2026: Mehrklassen-Zauberquelle im Turn-Composer bestätigen (PR #551)
+
+- **Basismain:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`; **Branch:** `feat/chat-a/spell-turn-class-confirmation-20261105`; **Fach-/Testcommit:** `abfb027f9f1e112e42fe6190d85bce4a699969aa`; **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/551.
+- **Fehler:** Der bereits bestehende boolesche Quellenbeleg `preparedForCastingClassConfirmed` konnte aus `SrdSpellTurnTransactionRules.prepare` nicht an `SrdSpellPreflightRules.preflight` übergeben werden. Daher scheiterten auch ausdrücklich bestätigte Wizard-/Sorcerer-Mehrklassenzauber am realen Magic-Action-/Bonus-Action-Staging.
+- **Änderung:** Rückwärtskompatibler optionaler Named-Parameter mit Default `false`; direkte Weitergabe an den unveränderten, regeltechnisch validierenden Preflight. Keine automatischen Zustimmungen oder Umgehung von Klassenlisten/-stufen, Slot-, Material-, Ziel-, Action-Economy-, Snapshot-/Replay- oder Effektbestätigung. Erforderlicher spätere atomare Controller-/Repository-Commit und Kampagnenrevision bleiben separat.
+- **Neu:** `app/test/srd_spell_turn_class_confirmation_test.dart` mit **8 deterministischen Fällen**: explizite Verweigerung ohne Bestätigung, legitime Wizard-/Sorcerer-Quellen, Fremdklasse/Slotstufe trotz Bool gesperrt, geänderte Helden-/Encounter-Snapshots, JSON-Roundtrip/Replay, Wizard-Zauber via Paktplatz, gültige Einzelklasse ohne Extra-Zustimmung.
+- **Dateien:** `app/lib/domain/srd_spell_turn_transaction_rules.dart`, neue Testdatei und additive `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`.
+- **Tests:** Zu Beginn PR #548 Flutter-Vollsuite und Flutter-Analyse bestanden; dort Android noch im Bau. **Die neue PR-#551-CI ist gesondert auf finalem HEAD zu prüfen** (Dart-Format, Flutter-Analyse/Vollsuite, Python/Backend, APK/ABI/Artefakte). Flutter/Dart lokal nicht installiert; keine Test-Deaktivierung oder Behauptung einer bereits grünen neuen CI.
+- **Parallelität:** PRs #543 (Pakt-Level) und #548 (persistierte Klassenbelege) betreffen andere Fachdateien; die eigenen Klassen-/Slot-Source-Gates bleiben unabhängig kompatibel. B/C/D-PRs #545–#550 verändern nicht die hier bearbeiteten Turn-Composer-Dateien. README und zentralen Checkpoint beim Merge durch Chat D gemeinsam bewahren.
+- **Kompatibilität:** SQLite-Schema 3, äußeres JSON-Schema 1, `HeroCharacter`-Form, App-Version und bestehende Saves unverändert; keine Migration oder neue Event-/Schreibaktion.
+- **Regelquelle:** Wizards of the Coast LLC, SRD 5.2.1, *Multiclassing – Spells Prepared/Pact Magic*, https://www.dndbeyond.com/srd, CC BY 4.0; `RULE-CHARACTER-CREATION-MULTICLASS-SPELLCASTING` bleibt `partial/unverified`, kein vollständiger SRD-Automatismus.
+- **Nächster einzelner Schritt:** Nach finaler CI und Integration das **kombinierte** Ergebnis der PRs #543/#548/#551 gegen den zuständigen Spell-/Turn-Preflight mit eigenen End-to-End- und Revisionskonflikt-Regressionen verifizieren, ohne Controller/SQLite außerhalb Chat-D-Review anzufassen.
+
+---
+
 ## Chat D – Exklusive Checkpoint-Namensprüfung nach Lock-Übernahme (05.11.2026)
 
 - **Basis-main:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.

@@ -1,3 +1,25 @@
+# Chat A – Confirmed multiclass spell source through turn transaction (05.11.2026, PR #551)
+
+**Basismain:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`. **Branch:** `feat/chat-a/spell-turn-class-confirmation-20261105`. **Fach-/Testcommit:** `abfb027f9f1e112e42fe6190d85bce4a699969aa`. **Draft-PR:** https://github.com/ManuEtt/Dnd/pull/551.
+
+**Ausgangsproblem:** `SrdSpellPreflightRules.preflight` forderte schon eine explizite Auswahl für einen mehrdeutigen Mehrklassenzauber, aber `SrdSpellTurnTransactionRules.prepare` konnte den optionalen Parameter nicht weiterreichen. Trotz ausdrücklicher Spielerentscheidung blieb der tatsächliche Zauberzug gesperrt.
+
+**Implementiert:** Ein optionaler `preparedForCastingClassConfirmed = false`-Parameter im bestehenden `SrdSpellTurnTransactionRules.prepare` wird an `SrdSpellPreflightRules.preflight` weitergereicht. Alle bisherigen Prüfungen und stufen-/klassenbezogenen Regeln bleiben unverändert; keine Zustimmung durch Erzähler oder Vorhersehbarkeit des Slots. Ein Wizard-vorbereiteter Zauber darf mit passendem Warlock-Paktplatz bezahlt werden.
+
+**Fachdateien:** `app/lib/domain/srd_spell_turn_transaction_rules.dart` und neue `app/test/srd_spell_turn_class_confirmation_test.dart`. Acht neue deterministische Tests für Legacy-Verweigerung, Wizard-/Sorcerer-positiv, falsche Quellen/Grade, veraltetes Hero-/Encounter-Evidence, JSON-Roundtrip, Wiederholungsschutz, Wizard/Pact-Kreuzpool und Einzelklasse. Alte Transaktions-/Preflighttests bleiben in Vollsuite aktiv.
+
+**Getestet:** Live-main, alle offenen PRs/Dateien, Fachcode, bestehende Turn-Testdatei, Masterprompt und Regelquelle geprüft; Code und Tests auf Branch committed. **Nicht lokal ausgeführt:** Flutter-/Dart-SDK fehlen. **GitHub-CI für PR #551 auf finalem HEAD noch NICHT als erfolgreich bestätigt**; Status nachziehen. PR #548 hatte beim Start Flutter-Vollsuite bestanden, aber Android noch nicht final.
+
+**Grenzen:** Dies ist eine *staged, reine Domänenressourcen-Transaktion*, kein Datenbank-Commit, keine Seriennummer, keine eigenständige Zauberwirkung, keine automatisch bestätigte Echtzeit-/Material-/Zielprüfung. Ein gesicherter, bestätigter `SrdPreparedSpellRecord` wird in separatem PR #548 vom Preflight verifiziert. Kein stilles Zusammenführen von PR #543/#548, keine Fremdbranches verändert.
+
+**Kompatibilität:** Keine neuen Hero-/Encounter-Felder, keine Speicherung, keine Migration, SQLite 3, JSON 1, Version, Android/UI/Story/Backend unverändert. `README.md`, `docs/CODEX_CHECKPOINT.md` und diese persönliche Checkpoint-Datei additiv fortgeschrieben; Chat D konsolidiert beim Merge.
+
+**SRD:** Wizards of the Coast LLC, SRD 5.2.1, `Multiclassing / Spells Prepared / Pact Magic` CC BY 4.0, https://www.dndbeyond.com/srd. Mehrklassenanforderungen `partial/unverified`.
+
+**Nächstes unabhängiges Paket:** Kombinierte neue und bestehende Tests für Klassenproof + Turn-Staging nach Integration durch Chat D, dabei echte Kampagnenrevision/Replay getrennt überprüfen. Kein Hintergrundauftrag.
+
+---
+
 ## Chat-A-Konsolidierung – 04.11.2026
 
 Die Beiträge zu Waldläufer-Unermüdlich (#538) und Hexenmeister-Magische-List (#539) werden im gemeinsamen Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` vereint; die originale Commit-Historie und beide individuellen Belege werden beibehalten. Kombinierte CI vor Main-Merge gesondert nachweisen.
