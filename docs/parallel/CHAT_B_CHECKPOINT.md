@@ -901,3 +901,21 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **Migration:** Keine; persistente SQLite- und JSON-Strukturen, Regeln, Quest-/HP-/XP-Zustände, Provider und App-Version unverändert.
 - **Konflikte:** Andere offene Chat-B-/D-PRs ändern teils andere Storymodule, jedoch nicht diese neue Fach-/Testdatei. README und zentraler Checkpoint sind gemeinsame Pfade: Additive Konsolidierung ausschließlich bei Chat-D-Integration. Kein Merge, Force-Push oder fremdes Branch-Löschen.
 - **Nächster Schritt:** CI/Android auf dem finalen PR-HEAD verifizieren; fehlschlagende Schritte gezielt auf eigenem Branch reparieren und danach von Chat D konfliktfrei integrieren lassen.
+
+---
+
+## 05.11.2026 – Chat B: veraltete Kampagnenrückblicke sicher erkennen (#545)
+
+- **Basis-main:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.
+- **Branch:** `feat/chat-b/resume-snapshot-stale-20261105`, **Draft-PR:** [#545](https://github.com/ManuEtt/Dnd/pull/545).
+- **Fachcommits:** `9bba64f2e14081ed45abd205d0fcbc46b0731b9e` (Quellenbindung), `6f4c141caf31e07e59a1469db9f546b807a14ea3` (sechs Regressionen), `0dc376b4c6957ad82d08085cadb9c759d563f0cf` (Testformat). Finaler Dokuments-HEAD separat prüfen.
+- **Ausgangsproblem:** `CampaignResumeSnapshot` hielt nur eine gekürzte Ausgabe ohne aktuelle Quellenprüfung vor. Ein alter Rückblick konnte trotz nachträglicher In-Memory-Änderung auf gleicher Revision weiterhin als aktueller Kontext verwendet werden.
+- **IMPLEMENTIERT:** `requireCurrent(latestCampaign)` prüft Kampagne/Sitzung/Revision und ungekürzte Story-Quellenstempel aus Szene, allen Recaps, allen Fakten und allen StoryThreads. Änderungen jenseits der sichtbaren Kürzung werden erkannt; reine Regelwertänderungen nicht als Erzähländerungen fehlinterpretiert. Öffentlich ohne Herkunft erzeugte Snapshots werden sicher abgewiesen. Keine In-Place-Änderung oder Speicherung.
+- **Geänderte Dateien:** `app/lib/story/campaign_resume_context.dart`, `app/test/campaign_resume_stale_snapshot_test.dart`, README, zentraler und persönlicher Checkpoint.
+- **Positive/negative Tests:** 6 deterministische Fälle: gleiche JSON-Herkunft; fremde Sitzungen/Kampagnen/Revisionen; lange Szenen mit Änderungen hinter der Ausgabelänge; ältere verdeckte Fakten, Rückblicke und Spuren; unveränderte Story mit Helden-HP-Änderung; ungebundene/fingierte Snapshots; echter SQLite-Restart mit unveränderten Rohdaten und Event-Rekonstruktion.
+- **GETESTET:** GitHub-Main-SHA, letzte CI, sämtliche bei Aufgabenwahl offenen PRs und relevante Modulpfade geprüft. Basis-main hatte vollständig grüne CI; keine Aussage über den neuen PR.
+- **NICHT GETESTET:** Vollständige CI dieses PR-HEADs und echte APK/Android-Geräteabnahme; kein lokales Dart-/Flutter-SDK.
+- **BLOCKIERT:** Finale CI/Review und ggf. Story/UI-Aufrufeinbindung der neuen read-only Aktualitätsprüfung nach dem Merge, sofern benötigt.
+- **Kompatibilität:** Kein Schema-/Migration-/JSON-/SQLite-/Regel-/Quest-/Spielwerte-/Provider-/Versionswechsel. Öffentlicher Konstruktor und bestehende Reader-Schnittstellen bleiben intakt.
+- **Parallelarbeit:** Chat-A-PR #543 und Chat-D-PR #544 betreffen andere Fachdateien. Gemeinsame README-/Checkpoint-Einträge beim Merge additiv erhalten.
+- **Nächster konkreter Schritt:** Exakten finalen CI-HEAD inklusive neuer sechs Tests prüfen; Fehler im selben Branch korrigieren und konfliktfreie Chat-D-Integration vorbereiten.

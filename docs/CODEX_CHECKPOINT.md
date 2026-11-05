@@ -1976,3 +1976,19 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **Nächster Schritt:** finale vollständige CI dieses Branches und anschließende konfliktfreie Integration abnehmen.
 
 ---
+
+---
+
+## Chat B – 05.11.2026: vollständige Quellenbindung beim Kampagnenrückblick (PR #545)
+
+- **Basis-main:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`. **Branch:** `feat/chat-b/resume-snapshot-stale-20261105`. **PR:** [#545](https://github.com/ManuEtt/Dnd/pull/545), Draft.
+- **IMPLEMENTIERT:** `app/lib/story/campaign_resume_context.dart` ergänzt `CampaignResumeSnapshot.requireCurrent` auf Kampagnen-ID, Sitzungs-ID, Revision und vollständige rohe Storyquellen (Szene, Sitzungsrückblicke, Fakten, Handlungsstränge), auch bei gleicher Revision oder Änderungen hinter einer UI-Kürzung. Nur Reader-Snapshots enthalten den geschützten Herkunftsbeleg; manuell erzeugte Snapshots schlagen geschlossen fehl.
+- **Vertrag:** Keine Schreiboperation, kein Event, keine KI-Provideraufrufe, keine bestätigte Regeländerung. Die unveränderte öffentliche Konstruktion und Story-API bleiben nutzbar; bestehende Aufrufer können `requireCurrent` vor Anzeige/Weiterleitung ergänzen. Reine Helden-/Regeländerungen bei gleicher Revision machen eine unveränderte Storyquelle nicht veraltet.
+- **Regressionen:** `app/test/campaign_resume_stale_snapshot_test.dart` mit sechs Flutter-Tests für identische JSON-Roundtrips, fremde Kampagnen/Sitzungen/Revisionen, unsichtbare Veränderungen jenseits der Szenenkürzung, ältere Fakten/Threads/Recaps außerhalb der Auswahl, Regelwertisolierung, nicht gebundene Snapshots und SQLite-Schließen/Neustart samt Journalrekonstruktion.
+- **Fachcommits:** `9bba64f2e14081ed45abd205d0fcbc46b0731b9e`; neuer Test `6f4c141caf31e07e59a1469db9f546b807a14ea3`; Testtitel-/Stilkorrektur `0dc376b4c6957ad82d08085cadb9c759d563f0cf`. Finalen HEAD nach Dokumentation ermitteln.
+- **GETESTET:** PR #536 wurde auf finalem HEAD `87b15f353de50e42e5ca930d1524b5cd570fda5e` mit erfolgreicher [CI #41784406877](https://github.com/ManuEtt/Dnd/actions/runs/41784406877) gemergt; aktueller main `74548d3` hatte eine erfolgreiche vollständige Main-CI. Diese älteren grünen Läufe sind **kein** Testnachweis für PR #545.
+- **NICHT GETESTET:** Vollständige Python-/Backend-/Flutter-/Android-CI von #545 auf seinem finalen HEAD zum Zeitpunkt dieses Nachtrags noch nicht abgenommen; lokales Flutter/Dart nicht verfügbar; kein Realgerät, Upgrade oder Produktiv-KI-Test.
+- **BLOCKIERT:** Finale CI, unabhängige Integrationsprüfung, tatsächliche Aufrufeinbindung vor Anzeige/Weiterleitung durch UI/Controller (eigener nachfolgender Arbeitsschritt).
+- **MIGRATION:** Keine SQLite-/JSON-Änderung; kein neuer Persistenzwert; TP, XP, Quests, NPCs, Regelengine und App-Version unverändert.
+- **Konfliktkontrolle:** Bei PR-Erstellung offene #543 und #544 geprüft; andere Fachpfade. README/zentralen Checkpoint bei Chat-D-Integration nur additiv konsolidieren, nicht überschreiben. Kein Merge oder Force-Push.
+- **Nächster Schritt:** Finale GitHub-CI dieses PRs auf exaktem Head verfolgen und eigene Fehler im selben Branch beheben.

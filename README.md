@@ -1291,3 +1291,19 @@ Finale GitHub-CI und reale Geräteabnahme getrennt nachweisen; kein Auto-Merge.
 Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt auch symbolische Links innerhalb von `app/lib/story/` und `app/lib/domain/` zurück (Dateien und Unterordner), bevor externe Dart-Dateien gelesen werden. Drei ergänzende Python-Regressionen sichern verschachtelte Datei- und Verzeichnislinks sowie Nicht-Dart-Links ab. Die Änderung enthält keine Regel-/Story-/UI-Anpassung oder Speicherformatmigration. Separate Chat-D-Abnahme auf `fix/chat-d/domain-symlink-source-guard-20261103`; vollständige CI auf finalem Commit noch ausstehend.
 
 ---
+
+---
+
+## Chat B – Wiederaufnahmerückblick gegen veraltete Storyquellen (05.11.2026)
+
+[Draft-PR #545](https://github.com/ManuEtt/Dnd/pull/545) ergänzt
+`CampaignResumeSnapshot.requireCurrent(latestCampaign)`. Ein bestätigter
+Kampagnenrückblick muss vor Wiederanzeige/Weitergabe erneut zur gespeicherten
+Kampagnen-ID, Sitzung, Revision und den **vollständigen Storyquellen** passen:
+Erzähl-Szene, alte Sitzungsrückblicke, Fakten und Handlungsstränge. Auch hinter
+Anzeigegrenzen versteckte Änderungen derselben Revision werden erkannt.
+Regel-/HP-Änderungen ohne Storywechsel werden nicht in bestätigte Fakten
+umgedeutet. Sechs neue Flutter-Regressionen decken JSON, SQLite-Neustart,
+Änderungen in unsichtbaren Storyabschnitten und manipulierte Rückblicke ab.
+Keine Daten-, Regel-, Provider-, Appversions- oder Schema-Migration. CI auf
+finalem PR-HEAD und echtes Android-Gerät sind separate Freigaben.
