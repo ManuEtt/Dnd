@@ -1,5 +1,6 @@
 import 'class_resource_rules.dart';
 import 'models.dart';
+import 'srd_character_classes.dart';
 
 /// SRD 5.2.1: Barbarian 18, Indomitable Might (CC BY 4.0).
 ///
@@ -18,8 +19,29 @@ enum SrdD20CheckKind {
 class SrdIndomitableMightRules {
   const SrdIndomitableMightRules._();
 
-  static bool isEligible(HeroCharacter hero) =>
-      ClassResourceRules.level(hero, 'Barbar') >= 18;
+  /// Invalid direct/legacy multiclass profiles must not unlock a level-18
+  /// feature by adding duplicate aliases or trusting an unknown other class.
+  static bool isEligible(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return false;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return false;
+    }
+    return ClassResourceRules.level(hero, 'Barbar') >= 18;
+  }
 
   static int effectiveTotal({
     required HeroCharacter hero,
