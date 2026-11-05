@@ -72,9 +72,8 @@ void main() {
         expect(SrdSorcerousRestorationRules.maximumUses(hero), 0);
         expect(SrdSorcerousRestorationRules.maximumRecoveredPoints(hero), 0);
         expect(
-          () => SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
-            hero,
-          ),
+          () =>
+              SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(hero),
           throwsFormatException,
         );
         expect(hero.toJson(), before);
@@ -92,9 +91,7 @@ void main() {
       final before = hero.toJson();
       expect(() => ClassResourceRules.validate(hero), throwsFormatException);
       expect(
-        () => SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
-          hero,
-        ),
+        () => SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(hero),
         throwsFormatException,
       );
       expect(hero.toJson(), before);
@@ -144,9 +141,8 @@ void main() {
       expect(SrdSorcerousRestorationRules.sorcererClassLevel(noClass), 0);
       expect(SrdSorcerousRestorationRules.maximumUses(noClass), 0);
       expect(
-        () => SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(
-          early,
-        ),
+        () =>
+            SrdSorcerousRestorationRules.restoreAfterCompletedShortRest(early),
         throwsStateError,
       );
       expect(
