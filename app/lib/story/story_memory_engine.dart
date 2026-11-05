@@ -250,11 +250,7 @@ class MemoryEngine {
           : 'Ort: $name';
       // A short recall must not truncate away the distinguishing identity.
       if (ambiguous && heading.length + 1 > maxCharacters) continue;
-      add(
-        heading,
-        _oneLinePlaceDescription(place.description),
-        priority: 50,
-      );
+      add(heading, _oneLinePlaceDescription(place.description), priority: 50);
     }
     candidates.sort((a, b) {
       final score = b.score.compareTo(a.score);
