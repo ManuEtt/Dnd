@@ -1,9 +1,3 @@
-## Chat D – Cleanup-GitHub-Action auf Node.js 24 aktualisiert (05.11.2026)
-
-[Draft-PR #571](https://github.com/ManuEtt/Dnd/pull/571) stellt ausschließlich den aktiven archivierenden Branch-Cleanup in `.github/workflows/cleanup-merged-safe-20261027.yml` von `actions/github-script@v7` auf `@v8` um. GitHub hat die Ausführung von JavaScript-Actions auf Node.js 24 umgestellt; v8 unterstützt diese Laufzeit und benötigt GitHub Actions Runner 2.327.1 oder neuer. Drei neue Python-Regressionstests in `scripts/tests/test_cleanup_github_script_runtime.py` verhindern einen Rückfall auf v7, fehlende oder doppelte Einstiegspunkte und das irrtümliche Zählen von Kommentaren als Action-Steps. Die bestehenden SHA-, Vorfahren-, Archivtag-, Schutzbranch- und erfolgreiches-Main-CI-Gates bleiben unverändert. **CI des finalen PR-HEADs steht noch aus; der Workflow wurde nicht manuell ausgelöst.** Keine Android-App-, SQLite-/JSON-, Spielstands- oder Versionsänderung.
-
----
-
 ## Chat D – portable APK-ZIP-Pfade vor Alpha-Veröffentlichung prüfen (05.11.2026)
 
 [Draft-PR #563](https://github.com/ManuEtt/Dnd/pull/563) weist innerhalb der ARM64-APK-Prüfung jetzt ZIP-Mitgliedsnamen zurück, deren Datei- oder Verzeichnisbestandteile mit Punkt oder Leerzeichen enden. Diese können auf Windows-kompatiblen Dateisystemen beim Entpacken mit anderen Namen kollidieren. Sechs negative Pfadvarianten, ein gültiger Pfad mit innerem Punkt/Leerzeichen und ein Release-Abbruchtest sichern die Vorabprüfung vor ZIP-CRC und Veröffentlichung ab. Keine SQLite-/JSON-/Spielstands- oder Android-Versionsänderung. Die vollständige GitHub-CI auf dem finalen PR-HEAD ist getrennt abzunehmen; die erfolgreiche Main-CI [#42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539) beweist diese neue Änderung noch nicht.
@@ -1333,3 +1327,11 @@ Die Python-Integritätsprüfung `scripts/check_domain_boundaries.py` weist jetzt
 ## Chat B – alte unsichtbare Zeichen in bestätigten Ortsrückblicken (05.11.2026)
 
 [Draft-PR #555](https://github.com/ManuEtt/Dnd/pull/555) erweitert die rein darstellende Ortsbereinigung um Soft Hyphen (U+00AD) und die sechs früheren Bidi-Formatsteuerzeichen U+206A–U+206F. Namen bleiben lesbar, Beschreibungen einzeilig; eine nur scheinbar andere Ortsbezeichnung erhält weiterhin ihre echte Orts-ID. Drei Flutter-Regressionsgruppen prüfen alle sieben Zeichen in beiden Textfeldern, gleiche sichtbare Namen mit unterschiedlichen IDs, veraltete Schnappschüsse trotz gleicher Revision sowie JSON-/SQLite-Neustart mit unveränderten Rohdaten. Keine Änderung an gespeichertem Ort, Schema, Quest, Regelwert oder Versionsnummer. Vollständige CI auf finalem Commit und Android-Realgerät werden gesondert abgenommen.
+
+---
+
+## Chat D – Cleanup-GitHub-Action auf Node.js 24 aktualisiert (05.11.2026)
+
+[Draft-PR #571](https://github.com/ManuEtt/Dnd/pull/571) stellt ausschließlich den aktiven archivierenden Branch-Cleanup in `.github/workflows/cleanup-merged-safe-20261027.yml` von `actions/github-script@v7` auf `@v8` um. GitHub hat die Ausführung von JavaScript-Actions auf Node.js 24 umgestellt; v8 unterstützt diese Laufzeit und benötigt GitHub Actions Runner 2.327.1 oder neuer. Drei neue Python-Regressionstests in `scripts/tests/test_cleanup_github_script_runtime.py` verhindern einen Rückfall auf v7, fehlende oder doppelte Einstiegspunkte und das irrtümliche Zählen von Kommentaren als Action-Steps. Die bestehenden SHA-, Vorfahren-, Archivtag-, Schutzbranch- und erfolgreiches-Main-CI-Gates bleiben unverändert. **CI des finalen PR-HEADs steht noch aus; der Workflow wurde nicht manuell ausgelöst.** Keine Android-App-, SQLite-/JSON-, Spielstands- oder Versionsänderung.
+
+---
