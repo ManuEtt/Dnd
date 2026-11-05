@@ -1,5 +1,14 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – Zauberkraftregeneration gegen ungültige Klassenprofile (05.11.2026)
+
+Bei **Sorcerous Restoration / Zauberkraftregeneration** darf ein unplausibler oder direkt konstruierter Charakter keine Zauberer-Klassenstufen aus doppelten deutschen/englischen Aliasen, unbekannten Klassen oder ungültigen Mehrklassenstufen erhalten. `SrdSorcerousRestorationRules` liefert in reinen Lesefunktionen für solche Profile 0 und weist die bestätigte Regeneration vor Ressourcenänderungen zurück. Gültige Solo-/Mehrklassen sowie Stufe-5-/Stufe-20-Grenzen bleiben erhalten.
+
+**Chat A, Draft-PR [#564](https://github.com/ManuEtt/Dnd/pull/564)** · Basis-main `f11701efd46d0fee058f5f8e80b57f38ed4f7af4` · Branch `feat/chat-a/sorcerous-restoration-class-profile-20261105` · Fach-/Test-HEAD vor Dokumentation `3d4719701a21bf63837fadd4f141e9030783436a`. Geändert: `app/lib/domain/srd_sorcerous_restoration_rules.dart` und neuer `app/test/srd_sorcerous_restoration_class_preflight_test.dart`. Positive/negative deterministische Regressionen liegen vor. **Noch nicht als bestanden nachgewiesen:** Dart-Format, Flutter-/Python-/Backendtests, Android-/CI-APKs auf finalem PR-HEAD, Geräteabnahme. Kein lokales Dart-/Flutter-SDK; CI muss getrennt überprüft werden. SQLite 3, äußeres JSON 1, bestehende Spielstände und App-Version unverändert; keine Migration. SRD 5.2.1, Sorcerer 5: Sorcerous Restoration, CC BY 4.0, <https://www.dndbeyond.com/srd>. Coverage bleibt ohne pauschale Hochstufung. Gemeinsame Checkpoints bei Integration durch Chat D additiv zusammenführen.
+
+---
+
+
 ## Chat D – validierte Android-APK sicher in das Release übernehmen (05.11.2026)
 
 Der Alpha-Release-Builder `scripts/prepare_alpha_release.py` bindet die Quell-APK jetzt beim Kopieren an die vor dem ZIP-Validierungslauf aufgezeichnete Identität (Gerät, Inode, Größe, Änderungs- und Statuszeit). Unter POSIX öffnet er außerdem jeden Quellpfad-Bestandteil ohne Verfolgung symbolischer Links und prüft die tatsächlich geöffnete APK vor und nach dem Kopieren. Eine spät eingefügte symbolische Datei/ein Elternordnerlink oder der Austausch gegen eine andere reguläre APK kann so keine fremde, unvalidierte Installationsdatei in ein fertiges Release schleusen. Drei zusätzliche Regressionen sichern die Austauschzeitfenster ab; der normale APK-Releasefall bleibt bestehen. [Draft-PR #552](https://github.com/ManuEtt/Dnd/pull/552), Fach-/Testcommit `333d00776672`; vollständige CI auf dem finalen Head noch offen. Keine Änderung an SQLite-/JSON-Spielständen, App-Version oder Release-Namen.
