@@ -7,7 +7,11 @@ Die UI kennzeichnet sichtbare Fehler des ausstehenden Spielerauftrags
 als eindeutige Screenreader-Live-Region. Drei Widgettests bei 320/360 dp,
 200 % Schrift und simulierter Tastatur prüfen den Erstfehler, die
 Aktualisierung, die Entfernung, die ausdrückliche Wiederholung und
-unveränderte Outbox-Daten. Code-/Testcommits `c5c0c18`/`559369a`.
+unveränderte Outbox-Daten. Code-/Testcommits `c5c0c18`/`559369a`,
+Testressourcen-/Formatterkorrektur `e1112b1`. Gezielte CI
+[#42038325743](https://github.com/ManuEtt/Dnd/actions/runs/42038325743)
+**erfolgreich**: Dart-Format 2 Dateien unverändert, Flutter-Analyse ohne
+Probleme, **20 Widgettests bestanden**. Temporärer Diagnoseworkflow entfernt.
 Vollständige Flutter-/Android-CI auf dem finalen dokumentierten PR-HEAD
 und echtes TalkBack stehen zur Abnahme aus. Keine Regel-, Persistenz-,
 JSON-/SQLite-Schema- oder Versionsänderung, keine Migration.
