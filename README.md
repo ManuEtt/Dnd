@@ -1,5 +1,12 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat A – persistierte Klassen-Zaubervorbereitung im Preflight (05.11.2026)
+
+[Draft-PR #548](https://github.com/ManuEtt/Dnd/pull/548) bindet das bereits vorhandene `preparedSpellRecord` an `SrdSpellPreflightRules.preflight`. Bei bestehendem versioniertem Klassennachweis muss der ausgewählte Zauber **exakt für seine ausdrücklich bestätigte eigene Zauberklasse** eingetragen sein; ein bloßes `preparedForCastingClassConfirmed: true` darf eine widersprechende Zuordnung nicht umgehen. Für ein gültiges Persistenzprotokoll entfällt die redundante Bestätigung mehrdeutiger Zauber. Ältere Spielstände **ohne** Nachweis behalten ihre bisherige Bestätigungsprüfung. Die amtliche SRD-5.2.1-Mehrklassenregel erlaubt Paktplätze für Zauber aus anderen Spellcasting-Klassen und umgekehrt; beide Richtungen bleiben verfügbar und sind durch sechs neue deterministische Fachtests abgedeckt, samt unverändertem Ausgangs-JSON, Replay-Sperre und Legacy-/JSON-Neustart. Keine Änderung der Slotformeln, Kampflogik oder Story/UI/Controller-Pfade; SQLite 3, externes JSON 1, App-Version und bestehende Speicherinhalte bleiben unverändert. Ausgangs-main `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`, Fach-/Testcommit `b5e56a06b7f9cd30a0337a873a0a5964826c1b9e`; finale GitHub-CI und Android-Abnahme auf endgültigem PR-HEAD bleiben nachzuweisen. Quelle SRD 5.2.1, *Multiclassing: Spells Prepared, Pact Magic* (CC BY 4.0). Chat D konsolidiert gemeinschaftliche Dokumente vor dem Main-Merge.
+
+---
+
+
 ## Chat D – Checkpoint-Dateien gegen spätes Überschreiben schützen (05.11.2026)
 
 Das Quellcode-Checkpoint-Skript `scripts/create_checkpoint.py` prüft identische Version-/Zeitstempel-/Label-Artefakte jetzt nicht nur vor der aufwendigen Vorbereitung, sondern nochmals unter der exklusiven Veröffentlichungssperre unmittelbar vor der eigentlichen Ausgabe. Dadurch kann ein konkurrierender Lauf nach der frühen Prüfung keine gleichnamigen, bereits veröffentlichten ZIP-/Patch-/Manifest-/Prüfsummendateien mehr unbemerkt ersetzen. Hängende Symlinks zählen ebenfalls als belegte Namen. Zwei neue Regressionen in `scripts/tests/test_create_checkpoint.py` decken spätes Auftauchen einer Archivdatei und eines hängenden Manifest-Symlinks ab. [Draft-PR #544](https://github.com/ManuEtt/Dnd/pull/544), Basis `74548d3d5243`, Fachcommit `021672463075`. Vollständige Actions-CI auf dem finalen dokumentierten HEAD noch ausstehend. SQLite/JSON, Speicherformate, App-Version und bestehende Aliasse bleiben unverändert.

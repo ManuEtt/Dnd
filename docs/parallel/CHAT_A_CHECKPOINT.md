@@ -1,3 +1,25 @@
+# Chat A – bestätigte Klassenzuordnung beim Zauberpreflight (05.11.2026, PR #548)
+
+**Basis-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`. **Branch:** `feat/chat-a/prepared-spell-proof-preflight-20261105`. **Fach-/Testcommit:** `b5e56a06b7f9cd30a0337a873a0a5964826c1b9e`. **PR:** https://github.com/ManuEtt/Dnd/pull/548 (Draft).
+
+**Problem:** Der bestätigte versionierte `SrdPreparedSpellRecord` blieb im ausführbaren `SrdSpellPreflightRules.preflight` unberücksichtigt. Ein flüchtiges boolesches Klassenbekenntnis konnte der tatsächlich gespeicherten Quellklassenzuordnung widersprechen oder ohne Not wiederholt nötig sein.
+
+**Umsetzung:** Falls ein Klassen-Zaubernachweis gespeichert ist, wird die originale Klassen-/Stufen-/Spells-Quelle gegen den aktuellen Helden und der gewählte Spell-Name gegen die exakt bestätigte eigene Klasse geprüft. Bei Widerspruch wird vor Ressourcenfreigabe ein `FormatException` geworfen. Ein gültiges Ledger ersetzt die sonst nötige zusätzliche mehrdeutige Bestätigung. Nur bei alten Spielen ohne Ledger gilt weiterhin das bisherige boolesche Zustimmungstor.
+
+**Amtliche Regelgrenze:** SRD 5.2.1, *Multiclassing – Pact Magic*, Wizards of the Coast LLC (CC BY 4.0), https://www.dndbeyond.com/srd: Mit den eigenen Klassen vorbereitete Zauber dürfen bei Wizard/Warlock-Mehrklasse aus beiden passenden Slotpools bezahlt werden. Ein generelles Verbot fremder Klassenzauber wäre **nicht** SRD-konform; weder der Patch noch die Tests tun das.
+
+**Fachdateien:** `app/lib/domain/srd_spell_preflight_rules.dart`, `app/test/srd_prepared_pact_spell_source_preflight_test.dart`; additiv `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`. Sechs neue deterministische Tests: beide erlaubten Kreuz-Casts, Klassenquelle/Bool-Konflikt, unzugeordnetes Flat-Spell, Legacy-Mehrdeutigkeit, JSON-/Pakt-Laden, Ressourcen-/Replay-Unveränderlichkeit.
+
+**Qualität:** PR #543 mit vollständiger GitHub-Actions-CI [41971463401](https://github.com/ManuEtt/Dnd/actions/runs/41971463401) grün, ohne Main-Merge durch A. Neue PR-#548-Tests und vollständige CI **noch nicht als bestanden nachgewiesen**; lokale Flutter-/Dart-SDKs fehlen. Alle vorhandenen Tests beibehalten. Android-Realgerät / Upgrade/Produktivsignierung separat offen.
+
+**Migration:** Keine; SQLite 3, äußeres JSON 1, Charakterfelder und App-Version unverändert. Die bestehende `HeroCharacter.copyWith`-Ungültigmachung des Ledger bei Klassen-/Spell-Änderungen bleibt erhalten. Kein neues Persistenz-/Controller-Event und keine automatische KI-Zaubervorbereitung.
+
+**Parallelität:** #544 bereits auf main, danach #545–#547 und #543 offen; keine betroffene Fachdatei in deren PR-Diffs. README und zentraler Checkpoint müssen beim späteren Merge additiv von Chat D übernommen werden.
+
+**Nächster unabhängiger Schritt:** Nach vollständiger CI und Integrationsreview die gebundene Spell-Plan-Quellenprüfung beim separaten atomaren, revisionsgesicherten Turn-Staging gezielt auf Replay/Änderung der Spielzustandsquelle testen. Keine automatische Fortsetzung nach dieser Sitzung.
+
+---
+
 ## Chat-A-Konsolidierung – 04.11.2026
 
 Die Beiträge zu Waldläufer-Unermüdlich (#538) und Hexenmeister-Magische-List (#539) werden im gemeinsamen Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` vereint; die originale Commit-Historie und beide individuellen Belege werden beibehalten. Kombinierte CI vor Main-Merge gesondert nachweisen.
