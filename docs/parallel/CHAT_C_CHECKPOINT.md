@@ -1,3 +1,20 @@
+## Chat C – Materialauswahl vor mehrdeutigen Inventar-IDs schützen (05.11.2026)
+
+- **Ausgangs-main:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4`.
+- **Branch:** `feat/chat-c/material-inventory-id-ui-20261105`; **Code-/Testcommit:** `1714476441e52922d97396b0ce8238ec39a4fc6b`.
+- **Pull Request:** [#566](https://github.com/ManuEtt/Dnd/pull/566) (Draft bis CI und Review).
+- **Ausgangsproblem:** Doppelte Inventarstapel-IDs konnten beim Auswählen im Material-Dropdown eine Flutter-Assertion auslösen, noch bevor die Domainprüfung sie ablehnt.
+- **IMPLEMENTIERT:** Der Materialdialog prüft jede Stapel-ID mit `SrdSpellInventoryIdRules.isSafe`, die Eindeutigkeit und positive Mengen vor dem Aufbau auswählbarer Optionen; bei inkonsistentem Inventar zeigt er eine Live-Fehlermeldung und sperrt Auswahl sowie Bestätigung. Abbrechen bleibt möglich.
+- **Dateien:** `app/lib/ui/srd_material_inventory_dialog.dart`, `app/test/srd_material_inventory_dialog_test.dart` und additive Dokumentationsänderungen.
+- **Tests ergänzt:** Drei negative Widgetfälle (doppelte ID, unsichtbares Unicode-Zeichen, Menge 0), jeweils Setup-Sperre, Abbruch, unveränderter JSON-Snapshot und keine Flutter-Exception. Bestehende Positivtests für gültige Materialauswahl bleiben bestehen.
+- **GETESTET:** Main- und PR-Dateiabgleich sowie statische GitHub-Quell-/Diffprüfung. Python-, Backend-, Flutter-, Dart-Format- und Android-Prüfungen auf diesem Commit noch nicht ausgeführt; GitHub Actions separat auswerten.
+- **NICHT GETESTET:** Reale Android-/TalkBack-/IME-Bedienung bei 320/360 dp und 200 % Schrift, produktive Release-Signierung.
+- **BLOCKIERT:** Lokale Container-Toolchain derzeit nicht ausführbar; bis zur erfolgreichen CI Draft lassen. Additive `README.md`-/Zentral-Checkpoint-Änderungen bei Chat-D-Integration bewahren.
+- **Kompatibilität / Migration:** Keine Datenmigration, keine Änderung an Regeln, Spielständen, SQLite/JSON, Controller oder Berechtigungen.
+- **NÄCHSTER SCHRITT:** Gezielte Flutter-Widgettests und Gesamt-CI am finalen Branch-HEAD auswerten; danach echte Geräteabnahme.
+
+---
+
 ## Konsolidierung 04.11.2026 – PR #535
 
 Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
