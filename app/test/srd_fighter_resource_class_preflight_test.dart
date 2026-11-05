@@ -56,10 +56,7 @@ void _reject(HeroCharacter hero) {
     ),
     throwsStateError,
   );
-  expect(
-    () => ClassFeatureResources.spendActionSurge(hero),
-    throwsStateError,
-  );
+  expect(() => ClassFeatureResources.spendActionSurge(hero), throwsStateError);
   expect(random.calls, 0);
   expect(hero.toJson(), before);
   expect(hero.spentSecondWind, 0);
@@ -133,10 +130,7 @@ void main() {
         spentWind: 1,
       );
       final before = hero.toJson();
-      expect(
-        () => ClassFeatureResources.validate(hero),
-        throwsFormatException,
-      );
+      expect(() => ClassFeatureResources.validate(hero), throwsFormatException);
       expect(
         () => ClassFeatureResources.afterShortRest(hero),
         throwsFormatException,
