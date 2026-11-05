@@ -1,3 +1,19 @@
+## 05.11.2026 – ZIP-Pfadportabilität für APK und Gradle-Wrapper vereinheitlicht
+
+- **Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`; **Branch:** `fix/chat-d/archive-windows-invalid-chars-20261105`; **Code-/Testcommit:** `ec826fa27e7d4bd23935a91f81b7830577677ceb`; **PR:** [#584](https://github.com/ManuEtt/Dnd/pull/584) (Draft).
+- **Problem:** Der Quellarchiv-Validator verwendet bereits `WINDOWS_INVALID_CHARACTERS` sowie `WINDOWS_RESERVED_STEMS`. Die Alpha-APK-Prüfung kontrollierte bisher diese Sonderzeichen nicht; die Gradle-Wrapper-JAR-Prüfung weder Sonderzeichen noch reservierte Gerätebasen. Das erlaubt auf Windows-kompatiblen Extraktionszielen mehrdeutige ZIP-Namen.
+- **IMPLEMENTIERT:** In `scripts/prepare_alpha_release.py` und `scripts/verify_project.py` diese zentralen Policies bereits vor ZIP-CRC-`testzip()` anwenden, für alle Datei- und Verzeichniskomponenten. Keine Verdoppelung der Policy-Konstanten.
+- **Regressionen:** Sechs neue Testmethoden in `scripts/tests/test_prepare_alpha_release.py` und `scripts/tests/test_verify_project.py`: je 21 ungültige Zeichenpfade, zusätzlich elf Windows-Gerätenamen im Wrapper, je ein Positivfall für zulässige Interpunktion/Unicode sowie Abbruch ohne Release und unveränderte Wrapper-Quelldatei.
+- **Dateien:** `scripts/prepare_alpha_release.py`, `scripts/verify_project.py`, `scripts/tests/test_prepare_alpha_release.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktprüfung:** Zu Beginn aktuelle `main`-SHA und offene PRs #579–#583 samt Fachdateien kontrolliert. Kein anderer offener PR verändert die vier technischen Dateien; README-Nachtrag streng append-only, neutraler Titel ohne redaktionelle Chat-Kennung.
+- **GETESTET:** Code, Regressionstests und Draft-PR über GitHub auf Branch gesichert; bestehende Main-CI für `0e4474c` vollständig erfolgreich. **Keine neuen Tests auf dem finalen PR-HEAD als bestanden behauptet.**
+- **NICHT GETESTET:** Vollständige Python-/Backend-/Flutter-/Android-/Release-CI auf endgültigem Branch-HEAD, lokaler Checkout/Test, reales Android-Gerät und bestehende Datenmigration.
+- **BLOCKIERT:** Für die Abnahme CI des finalen PR-HEADs prüfen; lokaler Repository-Checkout war in der Umgebung zuvor durch GitHub-DNS eingeschränkt.
+- **Migrationen:** keine. SQLite 3, JSON 1, Spielstände, Backups, SRD-Regeln, App-Version und Buildnummer unverändert.
+- **Nächster Schritt:** Vollständigen CI-Lauf des PR #584 bis einschließlich ABI-/Alpha-Release-Jobs abnehmen, bei Fehlern im selben Branch korrigieren; erst dann neue Konfliktprüfung und Integration.
+
+---
+
 ## Chat D – GitHub-Script-Cleanup mit Node.js 24 (05.11.2026)
 
 - **Ausgangs-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95`; App-Version `0.8.51+101`.
