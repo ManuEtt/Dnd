@@ -1,3 +1,20 @@
+## Chat D – Android-Hauptworkflow auf Node.js 24 vorbereiten (05.11.2026)
+
+- **Main zum Start:** `7b76d34e42f9f536993035876f8789d3405d70f9`.
+- **Branch:** `fix/chat-d/android-actions-node24-20261105`.
+- **Code-/Testcommit:** `c3096088e38a797bdbebb8646d9fe4f76203fdcf`; spätere Dokumentation auf PR-Head ergänzend.
+- **Pull Request:** [#575](https://github.com/ManuEtt/Dnd/pull/575) als Draft bis zur vollständigen CI-Abnahme.
+- **Implementiert:** 13 Node.js-20-Action-Aufrufe in `.github/workflows/android-build.yml` auf Node.js-24-kompatible Major-Releases umgestellt. Keine projektseitige Node-/Flutter-/Java-Versionsänderung.
+- **Geänderte Dateien:** `.github/workflows/android-build.yml`, `scripts/tests/test_android_actions_node24.py`, `scripts/tests/test_no_codex_actions.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Neue Tests:** vier statische Regressionstestmethoden, die tatsächliche Action-Schritte und Ausfallvarianten sowie unveränderte Build-/Artefaktverträge prüfen.
+- **GETESTET:** Vorherige Main-CI [#42072388815](https://github.com/ManuEtt/Dnd/actions/runs/42072388815) vollständig grün; Action-Schrittanzahl und Mutation der YAML-Zeilen auf Code-Commit verifiziert.
+- **NICHT GETESTET:** Vollständige PR-CI auf finalem HEAD, Gerät, Update-/Installationsfall. Insbesondere keine CI-Freigabe aufgrund älterer Main-CI behaupten.
+- **BLOCKIERT:** Abschlussprüfung der GitHub-CI des PR und unabhängige Mergeprüfung.
+- **MIGRATION:** Keine SQLite/JSON-/App-Versionsmigration, keine Änderung an Spielständen oder Fachlogik.
+- **Nächster Schritt:** CI prüfen, Fehler auf demselben Branch beheben, vollständige CI und Main-Konfliktfreiheit dokumentieren, erst danach Merge und neue Main-CI abnehmen.
+
+---
+
 ## CHAT D – Node.js-24-Action im sicheren Branch-Cleanup (05.11.2026)
 
 - **Main-Ausgangscommit:** `7d7bb421261af0f690fd0af9012996e45b95ff95`.

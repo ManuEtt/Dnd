@@ -1384,3 +1384,9 @@ Der Masterprompt verlangt für künftige Änderungen **ausschließlich neue, sac
 [Draft-PR #571](https://github.com/ManuEtt/Dnd/pull/571) stellt ausschließlich den aktiven archivierenden Branch-Cleanup in `.github/workflows/cleanup-merged-safe-20261027.yml` von `actions/github-script@v7` auf `@v8` um. GitHub hat die Ausführung von JavaScript-Actions auf Node.js 24 umgestellt; v8 unterstützt diese Laufzeit und benötigt GitHub Actions Runner 2.327.1 oder neuer. Drei neue Python-Regressionstests in `scripts/tests/test_cleanup_github_script_runtime.py` verhindern einen Rückfall auf v7, fehlende oder doppelte Einstiegspunkte und das irrtümliche Zählen von Kommentaren als Action-Steps. Die bestehenden SHA-, Vorfahren-, Archivtag-, Schutzbranch- und erfolgreiches-Main-CI-Gates bleiben unverändert. **CI des finalen PR-HEADs steht noch aus; der Workflow wurde nicht manuell ausgelöst.** Keine Android-App-, SQLite-/JSON-, Spielstands- oder Versionsänderung.
 
 ---
+
+---
+
+### 2026-11-05 – Android-Alpha-Buildaktionen auf Node.js 24 aktualisiert
+
+[PR #575](https://github.com/ManuEtt/Dnd/pull/575) migriert die 13 aktiven GitHub-Standardaktionen im Android-Hauptworkflow auf Node.js-24-kompatible Versionen: `actions/checkout@v6`, `setup-java@v6`, `setup-node@v6`, `upload-artifact@v6` und `download-artifact@v7`. Die vorhandenen Test-/Releasejobs, Architektur-APKs, Archivnamen, Flutter 3.35.7, Java 17 und die projektseitige Node.js-Version 22.14.0 bleiben unverändert. Vier neue Python-Regressionen prüfen die exakten Action-Schritte, fehlende oder verdoppelte Einträge, Kommentare und bestehende Qualitäts-/Artefaktverträge. Code-/Testcommit: `c3096088e38a797bdbebb8646d9fe4f76203fdcf`, Branch: `fix/chat-d/android-actions-node24-20261105`. **Vollständige CI auf finalem PR-Head noch offen**, vorherige Main-CI allein belegt diese Änderung nicht. Keine Spielstands-, SQLite-/JSON-, Regel- oder Versionsmigration.

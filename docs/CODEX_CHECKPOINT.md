@@ -1,3 +1,18 @@
+## Android-Alpha-CI – Node.js-24-kompatible Standardaktionen (05.11.2026)
+
+- **Ausgangs-main:** `7b76d34e42f9f536993035876f8789d3405d70f9` (Main-CI #42072388815 vollständig erfolgreich; kein Nachweis der neuen Änderung).
+- **Branch:** `fix/chat-d/android-actions-node24-20261105`; **Fach-/Testcommit:** `c3096088e38a797bdbebb8646d9fe4f76203fdcf`; **PR:** [#575](https://github.com/ManuEtt/Dnd/pull/575) (Draft).
+- **Problem:** Hauptworkflow nutzte ältere `checkout`, `setup-java`, `setup-node`, `upload-artifact`, `download-artifact`-Versionen mit Node.js-20-Runtime-Warnungen.
+- **Implementiert:** Nur die 13 Action-Versionen im Android-Hauptworkflow auf `checkout@v6`, `setup-java@v6`, `setup-node@v6`, `upload-artifact@v6` und `download-artifact@v7` umgestellt; alle Projekt-, Cache-, ABI-, Artefakt- und Qualitätsgates unverändert.
+- **Tests:** Vier neue Python-Regressionstestmethoden in `scripts/tests/test_android_actions_node24.py`; vorhandener Workflow-Gate-Test auf `upload-artifact@v6` angepasst. 13 YAML-Schritte und ihre Sollanzahl vorab statisch geprüft.
+- **GETESTET:** Ausgangs-main und seine vollständige CI; syntaktisch/strukturell geprüfte Action-Verweise auf Code-Commit.
+- **NICHT GETESTET:** Vollständige GitHub-CI auf dem finalen PR-Head; reale Android-Geräteabnahme, Installations-/Upgrade-Test und Veröffentlichung.
+- **Kompatibilität:** Keine Änderung an `app/pubspec.yaml`, Flutter 3.35.7, JDK 17, Node.js 22.14.0, SQLite/JSON, Regeln oder Spielständen; keine Migration.
+- **Konfliktprüfung:** Alle zu Beginn offenen 19 PRs und ihre Dateilisten abgeglichen; keine Fachdateiüberschneidung, gemeinsame README-/Checkpoint-Nachträge bei späterer Integration verlustfrei anhängen.
+- **Nächster Schritt:** Vollständige PR-CI inklusive aller drei ABI-Builds, Alpha-Artefakten und Source-History prüfen; erst nach vollständigem Grün und frischem Main-Abgleich regulär integrieren.
+
+---
+
 ## Chat D – GitHub-Script-Cleanup mit Node.js 24 (05.11.2026)
 
 - **Ausgangs-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95`; App-Version `0.8.51+101`.
