@@ -222,8 +222,35 @@ class MemoryEngine {
         priority: npc.alive ? 100 : 500,
       );
     }
+    // Saved location identity, not the displayed name, determines which
+    // confirmed place a memory describes. Two places can share a name (or
+    // differ only by invisible legacy marks) without being the same location.
+    final placeNameCounts = <String, int>{};
+    final placeIdCounts = <String, int>{};
     for (final place in campaign.places) {
-      add('Ort: ${place.name}', place.description, priority: 50);
+      final nameKey = _memoryNormalize(_visiblePlaceName(place.name));
+      if (nameKey.isNotEmpty) {
+        placeNameCounts[nameKey] = (placeNameCounts[nameKey] ?? 0) + 1;
+      }
+      placeIdCounts[place.id] = (placeIdCounts[place.id] ?? 0) + 1;
+    }
+    for (final place in campaign.places) {
+      // Imported or in-memory duplicate IDs cannot prove which physical
+      // place owns the description. Never guess from list order or the name.
+      if (_safePlaceId.stringMatch(place.id) != place.id ||
+          placeIdCounts[place.id] != 1) {
+        continue;
+      }
+      final name = _visiblePlaceName(place.name);
+      final nameKey = _memoryNormalize(name);
+      if (nameKey.isEmpty) continue;
+      final ambiguous = placeNameCounts[nameKey] != 1;
+      final heading = ambiguous
+          ? 'Ort: $name (Ort-ID: ${place.id})'
+          : 'Ort: $name';
+      // A short recall must not truncate away the distinguishing identity.
+      if (ambiguous && heading.length + 1 > maxCharacters) continue;
+      add(heading, _oneLinePlaceDescription(place.description), priority: 50);
     }
     candidates.sort((a, b) {
       final score = b.score.compareTo(a.score);
@@ -410,6 +437,29 @@ String _canonicalJson(Object? value) {
 
   return jsonEncode(ordered(value));
 }
+
+// Place names are user-visible identities in memory summaries. Strip legacy
+// invisible format marks for name comparison *and* rendering; descriptions
+// use spaces so separate words cannot be silently joined. Neither operation
+// edits any stored JSON or SQLite field.
+final RegExp _safePlaceId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
+final RegExp _invisiblePlaceMarks = RegExp(
+  r'[\u00ad\u034f\u061c\u180e\u200b-\u200f'
+  r'\u202a-\u202e\u2060-\u206f\ufeff]',
+);
+final RegExp _placeControls = RegExp(r'[\x00-\x1f\x7f-\x9f\u2028\u2029]');
+
+String _visiblePlaceName(String value) => value
+    .replaceAll(_invisiblePlaceMarks, '')
+    .replaceAll(_placeControls, ' ')
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .trim();
+
+String _oneLinePlaceDescription(String value) => value
+    .replaceAll(_invisiblePlaceMarks, ' ')
+    .replaceAll(_placeControls, ' ')
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .trim();
 
 // Only canonical, single-line IDs can disambiguate names in narrator text.
 // Unique names keep their legacy rendering even with unusual stored IDs.
