@@ -35,7 +35,7 @@ void main() {
         spentSpellSlots: const {'1': 3},
       ),
       'negativer normaler Verbrauch': _hero(spentSpellSlots: const {'1': -1}),
-      'nichtkanonischer Gradschlüssel': _hero(spentSpellSlots: const {'01': 1}),
+      'ungültiger Grad 01': _hero(spentSpellSlots: const {'01': 1}),
       'fremder Gradschlüssel': _hero(spentSpellSlots: const {'10': 1}),
       'Paktplätze über Klassengrenze': _hero(
         first: 'Hexenmeister',
@@ -50,19 +50,19 @@ void main() {
       test('${entry.key}: keine stillschweigende Ressourcenreparatur', () {
         final hero = entry.value;
         final before = hero.toJson();
-        final initialSpellSlots = Map<String, int>.from(hero.spentSpellSlots);
+        final initialSpells = Map<String, int>.from(hero.spentSpellSlots);
         final initialPactSlots = hero.spentPactSlots;
 
         expect(() => RestRules.longRest(hero), throwsFormatException);
         expect(hero.toJson(), before);
-        expect(hero.spentSpellSlots, initialSpellSlots);
+        expect(hero.spentSpellSlots, initialSpells);
         expect(hero.spentPactSlots, initialPactSlots);
         expect(hero.hitPoints, 12);
         expect(hero.concentratingOn, 'Unsichtbarkeit');
       });
     }
 
-    test('gültige Magier-/Hexenmeister-Mehrklasse regeneriert beide Pools', () {
+    test('gültige Mehrklasse regeneriert beide Slotpools', () {
       final hero = _hero(
         first: 'Wizard',
         second: 'Warlock',
@@ -83,10 +83,11 @@ void main() {
       expect(rested.spentHitDice, isEmpty);
       expect(rested.concentratingOn, isEmpty);
       expect(hero.toJson(), initial);
-      expect(HeroCharacter.fromJson(rested.toJson()).toJson(), rested.toJson());
+      final reloaded = HeroCharacter.fromJson(rested.toJson());
+      expect(reloaded.toJson(), rested.toJson());
     });
 
-    test('unveränderter Altspielstand ohne Zauberverbrauch bleibt gültig', () {
+    test('Altspielstand ohne Zauberverbrauch bleibt gültig', () {
       final oldHero = _hero(first: 'Fighter', level: 2);
       final original = oldHero.toJson();
       final loaded = HeroCharacter.fromJson(original);
