@@ -188,7 +188,8 @@ class NpcIdentityStoryPayload {
   static String _fold(String value) => value
       .replaceAll(
         RegExp(
-          r'[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]',
+          r'[\u00ad\u034f\u061c\u180e\u200b-\u200f'
+          r'\u202a-\u202e\u2060-\u206f\ufeff]',
         ),
         '',
       )
