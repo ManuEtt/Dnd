@@ -217,6 +217,75 @@ void main() {
     expect(uncovered.hit, true);
   });
 
+  test('Total cover protects only from the opposite side', () {
+    final rng = _RandomRolls([9, 0]);
+    expect(
+      () => SrdExtraCreatureAttackRules.resolve(
+        DiceEngine(random: rng),
+        _input(cover: CoverLevel.total, opposite: true),
+      ),
+      throwsFormatException,
+    );
+    expect(rng.calls, 0);
+    final allowed = SrdExtraCreatureAttackRules.resolve(
+      DiceEngine(random: rng),
+      _input(cover: CoverLevel.total, opposite: false, bonus: 2),
+    );
+    expect(allowed.effectiveArmorClass, 12);
+    expect(allowed.attackRoll.natural, 10);
+    expect(allowed.hit, true);
+    expect(allowed.damage, 3);
+    expect(rng.calls, 2);
+  });
+
+  test('Same-side total cover persists exactly one manual attack', () {
+    final rng = _RandomRolls([14, 2]);
+    final engine = GameEngine(dice: DiceEngine(random: rng));
+    final before = _queue(engine);
+    final savedBefore = before.toJson();
+    expect(
+      () => engine.manualExtraCreatureAttack(
+        before,
+        attackerId: 'orc',
+        targetId: 'goblin',
+        attack: _input(cover: CoverLevel.total, opposite: true),
+      ),
+      throwsFormatException,
+    );
+    expect(rng.calls, 0);
+    expect(before.toJson(), savedBefore);
+
+    final result = engine.manualExtraCreatureAttack(
+      before,
+      attackerId: 'orc',
+      targetId: 'goblin',
+      attack: _input(cover: CoverLevel.total, opposite: false),
+    );
+    expect(result.events.single.type, 'combat.manualExtraCreatureAttack');
+    expect(result.events.single.payload['cover'], 'total');
+    expect(result.events.single.payload['coverOppositeAttacker'], false);
+    expect(result.events.single.payload['effectiveArmorClass'], 12);
+    expect(result.campaign.trackedAreaCreatures[1].hitPoints, 7);
+    expect(result.campaign.manualTurnQueue!.actionUsed, true);
+    expect(result.campaign.revision, before.revision + 1);
+    expect(rng.calls, 2);
+    expect(
+      Campaign.fromJson(result.campaign.toJson()).toJson(),
+      result.campaign.toJson(),
+    );
+    expect(before.toJson(), savedBefore);
+    expect(
+      () => engine.manualExtraCreatureAttack(
+        result.campaign,
+        attackerId: 'orc',
+        targetId: 'goblin',
+        attack: _input(cover: CoverLevel.total, opposite: false),
+      ),
+      throwsFormatException,
+    );
+    expect(rng.calls, 2);
+  });
+
   test('Advantage & disadvantage cancel without third attack die', () {
     final rng = _RandomRolls([1, 17, 0]);
     final result = SrdExtraCreatureAttackRules.resolve(
@@ -236,7 +305,7 @@ void main() {
       _input(ac: 0),
       _input(damage: '11d6+2'),
       _input(damage: '2d20+1'),
-      _input(cover: CoverLevel.total),
+      _input(cover: CoverLevel.total, opposite: true),
       _input(ac: 96, cover: CoverLevel.threeQuarters, opposite: true),
     ]) {
       expect(
