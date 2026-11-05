@@ -326,15 +326,23 @@ Darin stehen:
 Aktualisiere zusätzlich auf deinem eigenen Arbeitsbranch:
 
 • "docs/CODEX_CHECKPOINT.md"
-• "README.md"
+• "README.md" – ausschließlich nach den folgenden Append-only-Regeln.
 
-Bewahre darin bisherige Einträge und dokumentiere nur nachgewiesene Änderungen.
+### Verbindliche README-Regel für alle Chats A, B, C und D
 
-Diese Änderungen dürfen parallel in verschiedenen PR-Branches liegen, aber nicht unkontrolliert in "main" zusammengeführt werden.
+Die README ist zunächst die **dauerhafte Projekteinstiegsseite** mit Projektüberschrift, Funktionsüberblick, Repository-Struktur, Startanleitung und Links. Dieser obere Bereich bleibt bei regulären Entwicklungspaketen unverändert. Neue Entwicklungs- und PR-Meldungen gehören ausschließlich in das **Entwicklungsprotokoll am absoluten Dateiende** von `README.md`.
 
-CHAT D übernimmt bei der Integration die Konsolidierung widersprüchlicher README- und Checkpoint-Änderungen.
+1. Öffne die vollständige aktuelle README auf deinem eigenen, vom aktuellen `main` abgeleiteten Branch und kontrolliere den letzten vorhandenen Eintrag.
+2. Ergänze **nur hinter dem letzten vorhandenen Zeichen bzw. Eintrag** einen neuen Nachtrag. Füge nichts am Dateianfang, vor der ersten Projektüberschrift, unter dem Projektstatus oder zwischen ältere Meldungen ein. Benutze keine Prepend-Operation und keinen neuen Hinweis oberhalb der Projektbeschreibung.
+3. Format pro Nachtrag: `### JJJJ-MM-TT – Chat <A/B/C/D>: <kurzer Änderungstitel>`, danach kurze Beschreibung, Branch, Commit/PR-Link (soweit vorhanden), tatsächlich ausgeführte Tests und CI-Status, Kompatibilitäts-/Migrationsauswirkung und offene Grenzen. Keine unbelegten Erfolgsbehauptungen.
+4. Bewahre **alle** vorhandenen Nachträge unverändert, in ihrer bisherigen Reihenfolge und ohne Duplikate. Korrigiere historische Einträge nicht stillschweigend; falls nötig, füge eine datierte Richtigstellung **hinten** an. Ein abgeschlossener PR ist nicht automatisch ein in `main` integriertes Feature.
+5. Prüfe unmittelbar vor Commit/PR den aktuellen `main`-Stand und konkurrierende PRs. Wenn andere Chats in der Zwischenzeit Nachträge angefügt haben, übernimm diese **vollständig und in ihrer Reihenfolge** und hänge erst danach deinen eigenen Nachtrag an. README-Konflikte niemals durch pauschales Ersetzen, Abschneiden oder Überschreiben lösen.
+6. Bei nicht sicher auflösbaren Überschneidungen verschiebe die zentrale README-Aktualisierung in einen **separaten koordinierten Dokumentations-/Integrations-PR** und halte den Fortschritt im eigenen `docs/parallel/CHAT_<KENNUNG>_CHECKPOINT.md` sowie in der PR-Beschreibung fest. Die Fachimplementierung darf nicht durch einen unnötigen README-Konflikt fremde Beiträge verlieren.
+7. Nur ein **explizit beauftragter** Dokumentations-/Integrationslauf darf die dauerhaften README-Einstiegsabschnitte umstrukturieren. Auch Chat D darf sie nicht bei gewöhnlichen Fachpaketen nach oben durch neue Statusmeldungen verdrängen.
 
-Bereits veröffentlichte Fortschritte anderer Chats dürfen dabei nicht verloren gehen.
+Bewahre auch in `docs/CODEX_CHECKPOINT.md` alle fremden, nachgewiesenen Fortschritte. Parallel vorliegende Dokumentationsänderungen dürfen nicht unkontrolliert in `main` zusammengeführt werden.
+
+CHAT D koordiniert bei der Integration die **verlustfreie** Zusammenführung von README-Nachträgen und Checkpoints. Bereits veröffentlichte Fortschritte anderer Chats dürfen dabei nicht verloren gehen.
 
 ───
 
@@ -411,7 +419,7 @@ Wenn das verfügbare Kontingent knapp wird:
 4. Fortschritt committen.
 5. Pull Request erstellen oder aktualisieren.
 6. Persönlichen und zentralen Checkpoint auf dem Branch aktualisieren.
-7. README fortschreiben.
+7. README ausschließlich durch einen neuen Nachtrag am absoluten Dateiende fortschreiben (Abschnitt 9).
 8. Den nächsten Schritt dokumentieren.
 
 Niemals eine erfolgreiche CI, eine funktionierende APK oder eine automatische Hintergrundausführung ohne tatsächlichen Nachweis behaupten.
