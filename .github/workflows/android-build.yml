@@ -90,9 +90,13 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: Dart-Formatierung prüfen
+      # Temporary isolated diagnostics. NEVER merge this workflow.
+      - name: Dart-Datei formatieren und Diff anzeigen (Diagnose)
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          dart format --output=write test/srd_fighter_resource_class_preflight_test.dart
+          git --no-pager diff -- test/srd_fighter_resource_class_preflight_test.dart
+          exit 1
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
