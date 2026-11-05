@@ -1,3 +1,19 @@
+## Chat C – Live-Fehlermeldungen für ausstehende Handlungen (05.11.2026)
+
+[Draft-PR #556](https://github.com/ManuEtt/Dnd/pull/556), Branch
+`feat/chat-c/pending-error-live-region-20261105`,
+Ausgangs-main `36ced64cd6b6b13888bee34f5dd33103edf04dcb`.
+Die UI kennzeichnet sichtbare Fehler des ausstehenden Spielerauftrags
+als eindeutige Screenreader-Live-Region. Drei Widgettests bei 320/360 dp,
+200 % Schrift und simulierter Tastatur prüfen den Erstfehler, die
+Aktualisierung, die Entfernung, die ausdrückliche Wiederholung und
+unveränderte Outbox-Daten. Code-/Testcommits `c5c0c18`/`559369a`.
+Vollständige Flutter-/Android-CI auf dem finalen dokumentierten PR-HEAD
+und echtes TalkBack stehen zur Abnahme aus. Keine Regel-, Persistenz-,
+JSON-/SQLite-Schema- oder Versionsänderung, keine Migration.
+
+---
+
 ## Chat D – TOCTOU-Abwehr beim Kopieren geprüfter ARM64-Release-APKs (05.11.2026)
 
 - **Ausgangs-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9` (vollständig grüne Main-CI [41998020622](https://github.com/ManuEtt/Dnd/actions/runs/41998020622)).
