@@ -9,19 +9,17 @@ import 'package:lebendiger_spielleiter/story/story_memory_engine.dart';
 import 'package:path/path.dart' as paths;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-Campaign _campaign({
-  List<Place> places = const [],
-  int revision = 0,
-}) => Campaign(
-  id: 'place-recall-identity',
-  name: 'Die zwei Ruinen',
-  world: 'Valdorn',
-  sessionId: 'session-two',
-  revision: revision,
-  hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 12),
-  scene: 'Unbestätigt: Alle Ruinen sind ein und derselbe Ort.',
-  places: places,
-);
+Campaign _campaign({List<Place> places = const [], int revision = 0}) =>
+    Campaign(
+      id: 'place-recall-identity',
+      name: 'Die zwei Ruinen',
+      world: 'Valdorn',
+      sessionId: 'session-two',
+      revision: revision,
+      hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 12),
+      scene: 'Unbestätigt: Alle Ruinen sind ein und derselbe Ort.',
+      places: places,
+    );
 
 void main() {
   sqfliteFfiInit();
@@ -169,9 +167,7 @@ void main() {
       ],
     );
     final raw = jsonEncode(original.toJson());
-    final decoded = Campaign.fromJson(
-      jsonDecode(raw) as Map<String, dynamic>,
-    );
+    final decoded = Campaign.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     expect(jsonEncode(decoded.toJson()), raw);
 
     final folder = await Directory.systemTemp.createTemp('place-recall-id-');
