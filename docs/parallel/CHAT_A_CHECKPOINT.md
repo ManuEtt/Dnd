@@ -1399,3 +1399,15 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 05.11.2026 – CHAT A: Deckung bei Zusatzkreaturen relativ zum Angreifer
+
+- **Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`. **Branch:** `fix/chat-a/extra-creature-relative-total-cover-20261105`. **Fach-/Testcommit:** `760dcf924ec5b11c3227a49d3174add05560b07d`; PR-Nummer und finalen SHA nach Veröffentlichung aktualisiert in PR-Beschreibung.
+- **Ausgangsproblem:** `SrdExtraCreatureAttackRules.resolve` sperrte vollständige Deckung unabhängig von `coverOppositeAttacker`. Damit wurde der gegnerferne Hindernisbereich auch auf der Angreiferseite fälschlich wie eine direkte Zielblockade behandelt.
+- **Implementiert:** Relative Sperre für `CoverLevel.total` nur bei gegenüberliegender Seite; Halb-/Dreivierteldeckung bleibt richtungsabhängig. Verifizierte übrige Eingaben, Initiative, Aktion, Würfel und Schaden bleiben unverändert. Der bestehende GameEngine-Pfad übernimmt die korrigierte Domänenentscheidung ohne gemeinsamen Schnittstellenumbau.
+- **Regressionen:** Bestehende Datei `app/test/srd_extra_creature_attack_test.dart`: Totaldeckung gegenüber sperrt vor W20; gleiche Seite erlaubt regelkonformen Treffer; GameEngine schreibt genau ein Ereignis, Schaden, Aktion und Revision; Roundtrip und unveränderte vorherige Kampagne. Vorhandenen Negativfall für Totaldeckung mit `opposite: true` präzisiert.
+- **SRD:** *Playing the Game / Combat / Cover*, v5.2.1, Wizards of the Coast LLC, CC BY 4.0, <https://www.dndbeyond.com/srd>. `RULE-COMBAT-COVER` bleibt `unverified`, keine vollständige Deckungs-/Karten-Engine vorgetäuscht.
+- **Getestet:** GitHub-Livezustand und vorhandene Tests/Quellgrenzen geprüft; Code- und Teständerungen gesichert. **Nicht getestet:** Flutter/Dart/Android lokal (SDK fehlt); vollständige CI auf finalem PR-HEAD steht aus.
+- **Kompatibilität:** Keine Migration, kein Versionswechsel, keine Änderung an `models.dart`, `game_engine.dart`, SQLite/JSON, Story, Backend und UI. README und zentraler/persönlicher Checkpoint nur additiv; andere PRs #579/#580 müssen beim Merge verlustfrei integriert werden.
+- **Nächster Schritt:** finalen CI-Lauf mit Format, Analyzer, Flutter-Tests, Android-Debug-/ABI-Jobs prüfen, rote Jobs korrigieren, anschließend unabhängige Integrationsfreigabe.
