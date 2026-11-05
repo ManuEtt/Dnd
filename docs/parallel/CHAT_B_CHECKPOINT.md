@@ -946,3 +946,17 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+## 2026-11-05 – Strukturierte NPC-Identität gegen Legacy-Unicode (PR #582)
+
+- **Ausgangs-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`.
+- **Branch:** `feat/chat-b/structured-npc-legacy-unicode-20261105`, **Draft-PR:** [#582](https://github.com/ManuEtt/Dnd/pull/582).
+- **Fachcommit:** `ae5b889b7549b656bba3292cfdb44161ce7c8770`; **Regression:** `998ebcd49484c5929c3b920ec76a8e2caf367cde` sowie Testtitel-Formatcommit `247a4dfeb7119dd61aa7b9cfc0b26e7fe5c995c8`. Abschließenden HEAD und CI live prüfen.
+- **Ausgangsproblem:** Die strukturierte `NpcIdentityStoryPayload` behandelte U+00AD, U+034F, U+180E und U+206A–U+206F nicht durchgehend als unsichtbare Formatcodes. Dadurch konnten visuell gleiche NPC-Namen bei freier Sprache als getrennte Identitäten behandelt werden. Die Codes konnten außerdem strukturierte Namen, Beziehungen und Notizen auf dem KI-Wire passieren.
+- **IMPLEMENTIERT:** Zwei bestehende Wächter (`_fold` und `_validText`) im Modul `app/lib/story/npc_identity_story_payload.dart` um diese Codes erweitert: sichtbare Namen werden beim Vergleich gefaltet; strukturierte Daten mit unsicheren Rohzeichen werden verweigert (fail-closed). Gültig explizit gewählte, saubere NPC-IDs bleiben möglich. Keine Mutation gespeicherter Texte, mechanischer Regeln oder bestätigter Kampagnen.
+- **TESTS ERGÄNZT:** `app/test/npc_identity_legacy_unicode_payload_test.dart` mit vier Gruppen: neun Namensspoofing-Varianten einschließlich expliziter Auswahl; je neun Formatzeichen in Namen, Beziehung, Notiz und Notizbeziehung; deutsche Namen/Emoji, JSON-Legacy und Stale-/Same-Revision; echter SQLite-Neustart, Identität und Journalrekonstruktion.
+- **GETESTET:** GitHub-Main, Masterprompt, offene PRs, Fachdateipfade sowie bestehende Architektur-/Storytests geprüft; Fachcode und Regressionen auf eigenem Branch committed. Keine Überschneidung der Fachdateien mit den drei damals offenen Regel-PRs #579/#580/#581.
+- **NICHT GETESTET:** Flutter/Dart/Python/Backend/Android-CI auf finalem PR-HEAD erst bei vollständigem Actions-Nachweis; Installation auf echtem Android-Gerät und produktiver KI-Anbieter nicht geprüft. Kein lokales Flutter/Dart-SDK.
+- **MIGRATION:** Keine. Bestehende JSONs/SQLite-Versionen, IDs, Events, Helden, Inventar, Quests und alte gespeicherte Rohtexte unverändert.
+- **BLOCKIERT:** Vollständige CI-/Integrationsabnahme und Geräteprüfung. Gemeinsame README-/CODEX-Nachträge mit parallelen PRs verlustfrei durch Chat D zusammenführen; README streng append-only und ohne neue Chat-Bezeichnungen.
+- **NÄCHSTER SCHRITT:** Finale CI #582 prüfen, konkrete Formatter-/Testfehler auf demselben Branch korrigieren; nach grünen Gates kontrollierte Integration.
