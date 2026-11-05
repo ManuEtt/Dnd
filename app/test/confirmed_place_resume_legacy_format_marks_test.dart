@@ -22,7 +22,7 @@ Campaign _campaign({List<Place> places = const []}) => Campaign(
 void main() {
   sqfliteFfiInit();
 
-  test('legacy soft hyphen and deprecated bidi marks never enter place recaps', () {
+  test('legacy hidden marks never appear in saved place recaps', () {
     for (final point in [
       0x00ad,
       0x206a,
@@ -37,8 +37,8 @@ void main() {
         places: [
           Place(
             id: 'tower',
-            name: 'Alte' + mark + 'Ruine',
-            description: 'Der Schlüssel' + mark + 'liegt hier.',
+            name: 'Alte${mark}Ruine',
+            description: 'Der Schlüssel${mark}liegt hier.',
           ),
         ],
       );
@@ -58,7 +58,7 @@ void main() {
       expect(selection.playerOverview.split('\n'), hasLength(2));
       selection.requireCurrent(original);
       expect(jsonEncode(original.toJson()), before);
-      expect(before, contains(mark));
+      expect(original.places.single.name, contains(mark));
     }
   });
 
@@ -69,7 +69,7 @@ void main() {
         const Place(id: 'north', name: 'AlteRuine', description: 'Nordtor.'),
         Place(
           id: 'south',
-          name: 'Alte' + invisible + 'Ruine',
+          name: 'Alte${invisible}Ruine',
           description: 'Südtor.',
         ),
       ],
@@ -98,7 +98,7 @@ void main() {
         original.places.first,
         Place(
           id: 'south',
-          name: 'Alte' + invisible + 'Ruine',
+          name: 'Alte${invisible}Ruine',
           description: 'Ein neuer, noch nicht gezeigter Ort.',
         ),
       ],
@@ -115,8 +115,8 @@ void main() {
       places: [
         Place(
           id: 'legacy',
-          name: 'Tor' + softHyphen + 'Ruine',
-          description: 'Geheimnis' + bidi + 'bekannt.',
+          name: 'Tor${softHyphen}Ruine',
+          description: 'Geheimnis${bidi}bekannt.',
         ),
       ],
     );
