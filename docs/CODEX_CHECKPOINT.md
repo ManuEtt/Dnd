@@ -1,3 +1,20 @@
+## Chat D – Kommentar-Backslashes dürfen keine Gradle-Properties verstecken (05.11.2026)
+
+- **Basis-main:** `d9fc2396dc44b9e03fc9a86d9dcc9c456c5a80a9`.
+- **Branch:** `fix/chat-d/gradle-comments-continuation-20261105`.
+- **Fach-/Test-HEAD vor Dokumentation:** `9a88f16448b2baa42fa8e75773bd370cfca29987`.
+- **PR:** [#547](https://github.com/ManuEtt/Dnd/pull/547), bis zur grünen vollständigen CI als Draft.
+- **Fehler:** `_gradle_logical_lines` verband `#`-/`!`-Kommentare mit abschließendem Backslash mit der nächsten physischen Zeile, obwohl Java `Properties.load` Kommentare nicht fortsetzt. Dadurch wurde ein folgender echter, eventuell manipulierter URL-/SHA-Doppelwert übersehen.
+- **IMPLEMENTIERT:** Eigenständige physische Kommentarzeilen werden vor der Fortsetzungsprüfung erkannt; nur nicht kommentierte Eigenschaftszeilen dürfen weiterhin logisch fortgesetzt werden. `distributionUrl` und `distributionSha256Sum` werden unverändert streng als eindeutige Werte geprüft.
+- **Tests ergänzt:** vier Regressionstestmethoden in `scripts/tests/test_verify_project.py`: 6 gültige Kommentar-Vorlagen (LF/CR/CRLF, #/!), 12 schädliche Duplikatfälle, 3 echte gültige Fortsetzungen, 2 Kommentarzeichen innerhalb einer fortgesetzten ungültigen Property = 23 Varianten.
+- **GETESTET:** Java 21 `Properties.load(StringReader)` bestätigt, dass ein späterer URL-Eintrag nach backslashterminiertem Kommentar unter LF/CR/CRLF tatsächlich wirksam wird; Branch, Fach-/Testcode und PR erfolgreich gesichert.
+- **NICHT GETESTET:** vollständiger `scripts/tests`-Pythonlauf, Backend-/Flutter-/Android-CI auf finalem Dokumentations-HEAD und Gerätetest. Diese bis zum nachweislichen erfolgreichen Workflow nicht als grün behaupten.
+- **Abgrenzung:** Keine Änderung an Android-/Flutter-Anwendungsquellen, Backend, SRD-Regeln, SQLite-/JSON-Schemas, Backupformaten oder App-Version. Aktuelle Chat-A-/B-PRs #543/#545/#546 ändern nicht die beiden Python-Fachdateien.
+- **Geänderte Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Nächster Schritt:** Volle CI auf dem finalen PR-HEAD prüfen, Fehler im eigenen Branch korrigieren und danach Konflikte/Main-CI vor einem Merge neu abgleichen.
+
+---
+
 ## Chat D – Exklusive Checkpoint-Namensprüfung nach Lock-Übernahme (05.11.2026)
 
 - **Basis-main:** `74548d3d5243485c05fa7cb26bf1cea945e6ce9b`.
