@@ -2071,3 +2071,13 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **MIGRATION:** Keine; JSON, SQLite, World/Quest/HP/XP/Regeln, App-Version und Provider bleiben unverändert. Herkunftsstempel prüft weiterhin alle ungekürzten gespeicherten Orte.
 - **Konfliktkontrolle:** Chat-B-PR #545 (Kampagnenrückblick), #546 (Langzeit-Ortsgedächtnis) und #550 (generierte Abenteuerangebote) berühren andere Fachdateien. Andere aktive PRs aus A, C, D ebenfalls abgeglichen; gemeinsame README/Checkpoints nur additiv bei Integration konsolidieren.
 - **Nächster Schritt:** Vollständige CI auf finalem PR-HEAD prüfen; Format-/Testfehler im selben Branch beheben; grünen PR zur kontrollierten Integration an Chat D übergeben.
+
+## CHAT B – 05.11.2026: Legacy-Formatmarken im NPC-Erzählertransport (#569)
+
+- **Ausgangs-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95`, **Branch:** `feat/chat-b/npc-narrator-legacy-unicode-main-sync-20261105`, **PR:** [#569](https://github.com/ManuEtt/Dnd/pull/569) Draft.
+- **Implementiert:** `app/lib/story/npc_narrator_memory.dart` entfernt zusätzliche ältere versteckte Formatzeichen (U+00AD, U+034F, U+180E, U+206A–U+206F) nur beim sichtbaren NPC-Namensvergleich und bei der ausgehenden, schreibgeschützten `memories`-Liste. Keine Änderung gespeicherter Kampagnen, Regelwerte, Providerzugänge, Schema oder Version.
+- **Neue Regressionen:** `app/test/npc_narrator_legacy_unicode_test.dart`, vier Gruppen mit neun mehrdeutigen Namen, gültigen Einzelidentitäten, Begrenzungen/Immutability und JSON-/SQLite-Neustart.
+- **Quellcommits:** `dc205e0b6238f78d137d252dfb1abec27a753e2f` und `3d32639f57ad4c838729ee70a1cc053dbd4aebc9`. Finalen Dokumentations-HEAD erneut ermitteln.
+- **Status:** GitHub-`main`, PR-Dateien, Storygrenzen und Quellcode geprüft. Neues Dart/Flutter/Backend/Python/Android-CI auf finalem #569-HEAD ist bis zum tatsächlichen Abschluss nicht als grün nachgewiesen; Realgerät und produktiver KI-Anbieter nicht getestet.
+- **Koordination/Nächster Schritt:** PR-CI vollständig auswerten, Fehler auf #569-Branch korrigieren, danach additive Zusammenführung gemeinsamer README-/Checkpoint-Abschnitte durch Chat D. Der vorzeitige Branch ohne aktualisierte Main-Basis bleibt unberührt; nur der aktuelle Main-synchronisierte Branch ist PR-Head.
+
