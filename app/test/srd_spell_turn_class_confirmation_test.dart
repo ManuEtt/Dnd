@@ -73,7 +73,7 @@ void main() {
     catalog = await SrdSpellCatalogLoader.load();
   });
 
-  test('ambiguous legacy spell without class approval fails before staging', () {
+  test('ambiguous legacy spell needs class confirmation', () {
     final hero = _hero();
     final encounter = _encounter();
     final before = hero.toJson();
@@ -170,19 +170,11 @@ void main() {
     final changedHero = hero.copyWith(gold: 5);
     final changedEncounter = _encounter(usedAction: true);
     expect(
-      () => _stage(
-        hero: changedHero,
-        encounter: encounter,
-        plan: plan,
-      ),
+      () => _stage(hero: changedHero, encounter: encounter, plan: plan),
       throwsFormatException,
     );
     expect(
-      () => _stage(
-        hero: hero,
-        encounter: changedEncounter,
-        plan: plan,
-      ),
+      () => _stage(hero: hero, encounter: changedEncounter, plan: plan),
       throwsFormatException,
     );
     expect(hero.spentSpellSlots, isEmpty);
@@ -190,7 +182,7 @@ void main() {
     expect(encounter.actionUsed, isFalse);
   });
 
-  test('JSON restart preserves proof and staged replay cannot charge twice', () {
+  test('JSON restart preserves proof and blocks replay', () {
     final hero = _hero();
     final encounter = _encounter();
     final plan = _prepare(
