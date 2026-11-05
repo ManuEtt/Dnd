@@ -1,9 +1,3 @@
-## Chat C – JSON-Importdialog bei großer Schrift und Android-IME (05.11.2026)
-
-Der JSON-Importdialog verwendet nun einen gemeinsamen scrollbaren Dialog-Inhaltsbereich statt einer verschachtelten `SingleChildScrollView`; bei mindestens 180 % Schrift startet das Editorfeld kompakter, ohne die Bearbeitbarkeit der eingefügten JSON-Daten einzuschränken. Die ausdrücklichen Aktionen „Importieren“ und „Abbrechen“ sowie Busy-/Fehler-Sperren bleiben erhalten. Sechs neue Widgettests bei 320/360 dp, 200 % Schrift und simulierter Android-Tastatur prüfen Bestätigung, Abbruch, ausstehende Dateiauswahl und Live-Fehleransage. [Draft-PR #570](https://github.com/ManuEtt/Dnd/pull/570), Basis `7d7bb421261af0f690fd0af9012996e45b95ff95`; vollständige CI und echte Android-/TalkBack-Prüfung beim Anlegen noch offen. Keine Regel-/SQLite-/JSON-/Backupformat-Änderung.
-
----
-
 ## Chat D – portable APK-ZIP-Pfade vor Alpha-Veröffentlichung prüfen (05.11.2026)
 
 [Draft-PR #563](https://github.com/ManuEtt/Dnd/pull/563) weist innerhalb der ARM64-APK-Prüfung jetzt ZIP-Mitgliedsnamen zurück, deren Datei- oder Verzeichnisbestandteile mit Punkt oder Leerzeichen enden. Diese können auf Windows-kompatiblen Dateisystemen beim Entpacken mit anderen Namen kollidieren. Sechs negative Pfadvarianten, ein gültiger Pfad mit innerem Punkt/Leerzeichen und ein Release-Abbruchtest sichern die Vorabprüfung vor ZIP-CRC und Veröffentlichung ab. Keine SQLite-/JSON-/Spielstands- oder Android-Versionsänderung. Die vollständige GitHub-CI auf dem finalen PR-HEAD ist getrennt abzunehmen; die erfolgreiche Main-CI [#42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539) beweist diese neue Änderung noch nicht.
