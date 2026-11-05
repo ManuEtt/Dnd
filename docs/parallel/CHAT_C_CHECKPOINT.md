@@ -1,3 +1,20 @@
+## 05.11.2026 – Chat C: Outbox-Fehler als Screenreader-Live-Meldung
+
+- **Ausgangs-main:** `36ced64cd6b6b13888bee34f5dd33103edf04dcb`.
+- **Branch:** `feat/chat-c/pending-error-live-region-20261105`.
+- **PR:** [#556](https://github.com/ManuEtt/Dnd/pull/556), Draft; GitHub-PR-HEAD ist der verbindliche endgültige SHA nach Dokumentation.
+- **Code-/Testcommits:** `c5c0c18ff33a048335893388d9f459fa2f5676e4`, `559369a546276e415871c8aa350b2c3a8a8d4e32`.
+- **Ausgangsproblem:** Sichtbare Fehler der dauerhaft gespeicherten ausstehenden Spielerhandlung waren keine expliziten Live-Regionen. Ein Screenreader konnte Änderungen wie „Verbindung fehlgeschlagen“ oder „Auftrag veraltet“ übersehen.
+- **IMPLEMENTIERT:** Fehler-Text in `PendingActionStatus` erhält eine einmalige `Semantics`-Live-Region mit Label `Fehler bei ausstehender Handlung: ...`. Die visuelle Fehlermeldung bleibt unverändert, innere Textsemantik ist zur Vermeidung doppelter Ansagen ausgeschlossen. Ohne Fehler existiert keine Warnregion.
+- **Fachdateien:** `app/lib/ui/pending_action_status.dart`, `app/test/pending_action_error_semantics_test.dart`.
+- **Regression:** Drei Widgettests (320/360 dp bei 200 % Schrift und 220 dp simulierter IME sowie Leerlauf) für erste/ersetzte/gelöschte Fehler, Live-Region, weiterhin ausdrücklich klickbares Retry, keine automatische Wiederholung, unverändertes `PendingPlayerAction.toJson()`.
+- **GETESTET:** Aktuellen GitHub-main, offene PRs/Fachdateien und bestehende Outbox-Widgettests geprüft; Code- und Testcommits auf eigenem Branch, Draft-PR erstellt.
+- **NICHT GETESTET:** Finale GitHub-Actions-CI auf dokumentiertem PR-HEAD und physisches Android-/TalkBack-Gerät mit echter Tastatur; lokales Flutter/Dart-SDK nicht vorhanden.
+- **Kompatibilität:** Keine Spielregel-, Controller-, Outbox-Persistenz-, SQLite-, JSON-, Versions-, Berechtigungs- oder Netzwerkänderung. Keine Migration.
+- **NÄCHSTER SCHRITT:** Format, Flutter-Analyse, bestehende/neue Widgettests und vollständige Android-CI auf finalem PR-HEAD abnehmen; Chat D konsolidiert gemeinsame README-/Checkpoint-Dokumentation additiv.
+
+---
+
 ## Konsolidierung 04.11.2026 – PR #535
 
 Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
