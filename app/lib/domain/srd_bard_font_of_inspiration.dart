@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'class_resource_rules.dart';
 import 'models.dart';
+import 'srd_character_classes.dart';
 import 'spellcasting_rules.dart';
 
 /// SRD 5.2.1, Bard level 5, Font of Inspiration:
@@ -80,6 +81,30 @@ class SrdBardFontOfInspirationRules {
     required int slotLevel,
     required bool usePactSlot,
   }) {
+    // An explicit spell-slot exchange must not turn malformed legacy class
+    // snapshots into extra Bardic Inspiration uses.
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      throw const FormatException(
+        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+      );
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      throw const FormatException(
+        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+      );
+    }
     if (ClassResourceRules.level(hero, 'Barde') < 5) {
       throw StateError('Inspiration regenerieren benötigt Bardenstufe 5.');
     }

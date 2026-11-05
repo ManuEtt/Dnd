@@ -20,3 +20,8 @@ Stand: 28.10.2026. Grundlage: [SRD 5.2.1](https://www.dndbeyond.com/srd), CC BY 
 - Klassenmatrix testet nun den tatsächlichen Ausführungsstatus des neuen Merkmals.
 
 Die vollständige Mechanik der übrigen Klassenmerkmale, Unterklassen, Wahl-/Zielentscheidungen und aller Zaubereffekte ist weiterhin offen; hier wird keine Vollautomatik behauptet. Flutter-Format, Analyse, Tests und APK sind erst mit einem **grünen GitHub-Actions-Lauf auf dem neuen HEAD** abgenommen. Ein Realgerätetest ist nicht erfolgt.
+
+
+## Klassenprofil-Preflight für Direkt- und Legacy-Charaktere (05.11.2026)
+
+Die bestätigte Umwandlung eines Zauberplatzes in eine verbrauchte Bardische Inspiration verlangt zusätzlich ein konsistentes SRD-Klassenprofil: Gesamtstufe 1–20, bestätigte Hauptklasse mit mindestens einer Stufe, optionale bestätigte und von der Hauptklasse verschiedene Zweitklasse mit mindestens einer Stufe und keine verwaisten Zweitstufen. Deutsche und englische Aliase werden kanonisch abgeglichen. Die Prüfung läuft vor der eigentlichen Zauberplatz- und Ressourcenbuchung sowohl beim Vorschlag als auch beim Einlösen eines zuvor erzeugten oder künstlich konstruierten Vorschlags. Ungültig: `FormatException`, unveränderter Charakter; gültige Bardenstufe 4 weiterhin regulär ohne Zugriffsrecht. Tests: `app/test/srd_bard_font_class_preflight_test.dart` (zwölf negative Klassenprofile, fünf gültige Einzel-/Mehrklassen, Replay-/JSON-Schutz). Kein Modell-/Event-/SQLite-/JSON-Schemawechsel, keine Migration. Quelle unverändert: Wizards of the Coast LLC, SRD 5.2.1, Classes / Bard 5 / Font of Inspiration, CC BY 4.0; Requirement `CLASS-BARDE-5-BASE-FONT-OF-INSPIRATION-0` bleibt `partial`. CI auf finalem PR-HEAD separat nachweisen.
