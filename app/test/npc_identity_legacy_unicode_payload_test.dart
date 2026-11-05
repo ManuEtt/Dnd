@@ -217,7 +217,7 @@ void main() {
     expect(old.npcRelationshipNotes, isEmpty);
   });
 
-  test('SQLite restart retains raw marks and authoritative selection', () async {
+  test('SQLite restart retains raw marks and NPC selection', () async {
     final folder = await Directory.systemTemp.createTemp('npc-structured-');
     final file = paths.join(folder.path, 'campaign.sqlite');
     var repository = await SqliteCampaignRepository.open(
