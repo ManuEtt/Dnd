@@ -60,12 +60,8 @@ void main() {
         secondary: 'Unbekannt',
         secondaryLevel: 2,
       ),
-      'fehlender Name für die Nebenklassenstufe': _hero(
-        secondaryLevel: 2,
-      ),
-      'Nebenklasse ohne eigene Stufe': _hero(
-        secondary: 'Wizard',
-      ),
+      'fehlender Name für die Nebenklassenstufe': _hero(secondaryLevel: 2),
+      'Nebenklasse ohne eigene Stufe': _hero(secondary: 'Wizard'),
       'Hauptklasse ohne eigene Stufe': _hero(
         primary: 'Wizard',
         secondary: 'Fighter',
