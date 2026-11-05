@@ -65,11 +65,9 @@ void main() {
       final original = jsonEncode(campaign.toJson());
 
       for (final action in ['Ich frage Mira.', 'Ich frage Mi${mark}ra.']) {
-        final selected = NpcNarratorMemory.merge(
-          campaign,
-          action,
-          ['Bestätigter Hafen'],
-        );
+        final selected = NpcNarratorMemory.merge(campaign, action, [
+          'Bestätigter Hafen',
+        ]);
         expect(selected, ['Bestätigter Hafen']);
         expect(selected.join(' '), isNot(contains('erste Mira')));
         expect(selected.join(' '), isNot(contains('zweite Mira')));
@@ -113,14 +111,7 @@ void main() {
     );
     expect(memories.first, contains('Die Chronik liegt am Hafen.'));
     expect(memories.last, 'Das Tor bleibt verschlossen.');
-    for (final point in [
-      0x00ad,
-      0x034f,
-      0x180e,
-      0x206a,
-      0x206d,
-      0x206f,
-    ]) {
+    for (final point in [0x00ad, 0x034f, 0x180e, 0x206a, 0x206d, 0x206f]) {
       expect(memories.join(' ').runes, isNot(contains(point)));
     }
     expect(memories.every((line) => line.length <= 400), isTrue);
@@ -181,9 +172,7 @@ void main() {
       npcs: const [
         WorldNpc(id: 'mira', name: 'Mi\u00adra', relationship: 'neutral'),
       ],
-      notes: [
-        _note('one', 'mira', 'Der\u206c Schlüssel liegt am Kai.'),
-      ],
+      notes: [_note('one', 'mira', 'Der\u206c Schlüssel liegt am Kai.')],
     );
     final roundTrip = Campaign.fromJson(
       jsonDecode(jsonEncode(original.toJson())) as Map<String, dynamic>,
