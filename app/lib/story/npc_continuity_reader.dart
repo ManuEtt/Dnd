@@ -97,24 +97,25 @@ class NpcContinuityReader {
   }
 }
 
-// Legacy imports may use zero-width spaces/joiners, word joiners, BOM or
-// direction markers to make distinct stored names look exactly the same.
+// Legacy imports may hide identity differences with zero-width marks, soft
+// hyphens, grapheme joiners, deprecated vowel separators and bidi controls.
+// These are invisible, not distinguishing NPC name characters.
 // Strip these characters for *identity comparison and name display only*.
 // They must never distinguish one NPC from a visually identical second NPC.
 final RegExp _invisibleNameMarks = RegExp(
-  r'[\u061c\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]',
+  r'[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]',
 );
 
 String _visibleName(String value) =>
     _singleLine(value.replaceAll(_invisibleNameMarks, ''));
 
-// Saved relationships/notes may also carry legacy formatting controls.
+// Saved relationships/notes may also carry legacy format controls.
 // Render a bounded *read-only* one-line projection, never mutate saved text.
 String _singleLine(String value) => value
     .replaceAll(
       RegExp(
-        r'[\x00-\x1f\x7f-\x9f\u061c\u200b-\u200f'
-        r'\u2028-\u202e\u2060-\u2069\ufeff]',
+        r'[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f'
+        r'\u2028-\u202e\u2060-\u206f\ufeff]',
       ),
       ' ',
     )
