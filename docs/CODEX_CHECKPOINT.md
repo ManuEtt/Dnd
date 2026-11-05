@@ -2100,3 +2100,20 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 05.11.2026 – Quelle der Inspiration: Klassenprofil vor Platzverbrauch
+
+**Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`. **Branch:** `fix/chat-a/bard-font-class-profile-20261105`. **Code-/Test-Commit:** `89a97c89cf1fb3408c7b7cf27f4d3fc697f443bf`; späteren Branch-HEAD und PR in GitHub nachsehen. **SRD:** Wizards of the Coast LLC, SRD 5.2.1, Classes / Bard Level 5 / Font of Inspiration, CC BY 4.0, <https://www.dndbeyond.com/srd>. Requirement `CLASS-BARDE-5-BASE-FONT-OF-INSPIRATION-0` bleibt `partial`.
+
+**Ursache:** `ClassResourceRules.level` prüft nur den angeforderten Klassenanteil. Ohne Profilprüfung konnten direkt erzeugte/Legacy-Helden mit unbekannter Klasse, kanonisch identischer Doppel-Bardenklasse, unerlaubter Stufe und verwaistem Nebenlevel bei `SrdBardFontOfInspirationRules.propose` in einen echten Ressourcen-/Zauberplatztausch gelangen.
+
+**Implementiert:** `app/lib/domain/srd_bard_font_of_inspiration.dart` prüft vor der Regelwirkung gültige Haupt- und Zweitklasse, keine doppelten Aliase, Gesamtstufen 1–20 und die Klassenstufenverteilung. `_validate` wird bei Vorschlag und `SrdBardFontProposal.applyTo` aufgerufen; auch gefälschte Vorschläge scheitern ohne Mutation. Der bestehende Snapshot- und Controller-Revisionsschutz bleibt. Der Sperrgrund für gültige Barden unter Stufe 5 bleibt `StateError`.
+
+**Tests:** neue `app/test/srd_bard_font_class_preflight_test.dart`: 12 ungültige Profile, 5 gültige deutsche/englische Einzel- und Mehrklassen, verbliebene Stufengrenze, manuell erzeugte Vorschläge, Wiederholungsschutz, unveränderte Ausgangs-JSONs und kanonischer Roundtrip.
+
+**GETESTET:** GitHub-Livezustand (offene PRs #579–#581), vorhandener Bard-Font-Code/-Tests, Requirement und Schnittstellen geprüft; Fach- und Testdateien auf eigenem Branch gesichert. **NICHT GETESTET:** Dart-Formatierung, Flutter-Analyse/-Tests, APK-/Hardwaretest auf finalem Commit (lokal kein Flutter-/Dart-SDK); GitHub Actions separat prüfen.
+
+**Kompatibilität:** Keine Änderung an `models.dart`, `game_engine.dart`, Controller, UI, Backend, SQLite-/JSON-/Eventformat, App-Version und bestehender bestätigter Aktion. Keine Migration; README ausschließlich unten angefügt. Andere PRs #579–#581 bearbeiten getrennte Domänen; gemeinsame Dokumentationsanhänge bei Integration verlustfrei konsolidieren.
+
+**Nächster Schritt:** PR-CI auf finalem HEAD auswerten und Fehler im eigenen Branch korrigieren; Integration anschließend separat koordinieren.
