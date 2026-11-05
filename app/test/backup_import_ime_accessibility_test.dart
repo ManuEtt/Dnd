@@ -84,14 +84,12 @@ void main() {
     ) async {
       final files = _FakeBackupFiles();
       final results = <String?>[];
-      await _openDialog(
-        tester,
-        width: width,
-        files: files,
-        results: results,
-      );
+      await _openDialog(tester, width: width, files: files, results: results);
 
-      expect(tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable, isTrue);
+      expect(
+        tester.widget<AlertDialog>(find.byType(AlertDialog)).scrollable,
+        isTrue,
+      );
       final field = find.widgetWithText(TextField, 'JSON-Spielstand');
       expect(tester.widget<TextField>(field).minLines, 3);
       await tester.ensureVisible(field);
@@ -112,12 +110,7 @@ void main() {
     ) async {
       final files = _FakeBackupFiles();
       final results = <String?>[];
-      await _openDialog(
-        tester,
-        width: width,
-        files: files,
-        results: results,
-      );
+      await _openDialog(tester, width: width, files: files, results: results);
       final field = find.widgetWithText(TextField, 'JSON-Spielstand');
       await tester.ensureVisible(field);
       await tester.enterText(field, 'unfertiger Entwurf');
@@ -147,13 +140,22 @@ void main() {
 
     expect(files.openCalls, 1);
     expect(tester.widget<TextField>(field).readOnly, isTrue);
-    expect(tester.widget<FantasyTextButton>(_button('Importieren')).onPressed, isNull);
-    expect(tester.widget<FantasyTextButton>(_button('Abbrechen')).onPressed, isNull);
+    expect(
+      tester.widget<FantasyTextButton>(_button('Importieren')).onPressed,
+      isNull,
+    );
+    expect(
+      tester.widget<FantasyTextButton>(_button('Abbrechen')).onPressed,
+      isNull,
+    );
     expect(results, isEmpty);
 
     pending.complete(null);
     await tester.pumpAndSettle();
-    expect(tester.widget<TextField>(field).controller!.text, '{"entwurf":true}');
+    expect(
+      tester.widget<TextField>(field).controller!.text,
+      '{"entwurf":true}',
+    );
     expect(find.textContaining('Dateiauswahl abgebrochen'), findsOneWidget);
     await _tapVisible(tester, _button('Abbrechen'));
     expect(results, [null]);
@@ -164,9 +166,8 @@ void main() {
     tester,
   ) async {
     final files = _FakeBackupFiles()
-      ..open = () async => throw const BackupFileException(
-        'Datei nicht verfügbar.',
-      );
+      ..open = () async =>
+          throw const BackupFileException('Datei nicht verfügbar.');
     final results = <String?>[];
     await _openDialog(tester, width: 360, files: files, results: results);
 
@@ -178,12 +179,14 @@ void main() {
 
     expect(find.text('Datei nicht verfügbar.'), findsOneWidget);
     expect(
-      tester.widgetList<Semantics>(
-        find.ancestor(
-          of: find.text('Datei nicht verfügbar.'),
-          matching: find.byType(Semantics),
-        ),
-      ).any((widget) => widget.properties.liveRegion ?? false),
+      tester
+          .widgetList<Semantics>(
+            find.ancestor(
+              of: find.text('Datei nicht verfügbar.'),
+              matching: find.byType(Semantics),
+            ),
+          )
+          .any((widget) => widget.properties.liveRegion ?? false),
       isTrue,
     );
     expect(tester.widget<TextField>(field).controller!.text, 'mein Entwurf');
