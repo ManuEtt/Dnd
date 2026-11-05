@@ -2056,3 +2056,11 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **MIGRATION:** Keine; JSON, SQLite, World/Quest/HP/XP/Regeln, App-Version und Provider bleiben unverändert. Herkunftsstempel prüft weiterhin alle ungekürzten gespeicherten Orte.
 - **Konfliktkontrolle:** Chat-B-PR #545 (Kampagnenrückblick), #546 (Langzeit-Ortsgedächtnis) und #550 (generierte Abenteuerangebote) berühren andere Fachdateien. Andere aktive PRs aus A, C, D ebenfalls abgeglichen; gemeinsame README/Checkpoints nur additiv bei Integration konsolidieren.
 - **Nächster Schritt:** Vollständige CI auf finalem PR-HEAD prüfen; Format-/Testfehler im selben Branch beheben; grünen PR zur kontrollierten Integration an Chat D übergeben.
+
+
+## 05.11.2026 – Chat B: verborgene Legacy-Formatzeichen in NPC-Kontinuität (#565)
+
+- **Basis:** main `f11701efd46d0fee058f5f8e80b57f38ed4f7af4`; Branch `feat/chat-b/npc-continuity-legacy-format-20261105`; [Draft-PR #565](https://github.com/ManuEtt/Dnd/pull/565).
+- **Fachstand:** `1831ddb8d3bb70b9f289fb57c18d3de458906a93`, neue Tests `00d78f1b84fbdd5e6b75a9ba7dc8e3498e133841`. `app/lib/story/npc_continuity_reader.dart` neutralisiert ergänzend U+00AD/U+034F/U+180E/U+206A–U+206F für sichtbare Namensgleichheit und nur lesende Ausgabe; `app/test/npc_continuity_legacy_format_marks_test.dart` enthält vier Gruppen einschließlich SQLite-Neustart.
+- **Abnahme:** Nur GitHub-Code-/PR-/Dateipfadprüfung durchgeführt; neue Tests, Flutter/Dart, Python/Backend und Android-CI auf dem endgültigen HEAD noch nicht als bestanden nachgewiesen. Keine realen Geräte-/KI-Tests.
+- **Integration:** Gemeinsame README-/Checkpoint-Einträge aus anderen offenen PRs nicht überschreiben; Merge nur koordiniert durch Chat D. Nächster Schritt: vollständige PR-CI prüfen, Fehler auf eigenem Branch korrigieren. Keine Spielstand-, Regel-, Provider-, Versions- oder Schemamigration.
