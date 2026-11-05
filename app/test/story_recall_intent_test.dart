@@ -22,6 +22,13 @@ void main() {
       'Erinnere dich an Mira.',
       'Erinnerst du dich an Mira?',
       'Kannst du dich an Mira erinnern?',
+      'Was haben wir bisher erlebt?',
+      'Was haben wir zuletzt erlebt?',
+      'Was ist beim letzten Mal passiert?',
+      'Kannst du mir erzählen, was bisher passiert ist?',
+      'Erzähl mir, was zuletzt passiert ist.',
+      'Fass mir die Geschichte zusammen.',
+      'Kannst du unsere Geschichte zusammenfassen?',
       'Rückblick',
       'Zeig mir das Tagebuch.',
       'Fasse unsere bisherige Geschichte zusammen.',
@@ -46,6 +53,10 @@ void main() {
       'Mira erinnert sich an unsere bisherige Geschichte.',
       'Ich erzähle Mira von unserem letzten Abenteuer.',
       'Ich fasse den Brief für Mira zusammen.',
+      'Ich frage Mira: Was haben wir bisher erlebt?',
+      'Ich erzähle Mira, was bisher passiert ist.',
+      'Was haben wir bisher erlebt und ich gehe weiter?',
+      'Kannst du mir sagen, wie ich das Tor öffne?',
       'Wir gehen zum Tagebuch.',
       'Mira fragt: Was weißt du über mich?',
       'Ich suche eine Zusammenfassung in der Bibliothek.',
@@ -78,6 +89,41 @@ void main() {
 
     expect(update.events.single.type, 'memory.recalled');
     expect(update.narration, contains('Mira bewacht das Stadttor.'));
+    expect(update.campaign.hero.toJson(), campaign.hero.toJson());
+  });
+
+  test('general recap returns only confirmed facts', () {
+    final campaign = _campaign();
+    final original = jsonEncode(campaign.toJson());
+    final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 25));
+
+    for (final request in [
+      'Was haben wir bisher erlebt?',
+      'Was ist beim letzten Mal passiert?',
+      'Kannst du mir erzählen, was bisher passiert ist?',
+      'Fass mir die Geschichte zusammen.',
+      'Kannst du unsere Geschichte zusammenfassen?',
+    ]) {
+      final update = engine.act(campaign, request);
+      expect(update.events.single.type, 'memory.recalled', reason: request);
+      expect(
+        update.narration,
+        contains('Mira bewacht das Stadttor.'),
+        reason: request,
+      );
+      expect(update.campaign.hero.toJson(), campaign.hero.toJson());
+    }
+    expect(jsonEncode(campaign.toJson()), original);
+  });
+
+  test('NPC dialogue containing a recap question stays a normal turn', () {
+    final campaign = _campaign();
+    final engine = GameEngine(clock: () => DateTime.utc(2026, 10, 25));
+    final update = engine.act(
+      campaign,
+      'Ich frage Mira: Was haben wir bisher erlebt?',
+    );
+    expect(update.events.single.type, isNot('memory.recalled'));
     expect(update.campaign.hero.toJson(), campaign.hero.toJson());
   });
 }

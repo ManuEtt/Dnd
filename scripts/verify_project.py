@@ -49,12 +49,16 @@ def _read_bounded_utf8(path: Path, maximum_bytes: int) -> str:
 def _gradle_logical_lines(text: str):
     """Join Java-properties continuation lines before inspecting keys.
 
+    Java properties delimit physical lines ONLY at CR, LF or CRLF. Python's
+    str.splitlines() additionally splits on NEL, VT and Unicode paragraph
+    separators; this could turn a key hidden inside a Java comment into an
+    apparently real Gradle setting. Keep those characters on their line.
     Odd trailing backslashes continue a logical line. Leading whitespace on
     subsequent physical lines is ignored by java.util.Properties.
     """
     pending = ''
     continued = False
-    for physical in text.splitlines():
+    for physical in re.split(r'\r\n|\r|\n', text):
         fragment = physical.lstrip(' \t\f') if continued else physical
         trailing = len(fragment) - len(fragment.rstrip('\\'))
         if trailing % 2:
@@ -122,7 +126,11 @@ def unique_gradle_property(text: str, key: str) -> str | None:
         suffix = stripped[index:].lstrip(' \t\f')
         if suffix.startswith(('=', ':')):
             suffix = suffix[1:]
-        candidates.append(suffix.strip())
+        # java.util.Properties discards only leading ASCII space, tab and
+        # form feed after the separator. Trailing whitespace (including plain
+        # ASCII spaces) is part of the actual value and must not be silently
+        # removed: Gradle consumes the preserved URL and checksum bytes.
+        candidates.append(suffix.lstrip(' \t\f'))
     return candidates[0] if len(candidates) == 1 else None
 
 

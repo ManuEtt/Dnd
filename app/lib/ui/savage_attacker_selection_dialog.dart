@@ -110,41 +110,44 @@ class _SavageAttackerSelectionDialogState
     final fight = widget.campaign.encounter;
     return AlertDialog(
       key: const ValueKey('savage-attacker-selection-dialog'),
+      scrollable: true,
       insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       title: const Text('Wilder Angreifer: Schaden wählen'),
       content: SizedBox(
         width: 360,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (fight != null) Text('Angriffsziel: ${fight.enemyName}'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (fight != null) Text('Angriffsziel: ${fight.enemyName}'),
+            const SizedBox(height: 8),
+            const Text(
+              'Wähle ausdrücklich einen der beiden Waffenwürfe. '
+              'Der höhere Wert wird nicht automatisch übernommen. '
+              'Attributs-, Klassen- und andere Schadensboni '
+              'sind hier nicht enthalten.',
+            ),
+            if (widget.critical) ...[
               const SizedBox(height: 8),
               const Text(
-                'Wähle ausdrücklich einen der beiden Waffenwürfe. '
-                'Der höhere Wert wird nicht automatisch übernommen. '
-                'Attributs-, Klassen- und andere Schadensboni '
-                'sind hier nicht enthalten.',
+                'Kritischer Treffer: Beide Möglichkeiten enthalten '
+                'ihre eigenen zusätzlichen Waffenwürfel.',
+                key: ValueKey('savage-attacker-critical-explanation'),
               ),
-              if (widget.critical) ...[
-                const SizedBox(height: 8),
-                const Text(
-                  'Kritischer Treffer: Beide Möglichkeiten enthalten '
-                  'ihre eigenen zusätzlichen Waffenwürfel.',
-                  key: ValueKey('savage-attacker-critical-explanation'),
-                ),
-              ],
-              const SizedBox(height: 12),
-              if (!valid)
-                const Text(
-                  'Auswahl nicht verfügbar: Der bestätigte Treffer, '
-                  'die unverbrauchten Talentvoraussetzungen oder die '
-                  'Würfelnachweise sind ungültig.',
-                  key: ValueKey('savage-attacker-invalid'),
-                )
-              else ...[
-                ListTile(
+            ],
+            const SizedBox(height: 12),
+            if (!valid)
+              const Text(
+                'Auswahl nicht verfügbar: Der bestätigte Treffer, '
+                'die unverbrauchten Talentvoraussetzungen oder die '
+                'Würfelnachweise sind ungültig.',
+                key: ValueKey('savage-attacker-invalid'),
+              )
+            else ...[
+              Semantics(
+                key: const ValueKey('savage-attacker-original-semantics'),
+                selected: _chooseAlternative == false,
+                child: ListTile(
                   key: const ValueKey('savage-attacker-original'),
                   contentPadding: EdgeInsets.zero,
                   leading: Icon(
@@ -161,7 +164,11 @@ class _SavageAttackerSelectionDialogState
                   selected: _chooseAlternative == false,
                   onTap: () => setState(() => _chooseAlternative = false),
                 ),
-                ListTile(
+              ),
+              Semantics(
+                key: const ValueKey('savage-attacker-alternative-semantics'),
+                selected: _chooseAlternative == true,
+                child: ListTile(
                   key: const ValueKey('savage-attacker-alternative'),
                   contentPadding: EdgeInsets.zero,
                   leading: Icon(
@@ -181,21 +188,21 @@ class _SavageAttackerSelectionDialogState
                   selected: _chooseAlternative == true,
                   onTap: () => setState(() => _chooseAlternative = true),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Fester Waffenbonus: ${verified.weaponFlatModifier >= 0 ? '+' : ''}${verified.weaponFlatModifier} '
-                  '(wird nur einmal berücksichtigt).',
-                  key: const ValueKey('savage-attacker-flat-modifier'),
-                ),
-              ],
-              const SizedBox(height: 12),
-              const Text(
-                'Erst der Kampfcontroller darf die gewählte Alternative '
-                'nach einer erneuten Revisions- und Zielprüfung auf '
-                'Schaden und Talentverbrauch anwenden.',
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Fester Waffenbonus: ${verified.weaponFlatModifier >= 0 ? '+' : ''}${verified.weaponFlatModifier} '
+                '(wird nur einmal berücksichtigt).',
+                key: const ValueKey('savage-attacker-flat-modifier'),
               ),
             ],
-          ),
+            const SizedBox(height: 12),
+            const Text(
+              'Erst der Kampfcontroller darf die gewählte Alternative '
+              'nach einer erneuten Revisions- und Zielprüfung auf '
+              'Schaden und Talentverbrauch anwenden.',
+            ),
+          ],
         ),
       ),
       actions: [

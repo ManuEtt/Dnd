@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../domain/models.dart';
 
 /// Confirmed, locally derived NPC history tied to one campaign session
@@ -15,7 +17,9 @@ class NpcIdentityContext {
     required this.alive,
     required this.relationship,
     required List<NpcRelationshipNote> notes,
-  }) : notes = List.unmodifiable(notes);
+    required String sourceStamp,
+  }) : notes = List.unmodifiable(notes),
+       _sourceStamp = sourceStamp;
 
   final String campaignId;
   // Local snapshot boundary only; the existing Story API map is unchanged.
@@ -26,6 +30,9 @@ class NpcIdentityContext {
   final bool alive;
   final String relationship;
   final List<NpcRelationshipNote> notes;
+
+  /// Full selected-NPC history, including notes omitted from the preview.
+  final String _sourceStamp;
 
   /// Typed, bounded context for a future explicitly ID-based Story transport.
   ///
@@ -88,6 +95,19 @@ class NpcIdentityMemory {
         if (campaign.npcRelationshipNotes[i].npcId == npcId)
           (note: campaign.npcRelationshipNotes[i], order: i),
     ];
+    // Legacy JSON can contain duplicate or malformed note IDs. A preview
+    // limited to maxNotes must not hide an identity collision in older notes.
+    // Check the *entire selected NPC history*, not unrelated NPC histories.
+    final noteIds = <String>{};
+    final safeNoteId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
+    for (final entry in history) {
+      final id = entry.note.id;
+      if (!safeNoteId.hasMatch(id) || !noteIds.add(id)) {
+        throw const FormatException(
+          'Mehrdeutige oder ungültige bestätigte NPC-Notiz-ID.',
+        );
+      }
+    }
     history.sort((a, b) {
       final dateOrder = b.note.recordedAt.compareTo(a.note.recordedAt);
       return dateOrder != 0 ? dateOrder : b.order.compareTo(a.order);
@@ -102,10 +122,16 @@ class NpcIdentityMemory {
       alive: npc.alive,
       relationship: npc.relationship,
       notes: history.take(maxNotes).map((item) => item.note).toList(),
+      sourceStamp: jsonEncode([
+        npc.toJson(),
+        for (final note in campaign.npcRelationshipNotes)
+          if (note.npcId == npcId) note.toJson(),
+      ]),
     );
   }
 
   /// Rejects a revision/session change, another campaign, or amended values.
+  /// Even older notes omitted by maxNotes must remain unchanged.
   ///
   /// No implicit refresh: the caller must explicitly re-read current state.
   static void requireCurrent(Campaign campaign, NpcIdentityContext context) {
@@ -120,7 +146,8 @@ class NpcIdentityMemory {
       expectedRevision: context.revision,
       maxNotes: context.notes.isEmpty ? 1 : context.notes.length,
     );
-    if (actual.npcName != context.npcName ||
+    if (actual._sourceStamp != context._sourceStamp ||
+        actual.npcName != context.npcName ||
         actual.alive != context.alive ||
         actual.relationship != context.relationship ||
         actual.notes.length != context.notes.length) {

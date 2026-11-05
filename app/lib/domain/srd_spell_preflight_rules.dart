@@ -67,6 +67,10 @@ class SrdSpellPreflightRules {
     bool consumedComponentReservedConfirmed = false,
     List<SrdMaterialItemConfirmation> confirmedMaterialItems = const [],
     bool slotTurnLimitConfirmed = false,
+    // A flat legacy spell list cannot identify the preparing class when both
+    // owned classes qualify for this same spell. Require the player's explicit
+    // class choice rather than inferring it from the shared list.
+    bool preparedForCastingClassConfirmed = false,
   }) {
     final knownName = _preparedName(hero, spell);
     if (knownName == null) {
@@ -92,6 +96,29 @@ class SrdSpellPreflightRules {
       throw const FormatException(
         'Zauber ist für diese eigene Klasse und deren Stufe nicht bestätigt.',
       );
+    }
+    // Multiclass preparations are class-specific in SRD 5.2.1, even when a
+    // spell appears on both lists. Historic hero.spells has no class owner.
+    // Require an explicit declaration only when BOTH actual class levels
+    // independently permit this spell, so a single eligible class needs no
+    // invented migration or extra choice.
+    if (hero.hasSecondClass && !preparedForCastingClassConfirmed) {
+      final first = findSrdClass(hero.className)?.name;
+      final second = findSrdClass(hero.secondaryClassName)?.name;
+      if (first != null &&
+          second != null &&
+          first != second &&
+          spell.classes.contains(_classes[first]) &&
+          spell.classes.contains(_classes[second]) &&
+          HealingSpellRules.maximumPreparedSpellLevel(hero, first) >=
+              spell.level &&
+          HealingSpellRules.maximumPreparedSpellLevel(hero, second) >=
+              spell.level) {
+        throw const FormatException(
+          'Bei einem Zauber beider Klassen muss die vorbereitende '
+          'eigene Klasse ausdrücklich bestätigt werden.',
+        );
+      }
     }
     SrdSpellCastingTimeRules.requireSingleTurn(spell);
     if (!actionAvailableConfirmed || !targetRulesConfirmed) {

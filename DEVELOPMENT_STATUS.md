@@ -1778,3 +1778,163 @@ nicht als abgenommene Android-Version bezeichnen.
 - **NÄCHSTER KONKRETER SCHRITT:** Finale PR-CI/Flutter-Tests auswerten, dann idempotentes persistentes XP-Gutschriftjournal inklusive GameController-/SQLite-Revisionen gesondert testen.
 
 ---
+
+
+---
+
+## 01.11.2026 – Chat A: Klassenprüfung vor Konzentrationswürfen
+
+Entwicklungsstand **0.8.50+100**, Branch
+`fix/chat-a/concentration-class-preflight-20261101`, Code/Test
+`37604994828745ac44e48d8e2f628024f2f355e2`, Basis-Main `5a88834c`.
+Die vorhandene Klassen-/Stufen-/Rettungswurf-Übungsprüfung wird jetzt auch vor
+dem tatsächlichen Konzentrationswurf und vor einer separaten W20-Auflösung
+verwendet. Unbekannte oder widersprüchliche Klassen gewähren keinen Mönchsbonus.
+Der deutsche Schadensdialog zeigt den Fehler ohne Teiländerung; nach expliziter
+Klassenkorrektur bleibt der normale Ablauf ausführbar. Alte Profile bleiben
+lesbar, keine SQLite-/JSON-Migration. SG 10–30 war bereits zuvor umgesetzt.
+
+**GETESTET:** 68 neue Tests (58 Domain, 8 Engine/SQLite, 2 echte UI-Flows) und
+42 bestehende Regressionen: **110 gezielte Tests bestanden**, Analyzer sauber.
+Die neuen Domänentests auf unverändertem Main: 25 bestanden / 33 fehlgeschlagen;
+mit Fix alle 58 bestanden. **Vollständig lokal bestanden:** 2.778 Flutter-,
+262 Python- und 76 Backend-Tests, 579 Dart-Dateien ohne Formatänderung,
+Analyse/Backend-Typecheck/Build/Protokollsmoke. Zusätzlich ARM64-Debug-APK und
+**13 native JUnit-Tests** ohne Fehler oder Skip. Zwei Android-Vorläufe scheiterten
+am vollen Datenträger; nach Bereinigung ausschließlich erzeugter Caches bestand
+die Wiederholung. Quellen, Spielstände und frühere Artefakte blieben erhalten.
+[PR #468](https://github.com/ManuEtt/Dnd/pull/468) ist gesichert; vollständige finale
+GitHub-CI auf seinem aktuellen Head separat abwarten. Kein Main-Merge behauptet.
+**NICHT GETESTET:** echtes Androidgerät/TalkBack, installiertes Upgrade,
+produktive Signierung. **NOCH NICHT IMPLEMENTIERT:** vollständige Konzentrations-
+automation und Klassenprüfung aller allgemeinen Wiederholungswürfe.
+[Fachbericht und Grenzen](docs/parallel/CHAT_A_CONCENTRATION_CLASS_PREFLIGHT_20261101.md).
+
+Nächster Schritt nach Abnahme: allgemeine Klassen-Wiederholungen vor Würfel und
+Ressourcenverbrauch auf dieselbe konsistente Klassenherkunft prüfen. Vorher
+aktuelle PRs abgleichen; offene #453/#461/#463/#448 nicht erneut implementieren.
+Die nachfolgenden früheren Entwicklungsstände sind historische Momentaufnahmen.
+
+---
+
+
+---
+
+## 02.11.2026 – Main2e9 integriert, kombinierte lokale Prüfungen bestanden
+
+Main `2e920f222ab8fd501d9d90bff580d0f8ccc42ff1` aus #471 ist regulär
+in denselben Entwicklungsbranch integriert; ursprüngliche Basis war `5a88834c`.
+Der abschließende Mergecommit ist über [PR #473](https://github.com/ManuEtt/Dnd/pull/473)
+ermittelbar. Keine Quellkonflikte; einziger Markdown-Konflikt im Chat-A-Checkpoint
+additiv gelöst, alle Main-Beiträge erhalten. Die eigenen 51 Guardzeilen und ihr
+Dateihash bleiben unverändert. SQLite3/JSON1 unverändert, keine Migration.
+
+**GETESTET auf dem kombinierten Stand:** **182 gezielte Flutter-Regressionen**
+mit den eigenen UI-/SQLite-Fällen und den neuen Main-Paketen; **275 Pythonfälle**,
+Projekt-/Importgrenzen-/SRD-Prüfung, **582 Dartdateien ohne Formatänderung** und
+saubere Analyse. Neuer **ARM64-Debug-Build und 14 native JUnit-Tests** ohne
+Fehler, Error oder Skip bestanden. Die vollständige lokale frühere Suite
+**2.782 Flutter /262 Python /76 Backend** gehört ausdrücklich zum Vorgänger8dd
+auf Basis5a; sie ist kein behaupteter neuer kombinierter Vollpass.
+
+**OFFEN:** vollständige CI des aktuellen abschließenden Merge-Heads, optimierte
+Alpha und reale Geräte-/TalkBack-/Upgrade-/Produktivsignierungsabnahme.
+[PR-Checks](https://github.com/ManuEtt/Dnd/pull/473/checks) abwarten; PR bleibt
+bis zur tatsächlichen CI-/Artefaktabnahme Draft. Kein Code-/SDK-Blocker bekannt.
+Der aktuelle Quellencheckpoint/Patch wird gegen **Main2e9** erstellt; frühere
+8dd-/5a-Archive bleiben unverändert erhalten. Main nicht direkt verändert.
+Allgemeiner initialer manueller Rettungswurf bleibt das nächste getrennte Paket;
+beide Klassen-Requirements weiterhin partial, Gesamt-SRD/Charakterassistent offen.
+
+**Nachfolgend historische Prüf- und Checkpointstände vor Main2e9:**
+
+## 02.11.2026 – lokale Vollabnahme des Chat-A-Pakets bestanden
+
+**0.8.51+101**, Basis-Main `5a88834c98f5aca40395088c20c7e1dc5b587868`,
+Branch `fix/chat-a/saving-throw-class-preflight-20261102`. Laufzeit-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038`, früher Dokumentationscheckpoint
+`d5cf52f1c27ecdb0f01f0ce461788cde12449310`. Nur Dokumentation folgt danach;
+Laufzeit-/Testcode unverändert. [PR #473](https://github.com/ManuEtt/Dnd/pull/473)
+ist Draft; die **[Checks des finalen aktuellen PR-Heads](https://github.com/ManuEtt/Dnd/pull/473/checks)**
+sind separat abzunehmen. Kein Main-Merge und keine erfolgreiche neue CI behauptet.
+
+**GETESTET:** `bash scripts/check.sh` vollständig mit Exit 0 bestanden:
+**2.782 Flutter / 262 Python / 76 Backend**, 579 Dartdateien ohne Formatänderung,
+Analyse sauber, Backend-Typecheck/Build und tatsächlicher lokaler Protokollsmoke.
+Abschlussmarker `08:15 +2782: All tests passed!`; 72 neue Fälle und 159 gezielte
+Regressionen sind darin keine zusätzliche globale SRD-Abnahme. Lokaler ARM64-
+Debug-Build und **13 native JUnit-Tests** ohne Fehler, Error oder Skip bestanden.
+Der frühzeitige Quellencheckpoint auf d5cf52f1 ist unabhängig geprüft: **1.369
+Dateien**, CRC/Hashes/Größen/Modi, echte Patchanwendung auf Basis5a und isolierte
+Git-Bundle-Wiederherstellung/fsck bestanden. Endcheckpoint und finale CI folgen.
+
+**Koordination:** Vor PR erneut **27 fremde PRs** geprüft: ursprüngliche 23 Heads
+unverändert, neue #469–#472 ohne Überschneidung der Fachdateien; deren CI lief beim
+Audit noch. #468 teilt das Requirement-Register, bearbeitet andere IDs. Bei späterer
+Konsolidierung die neue Version101 gegenüber100 und alle geprüften Belege erhalten.
+
+**OFFEN:** aktuelle finale PR-CI, optimierte Alpha und reale Geräte-/TalkBack-/
+Upgrade-/Produktivsignierungsabnahme. Allgemeiner initialer manueller Rettungswurf
+bleibt das nächste gesonderte Paket; vorher frische PR-/Quellenprüfung. SQLite3/
+JSON1 ohne Migration; beide Klassen-Requirements bleiben partial. Weitere Details
+im Fachbericht `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
+
+**Historischer Frühcheckpoint vor der vollständigen lokalen Abnahme:**
+
+## 02.11.2026 – Chat A: Klassenprüfung vor Rettungswurf-Wiederholungen, 0.8.51+101
+
+**Vorläufiger Quellen-Checkpoint, keine vollständige Abnahme.** Basis-Main
+`5a88834c98f5aca40395088c20c7e1dc5b587868`, Branch
+`fix/chat-a/saving-throw-class-preflight-20261102`. Code-/Testcommit
+`de8cef1bf9cd4cd67cfa7eb1916eec1b6b60f038` ist gesichert. Pull Request und finale CI
+folgen nach den erforderlichen Prüfungen. Main bleibt
+unverändert; Issue #425 und alte Branchmigration sind abgeschlossen.
+
+**IMPLEMENTIERT:** Genau 51 zusätzliche Zeilen im bestehenden
+`app/lib/domain/saving_throw_class_actions.dart`: bekannte SRD-Klassen und
+kanonische Aliase, Gesamt-/eigene Klassenstufen, zulässiger Zweitklassensplit und
+eindeutige Rettungswurfübungen vor Klassenbonus, Ressourcenverbrauch und neuem
+W20 prüfen. Die lesende Verfügbarkeitsabfrage liefert für solche ungültigen
+Profile `false`. Berechnungen, Ressourcenregeln und übriger vorhandener Code
+bleiben unverändert. In der bestehenden Engine-Kette erzeugt ein abgewiesener
+Textversuch absichtlich `rules.blocked` und eine Revision; Helden-/Ressourcenwerte
+und RNG ändern sich nicht. Historische Profile werden beim Öffnen nicht repariert.
+
+**GETESTET:** 62 neue Domain-, acht Engine-/SQLite- und zwei tatsächliche App-UI-
+Tests bestanden, zusammen **72 neue Fälle**. **159 gezielte neue und bestehende
+Regressionen** bestanden (157 Domain-/Flowfälle plus zwei UI-Fälle). Lokaler
+ARM64-Debug-APK-Build bestanden. Positivfälle
+für alle zwölf Klassen, gültige Aliase, tatsächliche Kämpfer-Klassenstufe,
+Übung/Erschöpfung einmal sowie negative Klassen-/Stufen-/Übungsdaten. Speicherfälle
+prüfen Ablehnung, einmalige Ressourcenbuchung, Replay, stale Zweitcontroller,
+Neustart, Export/Import und späten SQLite-Rollback. Ein vorher legitimer W20 wird
+bei spätem SQL-Fehler nicht als rückrollbar behauptet.
+
+**NICHT ABGESCHLOSSEN / NICHT GETESTET:** Vollständiges `scripts/check.sh` und
+native Android-Tests laufen zum Frühcheckpoint noch; kein Vollpass behauptet.
+Optimierte Alpha und aktuelle GitHub-CI stehen aus. Geräte-/TalkBack-/Upgrade-
+und produktive Signierungsabnahme fehlen. Kein Legacy-Profil-Korrektur-UI-Flow
+wird behauptet.
+
+**BLOCKIERT:** Kein bekannter fachlicher oder GitHub-Zugriffsblocker; reparierte
+UI-Fixtures haben 2/2 bestanden, vollständige Abnahme läuft. Nur begrenzter
+lokaler Speicherplatz: frühes Quellen-ZIP, Patch und Bundle außerhalb des
+Projekts priorisieren. Keine Quellen, Spielstände, WIP oder alten Artefakte löschen.
+
+**NOCH NICHT IMPLEMENTIERT:** Allgemeiner initialer manueller Rettungswurf ist
+in diesem Paket unverändert. Weitere Rettungswurfquellen, situative Modifikatoren,
+kompletter Charakterassistent und Gesamt-SRD bleiben offen. SQLite **3** / äußeres
+JSON **1**, keine Migration. `CLASS-K-MPFER-9-BASE-INDOMITABLE-0` und
+`CLASS-M-NCH-14-BASE-DISCIPLINED-SURVIVOR-0` nur **partial**; keine globale Abschlussquote.
+
+Vor Beginn 23 offene PRs anhand ihrer Dateilisten geprüft. PR #468 bleibt getrennt
+und auf seinem eigenen Head CI-grün; seine Konzentrationsdateien werden nicht
+verändert. Andere Chat-A-/B-/C-/D-Pakete nicht erneut implementieren oder mergen.
+Gemeinsame README-/Checkpoint-Zusätze konsolidiert Chat D später additiv.
+
+**Genau nächstes unabhängiges Paket:** Allgemeinen initialen manuellen Rettungswurf vor automatisch abgeleiteten Klassenboni und W20 validieren; schreibfreie Charakterbogen-Vorschauen unverändert lassen. Zuerst frische Main-/PR-Dateilisten prüfen. Akzeptanz: unbekannte/inkonsistente Klassen vor Bonus/RNG ablehnen, gültige Aliase und Mehrklassen behalten dieselben Boni, Domain-, SQLite-/Retry- und tatsächliche UI-Regressionen bestehen.
+
+Fachnachweis: `docs/parallel/CHAT_A_SAVING_THROW_CLASS_PREFLIGHT_20261102.md`.
+Die darunter bewahrten Berichte gelten jeweils für ihren damaligen Stand.
+
+---

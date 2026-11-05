@@ -3598,6 +3598,9 @@ class GameEngine {
       }
       try {
         if (short) {
+          // Even a rest without Hit Dice must not repair invalid source
+          // resources. This happens before Pact Magic or class recovery.
+          RestRules.validateShortRestResources(current.hero);
           final restoreSorceryPoints = words.contains(
             'mit zauberkraftregeneration',
           );

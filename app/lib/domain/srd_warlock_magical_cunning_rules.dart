@@ -1,6 +1,7 @@
 import 'condition_rules.dart';
 import 'models.dart';
 import 'spellcasting_rules.dart';
+import 'srd_character_classes.dart';
 
 /// SRD 5.2.1 (CC BY 4.0): Warlock 2 Magical Cunning, Warlock 20
 /// Eldritch Master. This helper resolves an explicitly *completed* rite.
@@ -14,12 +15,38 @@ class SrdWarlockMagicalCunningRules {
   static const resourceKey = 'magicalCunning';
 
   static int maximumUses(HeroCharacter hero) =>
-      SpellcastingRules.pactClassLevel(hero) >= 2 ? 1 : 0;
+      (_warlockClassLevel(hero) ?? 0) >= 2 ? 1 : 0;
+
+  /// An invalid legacy/direct class snapshot never grants a class feature.
+  /// Existing Pact Magic calculations remain owned by SpellcastingRules;
+  /// this preflight protects only Magical Cunning's resource transition.
+  static int? _warlockClassLevel(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return null;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return null;
+    }
+    return (primary == 'Hexenmeister' ? hero.primaryClassLevel : 0) +
+        (secondary == 'Hexenmeister' ? hero.secondaryClassLevel : 0);
+  }
 
   /// Recovery cap is ceil(half maximum Pact Magic slots), except at Warlock
   /// class level 20 when Eldritch Master restores every expended Pact slot.
   static int maximumRecoveredSlots(HeroCharacter hero) {
-    final level = SpellcastingRules.pactClassLevel(hero);
+    final level = _warlockClassLevel(hero) ?? 0;
     if (level < 2) return 0;
     final pool = SpellcastingRules.pactSlotCount(hero);
     return level >= 20 ? pool : (pool + 1) ~/ 2;
@@ -30,7 +57,13 @@ class SrdWarlockMagicalCunningRules {
   static SrdWarlockMagicalCunningResult restoreAfterCompletedRite(
     HeroCharacter hero,
   ) {
-    if (SpellcastingRules.pactClassLevel(hero) < 2) {
+    final warlockLevel = _warlockClassLevel(hero);
+    if (warlockLevel == null) {
+      throw const FormatException(
+        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+      );
+    }
+    if (warlockLevel < 2) {
       throw StateError('Magische List erfordert Hexenmeister-Klassenstufe 2.');
     }
     if (hero.isDead ||
@@ -68,7 +101,7 @@ class SrdWarlockMagicalCunningRules {
       spentPactSlotsBefore: expended,
       spentPactSlotsAfter: expended - recovered,
       usesRemaining: 0,
-      eldritchMaster: SpellcastingRules.pactClassLevel(hero) >= 20,
+      eldritchMaster: warlockLevel >= 20,
     );
   }
 }

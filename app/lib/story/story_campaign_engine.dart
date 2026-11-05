@@ -341,7 +341,13 @@ class StoryCampaignEngine {
     if (campaign.sessionRecaps.length >= 60) {
       throw const FormatException('Maximal 60 Sitzungsrückblicke möglich.');
     }
-    final summary = MemoryEngine.buildSessionSummary(campaign);
+    // A saved recap is the entry point for resuming after a long break.
+    // Enrich confirmed facts only with user/engine-confirmed open story leads.
+    // Scene narration is intentionally NOT a source of confirmed facts.
+    final summary = _summaryWithOpenLeads(
+      MemoryEngine.buildSessionSummary(campaign),
+      campaign.storyThreads,
+    );
     final recap = SessionRecap(
       id: _unusedStoryId(
         'recap',
@@ -462,6 +468,55 @@ class StoryCampaignEngine {
       payload: {'threadId': thread.id, 'status': status},
     );
   }
+}
+
+/// Read-only augmentation of the established confirmed-session summary.
+/// Never drop existing facts to fit extra narrative prompts, and never infer
+/// rule or quest transitions from story-thread text.
+String _summaryWithOpenLeads(String confirmed, List<StoryThread> threads) {
+  const maxUnits = 2400;
+  const heading = 'Offene Anknüpfungspunkte (bestätigte Handlungsnotizen):';
+  const maxNotes = 3;
+  var remaining = maxUnits - confirmed.length;
+  var count = 0;
+  final addition = StringBuffer();
+  // The latest edited/added thread is kept at the end of the saved list.
+  // Do not revive resolved/abandoned threads or include scene/dialogue text.
+  for (final thread in threads.reversed) {
+    if (thread.status != 'open') continue;
+    final title = _singleLineLead(thread.title);
+    final description = _singleLineLead(thread.description);
+    if (title.isEmpty || description.isEmpty) continue;
+    final line = '• $title: ${_boundedLead(description, 160)}';
+    final prefix = count == 0 ? '\n$heading\n' : '\n';
+    if (prefix.length + line.length > remaining) continue;
+    addition.write(prefix);
+    addition.write(line);
+    remaining -= prefix.length + line.length;
+    count++;
+    if (count == maxNotes) break;
+  }
+  return count == 0 ? confirmed : '$confirmed$addition';
+}
+
+String _singleLineLead(String text) => text
+    .replaceAll(
+      RegExp(
+        r'[\x00-\x1f\x7f-\x9f\u061c\u200b-\u200f'
+        r'\u2028-\u202e\u2066-\u2069\ufeff]',
+      ),
+      ' ',
+    )
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .trim();
+
+String _boundedLead(String text, int maximum) {
+  if (text.length <= maximum) return text;
+  var end = maximum - 1;
+  // Dart strings use UTF-16: do not cut a saved emoji surrogate pair.
+  final last = text.codeUnitAt(end - 1);
+  if (last >= 0xd800 && last <= 0xdbff) end--;
+  return '${text.substring(0, end).trimRight()}…';
 }
 
 /// Object key order can change in storage; list order and number types cannot.

@@ -35,6 +35,13 @@ class SrdSpellDefinition {
   final bool concentration;
   final bool ritual;
 
+  // Catalogue JSON is untrusted, as are public constructor inputs. Invisible
+  // formatting controls can split a material price or consumption verb while
+  // preserving a visually misleading component description.
+  static final RegExp _unsafeComponentFormat = RegExp(
+    r'[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e\u2060-\u206f\ufeff\ufff9-\ufffb]',
+  );
+
   /// Validate all three component flags against the exact spell notation.
   /// Publicly constructed spell definitions must be checked at rule boundaries
   /// as well as during JSON catalogue loading.
@@ -44,6 +51,11 @@ class SrdSpellDefinition {
     required bool somatic,
     required bool material,
   }) {
+    if (_unsafeComponentFormat.hasMatch(components)) {
+      throw const FormatException(
+        'SRD-Zauberkomponenten enthalten unsichtbare Steuerzeichen.',
+      );
+    }
     // Fail closed on duplicate, unknown or out-of-order component symbols.
     // A material component requires one nonempty, unambiguous description.
     // The published V/S/M flags are still verified individually below.

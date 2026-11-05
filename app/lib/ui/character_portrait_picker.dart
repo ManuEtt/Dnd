@@ -432,28 +432,46 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
     bottomNavigationBar: SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
-        child: Row(
-          children: [
-            Expanded(
-              child: FantasyTextButton(
-                label: 'Abbrechen',
-                style: FantasyButtonStyle.iron,
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: FantasyTextButton(
-                key: const ValueKey('portrait-apply'),
-                label: 'Übernehmen',
-                icon: Icons.save_outlined,
-                style: FantasyButtonStyle.woodGold,
-                onPressed: () => Navigator.of(
-                  context,
-                ).pop(CharacterPortraitChoice(_preset, _photo)),
-              ),
-            ),
-          ],
+        child: Builder(
+          builder: (context) {
+            final cancel = FantasyTextButton(
+              key: const ValueKey('portrait-cancel'),
+              label: 'Abbrechen',
+              style: FantasyButtonStyle.iron,
+              onPressed: () => Navigator.of(context).pop(),
+            );
+            final apply = FantasyTextButton(
+              key: const ValueKey('portrait-apply'),
+              label: 'Übernehmen',
+              icon: Icons.save_outlined,
+              style: FantasyButtonStyle.woodGold,
+              onPressed: () => Navigator.of(
+                context,
+              ).pop(CharacterPortraitChoice(_preset, _photo)),
+            );
+            // On narrow Android screens enlarged text needs the full width
+            // for each action. Keep both actions visible above the keyboard.
+            final stacked =
+                MediaQuery.textScalerOf(context).scale(1) >= 1.8 ||
+                MediaQuery.sizeOf(context).width < 320;
+            if (stacked) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(width: double.infinity, child: cancel),
+                  const SizedBox(height: 8),
+                  SizedBox(width: double.infinity, child: apply),
+                ],
+              );
+            }
+            return Row(
+              children: [
+                Expanded(child: cancel),
+                const SizedBox(width: 12),
+                Expanded(child: apply),
+              ],
+            );
+          },
         ),
       ),
     ),

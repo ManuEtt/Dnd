@@ -664,7 +664,12 @@ CREATE TABLE settings (
 
   @override
   Future<Campaign> importCampaign(String source) async {
-    if (source.length > 10 * 1024 * 1024) {
+    // Dart String.length counts UTF-16 code units, not bytes on disk. Keep
+    // the cheap first guard so malformed huge input is never UTF-8 encoded
+    // just to check its size, then enforce the actual file byte budget.
+    const maxImportBytes = 10 * 1024 * 1024;
+    if (source.length > maxImportBytes ||
+        utf8.encode(source).length > maxImportBytes) {
       throw const InvalidSaveException('Der Import ist größer als 10 MB.');
     }
     late final Campaign campaign;

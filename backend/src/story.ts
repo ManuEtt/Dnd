@@ -54,7 +54,8 @@ const object = (value: unknown): Record<string, unknown> => {
 };
 // Mirror Flutter's story parser: preserve legitimate prose while rejecting
 // invisible control characters and bidirectional text spoofing from providers.
-const unsafeStoryFormatting = /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f\u061c\u200b\u200e\u200f\u2028-\u202e\u2060\u2066-\u2069\ufeff]/u;
+// Reject additional invisible legacy marks in the same fields as the app.
+const unsafeStoryFormatting = /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e\u2060\u2066-\u206f\ufeff]/u;
 const string = (value: unknown, max: number): string => {
   if (typeof value !== 'string' || !value.trim() || value.length > max ||
       unsafeStoryFormatting.test(value)) throw new Error('invalid_story');

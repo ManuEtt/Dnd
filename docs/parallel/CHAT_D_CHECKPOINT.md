@@ -1,3 +1,87 @@
+## Konsolidierung 04.11.2026 – PR #537
+
+Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
+
+---
+
+# CHAT D – Gradle-Properties-Werte ohne Java-fremdes Trimmen lesen (04.11.2026)
+
+- **Main-Basis:** `c8f25132a82bcf55368a79100e0c2ea5595140b6`.
+- **Branch:** `fix/chat-d/gradle-properties-value-whitespace-20261104`.
+- **Fach-/Testcommit:** `15304e04861aec5913a55ce312448f2a4cd80a8b`.
+- **PR:** [#537](https://github.com/ManuEtt/Dnd/pull/537), Draft.
+- **Ausgangsproblem:** `str.strip()` auf Java-Property-Werten beseitigt auch abschließende Leerzeichen und führende Unicode-Leerzeichen, obwohl Java diesen Zeicheninhalt beibehält. Dadurch konnten ungültige Werte als sichere Gradle-URL oder SHA angenommen werden.
+- **IMPLEMENTIERT:** `unique_gradle_property()` bewahrt Werte bis auf von Java tatsächlich zu ignorierenden führenden ASCII-SP/Tab/FF; vorhandene strikte HTTPS- und SHA-Prüfung bleibt.
+- **TESTS ERGÄNZT:** Drei Regressionstestmethoden mit 22 Parametervarianten für trailing Space/Tab/FF/NBSP/Em-Space, führende NBSP/Em-Space und erlaubtes führendes Java-Whitespace.
+- **GETESTET:** Lokaler OpenJDK-21-Verhaltensnachweis für `Properties.load()` aus `StringReader`.
+- **NICHT GETESTET:** Repository-Python-Unittests, gesamte Flutter-/Backend-/Android-Projektprüfung, finale GitHub Actions für PR-HEAD, echtes Gerät.
+- **BLOCKIERT:** GitHub-Checkout über Container-Netzwerk war in vorigen Sitzungen nicht verfügbar, Flutter-/Dart-SDK lokal nicht vorhanden; vollständige CI als verlässliche Prüfumgebung.
+- **Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migration:** keine; SQLite, JSON, Save/Load, Backupformat, Android-Version unberührt.
+- **Nächster Schritt:** CI auf finalem Dokumentations-/Test-HEAD prüfen, Fehler gegebenenfalls auf diesem Branch beheben und erst danach Review/Merge.
+
+---
+
+---
+
+# CHAT D – Java-Properties-Zeilentrennung für verlässliche Gradle-Uploads (03.11.2026)
+
+- **Ausgangs-main-SHA:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`
+- **Branch:** `fix/chat-d/gradle-properties-physical-lines-20261103`
+- **Eigener Fach-/Testcommit:** `ab0a8c8827dbfc092d53ca048be24e13c1b23a64`
+- **PR:** [#528](https://github.com/ManuEtt/Dnd/pull/528) (Draft bis vollständiger, finaler CI)
+- **Ausgangsproblem:** `str.splitlines()` teilt auch an Unicode-Zeichen, die Java `Properties.load` als normale Zeichen innerhalb von Kommentaren/Werten behandelt. Ein scheinbar vorhandener `distributionUrl`-/SHA-Wert war damit nicht zwingend im tatsächlichen Gradle-Properties-Parser vorhanden.
+- **Erwartetes Verhalten:** Exakt CR/LF/CRLF bilden physische Zeilen; Unicode-Kommentare dürfen weder Pflichtwerte vortäuschen noch fälschliche Duplikate erzeugen. Normale Gradle-Konfigurationen bleiben akzeptiert.
+- **IMPLEMENTIERT:** `_gradle_logical_lines` nutzt `re.split(r'\r\n|\r|\n', text)` statt `splitlines()` ohne sonstige Parseränderungen.
+- **Tests ergänzt:** `scripts/tests/test_verify_project.py` mit vier Unicode-Separatortypen (NEL, VT, U+2028, U+2029), positivem Kommentarfall und drei gültigen physischen Zeilentrennungen.
+- **GETESTET:** GitHub-Actions [Run 41713843451](https://github.com/ManuEtt/Dnd/actions/runs/41713843451) auf ursprünglichem PR-HEAD `1e04364c63bf1890c716adae2fe7b76dad356f6a` vollständig erfolgreich: Python-/Domain-/SRD-Skripte, Backend, Flutter, Android-Debug-/Alpha-APK, native Backuptests und Quellcode-Checkpoint. Eine neue gemeinsame CI für den Integrations-HEAD ist gesondert erforderlich.
+- **NICHT GETESTET:** Finale kombinierte CI des Integrationscommits, reales Android-Gerät und Altspielstand-Upgrade.
+- **BLOCKIERT:** DNS-Zugriff des lokalen Git-Containers verhindert Checkout; Flutter-/Dart-SDK fehlt.
+- **Geänderte Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migrationen:** Keine; SQLite, JSON 1, bestehende Spielstände, Backups, App-Version und Lizenzdaten unverändert.
+- **Weitere Fehler:** Keine weiteren Fehler in diesem Paket nachgewiesen; vollständige Regression bleibt CI-pflichtig.
+- **Nächster konkreter Schritt:** Auf finalem #528-HEAD komplette GitHub Actions inklusive Python-Unittests, Backend, Flutter und Android-APK prüfen, erst bei Grün Review/Integration.
+
+
+---
+
+# CHAT D – UTF-8-Byteobergrenze für JSON-Spielstandimport (02.11.2026)
+
+- **Ausgangs-main-SHA:** `84437e4e92d735e179bb2585427b46a10451951d`.
+- **Eigener Branch:** `fix/chat-d/utf8-import-size-limit-20261102`.
+- **Code-/Testcommit:** `f3359b826f65027979b6e9af09640ff304a1188f`.
+- **Pull Request:** [#502](https://github.com/ManuEtt/Dnd/pull/502).
+- **Ausgangsproblem:** Eine 10-MiB-Importgrenze wurde allein über
+  `String.length` (UTF-16-Codeeinheiten) geprüft. Mehrbyteige Unicodezeichen
+  können die tatsächlich importierte UTF-8-Datei größer machen.
+- **IMPLEMENTIERT:** tatsächliche UTF-8-Bytezählung mit einem vorgelagerten
+  billigen Zeichenlängenfilter; frühzeitige `InvalidSaveException` vor
+  JSON-Parsing/SQLite-Transaktion; bisherige Fehlermeldung bleibt bestehen.
+- **Geänderte Dateien:** `app/lib/data/sqlite_campaign_repository.dart`,
+  `app/test/storage_repository_test.dart`, `README.md`,
+  `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanz:** 10-MiB-UTF-8-Grenze gilt auch für mehrbyteiges JSON,
+  bestehender Spielstand/Revision bleiben nach Ablehnung unverändert;
+  valide Unicodeimporte werden akzeptiert.
+- **Regressionen hinzugefügt:** zwei SQLite-FFI-Tests mit übergroßer
+  Unicode-Szene sowie legalen Umlauten/Emoji und persistiertem Roundtrip.
+- **GETESTET:** GitHub-Schreibzugriff, isolierter Branch und PR-Erstellung
+  tatsächlich erfolgreich. Kein Testlauf wurde lokal behauptet.
+- **NICHT GETESTET:** finale Python-/Backend-/Flutter-/Android-CI, realer
+  Android-Backup-Picker; Flutter-/Dart-SDK in dieser Sitzung nicht vorhanden.
+- **BLOCKIERT:** keine lokale Flutter-Toolchain, kein Netzwerk-Git-Clone;
+  GitHub Actions muss den vollständigen PR-HEAD prüfen.
+- **Migrationen:** keine. SQLite-Version 3, äußeres JSON-Schema 1,
+  vorhandene Spielstände, Version, Controller und Exportformat unverändert.
+- **Konfliktkoordination:** keine überschneidenden offenen Fachdateipfade;
+  zentrale Dokumente können beim Zusammenführen andere Statusnachträge
+  enthalten, daher ausschließlich additiv konsolidieren.
+- **Nächster konkreter Schritt:** PR #502-CI auf dem finalen Head prüfen;
+  bei Rot Formatierung/Ursache im selben Branch reparieren, bei Grün
+  unabhängigen Integrationsreview veranlassen.
+
+---
+
 # CHAT D – Android-Backupdateinamen: Unicode-Zeilenumbruch sperren (31.10.2026)
 
 - **Ausgangs-main-SHA:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
@@ -1410,3 +1494,251 @@ PR #177 nach Abschluss der GitHub-Actions-Läufe auf dem **finalen** Commit prü
 - **Historie:** sichere Original-Commit-Vorfahren und die vorläufigen Integrationsvarianten #494/#496 werden als Eltern archivierungsfähig gemacht, ohne deren fachliche Änderungen doppelt zu übernehmen.
 - **Abnahme:** kombinierte CI dieses Heads, erfolgreicher Merge #495 und erfolgreiche folgende Main-CI erforderlich; keine migrations- oder versionsbezogenen Änderungen, kein Realgerät/TalkBack abgenommen.
 - **Nächster Schritt:** nach #495 in main diesen PR abschließend prüfen, mergen und erst nach erfolgreicher Main-CI sichere Branchbereinigung kontrollieren.
+
+---
+
+## 02.11.2026 – Chat D: vier unabhängige, CI-grüne Barrierefreiheitsdialoge
+
+- **Stack-Basis:** `be1be6aac0cd8d2b53e0a1219f43fee2fcb35400`, nach #495 und #497.
+- **Quellen:** #465 Zustandsquellen-Dialog (CI 41323668152), #458 Mehrklassen-Dialog (CI 41282153192), #457 Magieinitiierten-Dialog (CI 41248140576) und #455 Hintergrundpaket-Dialog (CI 41246044715), jeweils `completed/success` auf Original-HEAD.
+- **Implementiert:** vier exakt geprüfte Flutter-UI-Git-Blobs und vier unveränderte Widgettest-Blobs ohne gemeinsame produktive Fachdateien. README, zentraler und CHAT_C-Checkpoint additiv konsolidiert.
+- **Regeln/Speicherung:** keine Domain-, Controller-, SQLite-, JSON-, Schema- oder Appversionsmigration; Dialoge bleiben unverbindlich, bis Anwender bestätigen.
+- **Noch offen:** neue kombinierte CI auf diesem Integrations-HEAD und Main-CI nach sequenziellen Merges, tatsächliche Android-Hardware-/TalkBack-Abnahme.
+- **Nächster Schritt:** nach Abnahme von #495 und #497 diesen Stack mit erneuter Konfliktprüfung mergen und nach erfolgreicher Main-CI Original-Branch-SHAs als Git-Tags archivieren, nicht vorher löschen.
+
+---
+
+## 02.11.2026 – Chat D: fünf zusätzliche getestete Zauber- und UI-Arbeitspakete
+
+- **Stack-Basis:** `ad9d2e6ebf960dbbb643ec093396b4335afb4ebc`, nach #495, #497 und #498.
+- **Quellen:** #472 Raster-Berührungsreichweite (41393551106 erfolgreich), #467 Vorbereitungs-/Austauschregeln (41323611885), #453 Mehrklassen-Slotalias (41244807154), #461 Mehrklassen-Zauberquellen (41282290565), #450 Schildreaktion-Dialog (41244483591). Alle auf dem jeweiligen finalen Quell-HEAD erfolgreich.
+- **Fachdateien:** nur die Original-Git-Blobs in fünf getrennten Modulen sowie jeweils eigenständige Testdateien und quellgetreue SRD-Dokumente. Alle bestehenden Modulbasis-Dateien exakt unverändert zur Quellbasis geprüft; neue Dateien vor Integration nicht vorhanden. README/Checkpoints additiv.
+- **Historienschutz:** Original-Quell-HEADs zusätzliche Git-Commit-Eltern; keine doppelte Übernahme, keine Force-Pushes, kein direkter Main-Commit.
+- **Akzeptanz:** Vollständige kombinierte PR-CI vor jedem Merge, #495/#497/#498 vorher erfolgreich integrieren, Main-CI und danach SHA-gesicherte Branchbereinigung. Keine realen Android-/TalkBack-Tests, keine SQLite-/JSON-Schema-/Versionsmigration in diesem Paket.
+- **Nächster Schritt:** nach erfolgreicher kompletter CI auf finalem Head und aller Vorgänger Stacked PR prüfen und mergen; dann noch verbliebene kollidierende PRs getrennt prüfen.
+
+---
+
+## Chat D – sichere Integration Zaubertrigger und NPC-Historie (02.11.2026)
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`; **Integrationsbranch:** `chore/chat-d/integrate-trigger-npc-20261102`.
+- **Quellen:** [PR #500](https://github.com/ManuEtt/Dnd/pull/500) Head `709b9fa8fa60a908ab8dcc2acda6a7a840cfa155` (vollständige Quell-CI erfolgreich) und [PR #501](https://github.com/ManuEtt/Dnd/pull/501) Head `c203e4fde2e2bb5c24d04eeac5f8e1de77e832ad` (zwei vollständige Quell-CIs erfolgreich).
+- **Änderungen:** Unicode-Formatcodes in Zaubertriggern zurückweisen; revisionsgebundene NPC-Auswahl gegen Änderungen verdeckter eigener Notizen absichern. Beide Fachmodule lagen auf der Integrationsbasis auf den exakt gleichen Git-Blobs wie auf der geprüften Quelle `84437e4e`.
+- **Regressionen:** Original-Code- und Testblobs der beiden finalen Heads unverändert übernommen; keine neuen oder gelöschten Spielstands-/SQLite-/JSON-Schemadaten.
+- **Dokumentation:** Originale reine Hinzufügungen aus beiden PRs in README, zentralen CODEX- und individuellen A/B-Checkpoints additiv erhalten. Keine vorherige Main-Dokumentation entfernt.
+- **Git-Historie:** Quell-Heads sind zusätzliche Eltern des Integrationscommits; keine Fremdbranches überschrieben oder gelöscht.
+- **Freigabe:** Neue vollständige kombinierte GitHub-Actions-CI auf dem exakten Integrations-HEAD und neue Main-CI nach Merge noch erforderlich. Keine Realgerät-/TalkBack-/Altversions-Upgrade-Abnahme.
+
+**Nächster Schritt:** Nach vollständig grüner kombinierter CI und aktuellem Main-/PR-Konfliktabgleich regulären Merge durchführen; danach Main-CI abnehmen.
+
+---
+
+## Chat D – zwei CI-grüne Android-Dialogpakete ohne Fachkollision (02.11.2026)
+
+- **Stack-Basis:** PR #507, Commit `15dbf85f531b23102b4f055f116cb0832ba4ec0b`. Dies ist ein gestapelter Integrationsschritt, der erst nach #507 und grüner Main-CI gemergt werden darf.
+- **Quellen:** [#492](https://github.com/ManuEtt/Dnd/pull/492) Head `104ad73947c439f96d19bcd8f738813e23041763` (zwei finale vollständige CI-Läufe erfolgreich); [#503](https://github.com/ManuEtt/Dnd/pull/503) Head `8ded6d3afc74a1d5cd6914956c8ed022c58a5d24` (zwei finale vollständige CI-Läufe erfolgreich).
+- **Übernommen:** Zusatzkreaturenangriffs- und Sending-Dialog bei 200 % Schrift und geöffneter Android-Tastatur bedienen; Tests und produktive UI-Blobs exakt von den originalen finalen Heads übernommen.
+- **Konfliktprüfung:** Beide produktiven UI-Blobs der Stack-Basis entsprechen exakt den ursprünglichen Quell-Basisblobs; keine Überschneidung der Fach-/Testdateien mit #507 oder untereinander. Gemeinsame README-/CODEX-/CHAT_C-Checkpoint-Diffs waren ausschließlich Einfügungen und wurden additiv erhalten; alte Dokumentation nicht gelöscht.
+- **Historie:** Quell-HEADs als zusätzliche Git-Eltern des Integrationscommits bewahrt. Keine Domain-/Regel-/Spielstands-/SQLite-/JSON-/Versionsänderung. Kein Force-Push, keine Fremdbranchlöschung.
+- **Offen:** Vollständige neue kombinierte PR-CI auf dem exakt finalen Integrations-HEAD, Vorgänger- und Main-CI, danach aktueller Main-/PR-Abgleich und regulärer Merge. Echte TalkBack-/IME-/Altversions-Geräteprüfung separat offen.
+
+**Nächster Schritt:** Vollständige CI dieses Stacks abnehmen und erst nach Merge von #507 mit grüner Main-CI integrieren.
+
+---
+
+---
+
+## Chat D – Checkpoint-Checksumliste gegen unsichtbare Unicode-Dateinamen schützen (02.11.2026)
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`.
+- **Pull Request:** [#504](https://github.com/ManuEtt/Dnd/pull/504), Draft bis finaler CI-Abnahme.
+- **Branch:** `fix/chat-d/checkpoint-unicode-ledger-20261102`; Code-/Teststand: `2b1386e4a43a15efa352ea5c6ff3afe143872830`.
+- **Problem:** `scripts/create_checkpoint.py:safe_name` verbot bisher nur ASCII-Steuerzeichen. Historische Checkpoint-Artefakte mit C1-Steuerzeichen, Bidirectional-Formatzeichen oder Unicode-Zeilen-/Absatztrennern konnten in die Prüfsummenliste aufgenommen werden. Eine Zeile konnte dadurch visuell irreführend sein.
+- **Lösung:** Historische Artefakt- und Quellnamen verwerfen, wenn ein Zeichen einer Unicode-Kategorie `Cc`, `Cf`, `Cs`, `Zl` oder `Zp` angehört. Normale internationale Namen einschließlich Umlaut, Emoji und kombinierender Zeichen bleiben erlaubt.
+- **Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, diese Datei.
+- **Regressionen:** sechs nicht sichtbare Steuer-/Format-/Trennzeichen in historischen ZIP-Namen mit unveränderten `LATEST`-/`SHA256SUMS`-Aliases nach Ablehnung; sichtbares internationales historisches Archiv bleibt im Prüfsummenledger.
+- **GETESTET:** Code und zwei neue Regressionstests im Branch gespeichert. Vorläufige GitHub-Actions-Prüfung auf finalem Dokumentations-HEAD steht aus.
+- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-CI auf dem finalen PR-HEAD; echte Geräteabnahme (nicht relevant für Python-Archivnamen).
+- **Kompatibilität:** keine Spielstand-, SQLite-/JSON-, Android-/Dart-, API- oder Versionsänderung; frühere sichere Checkpointnamen bleiben lesbar.
+- **Abgrenzung:** keine fachliche Dateikollision mit den beim Start offenen PRs #452–#503; insbesondere #502 ändert `sqlite_campaign_repository.dart` und dessen Test, nicht diese zwei Python-Dateien. Gemeinsame README-/Checkpoint-Nachträge nur additiv integrieren; kein automatischer Merge.
+- **Nächster Schritt:** vollständige CI auf dem finalen PR-HEAD prüfen; erst nach erfolgreicher CI zur Review freigeben.
+
+---
+
+## Chat D – Integrationsstapel nach #508 (02.11.2026)
+
+- Ausgangs-Stack: `04a9c339c0cda07158f5adc66cd8e5031e71d86e` (#508); zuvor #507.
+- Quellen: #504 final `5b42483294e2f819ef680c2487348fa01e17b79a` und #505 final `7d7d7e101d56a0b78d9da984ac19814f9756d2ff`, jeweils zwei vollständig grüne Quell-CIs.
+- Checkpoint-Namenfilter, Python-Regressionen sowie revisionsgesicherter Ortsrückblick und Dart-/SQLite-Tests als unveränderte Quell-Git-Blobs übernommen.
+- Keine bestehende Fachdatei verändert, deren Stack-Basis von der geprüften Quellbasis abweicht; Dokumentationsnachträge aus beiden Quellen ausschließlich additiv erhalten.
+- Original-Quellhistorien als zusätzliche Commit-Eltern erhalten. Keine Spielstandmigration, kein Force-Push.
+- Offen: vollständige kombinierte CI, danach geregelter Merge nach #507 und #508 sowie Main-CI; Realgerät-/TalkBack-/Upgrade-Abnahme getrennt.
+
+---
+
+## Chat D – UI-Sicherheitsdialoge, Folgeintegration (02.11.2026)
+
+- **Stack-Basis:** `a0a350fa534769c32293eaf8d7f91d3ab53c4c15` (PR #510, zuvor #508 und #507).
+- **Quellen:** #506 Head `31fa78dd5008018acbb18c5be83d9d22bbd2f9c6`, zwei erfolgreiche vollständige GitHub-CIs; #509 Head `8f930fedeb36df943d63f9278115c7622ecc1d07`, vollständige GitHub-CI erfolgreich.
+- **Umsetzung:** Wilder-Angreifer- und Sanfter-Fall-Dialoge bei 200 % Schrift/IME bedienbar, Auswahl- und Zustimmungsprüfungen; vier technische Original-Git-Blobs inklusive Tests übernommen. Beide produktiven UI-Basisdateien und Tests auf dem Stack gegenüber der Quellbasis unverändert.
+- **Dokumentation:** Originale reine Hinzufügungen von README, CODEX und CHAT_C additiv übernommen. Kein vorhandener Fortschritt entfernt.
+- **Historie:** Finale Quell-HEADs als zusätzliche Git-Eltern gespeichert. Kein Force-Push oder Löschen fremder Branches.
+- **Offen:** Neue vollständige kombinierte CI auf dem finalen Integrationscommit; anschließend geordneter Merge #507 → #508 → #510 → dieses Paket, jeweilige Main-CI und abschließender Merge-Abgleich. Keine reale TalkBack-/IME-/Upgrade-Geräteabnahme, keine Spielstands-/SQLite-/JSON-Änderung.
+
+---
+
+## Chat D – manuelle Zugfolge: parallele Varianten konsolidieren (02.11.2026)
+
+- **Stack-Basis:** `d879bff475ca5e64c19690fc142f2d24c0c5ff71` (#511, zuvor #510/#508/#507).
+- **Quellen:** PR #481 final `7f543aee1f54fe2c55c79eee3f951f4f695523db`, PR #483 final `db05d02f78ed4f030525c270a897d7bd7f37c735`, beide vollständige CI grün.
+- **Konflikt entschieden:** Produktive Dialogdateien unterscheiden sich ausschließlich in zwei Gleichstand-Tooltips (fünf Diffzeilen). #483 benennt den Figurennamen in beiden Tooltips; deshalb wird dessen Original-Codeblob übernommen und beide unterschiedlichen originalen Widget-Testdateien zusammen übernommen. UI-Ausgangsblob des Stacks entspricht exakt dem vorigen Quell-Main `88558020`.
+- **Historie und Dokumentation:** Beide Original-Quellheads als zusätzliche Commit-Eltern erhalten; sämtliche reinen README-/CODEX-/CHAT_C-Einfügungen additiv zusammengeführt, keine bestehenden Dateien überschrieben.
+- **Grenzen:** Keine Regel-/Speicher-/Versionsänderungen, keine eigenständige Kampfengine. Vollständige kombinierte CI dieser konkreten Testkombination vor jedem Merge erforderlich; danach geordnete Stack-/Main-Integration. Echte TalkBack-/Android-IME- und Altversionstests weiterhin offen.
+
+---
+
+---
+
+## Chat D – Alpha-Release-APK-Quelle ohne symbolische Verknüpfung (02.11.2026)
+
+- **Ausgangs-main:** `a2f22eaceb344aaced12d0ad548b813aa44d544f` (nach der vollständigen Abnahme und Integration von #508).
+- **Branch:** `fix/chat-d/alpha-apk-source-symlink-20261102`.
+- **Pull Request:** [#514](https://github.com/ManuEtt/Dnd/pull/514), Draft bis finaler CI-Abnahme.
+- **Implementierungs- und Regressionstest-Commits:** `15c75c8e137e9bf86538463a89db735fcc399571`, `9085c3a2ad0a7eca90f821f5c965c23f56e7c146`, `a9b1c76c5a4701937e3c56d06785edf02de77e2b` (Schutz des externen APK-Byteinhalts in Regression bestätigt).
+- **Problem:** `prepare_release` rief `Path.resolve()` bereits vor der APK-Validierung auf und verdeckte dadurch einen verlinkten Eingabepfad. Eine gültige APK aus einem unerwarteten externen Dateipfad konnte so als Release-Quelle akzeptiert werden.
+- **Lösung:** Originalpfad für die Prüfung erhalten; direkte und geerbte Symlinks vor dem Lesen ablehnen, nach der Quell-ZIP-Erzeugung erneut prüfen, ehe ein Release-APK-Ziel kopiert wird. Kein Zugriff auf das Ziel eines erkannten Linkpfads.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Tests:** vier neue Regressionen für gültige direkte APK-Quelle, verlinkte Quelldatei, verlinktes Elternverzeichnis, Quellpfad-Austausch nach Quellarchiv-Staging mit Rollback des Release-Verzeichnisses.
+- **GETESTET:** Änderung und Testfälle in GitHub auf eigenem Branch gespeichert. Vollständige GitHub-Actions-Abnahme auf finalem HEAD steht aus.
+- **NICHT GETESTET:** vollständige Python-/Backend-/Flutter-/Android-CI auf finalem HEAD und echter Geräte-Release-Installationspfad.
+- **Spielstände/Migration:** kein Schema-/Versionswechsel, kein Eingriff in Flutter, Story, SRD oder gespeicherte Kampagnen.
+- **Konfliktprüfung:** beim Beginn offene PRs #452–#512 ändern nicht die beiden Python-Fachdateien dieses Arbeitspakets. Gemeinsam genutzte Dokumentation vor Integration additiv bewahren. Keine fremden PRs oder Branches überschreiben.
+- **Nächster Schritt:** finale vollständige CI prüfen; bei erfolgreichen Checks Review-Freigabe und spätere konfliktgeprüfte Integration.
+
+---
+
+## Chat D – Sicherheit von KI-Story und Release-APK (03.11.2026)
+
+- **Stackbasis:** PR #512 Commit `126ccea2c66e3c87390c1856df7dc2f78a0aa9f1`; davor #511, #510, #508 und #507.
+- **Quellköpfe:** PR #513 `775bb246f60dca3d9736e058ab47a0f3a22ddd6f` mit zwei vollständig grünen CIs; PR #514 `47cb0c4ac2b137cfb63a6f6ef4857773ff591672` mit vollständig grüner Quell-CI.
+- **Fachänderungen:** Gleiche Legacy-Unicode-Steuerzeichen im KI-Story-Vertrag Flutter/Backend zurückweisen; Alpha-APK-Ausgangspfade gegen direkte und geerbte Symlinks absichern, auch nach Staging erneut prüfen. Quell-Regressionen vollständig übernommen.
+- **Kollisionskontrolle:** alle vier bereits vorhandenen technischen Fach-/Testdateien auf der Stackbasis entsprechen exakt den Git-Blobs des Quellmains `a2f22eaceb344aaced12d0ad548b813aa44d544f`; die neuen Story-Regressionstests liegen auf zuvor nicht vorhandenen Pfaden. Keine Änderung anderer Pakete.
+- **Dokumentation:** reinen README-/CODEX-/CHAT_B-/CHAT_D-Hinzufügungen beider Quell-PRs zu erhalten, ohne alte Einträge zu löschen. Quellhistorien via zusätzliche Commit-Eltern bewahren; kein Force-Push.
+- **Pflicht:** neue kombinierte CI auf exakt dem finalen Integrations-HEAD, ordentliche Hauptbranch-Integration erst nach #507 → #508 → #510 → #511 → #512 mit jeweils grüner Main-CI. Keine echte Android-TalkBack-/Upgrade-Abnahme und keine SQLite-/JSON-Schemaänderung.
+
+---
+
+## Chat D – Kurzrast auch ohne Trefferwürfel vor Ressourcenerholung prüfen (03.11.2026)
+
+- **Stack-Basis:** `6a317501d58740875694d41440c5f6597565314b` (#517 nach #512/#511/#510/#508/#507).
+- **Quelle:** PR #515, final `7343e91d4af143063b37027d22a8516a96c6c8c0`, vier erfolgreiche vollständige Quell-CIs auf dem finalen HEAD.
+- **Bug:** Kurzrast-Sonderpfade bei vollen HP/fehlenden Trefferwürfeln konnten fingierte Pakt- oder Klassenressourcen ohne Vorprüfung zurücksetzen. Gemeinsame reine `RestRules.validateShortRestResources` prüft Klasse, Pakt, Würfelpools vor jedem Regenerationspfad.
+- **Übernahme:** Drei unveränderte Original-Git-Blobs (zwei Fachdateien plus neuer Regressionstest) und Regelreferenz-Dokumentation. Beide existierenden Fach-Blobs auf Stack-Basis identisch mit Quell-Main `a2f22e` geprüft. README, zentraler CODEX und CHAT_A-Checkpoint additiv zusammengeführt, keine vorigen Beiträge gelöscht.
+- **Historie:** finaler Quell-HEAD als zusätzlicher Commit-Elternknoten; kein Force-Push, keine Branch-Löschung.
+- **Freigabe:** vollständig erfolgreiche kombinierte CI auf diesem HEAD, danach geordneter regulärer Merge erst nach früheren Integrations-PRs mit grüner Main-CI. Keine SQLite-/JSON-Schema- oder App-Versionsänderung. Reale Android-/Upgrade-Abnahme offen.
+
+---
+
+## Chat D – NPC-Identität bei Zero-Width-Unicode aus drei Quellen konsolidiert (03.11.2026)
+
+- **Stack-Basis:** `036102c40426b804911470f164dad61f2974ba69` (#518 nach #517/#512/#511/#510/#508/#507).
+- **Quellen:** #464 `f3db51cbae5690be22d93ce427bf6e8a355c1b67`, #470 `5b6aa9fbed930de0ad885c74c240f09255c6a947`, #477 `7f1d9051965c90e102cda16a7785c171f4138432`; exakte Quell-CI jedes HEAD erfolgreich.
+- **Lösung:** Versteckte Zero-Width-/Bidi-/BOM-Zeichen dürfen NPC-Identitäten im narrativen Speicher, strukturierten Story-Payload und Bestätigungsleser weder fälschen noch Eindeutigkeit vortäuschen.
+- **Konfliktfreiheit:** Alle drei Fachmodule auf der Stack-Basis enthielten die ursprünglichen Patch-Kontextstellen exakt jeweils einmal; nach präziser Anwendung aller Hunk-Änderungen entspricht jeder resultierende Git-Blob **bytegenau dem finalen Quellblob**. Keine aktuellen Fremdänderungen überschrieben; zusätzliche drei unveränderte Quell-Testblobs aufgenommen.
+- **Dokumentation:** README, zentralen und CHAT_B-Checkpoint verlustfrei additiv zusammengeführt. Git-Geschichte durch drei zusätzliche finale Quell-HEAD-Eltern bewahrt; kein Force-Push oder Branchlöschen.
+- **Gates:** Vollständige neue CI des endgültigen kombinierten HEADs sowie geordneter Main-Merge nach #518 und erfolgreicher Main-CI. Keine JSON-/SQLite-Migration, keine echte Android-Geräteabnahme.
+
+---
+
+## 03.11.2026 – Chat D: vier unabhängige aktuelle Fachpakete für die Folgeintegration vorbereitet
+
+- **Stackbasis:** PR #522, HEAD `698cd697f6fdf3c934641ea1e33c79beed29fee5` (nach #518 → #517 → #512).
+- **Quellpakete:** #519 (Legacy-Unicode im bestätigten NPC-Rückblick; `fdc7b269f67b63f0453484408e22dad86f6eb305`), #520 (sichere Material-IDs; `471bbad20b2b092bd93029c8fc2b6ef228cd8add`), #521 (Gelegenheitsbewegungs-Dialog bei hoher Schrift/IME; `d3213742022bf0779875cbef510b7d8667676eb0`) und #523 (SRD-Zauberkomponententexte; `5e93417329126a552f8cc893405ba27134ebb91a`).
+- **Konfliktprüfung:** Die vier technischen Quelldateien sind an der jeweiligen ursprünglichen Quellbasis und auf dem Stack-HEAD #522 bytegleich; die vier neuen Testdateien haben getrennte Pfade. Originale Fach-/Test-Git-Blobs werden unverändert übernommen, die vier originalen Quell-HEADs als zusätzliche Commit-Eltern bewahrt.
+- **Dokumentation:** Sämtliche ausschließlich additiven Abschnitte der vier PRs in README, zentralem CODEX-Checkpoint sowie den Checkpoints A, B und C werden ohne Löschung bestehender Einträge übernommen. Der Integrations-PR ist ein koordinierter Nachfolger, keine Ersetzung der Quellhistorie.
+- **Quell-CI:** #519 ([41594258320](https://github.com/ManuEtt/Dnd/actions/runs/41594258320)), #520 ([41593663239](https://github.com/ManuEtt/Dnd/actions/runs/41593663239)), #521 ([41593830589](https://github.com/ManuEtt/Dnd/actions/runs/41593830589)) und #523 ([41595431832](https://github.com/ManuEtt/Dnd/actions/runs/41595431832)) jeweils `completed/success` auf dem angegebenen Quell-HEAD.
+- **Noch nicht abgenommen:** Neue vollständig grüne kombinierte CI auf dem exakten Folgeintegrations-HEAD, reguläre Vorgänger-Merges mit grüner Main-CI, aktuelle Konfliktprüfung und reale Android-/TalkBack-/Upgrade-Tests.
+- **Kompatibilität:** Keine beabsichtigte SQLite-/JSON-/Versionsmigration, keine automatische KI-/Regelzustandsänderung.
+- **Nächster Schritt:** Kombinierte CI des Folgeintegrations-PRs abnehmen; erst nach geordneter Vorgängerintegration und grünem Main erneut mergen.
+
+---
+
+## 03.11.2026 – Chat D: drei bestätigte Story-Fortsetzungs-PRs nach #524 vorbereitet
+
+- **Quell-PRs:** #452 (`23422a695ffeab2309b15dae4b973085226de40f`), #456 (`9ca638e3ee85fb7cba894a8c76ca5a90b2120b56`), #459 (`0a859b301dd4660bb19d0c21a8a9b46c2aecd574`).
+- **Stackbasis:** `a1bcf9dd31ed46ad6865641d989c43cd8fc90063` (#524, nach #522).
+- **Abgleich:** Die vier bestehenden Story-/Testdateien auf der Stackbasis sind Git-Blob-bytegleich mit den Ursprungsbasen der Quell-PRs; drei neue Test-/Fachdateien kommen hinzu. Alle sieben technischen Blobs der drei Quellheads werden ohne Umbau übernommen. Originalquell-HEADs bleiben zusätzliche Eltern.
+- **Quell-CIs:** vollständige Android-Alpha-Workflows [41244723884](https://github.com/ManuEtt/Dnd/actions/runs/41244723884), [41246230660](https://github.com/ManuEtt/Dnd/actions/runs/41246230660) und [41282536339](https://github.com/ManuEtt/Dnd/actions/runs/41282536339) jeweils `completed/success`.
+- **Dokumentation:** Drei PRs in README, CODEX-Checkpoint und Chat-B-Checkpoint ausschließlich additiv zusammengeführt.
+- **Noch offen:** Neue kombinierte CI auf finalem Integrationshead, geordnete Vorgängerintegration und erneute Main-/Datei-/CI-Abnahme. Reale Android-/Upgrade-/TalkBack-Prüfung separat.
+- **Kompatibilität:** Keine beabsichtigte SQLite-/JSON-Migration oder App-Versionsänderung. Aus Storytext folgen keine unbestätigten Regelzustandsänderungen.
+
+---
+
+## 03.11.2026 – Chat D: drei ältere SRD-Klassen- und Rettungswurfpakete vorbereitet
+
+- **Quell-PRs:** #463 `6a110cf651fe45ada3cc00d026bef76a1a428ce8` (bestätigte klassengebundene Zaubervorbereitung), #468 `35c620e7e0ec173da73d1bb76c24a23703f78b0e` (Konzentrations-Klassenvorprüfung), #473 `77c172b34bb4c54eb188b659387b2981c1be44ca` (Rettungswurf-Klassenvorprüfung).
+- **Basis:** koordinierter Story-Integrationsstack #525, Commit `e298fa5590a4d8a16af17f7d062a1dfacb4a0960`.
+- **Technische Prüfung:** Alle fünf bereits vorhandenen geänderten Regeldateien auf dem Stack gegen ihre ursprünglichen Quellbasen verglichen: Git-Blobs bytegleich, keine zwischenzeitlichen Änderungen übersprungen. Originale Quell-Git-Blobs der drei PRs und sämtliche neuen Test-/Fachdokumente werden übernommen, Quell-HEADs als Commit-Eltern erhalten.
+- **SRD-Register:** Die voneinander verschiedenen JSON-Hunks aus #468 und #473 wurden einzeln einmalig gegen die unberührte Ursprungsbasis angewandt; resultierendes JSON ist gültig. Keine Quellenbewertung aus einem unbestätigten Katalogstatus abgeleitet.
+- **Version:** Beide PRs ändern `app/pubspec.yaml` von `0.8.49+99` zu `0.8.50+100` beziehungsweise `0.8.51+101`. Der Folgeintegrationsstand behält ausschließlich die neuere, bereits auf #473 erfolgreich gebaute Version `0.8.51+101`; niemals die ältere Versionsdatei von #468 zurückkopieren.
+- **Quell-CIs:** #463 [41312950120](https://github.com/ManuEtt/Dnd/actions/runs/41312950120), #468 [41326319399](https://github.com/ManuEtt/Dnd/actions/runs/41326319399), #473 [41395941527](https://github.com/ManuEtt/Dnd/actions/runs/41395941527), alle auf dem jeweiligen Quellhead `completed/success`.
+- **Gemeinsame Dokumentation:** README, zentraler CODEX-Checkpoint, Chat-A-Checkpoint, CHANGELOG, CHECKPOINT und DEVELOPMENT_STATUS jeweils additiv vereinigt; drei eigenständige SRD-/Chat-A-Nachweisdokumente unverändert.
+- **Noch offen:** Vollständige CI der kombinierten Quelle, Vorgänger-PRs mit grünen Main-Builds geordnet mergen, neuer Main-/Fachabgleich und tatsächlicher Android-/Upgrade-Geräteabnahmetest.
+- **Schema/Kompatibilität:** Keine absichtliche SQLite- oder JSON-Migration, keine Änderung der etablierten Regelschnittstellen außerhalb dokumentierter Preflight-Prüfungen.
+
+---
+
+## 03.11.2026 – Chat D: NPC-Notizvalidierung repariert; drei verwaiste Quellheads verlustfrei erhalten
+
+- **Quelle #516:** `feat/chat-b/confirmed-npc-note-id-integrity-20261103`, letzter HEAD `bd777c59074ae2ee76747972dc0a1fa946257863`, [vollständige CI 41698378638](https://github.com/ManuEtt/Dnd/actions/runs/41698378638) `completed/success`.
+- **CI-Fehlerbehebung:** Zwei Tests erwarteten irrtümlich, dass doppelte NPC-Notiz-IDs erst vom NPC-Leser nach JSON-Rekonstruktion oder SQLite-Neustart abgelehnt werden. Tatsächlich weist die bereits vorhandene Kampagnenvalidierung sie schon beim Import/Speichern ab. Die Tests prüfen jetzt sowohl den vorhandenen frühen Guard als auch die In-Memory-Leseansicht und den unveränderten alten SQLite-Spielstand nach zurückgewiesenem korruptem Schreibversuch; kein produktiver Validator abgeschwächt. Testdatei via offiziellem Dart-3.9.2-Formatter korrigiert, temporärer Diagnoseworkflow vollständig entfernt. PR-Fachdaten und neue Testdatei unverändert vom finalen erfolgreichen Quellhead übernommen. Der bestehende NPC-Identitäts-Fach-Git-Blob auf Stackbasis ist mit seiner Quellbasis bytegleich.
+- **Historischer NPC-Kurzfassungsbranch:** `feat/chat-b/bounded-confirmed-npc-excerpt-20261102` @ `96339224b658072f57d50dea0dcde252b61c934e` (historisch geschlossener, ungemergter PR #484), [Quell-CI 41401806782](https://github.com/ManuEtt/Dnd/actions/runs/41401806782) erfolgreich. Die beiden ursprünglichen Fach-/Testdateien sind **bereits blob-identisch im Stack** enthalten, der README-Abschnitt ebenfalls vorhanden; fehlende Nachträge in CODEX und Chat B additiv übernommen. Der Quellhead wird ausschließlich zur Git-Ancestry-Archivierung als zusätzlicher Parent eingebunden.
+- **Zwei ohne offenen PR verbliebene Flutter-Branches:** `feat/chat-c/manual-turn-queue-large-text-ime-20261102` @ `60f5a6341296eaa3bcced884501f9dd01f7dd779`; `feat/chat-c/material-inventory-large-text-ime-20261102` @ `c917b00ed873d374b83daefd0d847611ca92b2ac`.
+  Die erste produktive Dialogfassung unterscheidet sich von der bereits integrierten Version aus #512 ausschließlich in zwei **weniger aussagekräftigen** Tooltips (die aktuelle Fassung nennt den jeweiligen Namen); der erste Widgettest unterscheidet sich nur durch Dart-Formatter-Umbrüche. Beim Materialinventar ist die produktive Dialogdatei **blobgleich**, die neue Testfassung auf dem aktuellen Stack nutzt für die Eingabe korrekt das verschachtelte `EditableText` statt die vorherige `TextField.controller`-Annahme. Die neueren getesteten technischen Blobs bleiben im Integrationsbaum erhalten.
+- **Historie:** Alle vier ursprünglichen Quellheads (#516, #484 und die zwei verwaisten Chat-C-Branches) als zusätzliche Git-Commit-Eltern gesichert. Somit können die Branches nach einer tatsächlich erfolgreichen, geordneten Main-Integration und Main-CI als exakte Main-Ancestors sicher archiviert/gelöscht werden. Keine direkte Main-Bearbeitung und keine vorzeitige Löschung.
+- **Gemeinsame Dokumentation:** README, CODEX und Chat-B-Checkpoint mit den fehlenden additiven #516/#484-Abschnitten erweitert. Keine andere Fachdatei oder App-Version geändert.
+- **Noch offen:** Neue vollständige kombinierte CI auf exaktem Folge-HEAD, vollständige Main-Integration aller Vorgänger-PRs in Reihenfolge, grüne Main-CI, SHA-gesicherte Bereinigung, reale Android-/Upgrade-/TalkBack-Prüfung.
+
+---
+
+## Chat D – vier neue Sicherheits-/UI-Pakete koordiniert integrieren (03.11.2026)
+
+- **Produkt-main-Basis:** `fad366d778de1ab69984dfcae1c139d72f976e77` (Gesamtmerge #527); vollständige Main-CI [41715899159](https://github.com/ManuEtt/Dnd/actions/runs/41715899159) `completed/success` und sichere automatische Bereinigung [41718580714](https://github.com/ManuEtt/Dnd/actions/runs/41718580714) `completed/success`.
+- **Quell-PR #528:** `9aae43cedb654e9ff80cff3876d2118b652e3743`; Java-Properties-Zeilenenden gegen Unicode-Scheinumbrüche. Vollständige [Push-CI #41717031644](https://github.com/ManuEtt/Dnd/actions/runs/41717031644) erfolgreich auf genau diesem Commit; separater PR-Lauf #41717039953 beim letzten Abgleich noch in Arbeit.
+- **Quell-PR #529:** `b672c1dbfc66fd5d2dd5cdb0bb586460a6fcda56`; Android-Porträtaktionen bei großer Schrift/IME; vollständige [Quell-CI 41716033182](https://github.com/ManuEtt/Dnd/actions/runs/41716033182) erfolgreich.
+- **Quell-PR #530:** `76a848c9bcad79597ef80ef3d1e6c7c4096d7a29`; unsichtbare Unicode-Zeichen in bestätigten Konzentrationsschadensquellen; vollständige [Quell-CI 41715127740](https://github.com/ManuEtt/Dnd/actions/runs/41715127740) erfolgreich.
+- **Quell-PR #531:** `055e780f48d4b015ea3a558ac5ac738cd1e29b1c`; Legacy-Formatzeichen nur in der bestätigten NPC-Kurzchronik-Darstellung bereinigen; vollständige [Quell-CI 41714679161](https://github.com/ManuEtt/Dnd/actions/runs/41714679161) erfolgreich.
+- **Technische Konfliktprüfung:** Zwei Python-Fach-/Testdateien von #528 sind auf der aktuellen Main-Basis seit Erstellung unverändert. Je zwei unabhängige technische Fach-/Testdateien aus #529, #530 und #531 wurden gegen den letzten gemeinsamen Vorfahren `7be2135f` geprüft und sind auf aktuellem `main` bytegleich bzw. neue, bisher fehlende Testdateien. Die acht Quell-Git-Blobs werden bytegleich beibehalten.
+- **Gemeinsame Dokumentation:** README und zentraler CODEX-Checkpoint aus #528 (mit allen aktuellen Main-Einträgen) mit den ausschließlich additiven Abschnitten von #529–#531 ergänzt; individuelle Chat-A-/B-/C-Checkpoints erhalten ihre jeweiligen additiven Quellnachträge. Chat-D-Checkpoint erhält diesen Integrationsnachtrag. Originalquell-HEADs sollen als zusätzliche Commit-Eltern erhalten bleiben.
+- **Freigabegates:** Neue vollständige kombinierte CI auf dem exakten Integrations-HEAD, danach aktueller Main-/PR-/Konfliktvergleich, normaler Merge und erfolgreiche Main-CI. Erst danach Altbranches nach SHA-Archivierung und Main-Ancestry löschen. Quell-PRs nicht vorzeitig schließen oder verändern.
+- **Kompatibilität:** Keine absichtliche SQLite-/Kampagnen-JSON-/App-Versionänderung; echte Android-/TalkBack-/Altupgrade-Abnahme weiterhin separat offen.
+
+---
+
+### Chat D – konkreter Folge-Integrations-PR #533 (03.11.2026)
+
+- **Branch:** `chore/chat-d/integrate-nov03-regression-batch-20261103`; **PR:** [#533](https://github.com/ManuEtt/Dnd/pull/533).
+- **Main-Start:** `fad366d778de1ab69984dfcae1c139d72f976e77`; **technischer Integrationscommit vor diesem Nachtrag:** `9b759cd3f8ae66055e527cc4002ec2d6e3e18648`.
+- **Dateien:** acht technische Quell-/Testdateien und README, zentraler CODEX-Checkpoint, Checkpoints A/B/C/D. Fach-Git-Blobs aus den vier final vollständig erfolgreich geprüften Quellheads #528–#531 unverändert; nur gemeinsame Dokumentation additiv integriert. Alle Quellheads sind zusätzliche Eltern des Git-Commits.
+- **Tests:** Die vier **Einzel-Quell-CIs** sind `completed/success`. Die neue **kombinierte** GitHub-CI auf dem finalen Stand ist nach diesem Dokumentationscommit neu nachzuweisen, nicht vorzeitig als erfolgreich melden.
+- **Nächster Schritt:** Exakten finalen CI-HEAD und aktuelle Main-/PR-Konflikte abnehmen, regulär mergen, neue Main-CI prüfen und erst danach sichere, SHA-geprüfte Bereinigung. Kein Realgerätetest.
+
+
+---
+
+# CHAT D – Verschachtelte Quell-Symlinks in Story/Rules abweisen (03.11.2026)
+
+- **Ausgangs-main-SHA:** `fad366d778de1ab69984dfcae1c139d72f976e77`.
+- **Eigener Branch:** `fix/chat-d/domain-symlink-source-guard-20261103`.
+- **Pull Request:** wird für diesen Branch erstellt; finalen Commit im GitHub-PR ablesen.
+- **IMPLEMENTIERT:** Prüfer `scripts/check_domain_boundaries.py` scannt auch verschachtelte Einträge, lehnt symbolische Dateien/Ordner ab, liest keine Symlink-Dart-Ziele und belässt reguläre Dart-Grenzprüfung.
+- **TESTS ERGÄNZT:** `scripts/tests/test_nested_domain_boundaries.py` mit drei negativen Symlink-Fällen; bestehende positive Fälle unverändert.
+- **GETESTET:** Python-3.13-Minimalversuch zu `rglob`-Linkverhalten, GitHub-Schreibvorgang nach Bestätigung.
+- **NICHT GETESTET:** Projekt-Python-/Backend-/Flutter-/Android-Tests, finaler Actions-Lauf, reales Android-Gerät.
+- **BLOCKIERT:** keine lokale Repository-Kopie (GitHub-DNS im Container gesperrt); CI-Abnahme erforderlich.
+- **Geänderte Dateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_nested_domain_boundaries.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Migrationen:** keine. Alte Spielstände, SQLite/JSON, App-Version und Regel-/Storyzustand unverändert.
+- **Nächster Schritt:** gesamte PR-CI auf finalem Commit prüfen und erst danach einen kontrollierten Main-Integrationsreview durchführen.
+
+---

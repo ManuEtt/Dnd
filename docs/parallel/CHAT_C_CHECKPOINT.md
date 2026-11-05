@@ -1,3 +1,28 @@
+## Konsolidierung 04.11.2026 – PR #535
+
+Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
+
+---
+
+## 04.11.2026 – Chat C: Screenreader-Fortschritt der Kampagnenübersicht
+
+- **Ausgangs-main:** `17378018a6fc971aa723f0bfe817d040553fa020`.
+- **Branch:** `feat/chat-c/campaign-xp-progress-semantics-20261104`.
+- **PR:** [#535](https://github.com/ManuEtt/Dnd/pull/535), Draft.
+- **Problem:** Das schreibgeschützte `FantasyActiveHeroCard` zeigte den Fortschritt zum nächsten Level visuell, aber nicht mit einem sprechenden, eindeutigen Label; das bestehende Abenteuer-HUD enthielt bereits ein solches Label.
+- **IMPLEMENTIERT:** Eine `Semantics`-Beschriftung „Erfahrungsfortschritt: N Prozent“ auf dem vorhandenen `LinearProgressIndicator`; die inneren dekorativen Indikator-Semantiken werden ausgeschlossen, damit kein doppelter oder unbeschrifteter Balken angesagt wird. Der Prozentwert verwendet unverändert `CampaignExperience.levelProgress(hero)`, gerundet wie im Abenteuer-HUD. Ohne bestätigte EP entsteht weder Balken noch Prozentansage.
+- **Dateien:** `app/lib/ui/fantasy_campaign_dashboard.dart` und `app/test/fantasy_campaign_xp_accessibility_test.dart` sowie additive README-/Checkpoint-Einträge. Keine andere UI, keine Regelengine und keine Persistenzänderung.
+- **Drei Widgettests hinzugefügt:** 320/360 dp, 200 % Schrift, 220 dp simulierte Android-IME, eindeutige Prozentansage bei Level 1/150 EP (50 %), unveränderte bestätigte HP und JSON-Daten, bedienbare Fortsetzen-Aktion; negativer Fall ohne bestätigte EP und ohne implizite Spielstandsänderung.
+- **GETESTET:** aktuellen Main-HEAD, offenen PR-Fachdateien, Masterprompt, bestehende Dashboard-/HUD-Tests und die Fortschrittsberechnung geprüft; eigener Branch und GitHub-Code- und Testcommits vorhanden. **Gezielte GitHub-Widget-CI [#41776172261](https://github.com/ManuEtt/Dnd/actions/runs/41776172261): 11 Tests bestanden, 2 Dateien korrekt formatiert; vollständige CI auf finalem PR-HEAD noch ausstehend.**
+- **NICHT GETESTET:** Flutter/Dart lokal (SDK nicht verfügbar), neuer vollständiger Flutter-/Backend-/Python-/Android-GitHub-Lauf auf finalem HEAD, physisches Android-Gerät mit TalkBack und echter IME, Upgrade/Signierung.
+- **BLOCKIERT:** keine fachliche Überschneidung; technische CI und reale Geräteabnahme fehlen. Gemeinsame Dokumentationsdateien bei Integration durch Chat D additiv bewahren.
+- **Kompatibilität:** Schema SQLite 3, JSON 1, Domain-Regeln, SRD, Story, Controller, Assets, Berechtigungen und Versionsnummer unverändert. Keine Migration.
+- **NÄCHSTER SCHRITT:** CI auf endgültigem PR-HEAD vollständig abnehmen; bei Fehlern gezielt korrigieren. Anschließend echte TalkBack- und IME-Abnahme auf 320/360 dp durchführen.
+
+---
+
+---
+
 ## 02.11.2026 – Chat C: Mehrgegner-Initiative mit 200 % Schrift und IME
 
 - **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`.
@@ -546,3 +571,219 @@ Der vollständige rein additive Chat-Fachnachtrag aus PR #479 ist nachfolgend er
 - **MIGRATION:** keine (keine Schema-/JSON-/Persistenz-/Versions-/Domainänderung).
 - **BLOCKIERT:** Bis zur vollständigen grünen GitHub-CI im Draft belassen; nicht automatisch nach Main mergen. Dokumentationskonflikte mit parallelen PRs additiv von Chat D konsolidieren.
 - **NÄCHSTES PAKET:** Nach Review/Integration der unabhängigen UI-Dialog-PRs Fokusreihenfolge/Screenreader-Interaktion und responsive Materialinventar-Auswahl prüfen, ohne laufende Fremdmodule zu ändern.
+
+---
+
+## 01.11.2026 – Chat C: Zustandsquellen-Dialog bei 200 % Schrift und IME (PR #465)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`; Branch `feat/chat-c/condition-effect-dialog-ime-20261101`; Pull Request [#465](https://github.com/ManuEtt/Dnd/pull/465) (Draft bis CI).
+- **Problem:** Der Zustandsquellen-Dialog enthielt einen separat scrollenden Inhalt unter einem feststehenden Titel; für 320/360 dp, 200 % Schrift und eingeblendete Tastatur fehlte gezielte UI-Abnahme.
+- **IMPLEMENTIERT:** `app/lib/ui/condition_effect_dialog.dart` nutzt `AlertDialog(scrollable: true)` mit kompakteren Insets. Lange Dropdown-Labels erhalten Ellipsis, Validierungsfehler erhalten `Semantics(liveRegion: true)`; sämtliche Domänenwerte und vorhandenen Kontrollpfade bleiben unverändert.
+- **TESTS HINZUGEFÜGT:** `app/test/condition_effect_dialog_ime_test.dart`, vier Widgettests zu 320/360 dp, 200 % Schrift und 220 dp IME: ungültige Quelle zeigt angekündigten Fehler und neutralen Abbruch; gültige Zustandsquelle wird bestätigt, aber verändert den Helden nicht; Entfernen einer explizit gewählten Quelle von zwei Quellen liefert nur deren ID und mutiert nicht das übergebene Heldenmodell.
+- **GETESTET:** Live-main, Masterprompt, Architektur, Checkpoints, alle offenen PR-Dateilisten, bestehende Zustandseffekt-Tests und Domänenregeln geprüft. Zwei Code-/Testdateien auf isoliertem Branch gesichert. PR #458 ist fertig grün/reviewbereit; dessen CI gilt nicht als Prüfung von #465.
+- **NICHT GETESTET:** Für #465: Flutter-/Dart-Format, Flutter-Analyse und -Tests, Android-Debug/Alpha, native Tests, Backend/Python bis zum finalen GitHub-Actions-Lauf. Lokale Flutter-/Dart-Toolchain fehlt; echtes Android-Gerät und TalkBack bleiben offen.
+- **BLOCKIERT:** Final-HEAD-CI bis `completed/success` prüfen, vorher kein Review-Merge.
+- **GEÄNDERTE DATEIEN:** `app/lib/ui/condition_effect_dialog.dart`, `app/test/condition_effect_dialog_ime_test.dart`, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`. Keine Domänen-/Regel-/SQLite-/JSON-/Versionsänderung; **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Tastatur-/Screenreader-Fokusreihenfolge der Zustandsquelle auf echtem Android-Gerät, dabei Textfeld, Wechsel zwischen Hinzufügen und Entfernen und Fehleransage prüfen.
+
+---
+
+## 01.11.2026 – Chat C: Mehrklassen-Stufenaufstieg auf 320/360 dp mit 200 % Schrift/IME (PR #458)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `feat/chat-c/multiclass-dialog-large-text-ime-20261101`; **Code-/Testcommit:** `9524b7c8006e0dd9a2fee38b08c6ff33c792e49e`; **Pull Request:** [#458](https://github.com/ManuEtt/Dnd/pull/458) (Draft bis zur finalen CI).
+- **Problem:** Der Dialog nutzte einen verschachtelten vertikalen Scrollview mit abgetrenntem Titel; die breite Erfahrung-/Meilenstein-Auswahl passte bei 320 dp/200 % möglicherweise nicht. Es gab keinen spezifischen IME-/Großschrift-Test.
+- **IMPLEMENTIERT:** `app/lib/ui/multiclass_selection_dialog.dart` verwendet `AlertDialog(scrollable: true)` und kompakte Insets. Der bestehende `SegmentedButton<LevelUpMethod>` ist horizontal scrollbar; alle Regelabfragen und Bestätigungsaktionen bleiben unverändert.
+- **TESTS ERGÄNZT:** `app/test/multiclass_dialog_large_text_ime_test.dart`: 320/360 dp bei 200 % Schrift/220 dp Tastatur-Inset, unbestätigter Aufstieg bei fehlenden EP gesperrt, Abbruch ohne Heldenänderung, expliziter Meilenstein auch ohne EP möglich, Barde nur nach zusätzlicher Fertigkeitswahl bestätigbar. Vier Fälle mit positiven und negativen Prüfungen.
+- **GETESTET:** Masterprompt, alle Pflichtdokumente, aktuelle Main-/PR-Änderungsdateien geprüft; der Vor-PR #457 hat auf Commit `24fd1bdd821817952fe216156656b84b403ca766` vollständige grüne CI [#41248140576](https://github.com/ManuEtt/Dnd/actions/runs/41248140576), **nicht** als Nachweis für #458 verwenden.
+- **NICHT GETESTET:** Neue Widgettests, Dart-Formatierung, `flutter analyze`, vollständiger Flutter-Lauf, Backend/Python, Gradle/native Tests, Debug-/Alpha-APKs des finalen #458-SHA bis zum GitHub-Actions-Ergebnis. Flutter-/Dart-SDK lokal nicht vorhanden. Reales Gerät, IME und TalkBack ausstehend.
+- **BLOCKIERT:** Vollständige CI-Prüfung und Review, kein ungeprüfter Merge.
+- **GEÄNDERTE DATEIEN:** UI-Dialog, neue Testdatei, `README.md`, `docs/CODEX_CHECKPOINT.md`, eigener Chat-C-Checkpoint. Kein Regel- oder Speichermodul, keine Version oder Schemaänderung; **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Tastatur-/TalkBack-Fokusreihenfolge und bestätigte Interaktionen des Magieinitiierter-Dialogs nach Integration von #457 auf Main an einem eigenständigen, konfliktfreien Paket prüfen; alle vier Wahlfelder mit Fokus erreichbar, Enter aktiviert niemals ungültigen Confirm.
+
+---
+
+## 31.10.2026 – Chat C: Magieinitiierter-Dialog bei großer Schrift und IME (PR #457)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `feat/chat-c/magic-initiate-ime-scroll-20261031`. **Fach-/Testcommit:** `2a87d116e1cccf2dcf4e9af9ffae43e55a31d706`; **PR:** [#457](https://github.com/ManuEtt/Dnd/pull/457) (Draft; finalen Head im PR prüfen).
+- **Problem:** Das SRD-Magieinitiierter-Formular nutzt einen isolierten Inhalts-Scrollview in einem nicht explizit scrollbaren AlertDialog; 320/360 dp bei 200 % Schrift und Android-IME bislang nicht gezielt abgesichert.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_magic_initiate_dialog.dart` nutzt `AlertDialog(scrollable: true)`, schmale Insets und nur einen Scrollbereich für Titel/Inhalt; die vier validierten Dropdowns, Abbruch und Bestätigung behalten ihre bestehende fachliche Wirkung.
+- **TESTS HINZUGEFÜGT:** `app/test/srd_magic_initiate_ime_test.dart`: 320 und 360 dp mit 200 % Text/220 dp IME, scrollbare Formularfelder und Abbruch; bei doppelten Zaubertricks kein Confirm; bei vier gültigen Angaben wird nur das korrekte Wahl-DTO zurückgegeben. Vier Widgetfälle, keine externe KI.
+- **GETESTET:** Live-main, Masterprompt, Architektur/Arbeitsanweisungen, offene PR-Dateipfade und vorherige CI geprüft. PR #455 hat auf `aedc212faa3e64136f0713b1386e7141c4541381` zwei grüne CI-Läufe [41246044715](https://github.com/ManuEtt/Dnd/actions/runs/41246044715) / [41246040596](https://github.com/ManuEtt/Dnd/actions/runs/41246040596) und wurde auf Review gesetzt. Diese Läufe beweisen **nicht** #457.
+- **NICHT GETESTET:** Der neue Code ist zunächst ohne lokale Dart-/Flutter-Toolchain; vollständige CI (Format, Analyse, Fluttertests, native Android-/APK-/Backend-/Python-Gates) auf finalem PR-HEAD noch abzunehmen. Echtes Android-Gerät mit IME, TalkBack, Upgrade/Release-Signatur separat.
+- **BLOCKIERT:** Prüfung der vollständigen CI auf eigenem PR. Kein automatischer Merge.
+- **GEÄNDERTE DATEIEN:** `app/lib/ui/srd_magic_initiate_dialog.dart`, `app/test/srd_magic_initiate_ime_test.dart`, dieser Checkpoint, `docs/CODEX_CHECKPOINT.md`, `README.md`. Keine Spielregel-/Schema-/JSON-/Versionsänderung; **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Tastatur-Tab/Enter-Fokusreihenfolge der vier Auswahlfelder bei 320 dp/200 %/IME gezielt abnehmen; gültige Auswahl und Abbruch vollständig per Hardwaretastatur erreichbar, nie unbeabsichtigt bestätigen.
+
+---
+
+## 31.10.2026 – Chat C: Hintergrundpaket bei 200 % Schrift und IME (PR #455)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`; **Branch:** `feat/chat-c/background-package-large-text-ime-20261031`.
+- **Code- und Testcommit:** `3d2a1471338bf92fb31dd10b505fc9f3d7ca7eb1` (finalen Dokumentations-HEAD im PR prüfen); **Pull Request:** [#455](https://github.com/ManuEtt/Dnd/pull/455) (Draft).
+- **Problem:** Im Dialog für Hintergrundpakete liegt ein eigener Scrollbereich innerhalb eines nicht als scrollable deklarierten AlertDialog. Für sehr große Schrift und simulierte Android-Tastatur gab es keine spezifischen Widgettests; zwei Dropdowns waren nicht expandiert.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_background_package_dialog.dart` nutzt nun einen einzigen `AlertDialog(scrollable: true)`, schmale Insets und beide Dropdowns mit `isExpanded: true`. Unveränderte explizite Bestätigung und Abbruch.
+- **TESTS HINZUGEFÜGT:** `app/test/srd_background_package_ime_test.dart` mit vier positiven/negativen Varianten: 320/360 dp und 200 % Schrift bei 220 dp IME; Soldat ohne Spielset gesperrt und abbrechbar; Akolyth wählt 50 Gold statt Symbol; Soldat wählt ein wirklich vorhandenes Spielset. Layoutfehler werden explizit geprüft.
+- **GETESTET:** GitHub-main, alle offenen PR-Bereiche, bestehender Quellcode und vorhandene Tests geprüft, Branch/Code/Test-PR angelegt. [PR #450 CI 41244483591](https://github.com/ManuEtt/Dnd/actions/runs/41244483591) ist auf eigenem Vor-Branch grün; **nicht** als Nachweis für #455 verwenden.
+- **NICHT GETESTET:** Neue Tests, Formatierung, `flutter analyze`, vollständige Flutter-Suite, Backend/Python, native Gradle-Tests und APK für den finalen PR-Head sind bis zur CI offen. Flutter-/Dart-SDK lokal nicht vorhanden; keine echte Geräte-IME- oder TalkBack-Abnahme.
+- **BLOCKIERT:** CI-Abnahme des neuen Pakets. Keine automatische Integration.
+- **GEÄNDERTE DATEIEN:** UI-Dialog, neuer Test, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md`. Andere UI-/Fachmodule und Spielstandformat bleiben unangetastet. **Migrationen:** keine.
+- **NÄCHSTER SCHRITT:** Den getrennten `SrdMagicInitiateDialog` bei 320 dp/200 %/IME auf durchgehende Scrollbarkeit prüfen. Akzeptanz: alle Zauberwahlen, Validierungsfehler und Abbruch/Bestätigung bleiben erreichbar; doppelte Zaubertricks dürfen keine Bestätigung erlauben.
+
+---
+
+## 31.10.2026 – CHAT C: Schildreaktionsdialog auf kleinen Displays (PR #450)
+
+- **Ausgangs-main:** `5a88834c98f5aca40395088c20c7e1dc5b587868`.
+- **Branch:** `feat/chat-c/hero-shield-dialog-large-text-ime-20261031`; **Code-/Testcommit:** `a4809858c402963015337f95b5a58cce0a54f3f2`; **PR:** [#450](https://github.com/ManuEtt/Dnd/pull/450) (Draft, finalen Head direkt beim PR prüfen).
+- **Problem:** Der Bestätigungsdialog für die vorausgewählte Schildreaktion nutzt einen eigenen Scrollbereich ohne `AlertDialog.scrollable`. Bei 320/360 dp, 200 % Text und offener Android-Tastatur fehlte eine explizite Widget-Absicherung von Scrollen, Abbruch und gültiger Bestätigung.
+- **IMPLEMENTIERT:** `app/lib/ui/hero_shield_reaction_dialog.dart` scrollt Titel und Eingabebereich im Dialog, nutzt kompakte Viewport-Ränder sowie expandierte Dropdowns; feste Abbruch-/Bestätigungsaktionen und ausdrückliche V/S-Bestätigung bleiben erhalten.
+- **TESTS ERGÄNZT:** `app/test/hero_shield_reaction_dialog_large_text_ime_test.dart`: zwei positive Scroll-/Abbruchfälle (320 und 360 dp bei 200 %/IME), ungültige Komponentenbestätigung vor der gültigen Auswahl sowie der negative Fall ohne vorbereiteten Schild. Keine Daten- oder Ressourcenmutation beim Abbruch.
+- **GETESTET:** GitHub main, vier offene PR-Aufgabenpakete und geänderte PR-Dateien geprüft; die Code-/Teständerungen sind auf dem eigenen Branch gesichert. Die letzte main-Android-CI [41184883579](https://github.com/ManuEtt/Dnd/actions/runs/41184883579) ist erfolgreich; dies ist **kein** Nachweis für PR #450.
+- **NICHT GETESTET:** Neue Widgettests, lokaler Dart-Formatter, Flutter-Analyse, gesamter Flutter-/Backend-/Python-/Android-Build und Android-TalkBack/IME auf einem realen Gerät – Flutter-/Dart-SDK lokal nicht vorhanden. CI auf finalem PR-HEAD abnehmen.
+- **BLOCKIERT:** Vollständige Validierung durch ausstehende GitHub-PR-CI / fehlende lokale Flutter-Toolchain. Kein automatischer Merge.
+- **NOCH NICHT IMPLEMENTIERT:** Reale TalkBack- und Touch-Abnahme bei 320 dp/200 %/IME.
+- **Geänderte Dateien:** Schilddialog, neuer Widgettest, `docs/parallel/CHAT_C_CHECKPOINT.md`, `docs/CODEX_CHECKPOINT.md`, `README.md`. Kein Schema, keine API, kein JSON, kein Spielstand, keine Migration.
+- **Nächster unabhängiger Schritt:** Die Tastaturfokus-Reihenfolge des Schilddialogs auf 320 dp/200 %/IME mit Tab/Enter absichern; Akzeptanz: beide Komponenten und Abbruch sind erreichbar und Fokus aktiviert nie eine unbestätigte Schildreaktion.
+
+---
+
+## 02.11.2026 – Chat C: manueller Zusatzkreaturen-Angriff bei großer Schrift/IME (PR #492)
+
+- **Ausgangs-main:** `c33448780dfe8b453f7f1db9d28c1396822901a7`.
+- **Branch:** `feat/chat-c/manual-extra-attack-ime-20261102`; **PR:** [#492](https://github.com/ManuEtt/Dnd/pull/492) (Draft).
+- **Code-/Test-HEAD vor Dokumentation:** `88dfb25b21065f51baad4031a7340d919696126c`; finalen HEAD dem PR entnehmen.
+- **Ausgangsproblem:** Im umfangreichen Dialog für einen ausdrücklich bestätigten Zusatzkreaturen-Angriff erschwerten der innere Scrollbereich, lange Checkboxtexte und nicht expandierte Dropdowns die Bedienung auf 320/360 dp bei 200 % Schrift mit 220 dp IME.
+- **Implementiert:** `AlertDialog(scrollable: true)` und kompakte Insets statt innerem `SingleChildScrollView`; kompakte visuelle Checkboxbeschriftungen ab 180 % mit vollständigem `Text.semanticsLabel`; drei expandierte Dropdowns, ellipsierte lange Kreaturennamen, lebende Fehler-Semantik. Keine Regel-/Controller-/Persistenzänderung.
+- **Geänderte Fachdateien:** `app/lib/ui/manual_extra_creature_attack_dialog.dart`, neue `app/test/manual_extra_creature_attack_ime_test.dart`. Daneben additive README-/Checkpoint-Nachträge auf eigenem Branch.
+- **Neue Regressionen:** Abbruch auf 320/360 dp mit 200 %/IME ohne Mutation, unvollständige Angriffsbestätigung ohne Mutation und positiver bestätigter Angriffs-DTO-Weg mit sieben Pflichtbestätigungen. Bestehende `manual_extra_creature_attack_dialog_test.dart` bleibt unverändert.
+- **GETESTET:** Live-GitHub-main, 29 vor Start offene PRs inklusive geänderter Fachdateien und Quell-/Testfixtures geprüft; Branch/Commits und Draft-PR erstellt. Keine erfolgreichen ausführbaren Flutter-Tests behauptet.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse/Tests, Debug-APK, native Android-Tests, Python-/Backend-Gates auf finalem PR-HEAD, reales Android/TalkBack/IME und Altgeräteupgrade bis CI-/Geräteabnahme.
+- **BLOCKIERT:** Lokales Flutter/Dart-SDK nicht vorhanden; CI auf finalem Commit nach Dokumentation neu bewerten. README-/zentrale Checkpoint-Integration wegen paralleler PRs durch Chat D.
+- **Spielstandkompatibilität:** Keine Migration; unveränderte Domainregeln, JSON-/SQLite-Schemata, Ereignisse und App-Version.
+- **Nächster unabhängiger Schritt:** `app/lib/ui/srd_class_level_up_dialog.dart` separat auf 320 dp/200 % und schmale Auswahlfelder prüfen; nur bei nachweisbarer UI-Regression testen und korrigieren, nicht parallel zu künftig kollidierenden PRs.
+
+---
+
+---
+
+## 02.11.2026 – Sending-Dialog bei 200 % Schrift und Android-Tastatur
+
+- **Ausgangs-main:** `55d33945872e251ec53b6860addcb05152a80c3a`.
+- **Branch:** `feat/chat-c/sending-dialog-ime-20261102`.
+- **PR:** [#503](https://github.com/ManuEtt/Dnd/pull/503) (Draft).
+- **Problem:** Der umfangreiche Sending-Dialog benutzte einen eigenen Scrollbereich in einem nicht vollständig scrollbaren `AlertDialog`. Lange Zustimmungen und die Abschlussaktion waren bei 320/360 dp, 200 % Schrift und simuliertem 220-dp-IME-Inset nicht abgesichert.
+- **Implementiert:** `AlertDialog(scrollable: true)` mit nur einem Dialog-Scrollbereich. Bei mindestens 180 % Schrift sind drei Bestätigungstexte visuell kompakt; ihre vollständigen bestehenden Aussagen bleiben als `Text.semanticsLabel` erhalten. Die lange Abschlussaktion wird visuell verkürzt.
+- **Dateien:** `app/lib/ui/sending_attempt_dialog.dart`, `app/test/sending_attempt_ime_test.dart` sowie additive README-/Checkpoint-Einträge.
+- **Widgettests geschrieben:** 320/360 dp, 200 % Text und 220 dp Android-IME: Abbruch, deaktivierte unbestätigte Buchung, scrollbarer Inhalt, positive explizite Sending-Vorschau und Widerruf der Zustimmung nach Textänderung. Vorher-/Nachher-JSON des Helden wird verglichen.
+- **GETESTET:** GitHub-Quellstand, offene PRs, Fachdateiüberschneidungen, eigener Branch, Main-Merge ohne Dateikonflikte und offizielle Dartformatierung überprüft. Der erste kombinierte CI-Lauf [#41452067597](https://github.com/ManuEtt/Dnd/actions/runs/41452067597) auf `3bf9729d` hatte 2.789 erfolgreiche Fluttertests und einen neuen fehlgeschlagenen Touch-Widgettest: das nach einer Texteingabe oberhalb der Scrollposition liegende Dropdown war mit ausschließlich abwärts gerichtetem Test-Drag nicht erreichbar. Der Testhelfer wurde auf bidirektionales Scrollen korrigiert; neue vollständige CI am Folge-Commit noch zu prüfen.
+- **NICHT GETESTET:** Vollständige grüne Flutter-/Android-CI auf dem nach der Regression korrigierten finalen HEAD; reale Android-/TalkBack-/IME-/Upgrade-Abnahme. Die erste Gesamt-CI ist wegen des einen expliziten Widgettestfehlers **fehlgeschlagen**, keine Gesamtfreigabe.
+- **Keine Migration:** Regeln, Domain, Controller, Story, Datenbank, JSON-/SQLite-Schemas, App-Version und bestehende Spielstände unverändert. Keine automatische Zauberbuchung aus der UI.
+- **Nächster Schritt:** Finale GitHub Actions auf dem vollständig dokumentierten Commit überprüfen und konkrete Fehler im selben Branch korrigieren; erst nach grüner CI für Integration freigeben.
+
+---
+
+---
+
+## 02.11.2026 – Chat C: Wilder Angreifer bei 200 % Schrift und IME
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`.
+- **Branch:** `feat/chat-c/savage-attacker-ime-20261102`. **PR:** [#506](https://github.com/ManuEtt/Dnd/pull/506) (Draft bis finaler CI).
+- **Problem:** `SavageAttackerSelectionDialog` verwendete einen eigenen `SingleChildScrollView` im `AlertDialog`, ohne titel- und aktionsübergreifende Scrollabsicherung bei schmalen Android-Displays und eingeblendeter Tastatur. Der Auswahlstatus der beiden Würfe war für Screenreader nicht explizit.
+- **IMPLEMENTIERT:** `AlertDialog(scrollable: true)` statt verschachtelter vertikaler Scrollfläche; `Semantics(selected: ...)` für ersten und zweiten Wurf, nur nach ausdrücklicher Wahl ist `Wurf bestätigen` aktiv. Regeln, Würfel, Kämpfe und Speicherung unverändert.
+- **Geänderte technische Dateien:** `app/lib/ui/savage_attacker_selection_dialog.dart` und `app/test/savage_attacker_selection_dialog_test.dart`.
+- **Testfälle ergänzt:** vier Widgetfälle zu 320/360 dp, 200 % Schrift, 220 dp simuliertem IME; Touch-/Semantics-Auswahl, negativer Abbruch, unverbindlicher kritischer Treffer, bereits verbrauchtes Talent und unveränderte Kampagnen-JSON-Snapshots.
+- **GETESTET:** GitHub-Main und offene PR-Dateien abgeglichen; keine fachliche Überschneidung. Gezielter GitHub-Actions-Lauf [#41478500514](https://github.com/ManuEtt/Dnd/actions/runs/41478500514) auf dem damaligen Codecommit `8137394521d686ee4c2b1940a0a1c778821e4883` vollständig **success**, alle **10 Widgettests** bestanden. Die offizielle Dart-Formatabweichung ausschließlich im Test wurde exakt übernommen; temporärer Testworkflow anschließend aus dem Branch gelöscht.
+- **NICHT GETESTET:** Vollständige Python-/Backend-/Flutter-/Android-Gesamt-CI auf finalem Head, reale Android-/TalkBack-/Hardware-IME-/Altversionsupgrade-Tests.
+- **BLOCKIERT:** Keine lokalen Flutter-/Dart-Werkzeuge; finalen GitHub-Actions-Lauf abnehmen. Bestehende README-/Checkpoint-Einträge beim parallelen Merge ausschließlich additiv erhalten (Chat D).
+- **Migration:** Keine Domain-/Regel-/Controller-/SQLite-/JSON-/Version-/Spielstandsänderung. Dialog liefert nur `SavageAttackerSelectionRequest`, keine selbstständige Anwendung von Schaden.
+- **NÄCHSTER SCHRITT:** Finale vollständige GitHub-CI und anschließend Touch-/TalkBack-Abnahme auf echtem schmalen Android-Gerät; bis dahin Draft.
+
+---
+
+---
+
+## 02.11.2026 – Chat C: Mönch/Sanfter Fall bei Großschrift und IME
+
+- **Basis-main:** `516bc14e06cb02e7035a6adfb8e2d21e54253184`; **Branch:** `feat/chat-c/slow-fall-ime-consent-20261102`; **PR:** [#509](https://github.com/ManuEtt/Dnd/pull/509) (Draft).
+- **Problem:** `MonkSlowFallDialog` besaß nur einen eigenen `SingleChildScrollView` statt eines vollständigen scrollbar-Dialogs. Bei 200 % Schrift, schmalem Android-Bildschirm und virtueller Tastatur fehlten Akzeptanztests. Außerdem blieben zwei bereits erteilte Bestätigungen nach Bearbeitung des Sturzschadens gültig.
+- **IMPLEMENTIERT:** `AlertDialog(scrollable: true)`, schmale Insets und feste maximale Inhaltsbreite. Nach jeder Änderung des Schadenswerts werden Sturz- und Verteidigungsbestätigung widerrufen; erneutes explizites Ankreuzen für die neue Zahl erforderlich. Abbruch bekommt stabilen Widget-Key. Keine Auswertung oder Reaktionsbuchung im Dialog.
+- **Technische Dateien:** `app/lib/ui/monk_slow_fall_dialog.dart`, `app/test/monk_slow_fall_dialog_test.dart`.
+- **Tests ergänzt:** vier Widgetfälle für 320/360 dp, 200-%-Schrift und simuliertes 220-dp-IME: erneuter Konsens nach editiertem Schaden, erreichbares Abbrechen, bereits verbrauchte Reaktion bleibt gesperrt, unveränderter Helden-Snapshot bis zum Controller.
+- **GETESTET:** Code-/PR-Dateiüberschneidungen geprüft; gezielte Flutter-/Dart-GitHub-Abnahme noch abzuschließen.
+- **NICHT GETESTET:** vollständige CI am finalen PR-Head, echtes TalkBack-/Software-IME-/Geräte- und Upgradeverhalten.
+- **Migration:** Keine neuen Regeln, kein Controller-/Domain-/Speichermodell, kein SQLite-/JSON-/Versionswechsel.
+- **Nächster Schritt:** Den gezielten Test und die vollständige GitHub Actions CI inklusive Debug/Alpha-APKs erfolgreich abnehmen, danach PR-Review und echte Android-Touch-/TalkBack-Prüfung.
+
+---
+
+---
+
+## 02.11.2026 – Chat C: Manuelle Kampf-Zugfolge 200 % Schrift/IME (PR #481)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529` (nach erkanntem parallelem Main-Merge neu aufgesetzt); **Branch:** `feat/chat-c/manual-turn-queue-ime-rebased-20261102`; [PR #481](https://github.com/ManuEtt/Dnd/pull/481), Draft bis zur vollständigen CI-Abnahme.
+- **Problem:** `ManualTurnQueueDialog` scrollte bisher nur den Form-Inhalt, mit feststehendem Titel bei 320/360 dp, 200 % Schrift und 220 dp IME. Die Bestätigungen und Gleichstand-Sortierung waren nicht durch eigene responsiven Tests abgedeckt.
+- **IMPLEMENTIERT:** `app/lib/ui/manual_turn_queue_dialog.dart`: einheitliches `AlertDialog(scrollable:true)` und kompakte Insets statt verschachteltem vertikalem Scrollbereich; Validierungsfehler mit `Semantics(liveRegion:true)` und stabilem Key `queue-validation-error`.
+- **FÜNF TESTS:** `app/test/manual_turn_queue_dialog_ime_test.dart`: 320/360 dp bei 200 % Schrift, 220 dp Fake-IME: Fehler/neutraler Abbruch; bestätigte Initiative und Gleichstände liefern ausschließlich eine `ManualTurnQueueChoice`; Gleichstand-Umsortierung widerruft die zuvor erteilte Tie-Bestätigung und verlangt erneutes Häkchen; bereits gespeicherte Zugfolge gibt nur manuelles Advance-Signal zurück. Keine Mutation der `Campaign` auf irgendeinem Weg.
+- **GEPRÜFT:** Masterprompt, AGENTS, Architektur, Testing, Roadmap, Code, bestehender Widgettest, offene PR-Dateipfade und tatsächlicher Main-Stand. Keine fachliche Überschneidung mit parallelen PRs. Main-Merge vor PR-Erstellung erkannt; geänderten Code unverändert auf neue Main-SHA `885580202caeafc9787538b6dc1c833b3190a529` kopiert.
+- **CI AUSSTEHEND:** Dart-Formatierung, Analyse, gezielte/Vollsuite Flutter, Python-/Backend-, native Android-Tests, Debug-/Alpha-APK und Source-Checkpoint auf exaktem PR-HEAD; frühere PR-CI ist kein Beleg. Echtes Android-/TalkBack-/Hardwaretastatur-Verhalten, Altversions-Upgrade, produktive Signierung bleiben offen.
+- **MIGRATIONEN:** keine. Keine Domain-/Regel-/Controller-/Persistenz-/JSON-/Schema-/Versionsänderungen.
+- **BLOCKER:** Draft bis vollständig grüner CI, kein automatischer Merge. Geteilte Doku durch Chat D bei Integration additiv konsolidieren.
+- **NÄCHSTES PAKET:** Nach Integration der unabhängigen Dialog-PRs größere Fokus-/Screenreader-Tests und Eingabemethoden für responsive Fantasy-Kampfbildschirme ohne Änderungen an aktiven PR-Dateien.
+
+---
+
+## 02.11.2026 – Chat C: manuelle Kampf-Zugfolge bei 200 % Text und IME (PR #483)
+
+- **Ausgangs-main:** `885580202caeafc9787538b6dc1c833b3190a529`; **Branch:** `feat/chat-c/manual-turn-queue-ime-20261102`; [PR #483](https://github.com/ManuEtt/Dnd/pull/483), bis zur erfolgreichen vollständigen CI Draft.
+- **Problem:** Titel und Inhalt des Kampf-Zugfolge-Dialogs waren in zwei Scroll-/Layoutbereiche getrennt, sodass bei 320/360 dp, 200 % Text und 220 dp simuliertem Android-IME die Erreichbarkeit der Reihenfolge, Pfeile, Checkboxen, Fehler und Aktionen nicht nachgewiesen war. Gleichstands-Pfeile hatten nicht akteursspezifische Beschriftungen.
+- **IMPLEMENTIERT:** `app/lib/ui/manual_turn_queue_dialog.dart`: `AlertDialog(scrollable: true)` mit kompakten Insets; verschachtelter vertikaler `SingleChildScrollView` entfällt. Bestätigungsfehler über `Semantics(liveRegion:true)` und `queue-validation-error`. Pfeile besitzen eindeutige Tooltips mit Akteursnamen.
+- **FÜNF NEUE TESTS:** `app/test/manual_turn_queue_ime_test.dart`: negative Bestätigung/neutraler Abbruch bei 320 und 360 dp; positiver explizit bestätigter Gleichstand und Basis-Initiative bei 320 dp; bestehender, aktueller Marker liefert nur `ManualTurnQueueChoice.advance` bei 360 dp; fehlende Kreaturen-Initiative sperrt Bestätigung bei 320 dp. Immer 200 % Text und 220 dp Fake-IME, Scrollbarkeit und Kampagnen-Snapshot-Unveränderlichkeit.
+- **GETESTET:** Masterprompt, alle verbindlichen Projektdokumente, Main-HEAD, sämtliche 25 offenen PRs und deren Dateipfade sowie vorhandener `manual_turn_queue_dialog_test.dart` und Domain-Status geprüft. Kein Konflikt im UI-/Testpfad. Formatierungsdiagnose mit Dart 3.9.2/Flutter 3.35.7 auf GitHub Actions durchgeführt und Diff übernommen; temporärer Workflow entfernt.
+- **CI-AUSSTEHEND:** Standard-CI auf finalem #483-HEAD mit Struktur/Python/Backend, Dart-Format und Analyse, gezielten/allen Fluttertests, native Android-Tests, Debug-/ABI-Alpha-APKs und Artefakten; keine fremde/ältere CI als Nachweis für dieses Paket ausgeben.
+- **NICHT GETESTET:** echtes Android-Gerät, TalkBack, Hardwaretastatur, Upgrade, produktive Signierung.
+- **MIGRATION:** keine. Keine Regeln, persistierten Kampfzüge, Slotbuchungen, JSON-/SQLite-, Backend-/Versionsänderungen. Nur UI, Widgettests und additive Dokumentation.
+- **NÄCHSTER SCHRITT:** Finale #483-CI prüfen, bei Fehlern korrigieren und vollständige CI auf finalem SHA erneut ausführen; erst bei Grün Ready for review, Integration durch Chat D ohne automatischen Merge.
+
+
+---
+
+## 03.11.2026 – Chat C: Gelegenheitsbewegung mit 200 % Schrift und IME
+
+- **Ausgangs-main:** `a786ad61c508da1a9ec1a24f85100a4a994182c8`.
+- **Branch:** `feat/chat-c/opportunity-movement-ime-accessibility-20261103`.
+- **Codecommit:** `9674fbc4bca191e7d291851d4100658ae05aea76`.
+- **Widgettestcommit:** `5e1bab84446141cb71a58eb744303fffb8f8aefb`; finalen Dokumentations-HEAD über [PR #521](https://github.com/ManuEtt/Dnd/pull/521) prüfen.
+- **Problem:** Der Gelegenheitsbewegungs-Dialog verschachtelte einen eigenen Scrollbereich im nicht als Ganzes scrollbar konfigurierten AlertDialog. Bei 320/360 dp, großer Schrift und IME sind Formular und lange Freigabe schwer erreichbar.
+- **Implementiert:** `AlertDialog(scrollable: true)` ohne inneres Scrollen, kurze sichtbare Zustimmung ab 180 % bei unveränderter vollständiger TalkBack-Semantik, Validierungsfehler als Live-Region. Die Regelprüfung und alle Kampagnendaten sind unverändert.
+- **Dateien:** `app/lib/ui/opportunity_movement_dialog.dart`, neuer `app/test/opportunity_movement_ime_accessibility_test.dart`; additive Einträge in `README.md`, `docs/CODEX_CHECKPOINT.md` und diesem Checkpoint.
+- **Neue Regressionen:** Vier Widgettests zu Scroll-/A11y-Struktur bei 320/360 dp und 200 %/IME, Abbruch, gültiger explicit authorisierter Bewegung, Widerruf nach geänderter ungültiger Entfernung; positive und negative Dialogrückgaben und unverändertes Kampagnen-JSON.
+- **GETESTET:** main-HEAD und offene PRs/Änderungspfade geprüft; Quell- und Testcommits gesichert; Branch-Vergleich zunächst zwei erwartete Fachdateien, keine Überschneidung mit den damals offenen PR-Fachpfaden. Dies sind **keine** ausgeführten Flutter-Tests.
+- **NICHT GETESTET:** Lokale Dart-Format-/Analyse-/Flutter-/APK-Prüfungen (SDK fehlt); komplette CI auf dem finalen PR-HEAD ausstehend; echtes Android, TalkBack, IME, Altversions-Upgrade ausstehend.
+- **BLOCKIERT:** Fehlendes Flutter-/Dart-SDK und fehlender GitHub-Checkout im Container; CI-Freigabe bis vollständig erfolgreich abgeschlossenem Lauf gesperrt. README/zentralen Checkpoint nur additiv durch Chat D integrieren.
+- **Migrationen:** Keine SQLite-, JSON-, Regel-, Story- oder API-Migration; kein Versionswechsel, keine Kostenaktion.
+- **NÄCHSTER SCHRITT:** Den fertigen PR #521 auf exakt seinem finalen HEAD per GitHub-CI vollständig abnehmen; Format-/Testfehler im selben Branch korrigieren und danach einen echten Android-TalkBack-/IME-Test gesondert vornehmen.
+
+---
+
+
+---
+
+## 03.11.2026 – Chat C: Porträtauswahl bei 200 % Schrift und Android-IME
+
+- **Ausgangs-main:** `7be2135f5046c4139a7340cc2bfa876a7d311c93`.
+- **Branch:** `feat/chat-c/portrait-picker-large-text-actions-20261103`.
+- **Codecommit:** `b0bfb1b542ee92424ae7f10a8f231a1b0b417639`; **Testcommit:** `56223375245d45b5f3224cf21f28c0e9d8ca6f4e`.
+- **PR:** [#529](https://github.com/ManuEtt/Dnd/pull/529) (Draft); finalen Branch-HEAD einschließlich Dokumentation über GitHub prüfen.
+- **Problem:** Die halbbreiten, nebeneinander angeordneten Porträt-Aktionen können bei 200 % Android-Schrift und kleinen Geräten ihre vollständige lesbare Beschriftung verlieren.
+- **Implementiert:** Ab 180 % Schrift oder unter 320 dp zwei vertikal angeordnete volle Aktionsbreiten. Bei normaler Schrift bleibt die horizontale Anordnung unverändert. Der Auswahl-/Abbruch-/Übernahmevertrag bleibt derselbe.
+- **Fachdateien:** `app/lib/ui/character_portrait_picker.dart`; `app/test/character_portrait_large_text_actions_test.dart`. Additive Fortschritte in README, zentralem und Chat-C-Checkpoint.
+- **Vier Widgettests ergänzt:** 320/360 dp, 200 % Text und 220 dp simulierte IME (Abbrechen, vollbreite Actions, Touch-Erreichbarkeit, Semantikstatus und Scrollen), positive Übernahme einer bewussten Wahl und negative Abbruchfälle; normale horizontale Ansicht unverändert.
+- **GETESTET:** Main, letzte Commits/Actions, alle offenen PRs und deren Fachpfade geprüft; eigene Code- und Testcommits auf GitHub; Branch-Fachpfade von anderen PRs getrennt. Diese Bestandsaufnahme ist **kein ausgeführter Flutter-Test**.
+- **NICHT GETESTET:** Flutter/Dart lokal (kein SDK), vollständiger GitHub-Actions-Lauf auf finalem PR-HEAD, echte Android-Bedienung/TalkBack/IME und Altversions-Upgrade.
+- **BLOCKIERT:** Lokaler Flutter-/Android-SDK-Zugriff fehlt; GitHub-Actions-CI zur technischen Freigabe erforderlich. Gemeinsame README-/Checkpoint-Hunks additiv durch Chat D zusammenführen; kein eigenmächtiger Merge.
+- **Migration:** Keine. SQLite, JSON, Regelengine, KI, Story, Controller, Assets, Berechtigungen, bestehende Spielstände und App-Version unverändert.
+- **NÄCHSTER SCHRITT:** Finale GitHub-CI auf exakt dem Dokumentations-HEAD abnehmen, konkrete Fehler auf demselben Branch korrigieren; anschließend echte Android-/TalkBack-/IME-Prüfung.
+
+---

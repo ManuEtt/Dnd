@@ -58,6 +58,38 @@ class SrdConcentrationSaveModifierRules {
     'charisma',
   };
 
+  /// Validate only existing class levels and recorded saving throw training.
+  /// This does not confirm situational bonuses or roll circumstances. Runtime
+  /// damage calls it before selecting a concentration die; evidence preparation
+  /// still requires its separate explicit confirmations.
+  static void validateClassAndProficiencies(HeroCharacter hero) {
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        hero.level < 1 ||
+        hero.level > 20 ||
+        hero.secondaryClassLevel < 0 ||
+        hero.secondaryClassLevel >= hero.level ||
+        (hero.hasSecondClass &&
+            (hero.secondaryClassLevel < 1 ||
+                secondary == null ||
+                secondary == primary)) ||
+        (!hero.hasSecondClass && hero.secondaryClassLevel != 0)) {
+      throw const FormatException(
+        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+      );
+    }
+    final proficiencies = hero.savingThrowProficiencies;
+    if (proficiencies.toSet().length != proficiencies.length ||
+        proficiencies.any((ability) => !_abilities.contains(ability))) {
+      throw const FormatException(
+        'Die bestätigten Rettungswurf-Übungen sind nicht eindeutig.',
+      );
+    }
+  }
+
   static SrdConcentrationSaveModifierEvidence prepare(
     HeroCharacter hero, {
     required bool otherModifierSourcesReviewedConfirmed,
@@ -93,31 +125,7 @@ class SrdConcentrationSaveModifierRules {
         'Ein aktiver, handlungsfähiger Konzentrationszauber ist erforderlich.',
       );
     }
-    final primary = findSrdClass(hero.className)?.name;
-    final secondary = hero.hasSecondClass
-        ? findSrdClass(hero.secondaryClassName)?.name
-        : null;
-    if (primary == null ||
-        hero.level < 1 ||
-        hero.level > 20 ||
-        hero.secondaryClassLevel < 0 ||
-        hero.secondaryClassLevel >= hero.level ||
-        (hero.hasSecondClass &&
-            (hero.secondaryClassLevel < 1 ||
-                secondary == null ||
-                secondary == primary)) ||
-        (!hero.hasSecondClass && hero.secondaryClassLevel != 0)) {
-      throw const FormatException(
-        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
-      );
-    }
-    final proficiencies = hero.savingThrowProficiencies;
-    if (proficiencies.toSet().length != proficiencies.length ||
-        proficiencies.any((ability) => !_abilities.contains(ability))) {
-      throw const FormatException(
-        'Die bestätigten Rettungswurf-Übungen sind nicht eindeutig.',
-      );
-    }
+    validateClassAndProficiencies(hero);
     final rule = CharacterRuleEngine.savingThrow(hero, 'constitution');
     if (rule.automaticallyFails) {
       throw StateError(

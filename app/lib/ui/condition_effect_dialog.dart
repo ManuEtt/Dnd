@@ -103,127 +103,148 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
     final effects = widget.hero.conditionEffects;
     final canRemove = effects.isNotEmpty;
     return AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       title: const Text('Zustandsquelle verwalten'),
       content: SizedBox(
         width: 360,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (canRemove)
-                SwitchListTile(
-                  key: const ValueKey('condition-effect-remove-mode'),
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Bestehende Quelle beenden'),
-                  value: _remove,
-                  onChanged: (value) => setState(() {
-                    _remove = value;
-                    _validationError = null;
-                  }),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (canRemove)
+              SwitchListTile(
+                key: const ValueKey('condition-effect-remove-mode'),
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Bestehende Quelle beenden'),
+                value: _remove,
+                onChanged: (value) => setState(() {
+                  _remove = value;
+                  _validationError = null;
+                }),
+              ),
+            if (_remove)
+              DropdownButtonFormField<String>(
+                key: const ValueKey('condition-effect-existing-source'),
+                isExpanded: true,
+                initialValue: _selectedId,
+                decoration: const InputDecoration(
+                  labelText: 'Zustand und Quelle',
                 ),
-              if (_remove)
-                DropdownButtonFormField<String>(
-                  key: const ValueKey('condition-effect-existing-source'),
-                  isExpanded: true,
-                  initialValue: _selectedId,
-                  decoration: const InputDecoration(
-                    labelText: 'Zustand und Quelle',
-                  ),
-                  items: [
-                    for (final effect in effects)
-                      DropdownMenuItem(
-                        value: effect.id,
-                        child: Text(
-                          '${effect.condition}: ${effect.source}',
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                items: [
+                  for (final effect in effects)
+                    DropdownMenuItem(
+                      value: effect.id,
+                      child: Text(
+                        '${effect.condition}: ${effect.source}',
+                        overflow: TextOverflow.ellipsis,
                       ),
-                  ],
-                  onChanged: (value) => setState(() => _selectedId = value),
-                )
-              else ...[
-                DropdownButtonFormField<String>(
-                  key: const ValueKey('condition-effect-condition'),
-                  initialValue: _condition,
-                  isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Zustand'),
-                  items: [
-                    for (final condition in ConditionRules.descriptions.keys)
-                      DropdownMenuItem(
-                        value: condition,
-                        child: Text(condition),
-                      ),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) setState(() => _condition = value);
-                  },
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  key: const ValueKey('condition-effect-source'),
-                  controller: _source,
-                  maxLength: 200,
-                  decoration: const InputDecoration(
-                    labelText: 'Bestätigte Quelle',
-                    hintText: 'z. B. Giftfalle',
-                  ),
-                ),
-                DropdownButtonFormField<ConditionEffectDuration>(
-                  key: const ValueKey('condition-effect-duration'),
-                  initialValue: _duration,
-                  isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Wirkungsende'),
-                  items: [
-                    const DropdownMenuItem(
-                      value: ConditionEffectDuration.untilRemoved,
-                      child: Text('Bis zur ausdrücklichen Entfernung'),
                     ),
-                    if (_activeOwnTurn) ...const [
-                      DropdownMenuItem(
-                        value: ConditionEffectDuration.currentTurnEnd,
-                        child: Text('Ende des aktuellen eigenen Zugs'),
+                ],
+                onChanged: (value) => setState(() => _selectedId = value),
+              )
+            else ...[
+              DropdownButtonFormField<String>(
+                key: const ValueKey('condition-effect-condition'),
+                initialValue: _condition,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: 'Zustand'),
+                items: [
+                  for (final condition in ConditionRules.descriptions.keys)
+                    DropdownMenuItem(
+                      value: condition,
+                      child: Text(condition, overflow: TextOverflow.ellipsis),
+                    ),
+                ],
+                onChanged: (value) {
+                  if (value != null) setState(() => _condition = value);
+                },
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                key: const ValueKey('condition-effect-source'),
+                controller: _source,
+                maxLength: 200,
+                decoration: const InputDecoration(
+                  labelText: 'Bestätigte Quelle',
+                  hintText: 'z. B. Giftfalle',
+                ),
+              ),
+              DropdownButtonFormField<ConditionEffectDuration>(
+                key: const ValueKey('condition-effect-duration'),
+                initialValue: _duration,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: 'Wirkungsende'),
+                items: [
+                  const DropdownMenuItem(
+                    value: ConditionEffectDuration.untilRemoved,
+                    child: Text(
+                      'Bis zur ausdrücklichen Entfernung',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (_activeOwnTurn) ...const [
+                    DropdownMenuItem(
+                      value: ConditionEffectDuration.currentTurnEnd,
+                      child: Text(
+                        'Ende des aktuellen eigenen Zugs',
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      DropdownMenuItem(
-                        value: ConditionEffectDuration.nextTurnEnd,
-                        child: Text('Ende des nächsten eigenen Zugs'),
+                    ),
+                    DropdownMenuItem(
+                      value: ConditionEffectDuration.nextTurnEnd,
+                      child: Text(
+                        'Ende des nächsten eigenen Zugs',
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      DropdownMenuItem(
-                        value: ConditionEffectDuration.threeOwnTurnEnds,
-                        child: Text('Nach 3 eigenen Zugenden'),
+                    ),
+                    DropdownMenuItem(
+                      value: ConditionEffectDuration.threeOwnTurnEnds,
+                      child: Text(
+                        'Nach 3 eigenen Zugenden',
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      DropdownMenuItem(
-                        value: ConditionEffectDuration.fiveOwnTurnEnds,
-                        child: Text('Nach 5 eigenen Zugenden'),
+                    ),
+                    DropdownMenuItem(
+                      value: ConditionEffectDuration.fiveOwnTurnEnds,
+                      child: Text(
+                        'Nach 5 eigenen Zugenden',
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      DropdownMenuItem(
-                        value: ConditionEffectDuration.tenOwnTurnEnds,
-                        child: Text('Nach 10 eigenen Zugenden'),
+                    ),
+                    DropdownMenuItem(
+                      value: ConditionEffectDuration.tenOwnTurnEnds,
+                      child: Text(
+                        'Nach 10 eigenen Zugenden',
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
+                    ),
                   ],
-                  onChanged: (value) {
-                    if (value != null) setState(() => _duration = value);
-                  },
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Nur nach ausdrücklich bestätigter Regelquelle festlegen. '
-                  'Ein Zugende zählt erst bei bestätigtem eigenen Zug. '
-                  'Keine automatische Ableitung aus Zaubernamen.',
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-              if (_validationError != null) ...[
-                const SizedBox(height: 8),
-                Text(
+                ],
+                onChanged: (value) {
+                  if (value != null) setState(() => _duration = value);
+                },
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Nur nach ausdrücklich bestätigter Regelquelle festlegen. '
+                'Ein Zugende zählt erst bei bestätigtem eigenen Zug. '
+                'Keine automatische Ableitung aus Zaubernamen.',
+                style: TextStyle(fontSize: 12),
+              ),
+            ],
+            if (_validationError != null) ...[
+              const SizedBox(height: 8),
+              Semantics(
+                liveRegion: true,
+                child: Text(
                   _validationError!,
                   key: const ValueKey('condition-effect-error'),
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
-              ],
+              ),
             ],
-          ),
+          ],
         ),
       ),
       actions: [
