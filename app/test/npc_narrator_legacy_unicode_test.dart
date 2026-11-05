@@ -173,7 +173,7 @@ void main() {
     );
   });
 
-  test('JSON and SQLite restart preserve raw legacy text and rule state', () async {
+  test('SQLite restart preserves raw legacy text and rule state', () async {
     final original = _campaign(
       npcs: const [
         WorldNpc(id: 'mira', name: 'Mi\u00adra', relationship: 'neutral'),
