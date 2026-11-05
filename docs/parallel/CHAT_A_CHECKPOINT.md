@@ -1,3 +1,22 @@
+## Chat A – Entrinnen-Klassenprofil vor GE-Schadensvorschau prüfen (05.11.2026, Europe/Berlin)
+
+- **Basis-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95` (Merge PR #563; dessen CI [42058963495](https://github.com/ManuEtt/Dnd/actions/runs/42058963495) erfolgreich). Letzter bestätigter älterer main-CI-Lauf [42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539) auf `f11701efd46d`. Neuester main-Run getrennt prüfen.
+- **Branch:** `feat/chat-a/evasion-class-profile-20261105`; **Fach-/Testcommit:** `67e48593e677cd93ad277766091eb3aa14e510e7`; **PR:** [#568](https://github.com/ManuEtt/Dnd/pull/568) (Draft). Finale Doku-SHA und CI im PR nachvollziehen.
+- **Problem:** Unplausible Haupt-/Nebenklasse (z. B. `Monk 7 / Mönch 7` oder unbekannte Primärklasse) konnte `SrdEvasionRules.unlocked` für Mönch/Schurke Stufe 7 fälschlich auslösen.
+- **IMPLEMENTIERT:** Klassenprofilvalidierung mit SRD-Klassenaliasen, positiven und unterschiedlichen Klassenzuordnungen, konsistenten Zweitklassenstufen und Gesamtlevel 1–20. Ungültig: `unlocked/eligible` geben `false`, `previewConfirmedDexteritySave` wirft `FormatException` ohne Würfel, Ressourcenbuchung, HP-Mutation oder Ereignis. Gültige Mono-/Mehrklassen und Schadenshalbierung bleiben unverändert.
+- **Dateien:** `app/lib/domain/srd_evasion_rules.dart`, neue `app/test/srd_evasion_class_profile_preflight_test.dart`, README, zentraler und persönlicher Checkpoint, CHANGELOG, DEVELOPMENT_STATUS.
+- **Regressionen:** 10 negative Profile mit Erfolg/Fehlschlag, 10 positive Solo-/Mehrklassen und JSON-Roundtrip, separate Stufe-6-/20-Grenzen, wiederholte schreibfreie Vorschau. Bestehende Evasion- und Widgettests erhalten.
+- **GETESTET:** GitHub-main/PR-Dateilisten, vorhandene Domänentests und offizielle SRD-5.2.1-Quelle untersucht; GitHub-Code- und Testcommits geschrieben. Kein lokales Dart-/Flutter-SDK vorhanden. CI-Nachweise erst aus GitHub Actions verbuchen.
+- **NICHT GETESTET:** Neue vollständige Python-/Backend-/Flutter-CI, Dart-Format, Android-Debug/ABIs, native Tests, Gerätetest auf dem finalen PR-HEAD (zum Zeitpunkt dieses Texts).
+- **BLOCKIERT:** Lokale Flutter-Laufzeit fehlt; ohne finale CI/Integrationsreview keine Mergefreigabe.
+- **NOCH NICHT IMPLEMENTIERT:** Automatische Evasion-Kampf-/Persistenzanbindung, vollständige SRD-Abdeckung, Geräteregression. Keine Annahme aus KI-Erzählung.
+- **Kompatibilität:** SQLite 3, äußeres JSON 1, App `0.8.51+101`; keine Migration, kein Versionswechsel, keine Änderungen an `models.dart`, `game_engine.dart`, `rules_api.dart`, Controller/Story/UI.
+- **Quelle/IDs:** WotC SRD 5.2.1, *Monk/Rogue Level 7 Evasion*, CC BY 4.0, <https://www.dndbeyond.com/srd>; `CLASS-M-NCH-7-BASE-EVASION-0` und `CLASS-SCHURKE-7-BASE-EVASION-0` bleiben `partial`.
+- **Konflikte:** Fachcode von allen laufenden A/B/C/D-PRs einschließlich #564 und #567 getrennt; gemeinsame README-/CODEX-Dokumentation beim Merge durch Chat D additiv zusammenführen. Kein Auto-Merge/Force-Push.
+- **Nächster einzelner Schritt:** `SrdBardSuperiorInspirationRules` gegen ungültige Barden-Klassenprofile absichern; Erfolgskriterien sind kein Initativ-Regenerationsbonus für ungültige Klassen, unveränderte legitime Barde-18- und Mehrklassenwirkungen, Positiv-/Negativtests und keine Spielstandmigration.
+
+---
+
 ## Chat-A-Konsolidierung – 04.11.2026
 
 Die Beiträge zu Waldläufer-Unermüdlich (#538) und Hexenmeister-Magische-List (#539) werden im gemeinsamen Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` vereint; die originale Commit-Historie und beide individuellen Belege werden beibehalten. Kombinierte CI vor Main-Merge gesondert nachweisen.
