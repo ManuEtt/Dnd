@@ -1,3 +1,17 @@
+## Chat D – Gradle-JAR-ZIP-Pfade gegen Windows-Aliase absichern (05.11.2026)
+
+- **Basis-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95`; **Branch:** `fix/chat-d/wrapper-jar-portable-paths-20261105`; **Fach-HEAD:** `4c699c5317364d5db424cdd453ecb781edb92aa1`; **PR:** [#567](https://github.com/ManuEtt/Dnd/pull/567), Draft.
+- **Problem:** `scripts/verify_project.py` akzeptierte JAR-ZIP-Komponenten mit abschließendem Punkt/Leerzeichen, die auf Windows-kompatiblen Dateisystemen mehrdeutig werden.
+- **Lösung:** Pfadkomponenten bereits vor ZIP-`testzip()` zurückweisen; gültige Pfade, Gradle-Einstellungen, Spielstände und Buildnummer bleiben unverändert.
+- **Regressionstests:** `scripts/tests/test_verify_project.py` prüft acht negative Varianten an Dateien, Elternverzeichnissen und expliziten Verzeichnissen vor CRC ohne JAR-Veränderung sowie einen gültigen Positivfall.
+- **Geänderte Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Main-/Branch-SHA und offene PR-Dateilisten kontrolliert, Fach- und Testcode auf eigenem Branch committed; vorheriger PR #563 hatte vollständig erfolgreiche [CI #42058963495](https://github.com/ManuEtt/Dnd/actions/runs/42058963495).
+- **NICHT GETESTET:** lokale Tests wegen fehlender GitHub-DNS-Auflösung; vollständige CI auf finalem PR-HEAD, reale Android-Geräteprüfung.
+- **Migrationen:** keine; keine SQLite-/JSON-/Backup-, App- oder Regeländerungen.
+- **Nächster Schritt:** vollständigen PR-CI-Workflow prüfen, Fehler im selben Branch reparieren und nach Konfliktkontrolle erst dann integrieren.
+
+---
+
 ## Chat D – APK-ZIP-Komponenten mit abschließendem Punkt/Leerzeichen sperren (05.11.2026)
 
 - **Basis-main:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4` (Main-CI [42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539): erfolgreich, unabhängig vom neuen Patch).

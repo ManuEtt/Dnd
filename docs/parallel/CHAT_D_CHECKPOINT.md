@@ -1,3 +1,16 @@
+## Chat D – Gradle-JAR-ZIP-Pfadportabilität (05.11.2026)
+
+- Basis-main `7d7bb421261af0f690fd0af9012996e45b95ff95`; Branch `fix/chat-d/wrapper-jar-portable-paths-20261105`; Fach-HEAD `4c699c5317364d5db424cdd453ecb781edb92aa1`; [Draft-PR #567](https://github.com/ManuEtt/Dnd/pull/567).
+- Problem: Wrapper-JAR akzeptierte abschließende Punkte/Leerzeichen in ZIP-Komponenten, mögliche Windows-Pfadkollision.
+- Implementiert: Abwehr in `scripts/verify_project.py` vor CRC, gültige JAR-Dateien bleiben erlaubt.
+- Tests: `scripts/tests/test_verify_project.py`: acht negative Pfade (inklusive expliziter Verzeichnisse), positiver Pfad und unveränderte JAR-Datei.
+- Dateien: `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- Getestet: konfliktfreier Branch/PR-Abgleich. **Nicht getestet:** lokale Python-Tests (GitHub-DNS), vollständige CI auf finalem Head, Android-Realgerät.
+- Blocker: finale CI ausstehend. Migrationen: keine (SQLite 3, JSON 1, Spielstände, Backups, Buildnummer unverändert).
+- Nächster Schritt: PR-CI abnehmen, bei Fehlern korrigieren, nach erneutem Konfliktcheck integrieren.
+
+---
+
 ## Chat D – portables Alpha-APK-ZIP vor Veröffentlichung (05.11.2026)
 
 - **Ausgangs-Main-SHA:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4`.

@@ -1,3 +1,9 @@
+## Chat D – Portable Gradle-Wrapper-ZIP-Pfade (05.11.2026)
+
+[Draft-PR #567](https://github.com/ManuEtt/Dnd/pull/567) validiert jetzt auch die Portabilität aller JAR-ZIP-Pfadkomponenten: abschließende Leerzeichen oder Punkte werden vor ZIP-CRC abgewiesen. Acht negative und ein positiver Fall sind in `scripts/tests/test_verify_project.py` abgedeckt. Gültige JAR-/Gradle-Konfigurationen, SQLite/JSON-Spielstände und App-Version bleiben unverändert. Fach-HEAD `4c699c5317364d5db424cdd453ecb781edb92aa1`; vollständige CI auf finalem PR-HEAD separat abnehmen.
+
+---
+
 ## Chat D – portable APK-ZIP-Pfade vor Alpha-Veröffentlichung prüfen (05.11.2026)
 
 [Draft-PR #563](https://github.com/ManuEtt/Dnd/pull/563) weist innerhalb der ARM64-APK-Prüfung jetzt ZIP-Mitgliedsnamen zurück, deren Datei- oder Verzeichnisbestandteile mit Punkt oder Leerzeichen enden. Diese können auf Windows-kompatiblen Dateisystemen beim Entpacken mit anderen Namen kollidieren. Sechs negative Pfadvarianten, ein gültiger Pfad mit innerem Punkt/Leerzeichen und ein Release-Abbruchtest sichern die Vorabprüfung vor ZIP-CRC und Veröffentlichung ab. Keine SQLite-/JSON-/Spielstands- oder Android-Versionsänderung. Die vollständige GitHub-CI auf dem finalen PR-HEAD ist getrennt abzunehmen; die erfolgreiche Main-CI [#42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539) beweist diese neue Änderung noch nicht.
