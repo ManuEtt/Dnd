@@ -42,19 +42,39 @@ void main() {
   group('SRD 5.2.1 Entrinnen: konsistente Klassenprofile', () {
     test('Ungültige Direktprofile schalten Entrinnen nicht frei', () {
       final invalid = <HeroCharacter>[
-        _hero(primary: 'Monk', secondary: 'Mönch', level: 14,
-            secondaryLevel: 7),
-        _hero(primary: 'Rogue', secondary: 'Schurke', level: 14,
-            secondaryLevel: 7),
+        _hero(
+          primary: 'Monk',
+          secondary: 'Mönch',
+          level: 14,
+          secondaryLevel: 7,
+        ),
+        _hero(
+          primary: 'Rogue',
+          secondary: 'Schurke',
+          level: 14,
+          secondaryLevel: 7,
+        ),
         _hero(primary: 'Unbekannt'),
-        _hero(primary: 'Mönch', secondary: 'Unbekannt', level: 12,
-            secondaryLevel: 5),
+        _hero(
+          primary: 'Mönch',
+          secondary: 'Unbekannt',
+          level: 12,
+          secondaryLevel: 5,
+        ),
         _hero(primary: 'Mönch', level: 9, secondaryLevel: 2),
         _hero(primary: 'Mönch', secondary: 'Fighter', level: 7),
-        _hero(primary: 'Mönch', secondary: 'Fighter', level: 8,
-            secondaryLevel: -1),
-        _hero(primary: 'Fighter', secondary: 'Rogue', level: 7,
-            secondaryLevel: 7),
+        _hero(
+          primary: 'Mönch',
+          secondary: 'Fighter',
+          level: 8,
+          secondaryLevel: -1,
+        ),
+        _hero(
+          primary: 'Fighter',
+          secondary: 'Rogue',
+          level: 7,
+          secondaryLevel: 7,
+        ),
         _hero(level: 0),
         _hero(level: 21),
       ];
@@ -77,14 +97,30 @@ void main() {
         _hero(primary: 'Schurke'),
         _hero(primary: 'Rogue'),
         _hero(primary: 'Schurkin'),
-        _hero(primary: 'Fighter', secondary: 'Monk', level: 10,
-            secondaryLevel: 7),
-        _hero(primary: 'Kämpfer', secondary: 'Rogue', level: 12,
-            secondaryLevel: 7),
-        _hero(primary: 'Rogue', secondary: 'Cleric', level: 9,
-            secondaryLevel: 2),
-        _hero(primary: 'Monk', secondary: 'Rogue', level: 14,
-            secondaryLevel: 7),
+        _hero(
+          primary: 'Fighter',
+          secondary: 'Monk',
+          level: 10,
+          secondaryLevel: 7,
+        ),
+        _hero(
+          primary: 'Kämpfer',
+          secondary: 'Rogue',
+          level: 12,
+          secondaryLevel: 7,
+        ),
+        _hero(
+          primary: 'Rogue',
+          secondary: 'Cleric',
+          level: 9,
+          secondaryLevel: 2,
+        ),
+        _hero(
+          primary: 'Monk',
+          secondary: 'Rogue',
+          level: 14,
+          secondaryLevel: 7,
+        ),
       ];
       for (final hero in valid) {
         final before = hero.toJson();
@@ -114,8 +150,10 @@ void main() {
       expect(SrdEvasionRules.unlocked(hero), isFalse);
       expect(() => _preview(hero, true), throwsFormatException);
       expect(SrdEvasionRules.unlocked(_hero(level: 6)), isFalse);
-      expect(SrdEvasionRules.unlocked(_hero(primary: 'Rogue', level: 6)),
-          isFalse);
+      expect(
+        SrdEvasionRules.unlocked(_hero(primary: 'Rogue', level: 6)),
+        isFalse,
+      );
       expect(SrdEvasionRules.unlocked(_hero(level: 20)), isTrue);
     });
 
