@@ -1,5 +1,17 @@
 # Würfelraunen – Der lebendige Spielleiter
 
+## Chat C – Fertigkeitensuche oberhalb der Android-Tastatur (05.11.2026)
+
+[Draft-PR #549](https://github.com/ManuEtt/Dnd/pull/549):
+Das durchsuchbare Fertigkeiten-Detailsheet im Charakterbogen reserviert
+den Platz der geöffneten Android-Tastatur und begrenzt die Höhe anhand
+der verbleibenden Anzeige. Zwei Widgettests prüfen 320/360 dp bei
+200 % Schrift, Touch-Erreichbarkeit, Treffer-/Leersuche und
+unveränderte Charakterdaten. Keine Regel-, JSON-/SQLite- oder
+Versionsänderung. Vollständige CI und reale Android-Abnahme offen.
+
+---
+
 ## Chat D – Checkpoint-Dateien gegen spätes Überschreiben schützen (05.11.2026)
 
 Das Quellcode-Checkpoint-Skript `scripts/create_checkpoint.py` prüft identische Version-/Zeitstempel-/Label-Artefakte jetzt nicht nur vor der aufwendigen Vorbereitung, sondern nochmals unter der exklusiven Veröffentlichungssperre unmittelbar vor der eigentlichen Ausgabe. Dadurch kann ein konkurrierender Lauf nach der frühen Prüfung keine gleichnamigen, bereits veröffentlichten ZIP-/Patch-/Manifest-/Prüfsummendateien mehr unbemerkt ersetzen. Hängende Symlinks zählen ebenfalls als belegte Namen. Zwei neue Regressionen in `scripts/tests/test_create_checkpoint.py` decken spätes Auftauchen einer Archivdatei und eines hängenden Manifest-Symlinks ab. [Draft-PR #544](https://github.com/ManuEtt/Dnd/pull/544), Basis `74548d3d5243`, Fachcommit `021672463075`. Vollständige Actions-CI auf dem finalen dokumentierten HEAD noch ausstehend. SQLite/JSON, Speicherformate, App-Version und bestehende Aliasse bleiben unverändert.
