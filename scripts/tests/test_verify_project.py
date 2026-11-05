@@ -649,6 +649,72 @@ class VerifyProjectTests(unittest.TestCase):
                     )
                     self.assertEqual([], verify_project(self.root))
 
+    def test_comment_backslash_does_not_hide_required_gradle_properties(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        original = properties.read_text(encoding='utf-8')
+        for marker in ('#', '!'):
+            for newline in ('\n', '\r', '\r\n'):
+                with self.subTest(marker=marker, newline=repr(newline)):
+                    source = original.replace('\n', newline)
+                    for name in ('distributionUrl', 'distributionSha256Sum'):
+                        prefix = name + '='
+                        index = source.index(prefix)
+                        source = (
+                            source[:index] + marker + ' ignored ' + '\\'
+                            + newline + source[index:]
+                        )
+                    properties.write_bytes(source.encode('utf-8'))
+                    self.assertEqual([], verify_project(self.root))
+
+    def test_comment_backslash_cannot_hide_duplicate_gradle_settings(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        original = properties.read_text(encoding='utf-8')
+        for marker in ('#', '!'):
+            for key, bad_value, error_marker in (
+                ('distributionUrl', 'http://untrusted.example/gradle-8.12-all.zip',
+                 'HTTPS-Distribution'),
+                ('distributionSha256Sum', 'not-a-checksum', 'prüfsumme'),
+            ):
+                for newline in ('\n', '\r', '\r\n'):
+                    with self.subTest(marker=marker, key=key, newline=repr(newline)):
+                        content = (
+                            original.rstrip('\n') + newline
+                            + marker + ' ignored ' + '\\' + newline
+                            + key + '=' + bad_value + newline
+                        )
+                        properties.write_bytes(content.encode('utf-8'))
+                        self.assertTrue(any(
+                            error_marker in error for error in verify_project(self.root)
+                        ))
+
+    def test_real_gradle_property_continuation_is_still_supported(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        original = properties.read_text(encoding='utf-8')
+        for newline in ('\n', '\r', '\r\n'):
+            with self.subTest(newline=repr(newline)):
+                content = original.replace(
+                    'distributionUrl=', 'distributionUr\\' + newline + '  l='
+                ).replace('\n', newline)
+                properties.write_bytes(content.encode('utf-8'))
+                self.assertEqual([], verify_project(self.root))
+
+    def test_continued_value_with_hash_character_is_not_a_comment(self):
+        properties = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
+        original = properties.read_text(encoding='utf-8')
+        url = next(
+            line for line in original.splitlines()
+            if line.startswith('distributionUrl=')
+        )
+        for marker in ('#', '!'):
+            with self.subTest(marker=marker):
+                content = original.replace(
+                    url, url + '\\' + '\n' + marker + 'unexpected'
+                )
+                properties.write_text(content, encoding='utf-8')
+                self.assertTrue(any(
+                    'HTTPS-Distribution' in error for error in verify_project(self.root)
+                ))
+
     def test_comments_do_not_count_as_duplicate_gradle_properties(self):
         path = self.root / 'app/android/gradle/wrapper/gradle-wrapper.properties'
         path.write_text(path.read_text() +
