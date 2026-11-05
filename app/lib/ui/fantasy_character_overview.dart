@@ -123,12 +123,23 @@ class FantasyCharacterOverview extends StatelessWidget {
       showDragHandle: true,
       isScrollControlled: true,
       backgroundColor: FantasyPalette.night,
-      builder: (context) => SafeArea(
-        top: false,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * .72,
-          ),
+      builder: (context) {
+        final media = MediaQuery.of(context);
+        final keyboardHeight = media.viewInsets.bottom;
+        // The keyboard is not automatically deducted from the height of an
+        // isScrollControlled modal sheet. Reserve its space explicitly.
+        final availableHeight =
+            (media.size.height - keyboardHeight - media.padding.top)
+                .clamp(0.0, double.infinity)
+                .toDouble();
+        return Padding(
+          padding: EdgeInsets.only(bottom: keyboardHeight),
+          child: SafeArea(
+            top: false,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: availableHeight * .72,
+              ),
           child: StatefulBuilder(
             builder: (context, setModalState) {
               final normalized = query.trim().toLowerCase();
@@ -210,7 +221,9 @@ class FantasyCharacterOverview extends StatelessWidget {
             },
           ),
         ),
-      ),
+          ),
+        );
+      },
     );
   }
 
