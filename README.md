@@ -1426,3 +1426,8 @@ Regressionen gegen Downgrades: `scripts/tests/test_android_actions_node24.py` un
 ### 2026-11-05 – Unbezwingbare Stärke: gültige Klassenprofile
 
 Der Mindestwert für Stärkeproben und Stärkerettungswürfe ab Barbarenstufe 18 wird bei widersprüchlichen Haupt-/Nebenklassen, doppelten Alias-Klassen, ungültigen Stufen oder unbekannten Klassen nicht mehr freigeschaltet. Gültige deutsche/englische Aliase und Mehrklassenprofile bleiben unterstützt. Betroffen: `srd_indomitable_might_rules.dart` und neue deterministische Profiltests. Branch `feat/chat-a/indomitable-might-class-preflight-20261105`; PR/CI siehe GitHub. Kein JSON-/SQLite-Schemawechsel und keine Migration. SRD 5.2.1, Barbarian 18 / Indomitable Might, CC BY 4.0.
+
+
+### 2026-11-05 – Waldläufer: Wilde Sinne nur aus gültigen Klassenprofilen
+
+Die Blindsicht-Reichweite von 30 Fuß ab Waldläufer-Klassenstufe 18 wird nur noch aus einem konsistenten bestätigten Haupt-/Nebenklassenprofil angeboten. Ungültige Aliasdoppelungen, unbekannte Klassen, verwaiste Zweitstufen und Stufen außerhalb 1–20 gewähren weder Reichweite noch eine positive Distanzprüfung. Gültige deutsche/englische Klassenaliase und Mehrklassenkombinationen bleiben wirksam; es wird kein tatsächliches Entdecken versteckter Gegner behauptet. Dateien: `app/lib/domain/srd_ranger_feral_senses_rules.dart`, `app/test/srd_ranger_feral_senses_class_preflight_test.dart`. Branch `feat/chat-a/ranger-feral-senses-class-preflight-20261105`, PR/CI siehe GitHub. SRD 5.2.1, Ranger 18 / Feral Senses, CC BY 4.0, Requirement `CLASS-WALDL-UFER-18-BASE-FERAL-SENSES-0` bleibt `partial`. Keine Speicher-/JSON-/SQLite-Migration; lokale Dart-/Flutter-Tests nicht ausführbar, finale PR-CI separat nachweisen.

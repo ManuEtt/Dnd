@@ -1399,3 +1399,22 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 05.11.2026 – CHAT A: Wilde Sinne (Waldläufer 18) mit Klassenprofilprüfung
+
+**Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`. **Branch:** `feat/chat-a/ranger-feral-senses-class-preflight-20261105`. **Fach- und Testcommit:** `c4e555733f16b07b2f5ca49d68975fe9bfa94fc3`; PR nach Veröffentlichung im GitHub-Stand nachsehen.
+
+**Ausgangsproblem:** SRD-Waldläufer 18 / Feral Senses aktivierte die 30-Fuß-Blindsicht auch bei direkt gebildeten ungültigen Heldenprofilen (unbekannte Klassen, Alias-Doppelungen, unmögliche Klassen-/Gesamtlevel). Auch bestätigte Distanzprüfung konnte dadurch fälschlich positiv sein.
+
+**Änderung:** `app/lib/domain/srd_ranger_feral_senses_rules.dart` prüft die beiden kanonischen SRD-Klassenidentitäten und konsistente Stufen vor der blinden Reichweitenberechnung, liefert sonst `null`. Neue `app/test/srd_ranger_feral_senses_class_preflight_test.dart` enthält 12 negative und 5 positive Beispiele, Multiclass-Stufengrenze, unbekannte Entfernung, JSON-Immutabilität und Legacy-Roundtrip. Keine Würfe, Status-, Speicher-, Event- oder Storybuchung.
+
+**Quellennachweis:** Wizards of the Coast LLC, SRD 5.2.1, Classes / Ranger Level 18 Feral Senses, CC BY 4.0, <https://www.dndbeyond.com/srd>. `CLASS-WALDL-UFER-18-BASE-FERAL-SENSES-0` bleibt `partial`, da eine bestätigte Entfernung allein noch keine reale Wahrnehmung durch Deckung/Hindernisse belegt.
+
+**GETESTET:** GitHub-Main-HEAD, offener PR #579 und dessen getrennte Dateien, bestehender Regel-/Widgetcode und Testabdeckung geprüft; separater Branch angelegt und Quell-/Testdateien gesichert.
+
+**NICHT GETESTET:** Lokale Dart-/Flutter-Format-/Analyzer-/Tests (SDK fehlt), Android-APK/Hardware; volle GitHub-Actions-CI auf finalem PR-HEAD erst nach Veröffentlichung beurteilen. PR #579 hat eine unabhängige Formatkorrektur und erneute CI; dessen Ergebnis ersetzt keine Abnahme dieses Pakets.
+
+**Kompatibilität:** Keine Änderungen an gemeinsamen `models.dart`, `game_engine.dart`, Controller, Speicher, UI und Story, kein Schema-/JSON-/SQLite-Wechsel und keine Migration. README und zentraler Checkpoint ausschließlich additiv auf eigenem Branch. Bei Integration PR-#579-Abschnitte verlustfrei übernehmen.
+
+**Nächster Schritt:** finalen CI-Lauf inklusive Formatprüfung, Flutter-Tests und Android-APK abwarten bzw. Fehler korrigieren; danach koordinierte Integration durch Chat D.
