@@ -1,3 +1,21 @@
+## Chat A – Klassenprofil-Preflight für Sorcerous Restoration (05.11.2026, Europe/Berlin)
+
+- **Ausgangs-main:** `f11701efd46d0fee058f5f8e80b57f38ed4f7af4`; letzter bestätigter Main-Android-Workflow vor Start: [42053653539](https://github.com/ManuEtt/Dnd/actions/runs/42053653539) erfolgreich auf diesem SHA.
+- **Branch:** `feat/chat-a/sorcerous-restoration-class-profile-20261105`; **Fach-/Test-HEAD vor Doku:** `3d4719701a21bf63837fadd4f141e9030783436a`; **Draft-PR:** [#564](https://github.com/ManuEtt/Dnd/pull/564). Finaler Dokumentations-HEAD und CI gesondert zu kontrollieren.
+- **Ausgangsproblem:** Die öffentliche Zauberer-Klassenstufenberechnung akzeptierte doppelte Alias-Klassen (`Zauberer 6 / Sorcerer 6`) sowie inkonsistente Zweitklassen und konnte dadurch SRD-5.2.1-Regeneration zu früh oder mit zu hoher Punktzahl gewähren.
+- **IMPLEMENTIERT:** Konsistenzprüfung der ganzen Klassenkombination (gültige SRD-Aliase, unterschiedliche Klassen, Hauptklasse mindestens Stufe 1, konsistente Zweitklasse, Gesamtlevel 1–20). Lesen liefert für invaliden Snapshot 0, die bewusste Zustandsänderung wirft `FormatException` vor Ressourcenverbrauch. Gültige Level-5-/20-Grenzen und Mehrklassen bleiben unverändert.
+- **Dateien:** `app/lib/domain/srd_sorcerous_restoration_rules.dart`, neuer `app/test/srd_sorcerous_restoration_class_preflight_test.dart` plus additive `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`, `CHANGELOG.md`, `DEVELOPMENT_STATUS.md`.
+- **Regressionen:** 10 ungültige Profile, 1 manipulierte Restaurationsressource, 4 positive DE-/EN-Solo-/Mehrklassenkonfigurationen, Negativfall ohne Feature/Stufe 4, Level 20 sowie Immutable-/JSON-Prüfung. Tests nicht deaktiviert.
+- **GETESTET:** Live-main/11 offene PR-Dateilisten, Branchkollisionen, Quell-/Testvertrag und CC-BY-4.0-Regelstelle geprüft. Code und Tests auf GitHub-Branch gesichert. Keine lokale Flutter-Laufzeit verfügbar.
+- **NICHT GETESTET:** Dart-Format, Flutter-Test-/Analyze-/APK, Python-/Backend-Vollsuite, finale Actions-Prüfung auf späterem PR-HEAD, Android-Realgerät.
+- **BLOCKIERT:** lokales Flutter-/Dart-SDK sowie lokale GitHub-Klonverbindung; GitHub Actions ist für die eigentliche Testabnahme zuständig. Unabgenommene CI bedeutet keine Mergefreigabe.
+- **NOCH NICHT IMPLEMENTIERT:** keine allgemeine Klassenprofilmigration, keine automatische SRD-Vollabdeckung, keine neue UI.
+- **Migrationen/Abgrenzung:** keine Änderung an SQLite 3, äußerem JSON 1, `models.dart`, `rest_rules.dart`, `game_engine.dart`, Controller, Story, UI und Backend. Keine Änderung der App-Version und kein automatischer Merge. SRD v5.2.1, Sorcerer / Level 5 Sorcerous Restoration, WotC, CC BY 4.0: <https://www.dndbeyond.com/srd>. Coverage-Status bleibt bestehen.
+- **Koordination:** Open-PRs #543/#545/#546/#548/#549/#551/#554/#556/#557/#560/#561 fachlich dateikonfliktfrei; die gemeinsamen Dokumente müssen Chat D beim Merge additiv zusammenführen.
+- **Nächster einzelner Schritt:** Auf frischem main und nach erneuter PR-Dateiprüfung `SrdEvasionRules` gegen doppelte/ungültige SRD-Klassenprofile absichern; Akzeptanz: ungültiger Unlock = false, regelwidrige Evasion-Preview abgewiesen, gültige Mönch-/Schurke-Aliase/Mehrklassen und Schadenshalbierung unverändert, deterministische Positiv- und Negativtests.
+
+---
+
 ## Chat-A-Konsolidierung – 04.11.2026
 
 Die Beiträge zu Waldläufer-Unermüdlich (#538) und Hexenmeister-Magische-List (#539) werden im gemeinsamen Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` vereint; die originale Commit-Historie und beide individuellen Belege werden beibehalten. Kombinierte CI vor Main-Merge gesondert nachweisen.
