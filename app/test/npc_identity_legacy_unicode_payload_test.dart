@@ -132,7 +132,7 @@ void main() {
         ),
         _campaign(
           npcs: const [WorldNpc(id: 'mira-a', name: 'Mira')],
-          notes: [_note('first', 'mira-a', 'Das${mark} geheime Tor.')],
+          notes: [_note('first', 'mira-a', 'Das$mark geheime Tor.')],
         ),
         _campaign(
           npcs: const [WorldNpc(id: 'mira-a', name: 'Mira')],
