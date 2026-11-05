@@ -24,10 +24,30 @@ void main() {
     test('ungültige Haupt-/Zweitklassen und Level schalten nichts frei', () {
       final invalid = <HeroCharacter>[
         _hero(primary: 'Unbekannt'),
-        _hero(primary: 'Unbekannt', secondary: 'Barbar', level: 20, secondaryLevel: 18),
-        _hero(primary: 'Barbar', secondary: 'Unbekannt', level: 20, secondaryLevel: 1),
-        _hero(primary: 'Barbar', secondary: 'Barbarian', level: 20, secondaryLevel: 1),
-        _hero(primary: 'Barbarian', secondary: 'Barbar', level: 20, secondaryLevel: 1),
+        _hero(
+          primary: 'Unbekannt',
+          secondary: 'Barbar',
+          level: 20,
+          secondaryLevel: 18,
+        ),
+        _hero(
+          primary: 'Barbar',
+          secondary: 'Unbekannt',
+          level: 20,
+          secondaryLevel: 1,
+        ),
+        _hero(
+          primary: 'Barbar',
+          secondary: 'Barbarian',
+          level: 20,
+          secondaryLevel: 1,
+        ),
+        _hero(
+          primary: 'Barbarian',
+          secondary: 'Barbar',
+          level: 20,
+          secondaryLevel: 1,
+        ),
         _hero(secondary: 'Paladin', level: 20, secondaryLevel: 0),
         _hero(level: 20, secondaryLevel: 1),
         _hero(level: 21),
@@ -56,8 +76,18 @@ void main() {
       final valid = <HeroCharacter>[
         _hero(),
         _hero(primary: 'Barbarian'),
-        _hero(primary: 'Barbar', secondary: 'Paladin', level: 20, secondaryLevel: 2),
-        _hero(primary: 'Paladin', secondary: 'Barbarian', level: 20, secondaryLevel: 18),
+        _hero(
+          primary: 'Barbar',
+          secondary: 'Paladin',
+          level: 20,
+          secondaryLevel: 2,
+        ),
+        _hero(
+          primary: 'Paladin',
+          secondary: 'Barbarian',
+          level: 20,
+          secondaryLevel: 18,
+        ),
       ];
       for (final hero in valid) {
         final before = hero.toJson();
@@ -76,7 +106,12 @@ void main() {
     });
 
     test('17 Barbarenstufen oder nur andere Klasse genügen nicht', () {
-      final low = _hero(primary: 'Paladin', secondary: 'Barbar', level: 20, secondaryLevel: 17);
+      final low = _hero(
+        primary: 'Paladin',
+        secondary: 'Barbar',
+        level: 20,
+        secondaryLevel: 17,
+      );
       final other = _hero(primary: 'Paladin', level: 20);
       expect(SrdIndomitableMightRules.isEligible(low), isFalse);
       expect(SrdIndomitableMightRules.isEligible(other), isFalse);
