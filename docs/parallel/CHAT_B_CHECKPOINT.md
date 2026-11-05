@@ -916,3 +916,18 @@ Beide vollständigen Quellnachträge sind originalgetreu enthalten. Die neue Ges
 - **BLOCKIERT:** vollständige CI-Abnahme auf finalem Commit und Chat-D-Integration. **Migration:** keine; bestehende gespeicherte Angebote bleiben gültig.
 - **Koordination:** Keine Fachdatei-Überschneidung mit offenen Chat-B-PRs #545/#546; README/zentralen Checkpoint nur additiv integrieren.
 - **Nächster Schritt:** Finalen CI-Status abwarten, bei roten Prüfungen denselben Branch korrigieren, nach Grün an Chat D übergeben.
+
+---
+
+## 05.11.2026 – Chat B: Unicode-Schutz vor freien KI-Erzählungs-Checkpoints (#560)
+
+- **Basis-main:** `c8fa5ae32fac740dff4ff677d2141ddfd1c81a6e`; **Branch:** `feat/chat-b/narration-provider-format-guard-20261105`; **Draft:** [PR #560](https://github.com/ManuEtt/Dnd/pull/560).
+- **Fachcommits:** `45f0e53e89c4532148a71e8e1c3f4c3c80423d67` für Storymodul und `078e37f180b251bfff6bd7d87677015e8fbb0d49` für Tests; endgültigen HEAD nach den Doku-Änderungen neu ermitteln.
+- **Ausgangsproblem:** Bei `replaceNarration` galt bisher nur eine Anbieter-/Längenprüfung. Die untrusted Freitext-Antwort konnte dadurch unsichtbare Formatzeichen in die persistierte GM-Nachricht und den Narrations-Checkpoint übernehmen, obwohl der strukturierte KI-Story-Parser solche Zeichen bereits zurückweist.
+- **IMPLEMENTIERT:** `StoryCampaignEngine` verwirft U+00xx/C1-Steuerzeichen, Bidi-Override/Isolates, Soft Hyphen und ältere Unicode-Formatzeichen vor jeder narrativen Ersetzung. Normale Zeilen, Tab, Emoji, Umlaute und RTL-Buchstaben bleiben intakt. Rückweisung verändert weder Modell noch Ereignisse.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart`, `app/test/narration_provider_unicode_boundary_test.dart`, README, zentraler und dieser Chat-B-Checkpoint.
+- **Tests (positiv/negativ):** vier neue Flutter-Gruppen einschließlich 18 unsichtbaren Zeichen, zulässigen Mehrzeilern, 4000-Zeichen-/Providergrenzen, echter SQLite-Schließung/Neustart und Event-Replay. Keine Abschaltung bestehender Tests.
+- **GETESTET:** aktuelle Main-CI sowie offene PR-Fachpfade und bisherige Narrationstests überprüft. **NICHT GETESTET:** vollständige neue CI auf finalem PR-HEAD bei Erstellung dieses Nachtrags; Realgerät, Altdaten-Upgrade und bezahlter KI-Provider. Lokales Flutter/Dart nicht vorhanden.
+- **BLOCKIERT:** Finale CI/Review; Merge ausschließlich über Chat D. **Migration:** keine Daten- oder Regelformatänderung, keine Eingriffe in HP, Inventar, Quests, XP oder Session-Bibel.
+- **Parallelarbeit:** Kein offener PR verändert die beiden Fachpfade. PRs #545/#546/#555 und #558 betreffen andere Storyquellen; README/zentralen Checkpoint nur additiv konsolidieren.
+- **Nächster konkreter Schritt:** CI #560 auf finalem SHA vollständig überprüfen, Fehler aus Logs exakt korrigieren und PR für die Chat-D-Koordination kennzeichnen.

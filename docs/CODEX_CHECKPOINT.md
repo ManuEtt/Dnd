@@ -2040,3 +2040,17 @@ gemeinsame Dokumentation bei Integration durch Chat D additiv erhalten.
 - **Migration:** Keine. Bestehende gespeicherte AdventureOffer-Daten bleiben unangetastet; keine Schema-, Quest-, Regel-, XP-, HP-, Provider- oder Versionsänderung.
 - **Konfliktkontrolle:** Offene #545 (Kampagnenrückblick) und #546 (Ortsgedächtnis) ändern andere Storyfachdateien; #543/#548 Regeln, #547 Qualität, #549 UI. README/zentraler Checkpoint bei Integration additiv durch Chat D konsolidieren.
 - **Nächster Schritt:** CI auf finalem HEAD einschließlich Flutter-Tests/Android/Alpha prüfen und Fehler im eigenen Branch beheben; danach an Chat D übergeben.
+
+---
+
+## Chat B – 05.11.2026: freie KI-Narrationsersetzung gegen Unicode-Spoofing (PR #560)
+
+- **Basis-main:** `c8fa5ae32fac740dff4ff677d2141ddfd1c81a6e`.
+- **Branch:** `feat/chat-b/narration-provider-format-guard-20261105`; **Draft-PR:** [#560](https://github.com/ManuEtt/Dnd/pull/560). Fachcommits `45f0e53e89c4532148a71e8e1c3f4c3c80423d67` und `078e37f180b251bfff6bd7d87677015e8fbb0d49`; finaler Dokumentations-HEAD nach Commit neu prüfen.
+- **IMPLEMENTIERT:** `app/lib/story/story_campaign_engine.dart`: `replaceNarration` verwirft neue untrusted Narration bei C0/C1-Kontrollen, Bidi-Overrides und alten unsichtbaren Formatmarken anhand derselben Eingabepolicy wie strukturierte `AiStoryStep`-Texte. Ablehnung erfolgt vor der Änderung des bestätigten Erzähl-Checkpoints. Keine stillschweigende Bereinigung.
+- **Vier Regressionstestgruppen:** `app/test/narration_provider_unicode_boundary_test.dart`; 18 negative Codepoints mit unveränderten Event-/Kampagnenbytes, positive Mehrzeiler/Umlaute/Emoji/RTL/Tab mit identischem Regel-/Eventstate, bestehende Längen-/Provider-Checks und SQLite-Schließen-/Neustart samt Story-Replay nach Spoofing-Ablehnung.
+- **GETESTET:** aktuellen Main-HEAD, alle offenen Pull Requests, deren betroffene Fachdateien und bestehende Narrations-/SQLite-Testfälle geprüft. PR #555 (anderes Storymodul) hat auf `2af06a6231fe55dbd0652b3177582a2eec5bc97b` vollständig grüne [CI #42037924128](https://github.com/ManuEtt/Dnd/actions/runs/42037924128); dies belegt **nicht** den neuen Code in #560.
+- **NICHT GETESTET:** finale unabhängige GitHub-CI zu #560 zum Zeitpunkt der Dokumentation; lokales Flutter/Dart-SDK, echtes Android, produktiver KI-Anbieter und Upgrade eines Altbestands.
+- **BLOCKIERT:** vollständige GitHub-CI/Review sowie koordinierte Integration durch Chat D; keine lokale Flutter-Toolchain. **MIGRATION:** keine JSON-/SQLite-/Appversions- oder Provideränderung; keine Quest-/HP-/XP-/Regelzustandsmutation.
+- **Konfliktkontrolle:** Kein bei Aufgabenbeginn offener PR ändert `app/lib/story/story_campaign_engine.dart` oder den neuen Test; #545/#546/#555 und Chat-D-Integration #558 betreffen andere Storymodule. Gemeinsam bearbeitete README-/Checkpoint-Dateien nur additiv konsolidieren, niemals fremde Fachänderungen überschreiben.
+- **Nächster Schritt:** Finale CI dieses PRs auf dem exakten HEAD auswerten und bei Fehlern im eigenen Branch korrigieren; danach Chat-D-Integration.
