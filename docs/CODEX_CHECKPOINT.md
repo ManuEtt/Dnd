@@ -2100,3 +2100,14 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 2026-11-05 – Sanfter Fall: Mönchs-Klassenprofil vor bestätigter Reaktion
+
+- **Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`. **Branch:** `feat/chat-a/monk-slow-fall-class-preflight-20261105`. **Pull Request:** [#579](https://github.com/ManuEtt/Dnd/pull/579); Code/Test-Commit `50155e3ab83a427b16d8afb5098e7908982effc0`, finaler Branch-HEAD in PR/Actions nachsehen.
+- **Ausgangsproblem:** Die `SrdMonkSlowFallRules.maximumReduction`-Vorschau vertraute unvalidierten Klassenlevels, auch bei unbekannter Zweitklasse, doppeltem kanonischem Mönch-Alias oder unmöglicher Stufenverteilung.
+- **Implementiert:** Kanonische SRD-Klassenprüfung als fail-closed Voraussetzung vor Sturzschadensreduktion. Lesend `null` bei widersprüchlichem Profil; eine angeforderte bestätigte Reaktion liefert dann eine `FormatException`, bevor eine Wirkung ausgegeben wird. Keine Würfe, keine HP-, Reaktions-, Ressourcen- oder Ereignisänderung.
+- **Tests ergänzt:** `app/test/srd_monk_slow_fall_class_preflight_test.dart` mit elf Negativprofilen, gültigen deutschen/englischen Einzel- und Mehrklassen, Stufen-3-/4-Grenze, bestätigtem Schaden, JSON-Roundtrip und Unveränderlichkeit. Bestehende Fachtests unverändert.
+- **Quelle:** SRD 5.2.1 / Classes / Monk Level 4 Slow Fall (Wizards of the Coast LLC, CC BY 4.0); Requirement `CLASS-M-NCH-4-BASE-SLOW-FALL-1` weiterhin `partial`.
+- **Status:** Quellcode/Test geschrieben und auf GitHub gesichert; lokale Flutter-/Dart-Tests ohne SDK nicht durchführbar. GitHub Actions auf finalem PR-Commit vor Integration prüfen. Keine Datenmigration, keine Veränderung von `models.dart`, `game_engine.dart`, `services/`, SQLite, Story, UI oder Backend.
+- **Nächster konkreter Schritt:** vollständige PR-#579-CI auf dem endgültigen HEAD auswerten, Fehler bei Bedarf im selben Branch beheben; anschließend Integrationskontrolle.
