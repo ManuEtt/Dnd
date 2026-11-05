@@ -98,6 +98,7 @@ void main() {
         const Place(id: 'same', name: 'Dorf', description: 'Weg nach Norden.'),
         const Place(id: 'same', name: 'Anderes Dorf'),
         const Place(id: 'bad id', name: 'Unsicher'),
+        const Place(id: 'newline\n', name: 'Zeilenende'),
         const Place(id: '', name: 'Ohne ID'),
         Place(id: List.filled(65, 'x').join(), name: 'Zu lang'),
         const Place(id: 'safe', name: 'Burg', description: 'Ein Burgtor.'),
@@ -109,6 +110,7 @@ void main() {
     expect(recalled, ['Ort: Burg. Ein Burgtor.']);
     expect(recalled.join(' '), isNot(contains('Anderes Dorf')));
     expect(recalled.join(' '), isNot(contains('Unsicher')));
+    expect(recalled.join(' '), isNot(contains('Zeilenende')));
     expect(recalled.join(' '), isNot(contains('Ohne ID')));
   });
 
