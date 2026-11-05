@@ -799,3 +799,17 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+## 05.11.2026 – JSON-Export mit 200 % Schrift und langen Spielständen (PR #583)
+
+- **Ausgangs-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`.
+- **Branch:** `feat/chat-c/backup-export-large-text-20261105`; **Pull Request:** [#583](https://github.com/ManuEtt/Dnd/pull/583), Draft.
+- **Problem:** Der Exportdialog verwendete eine innere `SingleChildScrollView` unter einem festen Titel. Lange auswählbare JSON-Texte bei 320/360 dp, 200 % Schrift und verkleinertem sichtbarem Bildschirm brauchen eine gemeinsame scrollbarere Dialogoberfläche mit erreichbaren Aktionen.
+- **IMPLEMENTIERT:** In `app/lib/ui/backup_dialogs.dart` nur den Exportdialog auf `AlertDialog(scrollable: true)` umgestellt, innere Scrollfläche entfernt und Dialogränder verkleinert; Save/Copy/Close, Busy- und Android-Zurück-Sperre, vollständiger JSON-Text, Fehlermeldungs-Live-Region unverändert.
+- **Widgettests:** Neue `app/test/backup_export_large_text_accessibility_test.dart`: sechs positive/negative Fälle bei 320/360 dp/200 % Schrift/220 dp IME-Inset. Prüfen vollständiges JSON in Zwischenablage und Dateidienst, eindeutige Schließaktion, gesperrte Doppelaktionen und Zurück während wartender Dateioperation, Abbruchmeldung, private Pfade nicht in UI, Screenreader-Live-Meldung.
+- **GETESTET:** Main-SHA, offenen PR-Status und drei fremde PR-Dateilisten geprüft; keine UI-Pfadüberschneidung. GitHub-Code-/Testdateien erstellt.
+- **NICHT GETESTET:** Dart-Formatter/Flutter-Analyse und tatsächliche Widget-/Gesamttests sowie Android-Debug-/ABI-APKs des finalen PR-Kopfes bis zur CI-Auswertung; physisches Android mit TalkBack/IME.
+- **BLOCKIERT:** Lokale Dart-/Flutter-SDKs fehlen. PR bis vollständiger CI und Review Draft; keine automatische Integration.
+- **Kompatibilität:** Kein JSON-/SQLite-/Schema-/API-/Berechtigungs-/App-Versionswechsel und keine Migration.
+- **NÄCHSTER SCHRITT:** CI dieses Branches prüfen; fehlerhafte Formatierung oder Widgetannahmen im selben PR korrigieren und vollständig neu testen.
+
+---
