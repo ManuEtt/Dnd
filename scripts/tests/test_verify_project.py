@@ -197,6 +197,31 @@ class VerifyProjectTests(unittest.TestCase):
                     'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
                 ))
 
+    def test_wrapper_rejects_windows_device_names_before_crc(self):
+        # A valid JAR may otherwise carry filenames resolving to special
+        # Windows devices, including extension-bearing and directory names.
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        names = (
+            'CON', 'META-INF/con.txt', 'META-INF/PRN.json',
+            'META-INF/aux', 'META-INF/NUL.bin',
+            'META-INF/COM1.dll', 'META-INF/com9.txt',
+            'META-INF/LPT1.out', 'META-INF/lpt9.log',
+            'META-INF/CON.txt/child.dat', 'META-INF/NUL/',
+        )
+        for bad_name in names:
+            with self.subTest(name=bad_name):
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    archive.writestr(bad_name, b'unportable')
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before device-name guard'),
+                ):
+                    self.assertTrue(any(
+                        'Gradle-Wrapper-JAR' in message
+                        for message in verify_project(self.root)
+                    ))
+
     def test_wrapper_rejects_windows_invalid_zip_characters_before_crc(self):
         # Common Windows filesystems reject these characters in any path
         # component. The ZIP entry must be rejected before decompression.
