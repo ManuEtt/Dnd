@@ -132,5 +132,90 @@ class AndroidSdkPackageRetryTests(unittest.TestCase):
         self.assertIn("must name an absolute SDK directory", result.stderr)
 
 
+    def test_sdk_root_aliases_of_filesystem_root_fail_before_sdkmanager(self) -> None:
+        # The mock succeeds immediately, so even a broken guard cannot run
+        # deletion against the filesystem root during this regression test.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            binary = root / "bin"
+            binary.mkdir()
+            marker = root / "sdkmanager-was-called"
+            manager = binary / "sdkmanager"
+            manager.write_text(
+                '#!/usr/bin/env bash\n'
+                'printf "called" > "$SDK_TEST_MARKER"\n',
+                encoding="utf-8",
+            )
+            manager.chmod(0o755)
+
+            linked_root = root / "sdk-link-to-root"
+            linked_root.symlink_to("/", target_is_directory=True)
+            env = os.environ.copy()
+            env.pop("ANDROID_HOME", None)
+            env.update(
+                {
+                    "PATH": f"{binary}{os.pathsep}{env.get('PATH', '')}",
+                    "HOME": str(root),
+                    "SDK_TEST_MARKER": str(marker),
+                    "ANDROID_SDK_INSTALL_ATTEMPTS": "1",
+                    "ANDROID_SDK_RETRY_DELAY_SECONDS": "0",
+                }
+            )
+            for sdk_root in ("/.", "/..", str(linked_root)):
+                with self.subTest(sdk_root=sdk_root):
+                    env["ANDROID_SDK_ROOT"] = sdk_root
+                    result = subprocess.run(
+                        ["bash", str(SCRIPT)],
+                        env=env,
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn("absolute SDK directory", result.stderr)
+                    self.assertFalse(marker.exists())
+
+    def test_sdk_root_must_exist_but_valid_canonical_alias_works(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            binary = root / "bin"
+            binary.mkdir()
+            marker = root / "sdkmanager-was-called"
+            manager = binary / "sdkmanager"
+            manager.write_text(
+                '#!/usr/bin/env bash\n'
+                'printf "called" > "$SDK_TEST_MARKER"\n',
+                encoding="utf-8",
+            )
+            manager.chmod(0o755)
+            env = os.environ.copy()
+            env.pop("ANDROID_HOME", None)
+            env.update(
+                {
+                    "PATH": f"{binary}{os.pathsep}{env.get('PATH', '')}",
+                    "HOME": str(root),
+                    "SDK_TEST_MARKER": str(marker),
+                    "ANDROID_SDK_INSTALL_ATTEMPTS": "1",
+                    "ANDROID_SDK_RETRY_DELAY_SECONDS": "0",
+                    "ANDROID_SDK_ROOT": str(root / "missing-sdk"),
+                }
+            )
+            invalid = subprocess.run(
+                ["bash", str(SCRIPT)], env=env, capture_output=True, text=True,
+                check=False,
+            )
+            self.assertEqual(invalid.returncode, 2, invalid.stderr)
+            self.assertFalse(marker.exists())
+
+            sdk = root / "sdk"
+            (sdk / "nested").mkdir(parents=True)
+            env["ANDROID_SDK_ROOT"] = str(sdk / "nested" / "..")
+            valid = subprocess.run(
+                ["bash", str(SCRIPT)], env=env, capture_output=True, text=True,
+                check=False,
+            )
+            self.assertEqual(valid.returncode, 0, valid.stderr)
+            self.assertTrue(marker.exists())
+
 if __name__ == "__main__":
     unittest.main()
