@@ -35,15 +35,31 @@ void main() {
     test('ungültige SRD-Klassenprofile geben keine Zauberplätze frei', () {
       final invalid = <HeroCharacter>[
         _caster(primary: 'Unknown Homebrew'),
-        _caster(primary: 'Unknown Homebrew', secondary: 'Wizard',
-            level: 8, secondaryLevel: 5),
+        _caster(
+          primary: 'Unknown Homebrew',
+          secondary: 'Wizard',
+          level: 8,
+          secondaryLevel: 5,
+        ),
         _caster(secondary: 'Unknown Homebrew', level: 8, secondaryLevel: 3),
-        _caster(primary: 'Magier', secondary: 'Wizard',
-            level: 8, secondaryLevel: 3),
-        _caster(primary: 'Wizard', secondary: 'Magier',
-            level: 8, secondaryLevel: 3),
-        _caster(primary: 'Bardin', secondary: 'Bard',
-            level: 8, secondaryLevel: 3),
+        _caster(
+          primary: 'Magier',
+          secondary: 'Wizard',
+          level: 8,
+          secondaryLevel: 3,
+        ),
+        _caster(
+          primary: 'Wizard',
+          secondary: 'Magier',
+          level: 8,
+          secondaryLevel: 3,
+        ),
+        _caster(
+          primary: 'Bardin',
+          secondary: 'Bard',
+          level: 8,
+          secondaryLevel: 3,
+        ),
         _caster(secondary: 'Ranger'),
         _caster(secondaryLevel: 1),
         _caster(secondaryLevel: -1),
@@ -114,12 +130,7 @@ void main() {
       final original = hero.toJson();
       expect(hero.primaryClassLevel, 5);
       expect(MulticlassRules.combinedSpellcasterLevel(hero), 7);
-      expect(SpellcastingRules.availableSlots(hero), {
-        1: 4,
-        2: 3,
-        3: 3,
-        4: 1,
-      });
+      expect(SpellcastingRules.availableSlots(hero), {1: 4, 2: 3, 3: 3, 4: 1});
       final result = SpellcastingRules.cast(
         hero,
         spellName: 'Magisches Geschoss',
