@@ -150,8 +150,7 @@ class SrdSpellCastingTimeRules {
     // This classification still never confirms that the trigger occurred.
     const reactionPrefix = 'Reaction, which you take ';
     const bonusPrefix = 'Bonus Action, which you take ';
-    if (time.startsWith(reactionPrefix) ||
-        time.startsWith(bonusPrefix)) {
+    if (time.startsWith(reactionPrefix) || time.startsWith(bonusPrefix)) {
       if (expectedTrigger == null || expectedTrigger != time) {
         throw UnsupportedError(
           'Ungeprüfte ausgelöste SRD-Zauberwirkzeit: $time',
