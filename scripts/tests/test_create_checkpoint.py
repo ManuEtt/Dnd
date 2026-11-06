@@ -497,6 +497,76 @@ class CheckpointTests(unittest.TestCase):
             checkpoint.validate_archive(archive, expected)
 
 
+    @unittest.skipIf(sys.platform == 'win32', 'distinct case variants require POSIX')
+    def test_historical_casefold_twins_preserve_published_aliases(self):
+        first = self.create(label='first')
+        original_latest = Path(first['latest_archive']).read_bytes()
+        original_sums = Path(first['latest_checksums']).read_bytes()
+        twins = (
+            self.output / 'Wuerfelraunen_Case_Vollprojekt.zip',
+            self.output / 'Wuerfelraunen_case_Vollprojekt.zip',
+        )
+        for filename in twins:
+            filename.write_bytes(b'previous independent archive')
+        with self.assertRaisesRegex(ValueError, 'Colliding historical checkpoint'):
+            self.create(label='second')
+        self.assertEqual(Path(first['latest_archive']).read_bytes(), original_latest)
+        self.assertEqual(Path(first['latest_checksums']).read_bytes(), original_sums)
+        self.assertTrue(all(path.is_file() for path in twins))
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+
+    @unittest.skipUnless(sys.platform.startswith('linux'),
+                         'distinct Unicode-normalization variants need Linux')
+    def test_historical_unicode_equivalent_twins_preserve_aliases(self):
+        first = self.create(label='first')
+        original_latest = Path(first['latest_archive']).read_bytes()
+        original_sums = Path(first['latest_checksums']).read_bytes()
+        composed = self.output / 'Wuerfelraunen_Café_Vollprojekt.zip'
+        decomposed = self.output / 'Wuerfelraunen_Cafe\u0301_Vollprojekt.zip'
+        composed.write_bytes(b'composed filename')
+        decomposed.write_bytes(b'decomposed filename')
+        with self.assertRaisesRegex(ValueError, 'Colliding historical checkpoint'):
+            self.create(label='second')
+        self.assertEqual(Path(first['latest_archive']).read_bytes(), original_latest)
+        self.assertEqual(Path(first['latest_checksums']).read_bytes(), original_sums)
+        self.assertEqual(composed.read_bytes(), b'composed filename')
+        self.assertEqual(decomposed.read_bytes(), b'decomposed filename')
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+
+    @unittest.skipIf(sys.platform == 'win32', 'case variants require POSIX')
+    def test_same_timestamp_casefolded_label_does_not_replace_first_version(self):
+        first = self.create(label='tested')
+        before = {p.name: p.read_bytes() for p in self.output.iterdir()}
+        with self.assertRaisesRegex(ValueError, 'filename collides across filesystems'):
+            self.create(label='TESTED')
+        self.assertEqual(
+            before, {p.name: p.read_bytes() for p in self.output.iterdir()},
+        )
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+        self.assertTrue(Path(first['archive']).is_file())
+
+    @unittest.skipIf(sys.platform == 'win32', 'case variants require POSIX')
+    def test_stable_alias_casefold_twins_block_publication(self):
+        first = self.create(label='first')
+        latest = Path(first['latest_archive'])
+        checksums = Path(first['latest_checksums'])
+        original_latest = latest.read_bytes()
+        original_sums = checksums.read_bytes()
+        for alias in ('Wuerfelraunen_latest_Vollprojekt.zip', 'sha256sums.txt'):
+            with self.subTest(alias=alias):
+                twin = self.output / alias
+                twin.write_bytes(b'wrong-stable-alias')
+                try:
+                    with self.assertRaisesRegex(ValueError,
+                                                'stable alias collides across filesystems'):
+                        self.create(label='second')
+                    self.assertEqual(latest.read_bytes(), original_latest)
+                    self.assertEqual(checksums.read_bytes(), original_sums)
+                    self.assertEqual(twin.read_bytes(), b'wrong-stable-alias')
+                    self.assertFalse((self.output / '.checkpoint.lock').exists())
+                finally:
+                    twin.unlink()
+
     def test_safe_name_rejects_windows_nonportable_components(self):
         invalid = (
             'assets/CON', 'assets/con.txt', 'assets/NUL.json',

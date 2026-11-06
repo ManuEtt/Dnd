@@ -1,3 +1,19 @@
+## 06.11.2026 – Historische Checkpoint-Dateinamen kollisionsfrei archivieren
+
+- **Basis-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; Merge von PR #587, finale PR-CI [#42162161178](https://github.com/ManuEtt/Dnd/actions/runs/42162161178) erfolgreich. Main-CI für den Merge separat prüfen.
+- **Branch:** `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`; **Code-/Testcommit:** `c80950bc7ad5d7576d7717aea4c2535d9aa3f240`; **PR:** [#592](https://github.com/ManuEtt/Dnd/pull/592), Draft bis finale CI.
+- **Problem:** Einzelne historische Checkpoint-Dateinamen waren bereits Windows-portabel, aber unterschiedliche gleichwertige Schreibweisen (`Case`/`case`, `Café`/`Cafe\u0301`) konnten gemeinsam im SHA256-Ledger erscheinen. Neue Checkpoints mit gleichem Timestamp/Label in anderer Großschreibung sowie Aliase der beiden stabilen Dateien konnten auf Windows/macOS Dateien überschreiben oder verwechseln.
+- **Implementiert:** In `scripts/create_checkpoint.py` werden historische Dateinamen mit normalisiertem NFC-/Casefold-Schlüssel verglichen; bei Konflikt bricht die Liste vor dem Hashen ab. Unter dem exklusiven Publikationslock werden neue versionierte Namen und alle anders geschriebenen `Wuerfelraunen_LATEST_Vollprojekt.zip`- und `SHA256SUMS.txt`-Aliase vor dem Staging zurückgewiesen.
+- **Regressionen:** Vier neue Tests in `scripts/tests/test_create_checkpoint.py`: historische Groß-/Kleinschreibungszwillinge, historisch Unicode-äquivalente Namen (Linux), gleich datierte Versionen mit unterschiedlich geschriebenem Label und Varianten beider Aliasnamen. Jede Ablehnung bewahrt die vorherigen ZIP-/SHA256SUMS-Bytes und löst den exklusiven Lock.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Main-HEAD, offene PRs und deren Fachdateien abgeglichen; Code, Regressionen und PR committed. Volle PR-CI des Vorgängerpakets #587 erfolgreich. **Keine neue CI als erfolgreich ausgegeben.**
+- **NICHT GETESTET:** GitHub Actions auf finalem Dokumentations-HEAD, reale Android-Geräte, Upgrade eines Altspielstands, lokale vollständige Projekt-/Flutter-Suite (kein zuverlässiger Checkout).
+- **BLOCKIERT:** Vollständige CI des PR #592 und erneute Konfliktkontrolle vor Integration.
+- **Migrationen:** keine, ältere Sicherungen werden weder verändert noch gelöscht. SQLite 3, JSON 1, Backups, SRD-Regeln, App-/Buildversion unverändert.
+- **Nächster Schritt:** finale Actions-CI vollständig abnehmen (Python, Backend, Flutter, Android, alle ABI-APKs, Release), Fehler auf eigenem Branch korrigieren und erst nach grünem Lauf kontrolliert integrieren.
+
+---
+
 ## 06.11.2026 – Checkpoint-Dateinamen nach zentraler Quell-ZIP-Policy validieren
 
 - **Basis-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` (PR #584 integriert; Main-CI auf diesem Commit separat abnehmen).
