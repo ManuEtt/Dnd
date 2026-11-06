@@ -303,16 +303,16 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
         with _new_release_file(notes) as note_stream:
             created.append(notes)
             note_stream.write(
-            f'# Würfelraunen {app_version}+{build} – Android-Alpha\n\n'
-            f'- Quellstand: `{commit}`\n'
-            f'- CI-Lauf: {run_url or "lokale Quellcodeübergabe"}\n'
-            '- Plattform: Android ARM64 (`arm64-v8a`)\n'
-            '- Vollständiges Quellarchiv im ZIP-Root-Layout (Flutter, Backend, Tests, Assets).\n'
-            '- Diese APK wird derzeit mit einem **Debug-Testschlüssel** signiert. '
-            'Sie ist keine dauerhaft signierte Produktivversion; Updates können an '
-            'abweichenden Schlüsseln anderer Builds scheitern. Spielstände vorab sichern.\n'
-            '- Eine Veröffentlichung bedeutet nur, dass die im zugehörigen GitHub-Job '
-            'ausgeführten Tests erfolgreich waren; reale Gerätetests stehen separat an.\n',
+                f'# Würfelraunen {app_version}+{build} – Android-Alpha\n\n'
+                f'- Quellstand: `{commit}`\n'
+                f'- CI-Lauf: {run_url or "lokale Quellcodeübergabe"}\n'
+                '- Plattform: Android ARM64 (`arm64-v8a`)\n'
+                '- Vollständiges Quellarchiv im ZIP-Root-Layout (Flutter, Backend, Tests, Assets).\n'
+                '- Diese APK wird derzeit mit einem **Debug-Testschlüssel** signiert. '
+                'Sie ist keine dauerhaft signierte Produktivversion; Updates können an '
+                'abweichenden Schlüsseln anderer Builds scheitern. Spielstände vorab sichern.\n'
+                '- Eine Veröffentlichung bedeutet nur, dass die im zugehörigen GitHub-Job '
+                'ausgeführten Tests erfolgreich waren; reale Gerätetests stehen separat an.\n',
             )
         with _new_release_file(sums) as checksum_stream:
             created.append(sums)
