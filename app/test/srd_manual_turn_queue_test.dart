@@ -376,10 +376,7 @@ void main() {
     // A historical in-memory queue may outlive a removed creature, while
     // the current live actors still look complete after roster filtering.
     final removed = queued.copyWith(
-      trackedAreaCreatures: [
-        _creature('orc', 17),
-        _creature('goblin', 15),
-      ],
+      trackedAreaCreatures: [_creature('orc', 17), _creature('goblin', 15)],
     );
     expect(
       SrdInitiativeRosterRules.isCurrent(removed, removed.manualTurnQueue!),
