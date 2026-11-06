@@ -1,3 +1,20 @@
+## 06.11.2026 – Gespeicherte offene Anknüpfungspunkte nur mit eindeutigen IDs (PR #602)
+
+- **Ausgangs-main:** `95c605898f1bcae26e0a23afa55c767ec5b20744`; **Branch:** `feat/chat-b/recap-open-lead-id-integrity-20261106`, [PR #602](https://github.com/ManuEtt/Dnd/pull/602) (Draft). **Fach-/Teststand:** `3cafb7a29079c0e6f47a67e0d04350b062c41941`, finalen Dokumentations-HEAD im PR nachsehen.
+- **Problem:** `_summaryWithOpenLeads` fügte bisher offene Handlungsnotizen ohne Prüfung der gespeicherten ID zum bestätigten Sitzungsrückblick hinzu. Anders als `CampaignResumeReader` konnte er auch nichtkanonische Legacy-IDs und doppelte, widersprüchliche In-Memory-IDs als offen anzeigen.
+- **IMPLEMENTIERT:** Nur 1–64-stellige `[A-Za-z0-9_-]`-IDs, die im vollständigen Story-Thread-Snapshot exakt einmal vorkommen, gelangen in den zusätzlichen, als bestätigt bezeichneten Open-Leads-Abschnitt. Reihenfolge, Maximalzahl drei, bestätigte Fakten und Längenlimit bleiben erhalten. Kein persistierter Rohzustand oder SRD-Wert wird verändert.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart`, `app/test/story_recap_open_lead_id_integrity_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** Aktuelle Main-Basis, alle offenen PRs und deren Fachdateien geprüft. Vorheriger Story-PR [#598](https://github.com/ManuEtt/Dnd/pull/598) hat auf `a05e50b19572305520a62bb09a4ec0c5753e079b` eine vollständig erfolgreiche [GitHub-CI](https://github.com/ManuEtt/Dnd/actions/runs/42184643176); dies ist **kein** Nachweis für #602.
+- **NICHT GETESTET:** Vier neue Flutter-Regressionen sind ergänzt, aber noch nicht lokal ausgeführt; Dart-/Flutter-SDK im Arbeitscontainer fehlt. Finale GitHub-CI, Android-APK, reales Gerät und produktive KI von #602 noch nicht abgenommen.
+- **BLOCKIERT:** Vollständige CI-Abnahme von #602 und koordinierte Integration konkurrierender README-/zentraler Checkpoint-Nachträge; keine automatische Zusammenführung fremder PRs.
+- **Migration:** Keine; SQLite, JSON, Regel- und Questautorität, Version sowie bestätigte Ereignisse unverändert.
+- **NOCH NICHT IMPLEMENTIERT:** Vollständige fächerübergreifende Integration der offenen Story- und UI-PRs.
+- **Nächster konkreter Schritt:** Finale GitHub-CI mit Flutter-Tests, Format-/Analyse-/Android-Gates auf exaktem PR-HEAD auswerten, Fehler auf demselben Branch korrigieren und dann zur konfliktfreien Integration übergeben.
+
+- **Nachtrag zur Integration (06.11.2026):** Die bisherige CI [#42189711653](https://github.com/ManuEtt/Dnd/actions/runs/42189711653) wurde in der SQLite-Setup-Phase abgebrochen, nicht erfolgreich abgeschlossen. Der Branch wird deshalb verlustfrei mit dem aktuellen `main` (vor dem Merge-Commit: `0a813df100aa649c2204018349b0db9af09fb83f`) zusammengeführt; gemeinsam geänderte Dokumentation ist additive, die Fachdateien bleiben auf demselben Code-Stand. Vollständige CI auf dem neuen Merge-HEAD steht erneut aus.
+
+---
+
 ### 06.11.2026 – CI-Negativfall zur abschließenden Zielidentität korrigiert
 
 - **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606); neuer Korrekturcommit `52280992156bbb5f92c351497d6ec9e49ccb8310` nach Code-/Testcommit `a61bd446072d16d143cdf301270da6ca6c22edf7`.

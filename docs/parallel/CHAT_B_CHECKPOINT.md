@@ -1,3 +1,20 @@
+## 06.11.2026 – Integrität offener Hinweise in gespeicherten Sitzungsrückblicken
+
+- **Main-Ausgangs-SHA:** `95c605898f1bcae26e0a23afa55c767ec5b20744`.
+- **Eigener Branch:** `feat/chat-b/recap-open-lead-id-integrity-20261106`; **Fach-/Testcommit:** `3cafb7a29079c0e6f47a67e0d04350b062c41941`. **Pull Request:** [#602](https://github.com/ManuEtt/Dnd/pull/602) (Draft; endgültigen Dokumentationscommit gesondert prüfen).
+- **Ausgangsproblem:** Die gespeicherten Open-Leads-Rückblickzeilen vertrauten `status == open` ohne kanonische ID und Eindeutigkeitsnachweis; die read-only Wiederaufnahmeübersicht filterte diese Fälle bereits.
+- **IMPLEMENTIERT:** `_summaryWithOpenLeads` zählt alle Thread-IDs vor der Auswahl und berücksichtigt nur eindeutige `^[a-zA-Z0-9_-]{1,64}$`-Kennungen mit offenem Status. Keine automatischen Quest-/Kampf-/EP-Folgen.
+- **Änderungen:** `app/lib/story/story_campaign_engine.dart` und neuer `app/test/story_recap_open_lead_id_integrity_test.dart`; additive `README.md`-/`docs/CODEX_CHECKPOINT.md`-/`docs/parallel/CHAT_B_CHECKPOINT.md`-Dokumentation.
+- **Tests:** Vier neue Flutter-Fälle zu erlaubten/unsicheren IDs, bestätigter Zusammenfassung, Doppel-IDs mit widersprüchlichen Status, Auswahlreihenfolge/Limit, SQLite-Replay und unverändertem Helden-/Originalzustand. **Ausführung auf dem finalen PR-HEAD noch ausstehend.** Vorherige volle CI #598 auf `a05e50b19572305520a62bb09a4ec0c5753e079b`: [erfolgreich](https://github.com/ManuEtt/Dnd/actions/runs/42184643176), unabhängig von diesem Paket.
+- **NICHT GETESTET:** Lokales Dart/Flutter, vollständige neue GitHub-CI und Android-Debug-/ABI-APK, echtes Android-Gerät, Produktiv-KI.
+- **BLOCKIERT:** CI/Review sowie verlustfreie, koordinierte Integration der allgemeinen README-/Checkpoint-Dateien mit den anderen offenen PRs.
+- **Migrationen:** Keine. Vorhandene SQLite-/JSON-Spielstände, Regel-/Questwerte, Ereignisse und App-Version werden nicht geändert.
+- **Nächster Schritt:** Gesamte CI auf finalem #602-Commit abnehmen, etwaige Fehler isoliert im eigenen Branch korrigieren und anschließend an die Integration übergeben.
+
+- **Nachtrag zur Integration (06.11.2026):** Die bisherige CI [#42189711653](https://github.com/ManuEtt/Dnd/actions/runs/42189711653) wurde in der SQLite-Setup-Phase abgebrochen, nicht erfolgreich abgeschlossen. Der Branch wird deshalb verlustfrei mit dem aktuellen `main` (vor dem Merge-Commit: `0a813df100aa649c2204018349b0db9af09fb83f`) zusammengeführt; gemeinsam geänderte Dokumentation ist additive, die Fachdateien bleiben auf demselben Code-Stand. Vollständige CI auf dem neuen Merge-HEAD steht erneut aus.
+
+---
+
 ## Konsolidierung 04.11.2026 – PR #536
 
 Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
