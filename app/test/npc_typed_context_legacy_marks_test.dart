@@ -174,72 +174,72 @@ void main() {
   test(
     'SQLite restart retains legacy raw values and stale-raw guards',
     () async {
-    final folder = await Directory.systemTemp.createTemp('npc-typed-marks-');
-    final file = paths.join(folder.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: file,
-    );
-    try {
-      final campaign = _campaign(
-        npcs: const [
-          WorldNpc(
-            id: 'mira-one',
-            name: 'Mi\u00adra',
-            relationship: 'freund\u206flich',
-          ),
-          WorldNpc(id: 'mira-two', name: 'Mira'),
-        ],
-        notes: [
-          _note('first', 'mira-one', 'Das\u202e Siegel ist im Turm.'),
-          _note('second', 'mira-two', 'Der andere Weg ist frei.'),
-        ],
-      );
-      await repository.saveCampaign(campaign);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+      final folder = await Directory.systemTemp.createTemp('npc-typed-marks-');
+      final file = paths.join(folder.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: file,
       );
-      final restored = (await repository.getCampaign(campaign.id))!;
-      final before = jsonEncode(restored.toJson());
-      final snapshot = _read(restored);
-      final typed = snapshot.toContextMap();
+      try {
+        final campaign = _campaign(
+          npcs: const [
+            WorldNpc(
+              id: 'mira-one',
+              name: 'Mi\u00adra',
+              relationship: 'freund\u206flich',
+            ),
+            WorldNpc(id: 'mira-two', name: 'Mira'),
+          ],
+          notes: [
+            _note('first', 'mira-one', 'Das\u202e Siegel ist im Turm.'),
+            _note('second', 'mira-two', 'Der andere Weg ist frei.'),
+          ],
+        );
+        await repository.saveCampaign(campaign);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: file,
+        );
+        final restored = (await repository.getCampaign(campaign.id))!;
+        final before = jsonEncode(restored.toJson());
+        final snapshot = _read(restored);
+        final typed = snapshot.toContextMap();
 
-      expect(typed['npcName'], 'Mira');
-      expect(typed['relationship'], 'freund lich');
-      expect(typed.toString(), contains('Das Siegel ist im Turm.'));
-      expect(typed.toString(), isNot(contains('andere Weg')));
-      expect(restored.npcs.first.name, 'Mi\u00adra');
-      expect(restored.hero.toJson(), campaign.hero.toJson());
-      expect(restored.revision, campaign.revision);
-      NpcIdentityMemory.requireCurrent(restored, snapshot);
-      expect(jsonEncode(restored.toJson()), before);
-      expect(
-        (await repository.reconstructCampaign(campaign.id))!.toJson(),
-        restored.toJson(),
-      );
-      final altered = restored.copyWith(
-        npcs: [
-          const WorldNpc(
-            id: 'mira-one',
-            name: 'Mi\u034fra',
-            relationship: 'freund\u206flich',
-          ),
-          restored.npcs.last,
-        ],
-      );
-      // Both names render as Mira, but raw confirmed snapshot changed.
-      expect(_read(altered).toContextMap(), typed);
-      expect(
-        () => NpcIdentityMemory.requireCurrent(altered, snapshot),
-        throwsFormatException,
-      );
-      expect(jsonEncode(restored.toJson()), before);
-    } finally {
-      await repository.close();
-      await folder.delete(recursive: true);
-    }
+        expect(typed['npcName'], 'Mira');
+        expect(typed['relationship'], 'freund lich');
+        expect(typed.toString(), contains('Das Siegel ist im Turm.'));
+        expect(typed.toString(), isNot(contains('andere Weg')));
+        expect(restored.npcs.first.name, 'Mi\u00adra');
+        expect(restored.hero.toJson(), campaign.hero.toJson());
+        expect(restored.revision, campaign.revision);
+        NpcIdentityMemory.requireCurrent(restored, snapshot);
+        expect(jsonEncode(restored.toJson()), before);
+        expect(
+          (await repository.reconstructCampaign(campaign.id))!.toJson(),
+          restored.toJson(),
+        );
+        final altered = restored.copyWith(
+          npcs: [
+            const WorldNpc(
+              id: 'mira-one',
+              name: 'Mi\u034fra',
+              relationship: 'freund\u206flich',
+            ),
+            restored.npcs.last,
+          ],
+        );
+        // Both names render as Mira, but raw confirmed snapshot changed.
+        expect(_read(altered).toContextMap(), typed);
+        expect(
+          () => NpcIdentityMemory.requireCurrent(altered, snapshot),
+          throwsFormatException,
+        );
+        expect(jsonEncode(restored.toJson()), before);
+      } finally {
+        await repository.close();
+        await folder.delete(recursive: true);
+      }
     },
   );
 }
