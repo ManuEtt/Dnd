@@ -799,3 +799,21 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+---
+
+## 2026-11-06 – SRD-Ausrüstungskatalog bei IME und 200 % Schrift
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`.
+- **Branch:** `feat/chat-c/equipment-catalog-large-text-ime-20261106`.
+- **Fach-/Test-Commit:** `7fe870aab784880f7982c9fa1a298d50727d106c` (UI-Fachcommit `beb80e5c2e1995d44028e220840857db7fe919bf`).
+- **Pull Request:** [#614](https://github.com/ManuEtt/Dnd/pull/614), Draft bis CI auf finalem HEAD geprüft.
+- **IMPLEMENTIERT:** `EquipmentCatalogDialog` berücksichtigt `viewInsets.bottom` für die Ergebnishöhe und erlaubt auf kleinen Fenstern das Scrollen des Dialogs. Bei unter 500 dp und mindestens 180 % Schrift stehen beide 48-dp-Iconaktionen unterhalb der Gegenstandsdaten; die kompakte Zeile bei Standardschrift bleibt erhalten. Das Suchfeld bietet die Android-IME-Aktion „Suchen“ und gibt den Fokus nach Bestätigung frei. Keine automatische Auswahl oder Inventaränderung.
+- **Änderungen:** `app/lib/ui/equipment_catalog_dialog.dart`; neuer Regressionstest `app/test/equipment_catalog_large_text_ime_test.dart`.
+- **Akzeptanz und Regressionen:** 320/360 dp, 200 % Schrift, 220 dp Tastatur-Inset: Schaltflächen, Gegenstand und Kategorie erreichbar, explizite Auswahl; kein Treffer mit sicherem Abbruch; Kompaktansicht mit Standardschrift. Bestehende `app/test/ui_equipment_catalog_test.dart` bleibt unverändert.
+- **GETESTET:** Aktuellen Main-HEAD, alle initial 26 und anschließend 30 offenen PRs samt geänderten Dateipfaden geprüft; die Fachdateien sind konfliktfrei. Branch, zwei Fach-/Test-Commits und PR veröffentlicht. Lokal ist `python3 --version` verfügbar, `flutter` und `dart` jedoch nicht.
+- **NICHT GETESTET:** Neue oder bestehende Flutter-Widgettests, Dart-Format/Analyse, vollständige Python-/Backend-/Flutter-Tests, Android-Debug/native/ABI-/Alpha-Build auf dem finalen PR-HEAD, echtes Android/TalkBack, Upgrade und Signierung. GitHub-Actions-Ergebnis ist für den finalen Dokumentationsstand gesondert zu prüfen.
+- **BLOCKIERT:** Kein Flutter-/Dart-SDK und kein Git-Checkout wegen DNS-Sperre im lokalen Container. Es wird **kein** lokaler Testlauf oder fertiges APK behauptet.
+- **Kompatibilität:** Keine Datenbank-/JSON-Migration, kein verändertes Inventar-/SRD-Regelmodell, keine neuen Assets oder Rechte; App-Version `0.8.52+102` bleibt bestehen.
+- **Koordination:** `README.md` und `docs/CODEX_CHECKPOINT.md` nur additiv, fremde Nachträge von Chat D bei Integration verlustfrei übernehmen; keine eigenmächtigen Merges.
+- **NÄCHSTER SCHRITT:** Finalen #614-CI-Lauf auf seinem exakten HEAD mit Flutter-Format, Analyse, Widget-/Gesamttests sowie Android-/Backend-/Python-Pipeline prüfen; bei tatsächlichen Fehlern denselben Branch korrigieren und erst nach grüner CI zur Integration vorlegen.
