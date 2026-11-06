@@ -343,10 +343,7 @@ void main() {
     );
     final invalid = game.copyWith(manualTurnQueue: queue);
     expect(SrdInitiativeRosterRules.isCurrent(invalid, queue), isFalse);
-    expect(
-      () => engine.advanceManualTurnQueue(invalid),
-      throwsFormatException,
-    );
+    expect(() => engine.advanceManualTurnQueue(invalid), throwsFormatException);
     expect(() => Campaign.fromJson(invalid.toJson()), throwsFormatException);
     expect(game.manualTurnQueue, isNull);
   });
@@ -388,10 +385,7 @@ void main() {
       SrdInitiativeRosterRules.isCurrent(removed, removed.manualTurnQueue!),
       isFalse,
     );
-    expect(
-      () => engine.advanceManualTurnQueue(removed),
-      throwsFormatException,
-    );
+    expect(() => engine.advanceManualTurnQueue(removed), throwsFormatException);
     // A direct snapshot with colliding hero/creature IDs is never current.
     final collision = queued.copyWith(
       trackedAreaCreatures: [
