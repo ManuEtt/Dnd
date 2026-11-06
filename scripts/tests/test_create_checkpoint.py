@@ -497,6 +497,79 @@ class CheckpointTests(unittest.TestCase):
             checkpoint.validate_archive(archive, expected)
 
 
+    def test_safe_name_rejects_windows_nonportable_components(self):
+        invalid = (
+            'assets/CON', 'assets/con.txt', 'assets/NUL.json',
+            'assets/COM1.dll', 'assets/LPT9/out.txt',
+            'assets/folder./data.json', 'assets/folder /data.json',
+            'assets/data.json.', 'assets/data.json ',
+            'assets/a<b.txt', 'assets/a>b.txt', 'assets/a:b.txt',
+            'assets/a"b.txt', 'assets/a|b.txt', 'assets/a?b.txt',
+            'assets/a*b.txt', 'assets/a\\b.txt',
+        )
+        for name in invalid:
+            with self.subTest(name=name):
+                self.assertFalse(checkpoint.safe_name(name))
+        valid = (
+            'assets/COM10.txt', 'assets/LPT0.txt', 'assets/CONTEXT.txt',
+            'assets/alte karten.v2/karte #2.json',
+            'assets/Grüße-🗺️.json',
+        )
+        for name in valid:
+            with self.subTest(name=name):
+                self.assertTrue(checkpoint.safe_name(name))
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX-only filename fixtures')
+    def test_unportable_source_name_aborts_checkpoint_before_publication(self):
+        for name in ('assets/CON.txt', 'assets/scene?.json',
+                     'assets/room./scene.json'):
+            with self.subTest(name=name):
+                unsafe = self.write(name, 'unportable source')
+                try:
+                    with self.assertRaisesRegex(ValueError, 'Unsafe source filename'):
+                        self.create()
+                    self.assertFalse(self.output.exists())
+                finally:
+                    unsafe.unlink()
+                    if name.count('/'):
+                        unsafe.parent.rmdir()
+
+    def test_validate_archive_blocks_nonportable_members_before_read(self):
+        payload = b'content'
+        info = {
+            'sha256': hashlib.sha256(payload).hexdigest(),
+            'size': len(payload),
+            'executable': False,
+        }
+        archive = self.directory / 'unportable.zip'
+        for name in ('assets/CON.txt', 'assets/scene?.json',
+                     'assets/room./scene.json'):
+            with self.subTest(name=name):
+                with zipfile.ZipFile(archive, 'w') as writer:
+                    writer.writestr(name, payload)
+                with mock.patch.object(
+                    zipfile.ZipFile, 'open',
+                    side_effect=AssertionError('Archive read before name validation'),
+                ):
+                    with self.assertRaisesRegex(ValueError, 'Unsafe or excluded ZIP entry'):
+                        checkpoint.validate_archive(archive, {name: info})
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX-only filename fixtures')
+    def test_unportable_historical_name_preserves_previous_aliases(self):
+        first = self.create(label='first')
+        latest = Path(first['latest_archive'])
+        checksums = Path(first['latest_checksums'])
+        old_latest = latest.read_bytes()
+        old_sums = checksums.read_bytes()
+        unsafe = self.output / 'Wuerfelraunen_old?bad_Vollprojekt.zip'
+        unsafe.write_bytes(b'historical payload')
+        with self.assertRaisesRegex(ValueError, 'Unsafe previous checkpoint artifact'):
+            self.create(label='second')
+        self.assertEqual(latest.read_bytes(), old_latest)
+        self.assertEqual(checksums.read_bytes(), old_sums)
+        self.assertEqual(unsafe.read_bytes(), b'historical payload')
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+
     def test_safe_name_rejects_hidden_unicode_but_keeps_visible_international_names(self):
         for character in ('\u0085', '\u200b', '\u202e', '\u2066',
                           '\u2028', '\u2029'):
