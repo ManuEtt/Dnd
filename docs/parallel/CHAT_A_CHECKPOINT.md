@@ -1399,3 +1399,22 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 06.11.2026 – SRD Fighting Style: Nebenhandbonus für Paladin und Waldläufer
+
+**Basis-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; **Branch:** `fix/chat-a/two-weapon-style-paladin-ranger-20261106`; **Fach-/Testcommit:** `19c6ed888fe1f3c4a3fab7ba01a42a52017fcd7a`.
+
+**Regelproblem:** Der bekannte explizit gewählte Fighting Style „Kampf mit zwei Waffen“ gab bei legalen Paladin-2- und Waldläufer-2-Figuren keinen positiven Modifikator zum Light-Bonusangriff, weil bisher nur Fighter 1 akzeptiert wurde. SRD 5.2.1 bietet Fighting Style bei Kämpfer 1, Paladin 2 und Ranger 2.
+
+**Änderung:** `app/lib/domain/two_weapon_fighting_rules.dart` berechnet `getStyle` aus kanonisch gültigen Haupt-/Nebenklassen, eigenen Klassenstufen und dem gespeicherten, ausdrücklich gewählten Kampfstil. Keine automatische Stilwahl; nur passende Klassenstufen schalten frei. Falsche Aliase, unmögliche/fehlende Nebenlevel und unbekannte Klassen sperren den Bonus. Die anderen Light-Angriffs-/Bonusaktionsregeln bleiben identisch.
+
+**Tests:** `app/test/two_weapon_style_class_eligibility_test.dart` enthält positive/negative Fighter-/Paladin-/Ranger-Multiclass-Fälle, ungültige Profile, negative Stärke-/Geschicklichkeitsmodifikatoren sowie tatsächliche Paladin-/Ranger-Kampfdurchläufe mit bestätigter Waffenübung, Treffer/Schaden, konsumierter Bonusaktion und JSON-Roundtrip. Bestehende Combat-Tests beibehalten.
+
+**SRD-Provenienz:** Wizards of the Coast LLC, SRD v5.2.1, Classes/Fighting Style, Feats/Two-Weapon Fighting, Equipment/Light, CC BY 4.0, <https://www.dndbeyond.com/srd>. `RULE-COMBAT-TWO-WEAPON-FIGHTING` bleibt `partial` (keine Nickel-/Dual-Wielder- oder Light-Fernkampf-Automatik).
+
+**Getestet:** Quellcode, bisherige Tests, Main-HEAD und offene PR-Dateilisten geprüft; Fachänderung/Tests auf eigenem Branch gespeichert. **Noch nicht getestet:** Dart/Flutter und Android-APK/Gerät lokal (SDK fehlt); volle CI auf dem **finalen** PR-HEAD steht noch aus.
+
+**Migration / Konflikte:** Keine Änderung an `models.dart`, `game_engine.dart`, UI/Controller, Backend, SQLite/JSON, Events oder Version. README sachlich am absoluten Dateiende angefügt, andere Checkpoints unberührt; bei Gesamtintegration mit parallelen Anhängen additive Konsolidierung erforderlich.
+
+**Nächster Schritt:** Actions-Format, Analyzer, Flutter-Tests, Android-Build-Matrix auswerten und Fehler gezielt korrigieren; nach grüner CI fachliche Integration durch Chat D.

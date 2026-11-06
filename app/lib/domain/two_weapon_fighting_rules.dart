@@ -2,6 +2,7 @@ import 'condition_rules.dart';
 import 'class_resource_rules.dart';
 import 'models.dart';
 import 'rules_engine.dart';
+import 'srd_character_classes.dart';
 import 'srd_equipment_catalog.dart';
 
 /// SRD 5.2.1, Light (p.89): two different Light weapons enable an extra
@@ -10,9 +11,33 @@ import 'srd_equipment_catalog.dart';
 class TwoWeaponFightingRules {
   const TwoWeaponFightingRules._();
 
-  static bool getStyle(HeroCharacter hero) =>
-      ClassResourceRules.level(hero, 'Kämpfer') >= 1 &&
-      hero.features.contains('Kampfstil: Kampf mit zwei Waffen');
+  /// SRD Fighting Style: Fighter 1, Paladin 2, or Ranger 2. The feat must
+  /// already be an explicit confirmed character feature, not a class default.
+  /// A malformed legacy multiclass profile must not authorize extra damage.
+  static bool getStyle(HeroCharacter hero) {
+    if (!hero.features.contains('Kampfstil: Kampf mit zwei Waffen') ||
+        hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return false;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return false;
+    }
+    return ClassResourceRules.level(hero, 'Kämpfer') >= 1 ||
+        ClassResourceRules.level(hero, 'Paladin') >= 2 ||
+        ClassResourceRules.level(hero, 'Waldläufer') >= 2;
+  }
 
   static EquipmentEntry? _lightWeapon(InventoryItem item) {
     if (item.quantity < 1) return null;
