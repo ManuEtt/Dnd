@@ -44,6 +44,38 @@ class SrdSpellCastingTimeRules {
     r'[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e\u2060-\u206f\ufeff\ufff9-\ufffb]',
   );
 
+  // Only the eight triggered casting times independently identified in the
+  // SRD 5.2.1 working catalogue are classified. A matching prefix alone is
+  // never proof of the trigger, and an existing triggered spell must not be
+  // silently rewritten into an ordinary Action by a direct constructor.
+  // Source: Wizards of the Coast LLC, SRD 5.2.1 / Spells (CC BY 4.0).
+  static const _triggeredTimeByName = <String, String>{
+    'Counterspell':
+        'Reaction, which you take when you see a creature within 60 feet of '
+        'yourself casting a spell with Verbal, Somatic, or Material components',
+    'Feather Fall':
+        'Reaction, which you take when you or a creature you can see within '
+        '60 feet of you falls',
+    'Hellish Rebuke':
+        'Reaction, which you take in response to taking damage from a '
+        'creature that you can see within 60 feet of yourself',
+    'Shield':
+        'Reaction, which you take when you are hit by an attack roll or '
+        'targeted by the _Magic Missile_ spell',
+    'Divine Smite':
+        'Bonus Action, which you take immediately after hitting a target '
+        'with a Melee weapon or an Unarmed Strike',
+    'Searing Smite':
+        'Bonus Action, which you take immediately after hitting a target '
+        'with a Melee weapon or an Unarmed Strike',
+    'Ensnaring Strike':
+        'Bonus Action, which you take immediately after hitting a creature '
+        'with a weapon',
+    'Shining Smite':
+        'Bonus Action, which you take immediately after hitting a creature '
+        'with a Melee weapon or an Unarmed Strike',
+  };
+
   static SrdSpellCastingTimeAssessment inspect(SrdSpellDefinition spell) {
     final time = spell.castingTime;
     if (time.isEmpty || time != time.trim() || _invisible.hasMatch(time)) {
@@ -55,6 +87,12 @@ class SrdSpellCastingTimeRules {
     if (ritual != spell.ritual) {
       throw const FormatException(
         'Zauberwirkzeit und Ritualangabe widersprechen sich.',
+      );
+    }
+    final expectedTrigger = _triggeredTimeByName[spell.name];
+    if (expectedTrigger != null && time != expectedTrigger) {
+      throw const FormatException(
+        'Die ausgelöste SRD-Zauberwirkzeit passt nicht zum Zauber.',
       );
     }
     switch (time) {
@@ -108,25 +146,20 @@ class SrdSpellCastingTimeRules {
         );
     }
 
-    // Trigger wording is retained verbatim. Any triggered spell must use a
-    // separately audited action; this metadata never proves the trigger.
+    // A triggered time is valid only for its exact audited spell identity.
+    // This classification still never confirms that the trigger occurred.
     const reactionPrefix = 'Reaction, which you take ';
     const bonusPrefix = 'Bonus Action, which you take ';
-    if (time.startsWith(reactionPrefix) &&
-        time.length > reactionPrefix.length &&
-        time.substring(reactionPrefix.length).trim() ==
-            time.substring(reactionPrefix.length)) {
-      return const SrdSpellCastingTimeAssessment(
-        kind: SrdSpellCastingTimeKind.triggeredReaction,
-        ritualOption: false,
-      );
-    }
-    if (time.startsWith(bonusPrefix) &&
-        time.length > bonusPrefix.length &&
-        time.substring(bonusPrefix.length).trim() ==
-            time.substring(bonusPrefix.length)) {
-      return const SrdSpellCastingTimeAssessment(
-        kind: SrdSpellCastingTimeKind.triggeredBonusAction,
+    if (time.startsWith(reactionPrefix) || time.startsWith(bonusPrefix)) {
+      if (expectedTrigger == null || expectedTrigger != time) {
+        throw UnsupportedError(
+          'Ungeprüfte ausgelöste SRD-Zauberwirkzeit: $time',
+        );
+      }
+      return SrdSpellCastingTimeAssessment(
+        kind: time.startsWith(reactionPrefix)
+            ? SrdSpellCastingTimeKind.triggeredReaction
+            : SrdSpellCastingTimeKind.triggeredBonusAction,
         ritualOption: false,
       );
     }
