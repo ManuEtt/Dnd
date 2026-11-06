@@ -128,6 +128,9 @@ class CampaignMemoryPanel extends StatelessWidget {
                       relationship = campaign.npcs
                           .firstWhere((npc) => npc.id == value)
                           .relationship;
+                      // A note describes one specific NPC: never carry an
+                      // unconfirmed explanation over to a different person.
+                      note = '';
                     });
                   },
                 ),
@@ -142,15 +145,20 @@ class CampaignMemoryPanel extends StatelessWidget {
                     decoration: const InputDecoration(labelText: 'Beziehung'),
                   ),
                 ),
-                TextFormField(
-                  key: const ValueKey('npc-relationship-note'),
-                  initialValue: note,
-                  onChanged: (value) => note = value,
-                  maxLength: 500,
-                  minLines: 2,
-                  maxLines: 4,
-                  decoration: const InputDecoration(
-                    labelText: 'Warum hat sich die Beziehung geändert?',
+                KeyedSubtree(
+                  // FormField retains its old text when initialValue changes.
+                  // Give each NPC a fresh field when the target changes.
+                  key: ValueKey('npc-note-field-$npcId'),
+                  child: TextFormField(
+                    key: const ValueKey('npc-relationship-note'),
+                    initialValue: note,
+                    onChanged: (value) => note = value,
+                    maxLength: 500,
+                    minLines: 2,
+                    maxLines: 4,
+                    decoration: const InputDecoration(
+                      labelText: 'Warum hat sich die Beziehung geändert?',
+                    ),
                   ),
                 ),
               ],
