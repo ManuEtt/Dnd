@@ -173,7 +173,7 @@ class MemoryEngine {
       // Only a canonical, single-line stored ID can distinguish same-name
       // NPCs in confirmed narrative context.
       if (_safeNpcId.stringMatch(npc.id) != npc.id) return null;
-      return '${visibleName} (NPC-ID: ${npc.id})';
+      return '$visibleName (NPC-ID: ${npc.id})';
     }
 
     for (final note in campaign.npcRelationshipNotes.reversed) {
@@ -305,7 +305,7 @@ class MemoryEngine {
         return visibleName;
       }
       if (_safeNpcId.stringMatch(npc.id) != npc.id) return null;
-      return '${visibleName} (NPC-ID: ${npc.id})';
+      return '$visibleName (NPC-ID: ${npc.id})';
     }
 
     final npcSummaries = <String>[];
@@ -313,7 +313,7 @@ class MemoryEngine {
       final label = summaryNpcLabel(npc);
       if (label == null) continue;
       npcSummaries.add(
-        '${label} (${npc.alive ? 'lebendig' : 'tot'}, ${npc.relationship})',
+        '$label (${npc.alive ? 'lebendig' : 'tot'}, ${npc.relationship})',
       );
     }
 
