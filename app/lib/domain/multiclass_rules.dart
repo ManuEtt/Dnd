@@ -187,10 +187,30 @@ class MulticlassRules {
     );
   }
 
-  // SRD 5.2.1 (Multiclassing, p. 25): only confirmed class identities
-  // contribute to normal spell slots. The hero's stored spelling is unchanged;
-  // Pact Magic stays in its separate pool and subclass casters are not guessed.
+  // SRD 5.2.1 (Multiclassing, p. 25): only confirmed, coherent class
+  // levels contribute to normal spell slots. A known second spellcaster alone
+  // cannot grant slots when the primary identity or level data is invalid.
+  // Pact Magic stays separate; no subclass spellcasting is inferred.
   static int combinedSpellcasterLevel(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return 0;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return 0;
+    }
+
     int contribution(String name, int levels) {
       if (levels <= 0) return 0;
       final canonical = findSrdClass(name)?.name;
