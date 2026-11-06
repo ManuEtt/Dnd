@@ -36,9 +36,14 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
       content: SizedBox(
         width: 560,
         height: resultsHeight,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+        child: ListView.builder(
+          key: const ValueKey('equipment-catalog-results'),
+          itemCount: items.isEmpty ? 2 : items.length + 1,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
             const Text(
               'Auswahl zum Inventar hinzufügen. '
               'Weder Gold noch Kampfwerte werden automatisch verändert.',
@@ -79,96 +84,96 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 4),
-            Expanded(
-              child: items.isEmpty
-                  ? const Center(child: Text('Keine Gegenstände gefunden.'))
-                  : ListView.builder(
-                      key: const ValueKey('equipment-catalog-results'),
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        final entry = items[index];
-                        final buttons = Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            FantasyIconButton(
-                              tooltip: 'Werte für ${entry.name} anzeigen',
-                              icon: Icons.info_outline,
-                              onPressed: () => showModalBottomSheet<void>(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (sheetContext) => SafeArea(
-                                  child: FractionallySizedBox(
-                                    heightFactor: .8,
-                                    child: SingleChildScrollView(
-                                      padding: const EdgeInsets.all(20),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            entry.name,
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.headlineSmall,
-                                          ),
-                                          const SizedBox(height: 12),
-                                          EquipmentFields(entry: entry),
-                                          const SizedBox(height: 16),
-                                          FantasyTextButton(
-                                            icon: Icons.add,
-                                            label: 'Zum Inventar hinzufügen',
-                                            onPressed: () {
-                                              Navigator.pop(sheetContext);
-                                              Navigator.pop(context, entry);
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                ],
+              );
+            }
+            if (items.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Text('Keine Gegenstände gefunden.'),
+              );
+            }
+            final entry = items[index - 1];
+            final buttons = Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FantasyIconButton(
+                  tooltip: 'Werte für ${entry.name} anzeigen',
+                  icon: Icons.info_outline,
+                  onPressed: () => showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (sheetContext) => SafeArea(
+                      child: FractionallySizedBox(
+                        heightFactor: .8,
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                entry.name,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineSmall,
                               ),
-                            ),
-                            FantasyIconButton(
-                              tooltip: '${entry.name} hinzufügen',
-                              icon: Icons.add_circle_outline,
-                              onPressed: () => Navigator.pop(context, entry),
-                            ),
-                          ],
-                        );
-                        final tile = ListTile(
-                          key: ValueKey('equipment-catalog-item-${entry.id}'),
-                          dense: !compact,
-                          title: Text(entry.name),
-                          subtitle: Text(
-                            entry.category.label,
-                            maxLines: compact ? null : 1,
-                            overflow: compact
-                                ? TextOverflow.visible
-                                : TextOverflow.ellipsis,
+                              const SizedBox(height: 12),
+                              EquipmentFields(entry: entry),
+                              const SizedBox(height: 16),
+                              FantasyTextButton(
+                                icon: Icons.add,
+                                label: 'Zum Inventar hinzufügen',
+                                onPressed: () {
+                                  Navigator.pop(sheetContext);
+                                  Navigator.pop(context, entry);
+                                },
+                              ),
+                            ],
                           ),
-                          // At 200% text on narrow phones, the two buttons
-                          // must not consume the item's readable name width.
-                          trailing: compact ? null : buttons,
-                          onTap: () => Navigator.pop(context, entry),
-                        );
-                        if (!compact) return tile;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            tile,
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: buttons,
-                            ),
-                            const Divider(height: 8),
-                          ],
-                        );
-                      },
+                        ),
+                      ),
                     ),
-            ),
-          ],
+                  ),
+                ),
+                FantasyIconButton(
+                  tooltip: '${entry.name} hinzufügen',
+                  icon: Icons.add_circle_outline,
+                  onPressed: () => Navigator.pop(context, entry),
+                ),
+              ],
+            );
+            final tile = ListTile(
+              key: ValueKey('equipment-catalog-item-${entry.id}'),
+              dense: !compact,
+              title: Text(entry.name),
+              subtitle: Text(
+                entry.category.label,
+                maxLines: compact ? null : 1,
+                overflow: compact
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
+              ),
+              // At 200% text on narrow phones, the two buttons
+              // must not consume the item's readable name width.
+              trailing: compact ? null : buttons,
+              onTap: () => Navigator.pop(context, entry),
+            );
+            if (!compact) return tile;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                tile,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: buttons,
+                ),
+                const Divider(height: 8),
+              ],
+            );
+
+          },
         ),
       ),
       actions: [
