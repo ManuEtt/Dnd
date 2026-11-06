@@ -1,0 +1,22 @@
+name: Temporary NPC-dialog Dart formatting diagnosis
+on:
+  push:
+    branches:
+      - feat/chat-c/npc-relationship-note-reset-20261106
+permissions:
+  contents: read
+jobs:
+  formatter-diff:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Print exact Dart formatter diff
+        run: |
+          dart format app/lib/ui/campaign_memory_panel.dart app/test/campaign_memory_npc_switch_draft_test.dart
+          git diff -- app/lib/ui/campaign_memory_panel.dart app/test/campaign_memory_npc_switch_draft_test.dart
