@@ -1,3 +1,19 @@
+## 05.11.2026 – ZIP-Pfadportabilität für APK und Gradle-Wrapper vereinheitlicht
+
+- **Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`; **Branch:** `fix/chat-d/archive-windows-invalid-chars-20261105`; **Code-/Testcommit:** `ec826fa27e7d4bd23935a91f81b7830577677ceb`; **PR:** [#584](https://github.com/ManuEtt/Dnd/pull/584) (Draft).
+- **Problem:** Der Quellarchiv-Validator verwendet bereits `WINDOWS_INVALID_CHARACTERS` sowie `WINDOWS_RESERVED_STEMS`. Die Alpha-APK-Prüfung kontrollierte bisher diese Sonderzeichen nicht; die Gradle-Wrapper-JAR-Prüfung weder Sonderzeichen noch reservierte Gerätebasen. Das erlaubt auf Windows-kompatiblen Extraktionszielen mehrdeutige ZIP-Namen.
+- **IMPLEMENTIERT:** In `scripts/prepare_alpha_release.py` und `scripts/verify_project.py` diese zentralen Policies bereits vor ZIP-CRC-`testzip()` anwenden, für alle Datei- und Verzeichniskomponenten. Keine Verdoppelung der Policy-Konstanten.
+- **Regressionen:** Sechs neue Testmethoden in `scripts/tests/test_prepare_alpha_release.py` und `scripts/tests/test_verify_project.py`: je 21 ungültige Zeichenpfade, zusätzlich elf Windows-Gerätenamen im Wrapper, je ein Positivfall für zulässige Interpunktion/Unicode sowie Abbruch ohne Release und unveränderte Wrapper-Quelldatei.
+- **Dateien:** `scripts/prepare_alpha_release.py`, `scripts/verify_project.py`, `scripts/tests/test_prepare_alpha_release.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktprüfung:** Zu Beginn aktuelle `main`-SHA und offene PRs #579–#583 samt Fachdateien kontrolliert. Kein anderer offener PR verändert die vier technischen Dateien; README-Nachtrag streng append-only, neutraler Titel ohne redaktionelle Chat-Kennung.
+- **GETESTET:** Code, Regressionstests und Draft-PR über GitHub auf Branch gesichert; bestehende Main-CI für `0e4474c` vollständig erfolgreich. **Keine neuen Tests auf dem finalen PR-HEAD als bestanden behauptet.**
+- **NICHT GETESTET:** Vollständige Python-/Backend-/Flutter-/Android-/Release-CI auf endgültigem Branch-HEAD, lokaler Checkout/Test, reales Android-Gerät und bestehende Datenmigration.
+- **BLOCKIERT:** Für die Abnahme CI des finalen PR-HEADs prüfen; lokaler Repository-Checkout war in der Umgebung zuvor durch GitHub-DNS eingeschränkt.
+- **Migrationen:** keine. SQLite 3, JSON 1, Spielstände, Backups, SRD-Regeln, App-Version und Buildnummer unverändert.
+- **Nächster Schritt:** Vollständigen CI-Lauf des PR #584 bis einschließlich ABI-/Alpha-Release-Jobs abnehmen, bei Fehlern im selben Branch korrigieren; erst dann neue Konfliktprüfung und Integration.
+
+---
+
 ## Chat D – GitHub-Script-Cleanup mit Node.js 24 (05.11.2026)
 
 - **Ausgangs-main:** `7d7bb421261af0f690fd0af9012996e45b95ff95`; App-Version `0.8.51+101`.
@@ -2100,3 +2116,16 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-06 – TalkBack-Hinweise bei gesperrten Abenteuer-Schnellaktionen
+
+- **Zuständig:** Chat C. **Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`, nach Paketbeginn wurde `main` auf `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` durch unabhängig bearbeitete Release-/ZIP-Dateien aktualisiert.
+- **Branch:** `feat/chat-c/quick-actions-busy-semantics-20261106`; **PR:** [#588](https://github.com/ManuEtt/Dnd/pull/588) (Draft), **Code-/Testcommit:** `90cb263a396912257974422c7dfdb20969ff8f5a`.
+- **Problem:** Die vier fixierten Abenteuer-Schnellaktionen sind bei laufender Aktion deaktiviert, doch nur der Angriff erläuterte für TalkBack den Busy-Grund. Tab-/Enter-Navigation bei 320 dp/2x/IME ist bereits regressionsgetestet und wird nicht dupliziert.
+- **IMPLEMENTIERT:** `app/lib/ui/fantasy_art.dart` übergibt bei `busy` auch `Sprache`, `Untersuchen` und `W20` den Semantik-Hinweis „Eine Handlung wird bereits verarbeitet.“. Kein zusätzlicher Tooltip, keine Callback- oder InkWell-Änderung. Der separate Angriffskontext bleibt erhalten.
+- **TESTS HINZUGEFÜGT:** `app/test/fantasy_quick_actions_busy_semantics_test.dart`: fünf positive/negative Widgettests bei 320/360 dp, 200 % Schrift und simuliertem 270-dp-IME, alle Busy-Hinweise/Labels/Disable-Flags, unerlaubte Aktionen nicht ausgeführt, Bereitschaft nach Busy ohne veraltete Hints, Angriff mit eigenständigem Kontextgrund.
+- **GETESTET:** GitHub-Quellcode und vorhandene Keyboard-/Barrierefreiheitsregressionen untersucht, acht offene PR-Dateilisten gegen diese Fachmodule geprüft. Keine neue Regeländerung.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, Widget-/Gesamttests, Android-APK und native Tests auf finalem PR-HEAD bis zur CI-Auswertung; echtes Android/TalkBack/IME.
+- **BLOCKIERT:** Kein lokales Flutter/Dart-SDK; Review und finale CI erforderlich. Gemeinsame Dokumentationsnachträge anderer Chats append-only und verlustfrei integrieren.
+- **Migration:** Nicht erforderlich; keine App-Format-, Spielstands-, Versions- oder Berechtigungsänderung.
+- **NÄCHSTER SCHRITT:** GitHub-CI final prüfen und eventuelle Test-/Formatfehler im selben Branch beheben.
