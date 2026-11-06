@@ -799,3 +799,16 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+## 2026-11-06 – Zustandskreis-Verwaltung bei großer Schrift (PR #591)
+
+- **Ausgangs-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e`; während Entwicklung vorgerückter main `9a0fa855374a67805e531ad8574e048d99b33745`.
+- **Eigener Branch:** `feat/chat-c/ward-management-large-text-20261106`; **Code-/Testcommit:** `8a562f633262ae304dc927465f337d3bc8ca5e27`; **Draft-PR:** [#591](https://github.com/ManuEtt/Dnd/pull/591).
+- **Ausgangsproblem:** Zwei überlange, intrinsisch breite TextButton.icon-Aktionen im `FantasyEffectWard` sind auf 320/360 dp bei 200 % Schrift und offenem IME nicht gezielt auf vollständige Lesbarkeit abgesichert.
+- **IMPLEMENTIERT:** Vollbreite, flexible mehrzeilige Label-Darstellung für beide Aktionen nur bei großer Schrift / kleinem Inhalt; reguläres UI unverändert. Exakte bestehenden Callback- und Button-Keys erhalten; fehlende Aktionen bleiben unsichtbar.
+- **Geänderte Fachdateien:** `app/lib/ui/fantasy_effect_ward.dart`, `app/test/fantasy_ward_management_large_text_test.dart`; gemeinsame README/CODEX-Notizen ausschließlich angehängt.
+- **Tests:** fünf neue Widgetfälle, 320/360 dp bei 200 % + 220 dp IME; vollständige Labels, physisch sichtbare Schaltflächen, einzeln auslösbare Aktionen, fehlende Verwaltungsrechte, unveränderte JSON-Snapshots, Standardansicht.
+- **GETESTET:** Aktuelle Fachmodule, bestehende Tests und alle offenen fremden PR-Fachdateien auf Überschneidung geprüft; neue Code-/Testdatei auf Branch committet.
+- **NICHT GETESTET:** Finale Dart-Formatierung, Flutter-Analyse und Vollsuite, Android-Debug-/ABI-/Native-Build und reales Android mit TalkBack vor Abschluss der CI.
+- **BLOCKIERT:** Lokale Flutter-/Dart-SDKs fehlen; Freigabe erst mit GitHub-CI und Review. Gemeinsame Dokumentationsnachträge anderer Chats nicht überschreiben.
+- **Migration:** keine; unveränderte Regeln, JSON-/SQLite-Schemata, Speicher- und App-Version.
+- **NÄCHSTER SCHRITT:** Main-Synchronisierung, vollständige CI und ggf. identische Regressionskorrektur auf demselben Draft-PR.
