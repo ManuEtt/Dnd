@@ -176,11 +176,7 @@ void main() {
       contains('NPC-ID: keeper-a'),
     );
     expect(
-      story.MemoryEngine.retrieve(
-        old,
-        'Schlüssel',
-        matchingOnly: true,
-      ),
+      story.MemoryEngine.retrieve(old, 'Schlüssel', matchingOnly: true),
       isEmpty,
     );
   });
