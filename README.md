@@ -1476,3 +1476,25 @@ Die Alpha-Release-Erstellung kontrolliert jetzt zusätzlich zum Dateibesitz die 
 Bei der abschließenden Alpha-Release-Prüfung hat die unveränderte Priorität des Dateibesitzschutzes Vorrang vor der neuen Inhaltsprüfung: Wird eine geöffnete Zieldatei durch eine andere reguläre Datei ersetzt, meldet die Prüfung den **Zielaustausch** und bewahrt den fremden Inhalt. Nur bei unveränderter Dateiidentität folgt die zusätzliche SHA256-Inhaltsprüfung. Damit bleiben ältere Regressionstests und die neue Erkennung stiller In-Place-Manipulation zugleich wirksam.
 
 **Fehlerbehebung:** Commit `52280992156bbb5f92c351497d6ec9e49ccb8310` in [PR #606](https://github.com/ManuEtt/Dnd/pull/606). Der erste vollständige Lauf [#42194379586](https://github.com/ManuEtt/Dnd/actions/runs/42194379586) scheiterte in einem vorhandenen Python-Negativtest ausschließlich an einer anderen Fehlerklasse/Fehlermeldung; die Reihenfolge wurde korrigiert, kein Test entfernt. Eine erneute vollständige CI auf dem finalen Dokumentations-HEAD bleibt erforderlich. Keine Migration und keine Änderungen an Spielständen, JSON, SQLite, Story, Regeln oder Android-Version.
+
+### 2026-11-06 – Vollständige NPC-ID-Prüfung bei expliziter Auswahl
+
+Die explizite Wahl eines bereits gespeicherten NPCs akzeptiert jetzt ausschließlich eine **vollständig übereinstimmende** Kennung aus 1–64 ASCII-Zeichen (`A–Z`, `a–z`, Ziffern, `_` und `-`). Ein regulärer Ausdruck mit `hasMatch` konnte vorher bereits vor einem abschließenden Zeilentrennzeichen passen. So konnten historische IDs wie `mira\n` die Vorprüfung umgehen; die anschließende Story-Übertragung darf sich nicht allein auf einen späteren Schutz verlassen.
+
+**Umsetzung:** `app/lib/story/npc_story_selection.dart` prüft die vollständige gespeicherte Kennung über `stringMatch(id) == id`. Vier neue Regressionstests in `app/test/npc_story_selection_terminal_id_test.dart` schützen reguläre und manipulierte IDs, gleichnamige NPCs, veraltete Entscheidungen, JSON-Altbestände sowie SQLite-Neustart und Replay.
+
+**GitHub:** Branch `fix/chat-b/npc-selection-terminal-newline-id-20261106`, [PR #610](https://github.com/ManuEtt/Dnd/pull/610) (Draft), Code-/Teststand `231b98e1ad68e848674a3a4de87a61fcf5a73972`. Tests lokal nicht ausführbar (keine Dart-/Flutter-Toolchain); GitHub-CI auf dem finalen PR-HEAD separat auswerten. Vorherige PR-CI-Ergebnisse von #602/#605 zählen nicht als Test dieses Pakets.
+
+**Kompatibilität:** Gespeicherte NPC-IDs, Beziehungsnotizen, Story-Inhalte, JSON/SQLite, Regel-/Quest-/HP-Werte und App-/Android-Version bleiben unverändert; keine Migration und kein KI-Provider-Aufruf. Gerätebetrieb und Store-Signierung sind gesondert zu prüfen.
+
+### 2026-11-06 – Präzisierung und zusätzlicher Sitzungsnachweis bei NPC-Auswahl
+
+**Fachliche Präzisierung zum vorherigen Nachtrag:** Der vorhandene Dart-RegExp-Ausdruck mit `^...$` ohne Multiline-Modus weist abschließende Zeilenumbrüche bereits zurück. Der neue Vergleich der vollständigen Match-Zeichenkette ist daher eine **zusätzliche defensive Sicherheitsprüfung**, keine nachgewiesene Fehlerbehebung dieses bereits abgewiesenen Eingabefalls.
+
+**Tatsächliche Fehlerbehebung:** `NpcStorySelection.choose` wies bisher keine leere oder nur aus Leerraum bestehende `campaign.sessionId` zurück. Jetzt kann ein NPC nur ausdrücklich ausgewählt werden, wenn auch eine nichtleere Sitzungs-ID vorliegt. Das verhindert die Erzeugung scheinbar sitzungsgebundener Auswahlen aus unvollständigen In-Memory-Spielständen.
+
+**Regressionen:** `app/test/npc_story_selection_terminal_id_test.dart` enthält jetzt fünf Tests, darunter einen gezielten zuvor fehlschlagenden Negativtest für `sessionId` mit `''`, Leerzeichen sowie Zeilenumbrüchen. Positive Entscheidungen, Legacy-JSON, SQLite-Neustart, Namensgleichheit, Revisionen und unveränderte Regelwerte bleiben abgedeckt.
+
+**GitHub:** [PR #610](https://github.com/ManuEtt/Dnd/pull/610), Branch `fix/chat-b/npc-selection-terminal-newline-id-20261106`. Code-/Teststand `a6d02c839323b383272ba37309ec3912773ca0e7`. Der erste neue CI-Lauf [#42201211687](https://github.com/ManuEtt/Dnd/actions/runs/42201211687) scheiterte ausschließlich an `dart format` der neuen Testdatei; die kompakte Formatierung wurde daraufhin korrigiert, finale CI-Abnahme bleibt offen.
+
+**Kompatibilität:** Keine Schema- oder Versionsänderungen, keine Migration, kein neuer KI-Aufruf, keine Mutation an gespeicherten Charakteren, NPCs, Quests oder Spielständen.
