@@ -1,29 +1,3 @@
-## 06.11.2026 – aktueller Main ohne Regelquellenänderung übernommen
-
-Main `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` (Merge #584, Windows-sichere ZIP-Namen) wurde regulär in den eigenen Perfect-Focus-Branch übernommen. Nur README und zentraler Checkpoint kollidierten; Main-Inhalte vollständig erhalten, eigene README-Nachträge danach angehängt. App-Regel-/Testquellen, Backend, Android und Version sind bytegleich zum vorher vollständig lokal geprüften Head `1bb7c977` (3354 Flutter-, 341 Python-, 79 Backend-Tests, ARM64-Debug und 14 native Fälle bestanden). Die neue Python-Prüfung und der aktuelle kombinierte CI-Head werden erneut abgenommen. Kein Main-Push, kein Force-Push. Die folgenden ursprünglichen Einträge bleiben historische Momentaufnahmen der frühen Basis 0e4474c5.
-
-Zusätzliche APK-Prüfung: vorhandene CI-Alpha enthält keine generierten Button-PNGs, lokales Debug enthält alle 30; Architekturjobs im Workflow erzeugen sie nicht. Eine lokale ARM64-Test-APK im Releasemodus mit den 30 Bildern wird aus identischen App-Quellen gesichert. CI-Paketierung ist ein gesonderter Integrationshinweis; keine Änderungen am CI-Workflow im Regelpaket. Tatsächliche finale Ergebnisse stehen in PR #586 und im externen Importleitfaden.
-
----
-
-## 06.11.2026 – Perfekter Fokus aus konsistenten Mönchsklassen
-
-**Arbeitsbranch:** `fix/chat-a/monk-perfect-focus-profile-20261106`. **Main-Basis:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`, zugehörige Main-CI [42099192485](https://github.com/ManuEtt/Dnd/actions/runs/42099192485) tatsächlich vollständig erfolgreich. **Fachcommit:** `62e4544571f86ac5366b90ce2b91fab698e2eab7`. **PR:** [#586](https://github.com/ManuEtt/Dnd/pull/586), [aktuelle Head-Checks](https://github.com/ManuEtt/Dnd/pull/586/checks). Version **0.8.52+102** unverändert.
-
-**IMPLEMENTIERT:** MonkPerfectFocus.onInitiative prüft vor jeder automatischen Fokusgutschrift bekannte kanonische Klassen, unterschiedliche Mehrklassen und gültige Stufen 1–20. Unbekannte Begleitklassen, doppelte Mönchsaliase und unmögliche Stufensplits erhalten denselben Hero mit recovered=0. Kein nachträgliches Reparieren gespeicherter Figuren. Gültige deutsche/englische Aliase, Mönch 15/Kämpfer 2 in beiden Reihenfolgen und vorhandene Auffüllung auf vier bleiben erhalten. Kein automatischer Unheimlicher Stoffwechsel und keine Heilung. Die veraltete Quellkommentarbehauptung, Stoffwechsel sei nicht implementiert, wurde an die tatsächlich vorhandene separate Integration angepasst.
-
-**GETESTET beim Einfrieren:** 26 neue Domainfälle, sechs echte Controller-/SQLite-Flows und zwei tatsächliche App-UI-Flows sowie 15 bestehende Fachtests. Alle drei Kampfstartwege (Waldschrein, Rabenwacht, bestätigtes KI-Kampfangebot), tatsächlicher Legacy-JSON-Import, Fokusgrenzen, gültige Aliase/Mehrklassen, unveränderte TP/andere Ressourcen, Export/Import, Rekonstruktion, Neustart, requestId-Replay, stale Controller und später SQL-Rollback. Die regulären zwei Initiativewürfe finden weiterhin statt; das Paket blockiert unberechtigte Gutschriften und behauptet keine RNG-freie Kampfabweisung. Bei spätem SQL-Fehler rollt die gespeicherte Transaktion zurück, nicht legitime Würfel; stale/replay verursachen keine zusätzlichen Würfe.
-
-**WEITERE ABNAHME:** Vollständiges `bash scripts/check.sh` läuft auf gleichem Regel-/Testcode. Finale GitHub-CI, lokale Android-/native Prüfung sowie tatsächliche Source-/APK-Artefakte nach Abschluss separat im PR und externen Importleitfaden dokumentieren. Dieser eingefrorene Quellstand beschreibt ausdrücklich den Zeitpunkt vor Gesamtabnahme; keine noch offene Prüfung als Erfolg ausweisen. **NICHT GETESTET:** reales Androidgerät, TalkBack, tatsächliches APK-Upgrade, produktive Signierung. **BLOCKIERT:** keine Implementierungsblockade; Review und koordinierte Main-Integration noch ausstehend. Die bekannte nullable-NPC-whereArgs-Warnung in unverändertem removePendingAction ist kein neuer Fokus-Testfehler.
-
-**UMFANG:** Nur `app/lib/domain/monk_perfect_focus.dart`, drei neue `monk_perfect_focus_profile{,_flow,_ui}_test.dart`, Nachweisdokumentation und vorhandenes Requirement. GameEngine, MonkInitiativeFeatures, öffentliche API, Modelle, Controller und Speicher unverändert. SQLite 3 / äußeres JSON 1 ohne Migration. Alle sieben zuvor offenen PR-Dateilisten geprüft, keine Modulüberschneidung; #579 Sanfter Fall bearbeitet ein anderes spezialisiertes Modul. README gemäß neuer Regel ausschließlich neutral am absoluten Dateiende ergänzt. Fremde Fortschritte bei Integration additiv bewahren. Bardenpaket #576 und frühere Regelpakete sind bereits durch die Integration in Main übernommen; hier keine zweite Implementierung oder Branchlöschung.
-
-**REGELNACHWEIS:** Offizielles SRD 5.2.1 S. 52, Perfect Focus / Monk 15, CC BY 4.0. Tatsächliche Initiative ohne Uncanny Metabolism regeneriert verbrauchte Punkte bei höchstens drei vorhandenen bis auf vier. `CLASS-M-NCH-15-BASE-PERFECT-FOCUS-0` von unverified nach partial mit Code-/Testnachweisen; keine globale SRD-/Charaktererstellungs-Fertigstellung oder erfundenen Entity-Einträge.
-
-**NÄCHSTER KONKRETER SCHRITT:** Nach frischem Main-/PR-Dateiabgleich den expliziten Pfad `MonkInitiativeFeatures.onInitiative(useUncannyMetabolism: true)` auf bekannte, konsistente Klassenberechtigung prüfen. Akzeptanz: ungültige Profile dürfen weder Heilung/Fokus noch einmalige Nutzung/Zusatzwürfel auslösen, gültige Mönchsklassen und Spielerentscheidung bleiben erhalten. Diese zusätzliche Fähigkeit ist nicht durch das aktuelle Paket vollständig abgesichert. Keine automatische Hintergrundentwicklung nach Sitzungsende.
-
----
-
 ## 31.10.2026 – Migration abgenommen, Alpha 0.8.49+99
 
 Gesamtintegration #440 und Herkunftsnachtrag #444 sind regulär integriert.

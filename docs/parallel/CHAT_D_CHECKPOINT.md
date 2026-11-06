@@ -1,3 +1,52 @@
+## 06.11.2026 – Besitznachweis für bereits geöffnete Alpha-Release-Ausgaben
+
+- **Basis-main:** `95c605898f1bcae26e0a23afa55c767ec5b20744` nach vollständig erfolgreicher PR-#599-CI [#42184798098](https://github.com/ManuEtt/Dnd/actions/runs/42184798098) und regulärem Merge. Die separate Main-CI [#42188688824](https://github.com/ManuEtt/Dnd/actions/runs/42188688824) war bei Start noch aktiv.
+- **Branch:** `fix/chat-d/release-target-identity-20261106`; **Code-/Testcommit:** `def20a5d406d5abc66a75543b8e097f60c4b07b1`; **PR:** [#604](https://github.com/ManuEtt/Dnd/pull/604) (Draft bis vollständige CI).
+- **Problem:** Nach erfolgreichem exklusivem Anlegen konnte ein geöffneter APK-/Notiz-/Checksum-Zielpfad während des Schreibens ersetzt werden. Die bisherige Rollback-Liste hielt lediglich Dateinamen und konnte fremde Ersatzdateien nach einem Fehler entfernen. Nachträglich ersetzte APKs konnten sonst in eine spätere Prüfphase gelangen.
+- **IMPLEMENTIERT:** `_published_file_identity`, `_still_owned_file` und `_require_owned_file` verifizieren offene/geschriebene Dateien per `st_dev/st_ino` und `lstat` ohne Symlink-Verfolgung. `_new_release_file` prüft nach Flush und nach Schließen und entfernt bei Fehlern nur eigene Teil-Dateien. `copy_validated_apk` liefert die Identität aus dem geöffneten Ziel-Deskriptor. `prepare_release` bewahrt Herkunft jeder erzeugten Datei im Rollback und verifiziert den Bestand vor/nach finaler ZIP-/APK-Prüfung.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** Vier neue Python-Fälle für spät ersetzte Ziel-APK nach Copy, normale ReleaseNotes nach Öffnung, verlinkte SHA256-Datei nach Öffnung und ersetzte gültige APK nach abgeschlossener ZIP-Validierung. Bestehende Positiv-/Negativ-/Rollback- und Lock-Tests bleiben aktiv; eine bestehende Testinjektion gibt jetzt die geöffnete APK-Identität zurück.
+- **GETESTET:** Ausgangs-PR #599 vollständige GitHub-CI auf SHA `109e949c9a768f3fe9bacb482cfe9ef5ceb23c6f` grün; dieser ältere Erfolg gilt ausdrücklich nicht für den neuen Branch. Aktuelles Main, 22 offene fachfremde PRs, Code und Testquellen abgeglichen; eigener Branch und PR veröffentlicht.
+- **NICHT GETESTET:** Neue Python-Tests sowie vollständiger Backend-/Flutter-/Android-/APK-/Release-CI-Lauf auf finalem Dokumentations-HEAD, echte Geräteinstallation, Upgrade und Signierung. Lokaler GitHub-Checkout wegen DNS-Auflösung nicht verfügbar.
+- **BLOCKIERT:** Abnahme der neuen PR-CI und abschließende Main-/PR-Konfliktprüfung. Bei nicht vertrauenswürdiger, fremd beschreibbarer Release-Ausgabe ist auch eine finale Inode-Prüfung keine vollständige Race-free-Garantie gegen einen aktiven Gegner nach dem letzten Check.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge des neuen PRs und keine Datenmigration. Kein weiterer Eingriff in Backup-/JSON-/SQLite-/Story-/Rules-/Flutter-Logik; App-Version weiterhin `0.8.52+102`.
+- **NÄCHSTER SCHRITT:** Finalen Android-Alpha-Workflow zu PR #604 mit Python, Backend, Dart/Flutter, Debug-APK, nativen Dateitests, drei ABI-APKs und vollständigem Release gegen exakten Commit abnehmen und bei Fehlern im selben Branch reparieren; erst anschließend Integration prüfen.
+
+---
+
+## 06.11.2026 – Atomare Alpha-Release-Zieldateien bei späten Kollisionen
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; 15 zum Start offene fachfremde PRs mit sämtlichen Dateilisten geprüft.
+- **Branch:** `fix/chat-d/alpha-release-exclusive-output-20261106`; **Code-/Teststand:** `e4a901a9ad5efb4c065ce7c9291bccd309d27497`; **PR:** [#599](https://github.com/ManuEtt/Dnd/pull/599) (Draft bis vollständiger CI).
+- **Ausgangsproblem:** Zwischen anfänglicher Versions-Kollisionsprüfung und tatsächlichem Schreiben der APK-/ReleaseNotes-/SHA256-Ausgaben konnten neue reguläre Dateien oder Symlinks auftreten. Die bisherigen schreibenden Opens konnten diese Dateien oder externe Linkziele überschreiben; der Fehlerpfad konnte auch unbeteiligte Dateinamen löschen.
+- **IMPLEMENTIERT:** `_new_release_file` nutzt exklusive Dateierstellung (`x`/`xb`) ohne Überschreiben von vorhandenen Dateien/Symlinks. Nach erfolgreichen Schritten erfasste eigene Dateien werden beim Abbruch rückwärts entfernt; partiell geschriebene APKs werden im exklusiven Writer aufgeräumt. Bestehende Quell-/APK-Validierung, Version-Lock, Dateinamen, SHA256-Format und erfolgreiche Veröffentlichung bleiben bestehen.
+- **Geänderte Fachdateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`. Projekt-Nachtrag ausschließlich am README-Dateiende sowie dieser und zentraler Checkpoint.
+- **GETESTET:** GitHub-Quellvergleich, Main-HEAD-Abgleich, offene PRs und deren veränderte Fachdateien geprüft; eigenständiger Branch, Code-/Testcommits und Draft-PR tatsächlich auf GitHub erstellt. **Noch kein neu bestandener Testlauf auf dem finalen PR-HEAD nachgewiesen.**
+- **NICHT GETESTET:** Python-Regressionen und vollständige Python-/Backend-/Flutter-/Android-/APK-/Release-Pipeline auf endgültigem Dokumentationscommit, reale Geräte-/Upgradeprüfung. Lokaler Repository-Checkout ist wegen fehlender DNS-Auflösung zu GitHub nicht ausführbar.
+- **BLOCKIERT:** Vollständige GitHub-Actions-Abnahme und abschließender kombinierter PR-/Main-Konfliktabgleich.
+- **NOCH NICHT IMPLEMENTIERT:** Kein automatischer Merge, keine produktive App-Signierung und keine reale Geräteabnahme. Es werden keine zusätzlichen Funktionen behauptet.
+- **Kompatibilität/Migration:** Keine Migration; SQLite-Schema 3, äußeres JSON-Format 1, Spielstanddaten und Backups unverändert. Keine Änderung der App-Version 0.8.52+102, von Story/Regeln/UI oder den Android-Build-Inputs.
+- **Nächster Schritt:** Vollständigen finalen GitHub-Actions-Lauf für PR #599 einschließlich Python/Backend/Flutter, Debug- und drei ABI-APKs, Release-Prüfung abnehmen; bei Fehlern denselben Branch korrigieren, vor eventuellem Merge Main/PRs erneut abgleichen.
+
+---
+
+## 06.11.2026 – Checkpoint-Manifest, Patch, Archive und Prüfsummen: portable Namen
+
+- **Ausgangs-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` nach regulärer Integration von PR #584 mit grünem PR-Lauf [#42108899271](https://github.com/ManuEtt/Dnd/actions/runs/42108899271); Main-CI separat.
+- **Branch:** `fix/chat-d/checkpoint-portable-filenames-20261106`; **Code-/Testcommit:** `3fc10f558b165b39f5ac2f28e568d911391738da`; **PR:** [#587](https://github.com/ManuEtt/Dnd/pull/587), Draft bis vollständiger CI-Nachweis.
+- **Problem:** Checkpoint-`safe_name` akzeptierte Windows-illegale Dateinamen (`scene?.json`), Gerätebasen (`CON.txt`), abschließende Punkte/Leerzeichen, obwohl der Quell-ZIP-Exporter sie schon verwehrt. Historische Sicherungen mit solchen Namen konnten die Prüfsummenliste beeinflussen.
+- **Implementiert:** In `scripts/create_checkpoint.py` werden die bestehenden `WINDOWS_INVALID_CHARACTERS` und `WINDOWS_RESERVED_STEMS` importiert und alle Pfadkomponenten beim Manifest/Archiv/Patch/Checksum-Scan vor Inhaltssichtung geprüft. Vorhandene Artefakte werden nicht migriert oder überschrieben.
+- **Akzeptanz:** Vier neue Python-Regressionstestmethoden: ungültige und gültige Namen, blockierter Quellcheckpoint vor Publikation, bösartige Archivnamen vor Datenlesen und Bewahrung von `LATEST` und `SHA256SUMS.txt` bei gefährlichem historischem Namen.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktkontrolle:** Aktuelles Main und offene PRs #579, #580, #581, #582, #583, #585, #586 geprüft; keine Fachdateiüberschneidung. README nur am absoluten Dateiende, mit fachlichem Titel ohne Chat-Kennung; gemeinsame Checkpoint-Fortschritte bleiben additiv.
+- **GETESTET:** PR #584 vollständige [CI #42108899271](https://github.com/ManuEtt/Dnd/actions/runs/42108899271) bestanden; Branch/PR/Testcode für dieses neue Paket committed und Dateilisten geprüft. **Dieser ältere CI-Erfolg beweist keine neue Änderung.**
+- **NICHT GETESTET:** finale vollständige GitHub-CI auf neuem Dokumentations-HEAD, lokaler Kompletttest (Checkout/DNS), echte Android-Geräteabnahme, bestehende Backups auf anderen Dateisystemen.
+- **BLOCKIERT:** Finale CI zur Mergefreigabe; keine produktive Android-Signierung.
+- **Migrationen:** keine. SQLite 3, JSON 1, Kampagnen-/Spielstände, Backups, App-/Buildversion, SRD und Story unverändert.
+- **Nächster Schritt:** finalen Actions-Lauf auf Python-, Backend-, Flutter-, Debug-APK-, allen ABI-APK- und Alpha-Release-Gates vollständig prüfen und nach neuer Main-/PR-Konfliktprüfung integrieren.
+
+---
+
 ## 05.11.2026 – ZIP-Pfadportabilität in Alpha-APK und Gradle-Wrapper (PR #584)
 
 - **Ausgangs-Main-SHA:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`. Bestehende Main-CI auf diesem SHA erfolgreich (kein Beleg für den neuen Branch).

@@ -1,3 +1,11 @@
+## 06.11.2026 – konfliktarmer Regel-PR, gemeinsame Statusnachträge separat
+
+Aktuelle integrierte Main-Basis: `2a4fab5a56127d866dd2a8933836fd1136d772b3`. README, zentraler und persönlicher Checkpoint, Entwicklungsstatus und Changelog entsprechen in diesem Codebranch unverändert Main. Die eigenen Nachträge sind vollständig im separaten [Dokumentations-PR #607](https://github.com/ManuEtt/Dnd/pull/607) erhalten; das folgt der Konfliktregel in Abschnitt 9 des Parallel-Masterprompts und verhindert wiederkehrende gemeinsame README-Konflikte im Regel-PR #586. Dieser exklusive Fachnachweis bleibt beim Code, ebenso der maschinenlesbare Requirementnachweis und alle Tests.
+
+App-/Backendquellen sind seit Codeabnahme `1bb7c977` unverändert; lokale 3354 Flutter-/79 Backend-Tests, 14 native Tests, ARM64-Debug und ARM64-Alpha mit allen 30 generierten Button-PNGs sind belegt. Neue Main-Paketierungsskripte werden separat erneut geprüft, die finale CI läuft auf dem neuen Head. Kein ungeprüfter Main-Merge behauptet. Der vorherige kombinierte Head `9eb6de6e` hat bereits alle sechs Jobs in CI 42162661840 bestanden. Die folgenden Abschnitte bewahren frühere eingefrorene Momentaufnahmen.
+
+---
+
 ## 06.11.2026 – aktueller Main ohne Regelquellenänderung übernommen
 
 Main `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` (Merge #584, Windows-sichere ZIP-Namen) wurde regulär in den eigenen Perfect-Focus-Branch übernommen. Nur README und zentraler Checkpoint kollidierten; Main-Inhalte vollständig erhalten, eigene README-Nachträge danach angehängt. App-Regel-/Testquellen, Backend, Android und Version sind bytegleich zum vorher vollständig lokal geprüften Head `1bb7c977` (3354 Flutter-, 341 Python-, 79 Backend-Tests, ARM64-Debug und 14 native Fälle bestanden). Die neue Python-Prüfung und der aktuelle kombinierte CI-Head werden erneut abgenommen. Kein Main-Push, kein Force-Push. Die folgenden ursprünglichen Einträge bleiben historische Momentaufnahmen der frühen Basis 0e4474c5.
