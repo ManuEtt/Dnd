@@ -1,3 +1,18 @@
+## 06.11.2026 – Wiederaufnahmetexte von historischen Unicode-Formatmarken bereinigen (PR #598)
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`. **Branch:** `feat/chat-b/resume-legacy-format-marks-20261106`. **PR:** [#598](https://github.com/ManuEtt/Dnd/pull/598) (Draft bis finale CI). **Fach-/Testcommit:** `49be541a4d2a841d09d182c424f202b8440c2166`; Dokumentationscommit und finalen PR-HEAD gesondert prüfen.
+- **Ausgangsproblem:** Der schreibgeschützte `CampaignResumeReader` ließ U+00AD, U+034F, U+180E und U+206A–U+206F in historischen Szenen, Recaps, Fakten und offenen Handlungsnotizen ungefiltert.
+- **IMPLEMENTIERT:** Die reine Anzeigeprojektion ersetzt diese Formatmarken durch Leerraum und fasst Leerraum zusammen; gespeicherte Unicode-Rohdaten bleiben unverändert, normale Unicode-Buchstaben und Emoji erlaubt, Revisions-/Stale-Stamp bleibt an Rohdaten gebunden.
+- **Dateien:** `app/lib/story/campaign_resume_context.dart`, `app/test/campaign_resume_legacy_format_marks_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** Main-/PR-/Fachdatei-Inspektion und Branchvergleich; keine Fachpfadüberschneidung mit den offenen Story-PRs #582, #590, #593.
+- **NICHT GETESTET:** Drei neu ergänzte Flutter-Regressionen, gesamte lokale Flutter-/Dart-Suite, finales PR-CI/Android-APK, reales Gerät und Produktiv-KI; SDK und vollständiger Checkout in der aktuellen Umgebung fehlen.
+- **BLOCKIERT:** Finale CI-Abnahme und koordinierte Integration der gleichzeitig berührten README-/zentralen Checkpoint-Nachträge.
+- **Migrationen:** Keine; SQLite-/JSON-Format, Regelzustand, bestätigte Ereignisse, Replay und App-Version unverändert.
+- **NOCH NICHT IMPLEMENTIERT:** Erweiterte fachliche Abnahme der kombinierten offenen Story-/Regel-PRs.
+- **Nächster Schritt:** GitHub-CI auf finalem PR-HEAD inklusive Format-/Flutter-/Android-Gates prüfen; bei Bedarf gezielt im selben Branch reparieren, anschließend die Dokumentationsnachträge verlustfrei integrieren.
+
+---
+
 ## 06.11.2026 – Checkpoint-Dateinamen nach zentraler Quell-ZIP-Policy validieren
 
 - **Basis-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` (PR #584 integriert; Main-CI auf diesem Commit separat abnehmen).

@@ -185,8 +185,8 @@ String _excerpt(String original, int maxUnits) {
   final cleaned = original
       .replaceAll(
         RegExp(
-          r'[\x00-\x1f\x7f-\x9f\u061c\u200b-\u200f'
-          r'\u2028-\u202e\u2060-\u2069\ufeff]',
+          r'[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e'
+          r'\u200b-\u200f\u2028-\u202e\u2060-\u206f\ufeff]',
         ),
         ' ',
       )

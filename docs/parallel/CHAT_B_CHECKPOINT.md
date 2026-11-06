@@ -1,3 +1,18 @@
+## 06.11.2026 – Ältere Unicode-Formatmarken aus Wiederaufnahmekontext entfernen
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; **Branch:** `feat/chat-b/resume-legacy-format-marks-20261106`; **PR:** [#598](https://github.com/ManuEtt/Dnd/pull/598) (Draft).
+- **Fach-/Testcommit:** `49be541a4d2a841d09d182c424f202b8440c2166`, Dokumentations-/finalen Head nach Veröffentlichung prüfen.
+- **Problem:** Im Kampagnen-Wiedereinstieg wurden alte, unsichtbare Unicode-Formatmarken U+00AD, U+034F, U+180E und U+206A–U+206F in gesicherten Texten noch angezeigt.
+- **Implementiert:** `CampaignResumeReader.read` neutralisiert diese Formatmarken ausschließlich in seinen Auszügen, nicht in JSON/SQLite oder bestätigtem Zustand. Unveränderlicher `requireCurrent`-Rohstempel und vorhandene Grenzen bleiben gültig.
+- **Geänderte Dateien:** `app/lib/story/campaign_resume_context.dart`, neuer Test `app/test/campaign_resume_legacy_format_marks_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** GitHub-Main, 16 offene PRs, geänderte Story-Fachdateien und Branchvergleich geprüft. Keine fachliche Überschneidung mit #582, #590, #593.
+- **NICHT GETESTET:** Drei neue Flutter-Tests sind geschrieben, aber noch nicht ausgeführt; keine lokale Dart-/Flutter-Toolchain, vollständige CI des finalen Heads ausstehend; kein Android-Gerät und keine Produktiv-KI.
+- **BLOCKIERT:** Flutter-/Dart-/Android-Abnahme via GitHub Actions; fremde additive README-/Checkpoint-Nachträge müssen vor Merge verlustfrei konsolidiert werden.
+- **Migration:** Keine; IDs, gespeicherte Kampagne, SQLite 3/JSON 1, Regeln, Replay und App-Version bleiben gleich.
+- **Nächster konkreter Schritt:** CI/Format/Android-Build auf dem finalen PR-Head abnehmen und bei einem Fehlbefund exakt diesen Branch korrigieren.
+
+---
+
 ## Konsolidierung 04.11.2026 – PR #536
 
 Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.

@@ -1446,3 +1446,11 @@ Beim Erstellen von vollständigen Quellcode-Checkpoints gelten für Manifest- un
 **GitHub:** Branch `fix/chat-d/checkpoint-portable-filenames-20261106`, [PR #587](https://github.com/ManuEtt/Dnd/pull/587). Die vollständige CI des finalen Commits steht noch aus; ein lokaler Kompletttest wurde nicht behauptet.
 
 **Kompatibilität:** Keine Migration, keine Änderungen an SQLite-/JSON-Spielständen, tatsächlichen Backup-Dateiinhalten, Flutter- oder Android-Version, Regel- und Storylogik. Reale Geräteabnahme und produktive Signierung bleiben separat offen.
+
+### 2026-11-06 – Wiederaufnahmekontext gegen ältere Unicode-Formatmarken abgesichert
+
+- **Problem:** In gespeicherten Szenen, Rückblicken, Fakten und offenen Handlungsnotizen konnten die Legacy-Formatmarken U+00AD, U+034F, U+180E sowie U+206A–U+206F die schreibgeschützte Wiederaufnahmeprojektion erreichen.
+- **Lösung:** `CampaignResumeReader.read` neutralisiert diese Zeichen nun in der Anzeige, bewahrt dabei normalen Unicode und prüft unverändert den vollständigen Rohquellstand auf veraltete Revisionen. Weder erzählte Behauptungen noch die Anzeige ändern bestätigte Regeln.
+- **Code und Nachweise:** `app/lib/story/campaign_resume_context.dart`, `app/test/campaign_resume_legacy_format_marks_test.dart`, [PR #598](https://github.com/ManuEtt/Dnd/pull/598), Branch `feat/chat-b/resume-legacy-format-marks-20261106`, Fach-/Teststand `49be541a4d2a841d09d182c424f202b8440c2166`.
+- **Tests:** Drei neue Flutter-Regressionen zu veralteten Formatmarken, unverändertem Unicode/Quellstempel und SQLite-Neustart ergänzt; bei Veröffentlichung dieses Eintrags noch nicht lokal ausgeführt und finale GitHub-CI noch nicht bestätigt.
+- **Kompatibilität:** Keine JSON-/SQLite-Migration, keine Versionsanhebung, keine Änderung persistierter Rohtexte, Helden-, Quest- oder Kampfdaten. Reales Android-Gerät und Produktiv-KI nicht getestet.
