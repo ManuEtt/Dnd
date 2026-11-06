@@ -380,6 +380,10 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
         with zipfile.ZipFile(source) as archive:
             if archive.testzip() is not None:
                 raise ValueError('Das Quellarchiv ist beschädigt.')
+        # Keep the established replacement error distinct from an in-place
+        # content change: verify file ownership before reading final hashes.
+        for generated_path, identity in created.items():
+            _require_owned_file(generated_path, identity)
         # A valid ZIP and an unchanged inode do not prove unchanged bytes.
         # Check each published artifact against the digest recorded before
         # final validation; also defend the manifests against in-place edits.
