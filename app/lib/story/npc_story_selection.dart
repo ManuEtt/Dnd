@@ -6,8 +6,8 @@ import '../domain/models.dart';
 /// The name is for display only: only [npcId] identifies the selected NPC.
 /// This object authorizes read-only narrative context, never rule changes.
 class NpcStorySelection {
-  // RegExp.hasMatch accepts a $ anchor immediately before a final newline.
-  // Match the entire stored identity, including every trailing code unit.
+  // Check the whole identifier instead of merely finding a matching span.
+  // This also remains safe if the expression's options change later.
   static final RegExp _safeNpcId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
 
   const NpcStorySelection._({
@@ -32,6 +32,7 @@ class NpcStorySelection {
   /// Called after a player actively selects one saved NPC identity.
   static NpcStorySelection choose(Campaign campaign, String npcId) {
     if (campaign.id.trim().isEmpty ||
+        campaign.sessionId.trim().isEmpty ||
         campaign.revision < 0 ||
         campaign.revision > 2147483647 ||
         _safeNpcId.stringMatch(npcId) != npcId) {
