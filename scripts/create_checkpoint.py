@@ -29,7 +29,8 @@ import tempfile
 import unicodedata
 import zipfile
 
-from package_project import (REQUIRED_FILES, ROOT, create_archive, include,
+from package_project import (REQUIRED_FILES, ROOT, WINDOWS_INVALID_CHARACTERS,
+                             WINDOWS_RESERVED_STEMS, create_archive, include,
                              read_verified_source, source_paths)
 from prepare_alpha_release import read_version, sha256
 
@@ -52,13 +53,20 @@ def git(root: Path, *args: str, env: dict | None = None,
 
 
 def safe_name(name: str) -> bool:
-    path = PurePosixPath(name)
-    return (bool(name) and not path.is_absolute() and '\\' not in name
-            and all(part not in {'', '.', '..'} for part in name.split('/'))
-            and not any(unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
-                        for char in name)
-            and not re.match(r'^[A-Za-z]:', name))
+    """Use the same Windows-portable path policy as the source ZIP exporter.
 
+    Reject ambiguous names in manifests, patches, historical checksum entries
+    and archive validation before reading or publishing checkpoint content.
+    """
+    path = PurePosixPath(name)
+    return (bool(name) and not path.is_absolute()
+            and not re.match(r'^[A-Za-z]:', name)
+            and all(part not in {'', '.', '..'} and not part.endswith((' ', '.'))
+                    and part.split('.', 1)[0].upper() not in WINDOWS_RESERVED_STEMS
+                    for part in name.split('/'))
+            and not any(char in WINDOWS_INVALID_CHARACTERS
+                        or unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
+                        for char in name))
 
 def previous_checkpoint_files(output_dir: Path) -> dict[str, tuple[Path, os.stat_result]]:
     """Select only safe, regular historical artifacts for the checksum ledger.
