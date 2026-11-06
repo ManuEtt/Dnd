@@ -7,6 +7,10 @@ import '../domain/models.dart';
 class NpcNarratorMemory {
   const NpcNarratorMemory._();
 
+  // The confirmed NPC resume selector uses the same stored-ID policy.
+  // A duplicate or non-canonical identity must never authorize a note.
+  static final RegExp _safeId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
+
   /// Keep NPC history relevant to the player's current action ahead of
   /// unrelated general memories, without exceeding the existing wire limits.
   static List<String> merge(
@@ -33,7 +37,7 @@ class NpcNarratorMemory {
 
     final mentioned = <String, WorldNpc>{};
     for (final npc in campaign.npcs) {
-      if (npc.id.isNotEmpty &&
+      if (_safeId.hasMatch(npc.id) &&
           nameCounts[_normalize(npc.name)] == 1 &&
           _mentions(action, npc.name)) {
         // Ambiguous repeated IDs cannot authorize NPC-specific memories.
@@ -42,11 +46,22 @@ class NpcNarratorMemory {
         }
       }
     }
+    // A legacy in-memory snapshot may have two contradictory notes under
+    // one ID. Count all IDs before selecting, including notes for other NPCs.
+    final noteIdCounts = <String, int>{};
+    for (final note in campaign.npcRelationshipNotes) {
+      noteIdCounts[note.id] = (noteIdCounts[note.id] ?? 0) + 1;
+    }
     final relevant = <({NpcRelationshipNote note, WorldNpc npc, int order})>[];
     for (var index = 0; index < campaign.npcRelationshipNotes.length; index++) {
       final note = campaign.npcRelationshipNotes[index];
       final npc = mentioned[note.npcId];
-      if (npc == null || note.note.trim().isEmpty) continue;
+      if (npc == null ||
+          !_safeId.hasMatch(note.id) ||
+          noteIdCounts[note.id] != 1 ||
+          note.note.trim().isEmpty) {
+        continue;
+      }
       relevant.add((note: note, npc: npc, order: index));
     }
     relevant.sort((a, b) {
