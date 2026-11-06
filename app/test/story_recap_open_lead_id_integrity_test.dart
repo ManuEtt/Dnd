@@ -188,10 +188,7 @@ void main() {
     expect(leads, contains('Zweiter: Der zweite Hinweis.'));
     expect(leads, isNot(contains('Zu lange ID')));
     expect(leads, isNot(contains('Erster')));
-    expect(
-      CampaignResumeReader.read(campaign).openLeads,
-      hasLength(3),
-    );
+    expect(CampaignResumeReader.read(campaign).openLeads, hasLength(3));
     expect(summary.length, lessThanOrEqualTo(2400));
   });
 
