@@ -92,7 +92,10 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          dart format lib test
+          git diff -- test/srd_manual_turn_queue_test.dart
+          exit 1  # temporary formatter diagnostic; restore strict gate immediately
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
