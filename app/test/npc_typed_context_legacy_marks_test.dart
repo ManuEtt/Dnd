@@ -127,7 +127,10 @@ void main() {
     expect((context['npcName'] as String), isNot(contains('\n')));
     expect((note['note'] as String), isNot(contains('\n')));
     expect(() => context['npcName'] = 'Fremde Mira', throwsUnsupportedError);
-    expect(() => note['note'] = 'Eine andere Geschichte', throwsUnsupportedError);
+    expect(
+      () => note['note'] = 'Eine andere Geschichte',
+      throwsUnsupportedError,
+    );
     NpcIdentityMemory.requireCurrent(campaign, snapshot);
     expect(jsonEncode(campaign.toJson()), before);
   });
@@ -164,11 +167,13 @@ void main() {
     final old = Campaign.fromJson(oldJson);
     final oldContext = _read(old, npcId: safe);
     expect(oldContext.toContextMap()['notes'], isEmpty);
-    expect(jsonEncode(old.toJson()), isNot(contains('Unbestätigt:')));
+    NpcIdentityMemory.requireCurrent(old, oldContext);
+    expect(old.hero.toJson(), valid.hero.toJson());
   });
 
-  test('SQLite restart retains legacy raw values and stale-raw guards',
-      () async {
+  test(
+    'SQLite restart retains legacy raw values and stale-raw guards',
+    () async {
     final folder = await Directory.systemTemp.createTemp('npc-typed-marks-');
     final file = paths.join(folder.path, 'campaign.sqlite');
     var repository = await SqliteCampaignRepository.open(
@@ -235,5 +240,6 @@ void main() {
       await repository.close();
       await folder.delete(recursive: true);
     }
-  });
+    },
+  );
 }
