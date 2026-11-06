@@ -62,8 +62,10 @@ void main() {
         final search = find.byKey(
           const ValueKey('equipment-catalog-search'),
         );
-        expect(tester.widget<TextField>(search).textInputAction,
-            TextInputAction.search);
+        expect(
+          tester.widget<TextField>(search).textInputAction,
+          TextInputAction.search,
+        );
 
         await tester.enterText(search, 'Langschwert');
         await tester.pumpAndSettle();
@@ -81,8 +83,10 @@ void main() {
         final info = find.byTooltip('Werte für Langschwert anzeigen');
         expect(add, findsOneWidget);
         expect(info, findsOneWidget);
-        expect(find.bySemanticsLabel('Langschwert hinzufügen'),
-            findsOneWidget);
+        expect(
+          find.bySemanticsLabel('Langschwert hinzufügen'),
+          findsOneWidget,
+        );
         await tester.ensureVisible(add);
         await tester.pumpAndSettle();
         expect(add.hitTestable(), findsOneWidget);
