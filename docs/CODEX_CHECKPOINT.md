@@ -2132,3 +2132,18 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 06.11.2026 – Ungesicherte NPC-Beziehungsnotizen beim Figurenwechsel zurücksetzen
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; App-Version `0.8.52+102`.
+- **Branch:** `feat/chat-c/npc-relationship-note-reset-20261106`; **Fach-/Test-Commit:** `bc9fe9f24554980e180cfa5c3057b80331237f8d`; **Draft-PR:** [#596](https://github.com/ManuEtt/Dnd/pull/596). Endgültigen Dokumentations-HEAD gesondert prüfen.
+- **IMPLEMENTIERT:** Android-/Flutter-Dialog verwirft nur den nicht bestätigten Notizentwurf bei Wechsel der NPC-ID; das bisherige FormField wird durch einen NPC-spezifischen Key zurückgesetzt.
+- **Dateien:** `app/lib/ui/campaign_memory_panel.dart`, `app/test/campaign_memory_npc_switch_draft_test.dart`, `README.md`, dieses Dokument und `docs/parallel/CHAT_C_CHECKPOINT.md`.
+- **Regressionen ergänzt:** Wechsel A→B verhindert fälschliche Bestätigung der alten Notiz, bewusste neue Notiz wird dem Ziel-NPC zugeordnet, Wechsel A→B→A und Abbrechen ohne gespeicherte Nebenwirkung, bestehender Snapshot bleibt unverändert.
+- **GETESTET:** aktueller main-HEAD und 15 offene PRs samt Dateilisten auf Konflikte geprüft; eigener GitHub-Branch, Quellcode, Tests und PR gesichert. Der vorherige [Main-Workflow #42168660349](https://github.com/ManuEtt/Dnd/actions/runs/42168660349) war erfolgreich, beweist aber die neue Änderung nicht.
+- **NICHT GETESTET:** lokale Flutter-/Dart-Ausführung mangels SDK; Python-, Backend-, Flutter- und Android-CI auf dem finalen PR-SHA; reales TalkBack-/IME-Gerät; Upgrade und Signierung.
+- **BLOCKIERT:** Draft bis finaler CI-Abnahme, gemeinsame README-/Checkpoint-Nachträge müssen vor Integration additiv konsolidiert werden.
+- **Migration:** Keine Änderung an Spielständen, JSON, SQLite, Domain-/Story-Regeln, Controller, Version oder Berechtigungen.
+- **NÄCHSTER SCHRITT:** GitHub-Actions auf dem finalen PR-HEAD vollständig prüfen und eventuelle Format-/Testfehler im selben Branch beheben; danach echte Bedienprüfung bei 320 dp mit 200 % Schrift und IME.
+
+---
