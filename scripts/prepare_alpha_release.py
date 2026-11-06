@@ -302,6 +302,11 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     if (checked_source is None
             or _source_identity(source_apk.stat()) != _source_identity(checked_source)):
         raise ValueError('Die ARM64-APK-Quelle wurde während der Prüfung verändert.')
+    # Keep a content digest of the already validated source. Metadata alone
+    # cannot detect an in-place rewrite that restores size and timestamps.
+    validated_apk_digest = sha256(source_apk)
+    if _source_identity(source_apk.stat()) != _source_identity(checked_source):
+        raise ValueError('Die ARM64-APK-Quelle wurde während der Prüfung verändert.')
     stem = f'Wuerfelraunen_v{app_version}_{build}'
     source = output / f'{stem}_Source.zip'
     target_apk = output / f'{stem}_arm64.apk'
@@ -329,7 +334,7 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     # must not delete another process's file after a late replacement.
     created: dict[Path, tuple[int, int]] = {}
     try:
-        create_archive(root, source, layout='root')
+        _, source_digest = create_archive(root, source, layout='root')
         for generated_path in (source, source_checksum):
             created[generated_path] = _published_file_identity(generated_path.lstat())
         # Recheck after potentially long source ZIP creation as well.
@@ -352,17 +357,37 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
                 '- Eine Veröffentlichung bedeutet nur, dass die im zugehörigen GitHub-Job '
                 'ausgeführten Tests erfolgreich waren; reale Gerätetests stehen separat an.\n',
             )
+        # Use the immutable source checksums rather than trusting a changed
+        # output path while constructing the published checksum manifest.
+        expected_hashes = {
+            source: source_digest,
+            target_apk: validated_apk_digest,
+            notes: sha256(notes),
+        }
+        if (sha256(source) != source_digest
+                or sha256(target_apk) != validated_apk_digest):
+            raise ValueError('Die Alpha-Release-Inhalte wurden beim Erstellen verändert.')
+        checksum_text = ''.join(
+            f'{digest}  {path.name}\n' for path, digest in expected_hashes.items()
+        )
         with _new_release_file(sums) as checksum_stream:
             created[sums] = _published_file_identity(os.fstat(checksum_stream.fileno()))
-            checksum_stream.write(''.join(
-                f'{sha256(path)}  {path.name}\n' for path in (source, target_apk, notes)
-            ))
+            checksum_stream.write(checksum_text)
         for generated_path, identity in created.items():
             _require_owned_file(generated_path, identity)
         validate_arm64_apk(target_apk)
         with zipfile.ZipFile(source) as archive:
             if archive.testzip() is not None:
                 raise ValueError('Das Quellarchiv ist beschädigt.')
+        # A valid ZIP and an unchanged inode do not prove unchanged bytes.
+        # Check each published artifact against the digest recorded before
+        # final validation; also defend the manifests against in-place edits.
+        if any(sha256(path) != digest for path, digest in expected_hashes.items()):
+            raise ValueError('Die Alpha-Release-Inhalte wurden nach der Prüfsumme verändert.')
+        if (sums.read_text(encoding='utf-8') != checksum_text
+                or source_checksum.read_text(encoding='utf-8')
+                != f'{source_digest}  {source.name}\n'):
+            raise ValueError('Die Alpha-Release-Prüfsummen wurden verändert.')
         for generated_path, identity in created.items():
             _require_owned_file(generated_path, identity)
     except BaseException:
