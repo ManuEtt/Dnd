@@ -1,3 +1,9 @@
+## 2026-11-06 – Klassenberechtigung für Perfekten Fokus
+
+- Automatische Fokusgutschrift bei Initiative nur aus bekannten, unterschiedlichen Klassen mit gültigen Stufen; widersprüchliche Altprofile bleiben unverändert.
+- 34 neue Domain-/SQLite-/UI-Fälle sowie 15 bestehende Fachtests gezielt bestanden; TP, anderer Verbrauch und optionaler Stoffwechsel bleiben unverändert.
+- Aktuelle vollständige Abnahme/CI siehe PR #586. App 0.8.52+102, SQLite 3 / JSON 1 ohne Migration. SRD 5.2.1 S. 52, CC BY 4.0; Requirement konservativ partial.
+
 ## 31.10.2026 – Migration abgenommen, Alpha 0.8.49+99
 
 Gesamtintegration #440 und Herkunftsnachtrag #444 sind regulär integriert.

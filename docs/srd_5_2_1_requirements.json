@@ -2811,12 +2811,22 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#m-nch_15_base_perfect-focus_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/monk_perfect_focus_test.dart",
+        "app/test/monk_perfect_focus_profile_test.dart",
+        "app/test/monk_perfect_focus_profile_flow_test.dart",
+        "app/test/monk_perfect_focus_profile_ui_test.dart",
+        "app/test/monk_uncanny_metabolism_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/monk_perfect_focus.dart",
+        "app/lib/domain/monk_initiative_features.dart",
+        "app/lib/domain/class_resource_rules.dart",
+        "app/lib/domain/game_engine.dart"
+      ],
+      "note": "SRD 5.2.1 S.52 CC BY 4.0: Mönch15 regeneriert bei tatsächlicher Initiative ohne gewählten Uncanny Metabolism verbrauchten Fokus bei höchstens3verfügbaren bis auf4. Bekannte unterschiedliche Klassen und konsistente Stufen vorausgesetzt; ungültige Altprofile erhalten denselben Hero/0Gutschrift. 26neue Domain-,6echte SQLite- und2AppUI-Fälle plus15Bestandsfälle gezielt bestanden: dreiKampfstartpfade,Aliase/Mehrklassen,Grenzen,unveränderteTP/andereRessourcen,Export/Import/Neustart/Replay,staleRevision undspäterSQLRollback. Reguläre Initiativewürfe bleiben; keine RNG-freie Kampfabweisung. Finale Gesamt-/Android-Abnahme im PR586; Geräteabnahme sowie die Profilberechtigung des expliziten Uncanny-Pfads separat offen, deshalb partial."
     },
     {
       "id": "CLASS-M-NCH-16-BASE-ABILITY-SCORE-IMPROVEMENT-0",
