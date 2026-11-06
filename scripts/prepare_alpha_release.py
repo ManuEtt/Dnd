@@ -302,11 +302,6 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     if (checked_source is None
             or _source_identity(source_apk.stat()) != _source_identity(checked_source)):
         raise ValueError('Die ARM64-APK-Quelle wurde während der Prüfung verändert.')
-    # Keep a content digest of the already validated source. Metadata alone
-    # cannot detect an in-place rewrite that restores size and timestamps.
-    validated_apk_digest = sha256(source_apk)
-    if _source_identity(source_apk.stat()) != _source_identity(checked_source):
-        raise ValueError('Die ARM64-APK-Quelle wurde während der Prüfung verändert.')
     stem = f'Wuerfelraunen_v{app_version}_{build}'
     source = output / f'{stem}_Source.zip'
     target_apk = output / f'{stem}_arm64.apk'
@@ -334,6 +329,12 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     # must not delete another process's file after a late replacement.
     created: dict[Path, tuple[int, int]] = {}
     try:
+        # Hash after claiming the release lock so interruption also follows
+        # the ordinary release cleanup path. Keep the validated source digest
+        # independently of the subsequently copied target.
+        validated_apk_digest = sha256(source_apk)
+        if _source_identity(source_apk.stat()) != _source_identity(checked_source):
+            raise ValueError('Die ARM64-APK-Quelle wurde während der Prüfung verändert.')
         _, source_digest = create_archive(root, source, layout='root')
         for generated_path in (source, source_checksum):
             created[generated_path] = _published_file_identity(generated_path.lstat())
