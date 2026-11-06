@@ -1486,3 +1486,15 @@ Die explizite Wahl eines bereits gespeicherten NPCs akzeptiert jetzt ausschließ
 **GitHub:** Branch `fix/chat-b/npc-selection-terminal-newline-id-20261106`, [PR #610](https://github.com/ManuEtt/Dnd/pull/610) (Draft), Code-/Teststand `231b98e1ad68e848674a3a4de87a61fcf5a73972`. Tests lokal nicht ausführbar (keine Dart-/Flutter-Toolchain); GitHub-CI auf dem finalen PR-HEAD separat auswerten. Vorherige PR-CI-Ergebnisse von #602/#605 zählen nicht als Test dieses Pakets.
 
 **Kompatibilität:** Gespeicherte NPC-IDs, Beziehungsnotizen, Story-Inhalte, JSON/SQLite, Regel-/Quest-/HP-Werte und App-/Android-Version bleiben unverändert; keine Migration und kein KI-Provider-Aufruf. Gerätebetrieb und Store-Signierung sind gesondert zu prüfen.
+
+### 2026-11-06 – Präzisierung und zusätzlicher Sitzungsnachweis bei NPC-Auswahl
+
+**Fachliche Präzisierung zum vorherigen Nachtrag:** Der vorhandene Dart-RegExp-Ausdruck mit `^...$` ohne Multiline-Modus weist abschließende Zeilenumbrüche bereits zurück. Der neue Vergleich der vollständigen Match-Zeichenkette ist daher eine **zusätzliche defensive Sicherheitsprüfung**, keine nachgewiesene Fehlerbehebung dieses bereits abgewiesenen Eingabefalls.
+
+**Tatsächliche Fehlerbehebung:** `NpcStorySelection.choose` wies bisher keine leere oder nur aus Leerraum bestehende `campaign.sessionId` zurück. Jetzt kann ein NPC nur ausdrücklich ausgewählt werden, wenn auch eine nichtleere Sitzungs-ID vorliegt. Das verhindert die Erzeugung scheinbar sitzungsgebundener Auswahlen aus unvollständigen In-Memory-Spielständen.
+
+**Regressionen:** `app/test/npc_story_selection_terminal_id_test.dart` enthält jetzt fünf Tests, darunter einen gezielten zuvor fehlschlagenden Negativtest für `sessionId` mit `''`, Leerzeichen sowie Zeilenumbrüchen. Positive Entscheidungen, Legacy-JSON, SQLite-Neustart, Namensgleichheit, Revisionen und unveränderte Regelwerte bleiben abgedeckt.
+
+**GitHub:** [PR #610](https://github.com/ManuEtt/Dnd/pull/610), Branch `fix/chat-b/npc-selection-terminal-newline-id-20261106`. Code-/Teststand `a6d02c839323b383272ba37309ec3912773ca0e7`. Der erste neue CI-Lauf [#42201211687](https://github.com/ManuEtt/Dnd/actions/runs/42201211687) scheiterte ausschließlich an `dart format` der neuen Testdatei; die kompakte Formatierung wurde daraufhin korrigiert, finale CI-Abnahme bleibt offen.
+
+**Kompatibilität:** Keine Schema- oder Versionsänderungen, keine Migration, kein neuer KI-Aufruf, keine Mutation an gespeicherten Charakteren, NPCs, Quests oder Spielständen.
