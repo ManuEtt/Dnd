@@ -5,6 +5,8 @@ on:
       - feat/chat-b/npc-memory-hidden-name-identity-20261106
     paths:
       - .github/workflows/chat-b-memory-format-diagnostic.yml
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
