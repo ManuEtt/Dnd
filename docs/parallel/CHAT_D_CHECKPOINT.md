@@ -1,3 +1,22 @@
+## 05.11.2026 – ZIP-Pfadportabilität in Alpha-APK und Gradle-Wrapper (PR #584)
+
+- **Ausgangs-Main-SHA:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`. Bestehende Main-CI auf diesem SHA erfolgreich (kein Beleg für den neuen Branch).
+- **Eigener Branch:** `fix/chat-d/archive-windows-invalid-chars-20261105`.
+- **Fach-/Testcommit:** `ec826fa27e7d4bd23935a91f81b7830577677ceb`; separater Dokumentationscommit auf demselben Branch.
+- **Pull Request:** [#584](https://github.com/ManuEtt/Dnd/pull/584), zunächst Draft.
+- **Problem:** Quellarchiv-Validator prüft Windows-illegale Zeichen und reservierte Namen; APK- und Wrapper-JAR-ZIP-Metadatenprüfung war inkonsistent, wodurch mit ZIP-CRC gültige, aber nicht portable Namen `scene?.json`, `folder|` oder `CON.txt` durchgelassen werden konnten.
+- **IMPLEMENTIERT:** `scripts/prepare_alpha_release.py` lehnt alle `WINDOWS_INVALID_CHARACTERS` in jedem ZIP-Namen vor CRC ab; `scripts/verify_project.py` lehnt dieselben Zeichen sowie `WINDOWS_RESERVED_STEMS` für jede JAR-Datei-/Verzeichniskomponente ab. Beide referenzieren die zentralen Konstanten in `scripts/package_project.py`.
+- **Akzeptanz/Testumfang:** sechs neue Regressionstestmethoden: 21 negative APK-ZIP-Varianten, 21 negative JAR-ZIP-Varianten, elf reservierte Wrapper-Gerätenamen; je ein Positivtest für zulässige Interpunktion/Unicode; keine Änderung des Wrapper-JAR bei Abweisung und keine Veröffentlichung bei unsicherer APK.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/verify_project.py`, `scripts/tests/test_prepare_alpha_release.py`, `scripts/tests/test_verify_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktkontrolle:** Offene PRs #579–#583 prüfen verschiedene Regeln/Story/UI; keine Überschneidung der Fachdateien. Gemeinsame Checkpoints additiv, README nach aktuellem Masterprompt ausschließlich am absoluten Dateiende, fachlicher Titel ohne Chat-Zuordnung.
+- **GETESTET:** GitHub-Branch/Datei-/Commit- und PR-Vergleich; vollständiger Testnachweis steht noch aus.
+- **NICHT GETESTET:** Lokale vollständige Suite (Checkout/DNS eingeschränkt), finale GitHub-CI auf Dokumentations-HEAD, Android-Realgerät, Store-Signierung, Altdatenupgrade.
+- **BLOCKIERT:** PR-CI bis zur vollständigen Abnahme.
+- **Migration:** keine; Datenbank/JSON, Spielstände, Backups, Regeln, Android-Version unverändert.
+- **Nächster Schritt:** Finale Actions mit Python, Backend, Flutter, Android-Debug, nativen Sicherungstests, allen drei ABI-APKs und Alpha-Release abnehmen; nach Grün Main/PR-Dateilisten erneut prüfen und kontrolliert integrieren.
+
+---
+
 ## CHAT D – Node.js-24-Action im sicheren Branch-Cleanup (05.11.2026)
 
 - **Main-Ausgangscommit:** `7d7bb421261af0f690fd0af9012996e45b95ff95`.

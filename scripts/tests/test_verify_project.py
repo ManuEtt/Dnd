@@ -197,6 +197,63 @@ class VerifyProjectTests(unittest.TestCase):
                     'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
                 ))
 
+    def test_wrapper_rejects_windows_device_names_before_crc(self):
+        # A valid JAR may otherwise carry filenames resolving to special
+        # Windows devices, including extension-bearing and directory names.
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        names = (
+            'CON', 'META-INF/con.txt', 'META-INF/PRN.json',
+            'META-INF/aux', 'META-INF/NUL.bin',
+            'META-INF/COM1.dll', 'META-INF/com9.txt',
+            'META-INF/LPT1.out', 'META-INF/lpt9.log',
+            'META-INF/CON.txt/child.dat', 'META-INF/NUL/',
+        )
+        for bad_name in names:
+            with self.subTest(name=bad_name):
+                with zipfile.ZipFile(jar, 'w') as archive:
+                    archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                    archive.writestr(bad_name, b'unportable')
+                with mock.patch.object(
+                    zipfile.ZipFile, 'testzip',
+                    side_effect=AssertionError('CRC reached before device-name guard'),
+                ):
+                    self.assertTrue(any(
+                        'Gradle-Wrapper-JAR' in message
+                        for message in verify_project(self.root)
+                    ))
+
+    def test_wrapper_rejects_windows_invalid_zip_characters_before_crc(self):
+        # Common Windows filesystems reject these characters in any path
+        # component. The ZIP entry must be rejected before decompression.
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for char in ('<', '>', ':', '"', '|', '?', '*'):
+            for unsafe in (
+                f'META-INF/entry{char}name.txt',
+                f'META-INF/folder{char}/entry.txt',
+                f'META-INF/folder{char}/',
+            ):
+                with self.subTest(char=char, name=unsafe):
+                    with zipfile.ZipFile(jar, 'w') as archive:
+                        archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+                        archive.writestr(unsafe, b'unportable')
+                    original = jar.read_bytes()
+                    with mock.patch.object(
+                        zipfile.ZipFile, 'testzip',
+                        side_effect=AssertionError('CRC reached before path guard'),
+                    ):
+                        self.assertTrue(any(
+                            'Gradle-Wrapper-JAR' in message
+                            for message in verify_project(self.root)
+                        ))
+                    self.assertEqual(jar.read_bytes(), original)
+
+    def test_wrapper_allows_safe_punctuation_and_unicode(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
+            archive.writestr('META-INF/Karte @2+Rätsel #7.txt', b'valid')
+        self.assertEqual(verify_project(self.root), [])
+
     def test_wrapper_rejects_nonportable_trailing_space_or_dot_before_crc(self):
         # Some extraction targets normalize trailing dots and spaces. Reject
         # all such components before CRC validation, not just exact collisions.
