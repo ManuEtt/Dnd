@@ -44,7 +44,10 @@ Campaign _campaign() => Campaign(
   ],
 );
 
-Future<void> _openNpcDialog(WidgetTester tester, GameController controller) async {
+Future<void> _openNpcDialog(
+  WidgetTester tester,
+  GameController controller,
+) async {
   await tester.pumpWidget(
     MaterialApp(
       home: Scaffold(
@@ -71,9 +74,7 @@ Future<void> _selectNpc(WidgetTester tester, String name) async {
 }
 
 void main() {
-  testWidgets('NPC-Wechsel verwirft fremde Notiz und speichert nur neuen Entwurf', (
-    tester,
-  ) async {
+  testWidgets('NPC-Wechsel trennt alte und neue Notiz', (tester) async {
     final repository = _RecordingRepository();
     final controller = GameController(repository: repository);
     final original = _campaign();
@@ -87,7 +88,10 @@ void main() {
     final oldNoteState = tester.state<FormFieldState<String>>(note);
 
     await _selectNpc(tester, 'Tarek');
-    expect(tester.state<FormFieldState<String>>(note), isNot(same(oldNoteState)));
+    expect(
+      tester.state<FormFieldState<String>>(note),
+      isNot(same(oldNoteState)),
+    );
     expect(tester.state<FormFieldState<String>>(note).value, '');
     expect(find.text('Mira hat mir den Schlüssel gegeben.'), findsNothing);
     expect(
@@ -120,7 +124,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('NPC-Hin- und Rückwechsel setzt jeden ungesicherten Entwurf zurück', (
+  testWidgets('Zurückwechseln stellt keinen alten Entwurf wieder her', (
     tester,
   ) async {
     final repository = _RecordingRepository();
