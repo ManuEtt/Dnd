@@ -946,3 +946,17 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+## 2026-11-06 – Legacy-NPC-Identität in Recall und Sitzungsrückblick (PR #590)
+
+- **Ausgangs-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e`.
+- **Eigener Branch:** `feat/chat-b/npc-memory-hidden-name-identity-20261106`. **PR:** [#590](https://github.com/ManuEtt/Dnd/pull/590) (Draft).
+- **Fach-/Testcommits:** `9753525f02d61d3ca1e06a9d070a2146fef931c2`, `e36cb9a32fabd7953581392ee517f929b6c16b2c`, `bbf7eec464181e357a83e3f94e65ecadaed5daa4`. **Finalen Branch-HEAD** inklusive Dokumentation bei CI-Abnahme ermitteln.
+- **Problem:** Legacy-Namen wie `Mira` und `Mi<U+00AD>ra` konnten im bestätigten `MemoryEngine.retrieve` und im gespeicherten `MemoryEngine.buildSessionSummary` als verschiedene Namen behandelt werden, ohne sichere NPC-ID. Versteckte Marken wurden sichtbar in Erinnerungszeilen übernommen.
+- **Implementiert:** Unicode-Formatmarken werden beim lexikalischen Abgleich und bei der einzeiligen Namensdarstellung im Story-Gedächtnis entfernt. Optisch gleiche NPCs werden **nur bei eindeutigen, kanonischen IDs** mit eigener `NPC-ID` ausgewiesen; bei unsicherer/mehrdeutiger ID wird kein bestätigtes NPC-Faktum vermutet. Eingaben mit Legacy-Formatmarken finden dieselben bestätigten Namen. Sonstige Story- oder SRD-Regeln unberührt.
+- **Betroffene Fachdateien:** `app/lib/story/story_memory_engine.dart`, `app/test/story_memory_npc_legacy_format_test.dart`. Dokumentation: README (nur angehängter neutraler Eintrag), `docs/CODEX_CHECKPOINT.md` (anhängen), dieser Checkpoint (anhängen).
+- **Tests ergänzt:** vier Gruppen mit neun Formatcodepunkten, Dubletten-ID und leeren Sichtnamen, deutschen Unicode-Namen, GameEngine-Recap mit JSON-Legacy, echtem SQLite-Neustart mit Revision-0-Erstsave, vollständigem Feldvergleich und Journalrekonstruktion.
+- **Prüfstatus:** Repository-/Masterprompt-/Architektur-/Fachdateien sowie offene PRs geprüft; keine Fachüberschneidung. **Neue Tests noch nicht als bestanden belegt**, GitHub-CI-Status nach finalem HEAD prüfen. Lokales Flutter/Dart nicht verfügbar. Der **vorausgehende** unabhängige PR #582 hat nach SQLite-Testfix die vollständige Actions-Suite [#42160305094](https://github.com/ManuEtt/Dnd/actions/runs/42160305094) erfolgreich abgeschlossen, ist jedoch noch nicht als integriert nachgewiesen.
+- **Migration:** keine. Bestätigte Quellen, IDs, JSON und SQLite unverändert; keine Controller-, UI-, Regel-, Backend-, Signierungs- oder Event-Schemaänderung.
+- **Bekannte Grenzen:** CI für #590 offen, Android-Realgerät und echter Anbieter ungetestet; README-/CODEX-Dokumentation mit anderen PRs bei Integration verlustfrei abstimmen.
+- **Nächster konkreter Schritt:** Komplette CI des finalen PR-HEADs verfolgen, ggf. Fehlerursache im selben Branch beheben; danach Integration über Chat D koordinieren.
