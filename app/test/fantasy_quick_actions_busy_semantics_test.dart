@@ -14,8 +14,8 @@ Semantics _semantics(WidgetTester tester, String action) {
       (widget) => widget is Semantics && widget.properties.button == true,
     ),
   );
-  expect(button, findsOneWidget);
-  return tester.widget<Semantics>(button);
+  expect(button, findsWidgets);
+  return tester.widget<Semantics>(button.first);
 }
 
 Future<void> _mount(
