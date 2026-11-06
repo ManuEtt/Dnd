@@ -119,11 +119,7 @@ void main() {
           hero,
           choice: 'vergiftet',
         );
-        expect(
-          identical(result.hero, hero),
-          isTrue,
-          reason: hero.classSummary,
-        );
+        expect(identical(result.hero, hero), isTrue, reason: hero.classSummary);
         expect(result.removed, isEmpty);
         expect(result.choiceRequired, isFalse);
         expect(hero.toJson(), before);
@@ -135,10 +131,7 @@ void main() {
       final pending = MonkSelfRestoration.atEndOfTurn(hero);
       expect(pending.choiceRequired, isTrue);
       expect(identical(pending.hero, hero), isTrue);
-      final chosen = MonkSelfRestoration.atEndOfTurn(
-        hero,
-        choice: 'bezaubert',
-      );
+      final chosen = MonkSelfRestoration.atEndOfTurn(hero, choice: 'bezaubert');
       expect(chosen.removed, 'bezaubert');
       expect(chosen.hero.conditions, ['vergiftet', 'blind']);
       expect(hero.conditions, ['bezaubert', 'vergiftet', 'blind']);
