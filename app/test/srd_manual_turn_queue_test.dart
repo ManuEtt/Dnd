@@ -376,10 +376,8 @@ void main() {
       ),
       isTrue,
     );
-    expect(
-      engine.advanceManualTurnQueue(defeated).campaign.manualTurnQueue!.activeActorId,
-      'goblin',
-    );
+    final afterDefeat = engine.advanceManualTurnQueue(defeated).campaign;
+    expect(afterDefeat.manualTurnQueue!.activeActorId, 'goblin');
 
     // A historical in-memory queue may outlive a removed creature, while
     // the current live actors still look complete after roster filtering.
