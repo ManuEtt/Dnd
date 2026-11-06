@@ -759,17 +759,17 @@ class AlphaReleaseTests(unittest.TestCase):
         sums = self.out / 'Wuerfelraunen_v0.5.4_24_SHA256.txt'
         outside = self.base / 'external-hashes'
         outside.write_bytes(b'untouched hashes')
-        actual_hash = release.sha256
-        inserted = False
+        # The checksum file is opened before SHA256 calculation. Inject the
+        # collision at the actual exclusive-open boundary, not during hashing.
+        actual_writer = release._new_release_file
 
-        def hash_then_insert_link(path):
-            nonlocal inserted
-            if not inserted:
+        def insert_before_open(path, *, binary=False):
+            if path == sums:
                 sums.symlink_to(outside)
-                inserted = True
-            return actual_hash(path)
+            return actual_writer(path, binary=binary)
 
-        with mock.patch.object(release, 'sha256', side_effect=hash_then_insert_link):
+        with mock.patch.object(release, '_new_release_file',
+                               side_effect=insert_before_open):
             with self.assertRaisesRegex(ValueError, 'Release-Zieldatei'):
                 release.prepare_release(self.root, self.out)
         self.assertEqual(outside.read_bytes(), b'untouched hashes')
