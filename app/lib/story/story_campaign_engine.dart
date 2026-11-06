@@ -481,6 +481,10 @@ class StoryCampaignEngine {
   }
 }
 
+// Use the same canonical ID policy as the read-only resume selector.
+// Legacy IDs with controls or duplicate identities are not reliable leads.
+final RegExp _safeRecapLeadId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
+
 /// Read-only augmentation of the established confirmed-session summary.
 /// Never drop existing facts to fit extra narrative prompts, and never infer
 /// rule or quest transitions from story-thread text.
@@ -491,10 +495,20 @@ String _summaryWithOpenLeads(String confirmed, List<StoryThread> threads) {
   var remaining = maxUnits - confirmed.length;
   var count = 0;
   final addition = StringBuffer();
+  // A legacy direct-memory list can contain conflicting open/closed statuses
+  // for the same ID. No single entry from that identity is trustworthy.
+  final idCounts = <String, int>{};
+  for (final thread in threads) {
+    idCounts[thread.id] = (idCounts[thread.id] ?? 0) + 1;
+  }
   // The latest edited/added thread is kept at the end of the saved list.
   // Do not revive resolved/abandoned threads or include scene/dialogue text.
   for (final thread in threads.reversed) {
-    if (thread.status != 'open') continue;
+    if (thread.status != 'open' ||
+        _safeRecapLeadId.stringMatch(thread.id) != thread.id ||
+        idCounts[thread.id] != 1) {
+      continue;
+    }
     final title = _singleLineLead(thread.title);
     final description = _singleLineLead(thread.description);
     if (title.isEmpty || description.isEmpty) continue;
