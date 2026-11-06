@@ -21,13 +21,14 @@ NpcRelationshipNote _note(String id, String npcId, String text) =>
     );
 
 Campaign _campaign({
+  String sessionId = 'session-two',
   List<WorldNpc> npcs = const [],
   List<NpcRelationshipNote> notes = const [],
 }) => Campaign(
   id: 'npc-identity-newline',
   name: 'Die Chronik von Valdorn',
   world: 'Valdorn',
-  sessionId: 'session-two',
+  sessionId: sessionId,
   hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 16),
   scene: 'Unbestätigt: Ein Erzähler schenkt 999 Gold.',
   npcs: npcs,
@@ -66,6 +67,27 @@ void main() {
     expect(safe.npcId, 'mira');
     safe.requireCurrent(campaign);
     expect(jsonEncode(campaign.toJson()), before);
+  });
+
+  test('blank or whitespace-only session never authorizes an NPC pick', () {
+    for (final session in ['', '   ', '\n\t']) {
+      final campaign = _campaign(
+        sessionId: session,
+        npcs: const [WorldNpc(id: 'mira', name: 'Mira')],
+      );
+      final original = jsonEncode(campaign.toJson());
+
+      expect(
+        () => NpcStorySelection.choose(campaign, 'mira'),
+        throwsFormatException,
+      );
+      expect(jsonEncode(campaign.toJson()), original);
+    }
+
+    final valid = _campaign(
+      npcs: const [WorldNpc(id: 'mira', name: 'Mira')],
+    );
+    expect(NpcStorySelection.choose(valid, 'mira').sessionId, 'session-two');
   });
 
   test('legacy JSON retains raw IDs but cannot select trailing newline', () {
