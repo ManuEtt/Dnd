@@ -451,10 +451,30 @@ class SrdClassFeatureCatalog {
     );
   }
 
+  /// Read-only preflight for class-level-derived unlocks and summaries.
+  /// Invalid legacy/direct character snapshots must not invent class features
+  /// or resource counts. This does not validate the entire character sheet.
+  static bool hasConsistentClassLevels(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return false;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    if (primary == null) return false;
+    if (!hero.hasSecondClass) return hero.secondaryClassLevel == 0;
+    final secondary = findSrdClass(hero.secondaryClassName)?.name;
+    return hero.secondaryClassLevel > 0 &&
+        secondary != null &&
+        secondary != primary;
+  }
+
   /// Handles character *class levels*, never total levels of multiclass heroes.
   /// Source list features are not inserted into HeroCharacter.features, because
   /// that field represents explicitly confirmed/manual special abilities.
   static List<SrdClassFeature> unlocked(HeroCharacter hero) {
+    if (!hasConsistentClassLevels(hero)) return const [];
     final primary = findSrdClass(hero.className)?.name;
     final secondary = findSrdClass(hero.secondaryClassName)?.name;
     final result = <SrdClassFeature>[];
