@@ -1437,6 +1437,16 @@ Release-APKs und die im Android-Upload enthaltene Gradle-Wrapper-JAR werden auf 
 
 **Kompatibilität und Grenzen:** Keine SQLite-/JSON-/Backup-/Spielstands-, Gradle-, Android-Versions- oder SRD-Regeländerung. Realgerätetest und produktive Signierung sind separat offen.
 
+### 2026-11-06 – Checkpoint-Dateinamen plattformübergreifend absichern
+
+Beim Erstellen von vollständigen Quellcode-Checkpoints gelten für Manifest- und Patchpfade, Archivnamen sowie historische Prüfsummen-Einträge jetzt die gleichen Portabilitätsregeln wie beim Quell-ZIP-Export. Reservierte Windows-Gerätenamen (`CON`, `NUL`, `COM1` usw.), abschließende Punkte/Leerzeichen und Windows-unzulässige Zeichen werden vor dem Lesen bzw. Veröffentlichen von Sicherungen zurückgewiesen. Gültige internationale Zeichen und übliche Interpunktion bleiben erlaubt.
+
+**Umsetzung:** `scripts/create_checkpoint.py` verwendet die bestehenden zentralen Namenskonstanten aus `scripts/package_project.py`. Vier Regressionstests in `scripts/tests/test_create_checkpoint.py` sichern problematische und gültige Namen, Prüfungen vor Archivdatenlesen, Veröffentlichungssperren und den unveränderten Bestand bereits veröffentlichter `LATEST`-/Prüfsummen-Dateien ab.
+
+**GitHub:** Branch `fix/chat-d/checkpoint-portable-filenames-20261106`, [PR #587](https://github.com/ManuEtt/Dnd/pull/587). Die vollständige CI des finalen Commits steht noch aus; ein lokaler Kompletttest wurde nicht behauptet.
+
+**Kompatibilität:** Keine Migration, keine Änderungen an SQLite-/JSON-Spielständen, tatsächlichen Backup-Dateiinhalten, Flutter- oder Android-Version, Regel- und Storylogik. Reale Geräteabnahme und produktive Signierung bleiben separat offen.
+
 
 ### 2026-11-06 – Klassenmerkmalskatalog und automatische Werte gegen widersprüchliche Profile absichern
 
