@@ -75,7 +75,7 @@ void main() {
           _note(
             'first',
             'mira-one',
-            'Die${mark} Karte liegt am Tor.',
+            'Die$mark Karte liegt am Tor.',
             relationship: 'verbünd${mark}et',
           ),
         ],
