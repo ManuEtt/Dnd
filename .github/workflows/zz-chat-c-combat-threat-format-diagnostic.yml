@@ -1,0 +1,22 @@
+name: Temporary combat threat Dart formatting diagnosis
+on:
+  push:
+    branches:
+      - feat/chat-c/combat-threat-wide-seals-20261106
+permissions:
+  contents: read
+jobs:
+  formatter-diff:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+          cache: true
+      - name: Print exact Dart formatter diff
+        run: |
+          dart format app/lib/ui/fantasy_combat_threat_status.dart app/test/fantasy_combat_threat_large_text_test.dart
+          git diff -- app/lib/ui/fantasy_combat_threat_status.dart app/test/fantasy_combat_threat_large_text_test.dart
