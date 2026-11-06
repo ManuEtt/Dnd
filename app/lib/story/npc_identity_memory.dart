@@ -45,7 +45,7 @@ class NpcIdentityContext {
     'campaignId': campaignId,
     'campaignRevision': revision,
     'npcId': npcId,
-    'npcName': _oneLine(npcName),
+    'npcName': _oneLine(npcName, name: true),
     'alive': alive,
     'relationship': _oneLine(relationship),
     'notes': List<Map<String, Object>>.unmodifiable([
@@ -67,6 +67,130 @@ class NpcIdentityContext {
 /// campaign at the moment the snapshot is prepared or revalidated.
 class NpcIdentityMemory {
   const NpcIdentityMemory._();
+
+  // The typed Story identity contract uses canonical IDs, just like the
+  // player-selected NPC transport. Never put legacy control/format marks
+  // into an ID-bearing context map.
+  static final RegExp _safeNpcId = RegExp(r'^[a-zA-Z0-9_-]{1,64}
+    Campaign campaign, {
+    required String npcId,
+    required int expectedRevision,
+    int maxNotes = 3,
+  }) {
+    if (campaign.id.trim().isEmpty ||
+        !_safeNpcId.hasMatch(npcId) ||
+        expectedRevision < 0 ||
+        campaign.revision != expectedRevision ||
+        maxNotes < 1 ||
+        maxNotes > 20) {
+      throw const FormatException('Veralteter oder ungültiger NPC-Kontext.');
+    }
+
+    final matches = campaign.npcs.where((npc) => npc.id == npcId).toList();
+    if (matches.length != 1) {
+      throw const FormatException('NPC-ID nicht eindeutig bestätigt.');
+    }
+    final npc = matches.single;
+    final history = <({NpcRelationshipNote note, int order})>[
+      for (var i = 0; i < campaign.npcRelationshipNotes.length; i++)
+        if (campaign.npcRelationshipNotes[i].npcId == npcId)
+          (note: campaign.npcRelationshipNotes[i], order: i),
+    ];
+    // Legacy JSON can contain duplicate or malformed note IDs. A preview
+    // limited to maxNotes must not hide an identity collision in older notes.
+    // Check the *entire selected NPC history*, not unrelated NPC histories.
+    final noteIds = <String>{};
+    final safeNoteId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
+    for (final entry in history) {
+      final id = entry.note.id;
+      if (!safeNoteId.hasMatch(id) || !noteIds.add(id)) {
+        throw const FormatException(
+          'Mehrdeutige oder ungültige bestätigte NPC-Notiz-ID.',
+        );
+      }
+    }
+    history.sort((a, b) {
+      final dateOrder = b.note.recordedAt.compareTo(a.note.recordedAt);
+      return dateOrder != 0 ? dateOrder : b.order.compareTo(a.order);
+    });
+
+    return NpcIdentityContext._(
+      campaignId: campaign.id,
+      sessionId: campaign.sessionId,
+      revision: campaign.revision,
+      npcId: npc.id,
+      npcName: npc.name,
+      alive: npc.alive,
+      relationship: npc.relationship,
+      notes: history.take(maxNotes).map((item) => item.note).toList(),
+      sourceStamp: jsonEncode([
+        npc.toJson(),
+        for (final note in campaign.npcRelationshipNotes)
+          if (note.npcId == npcId) note.toJson(),
+      ]),
+    );
+  }
+
+  /// Rejects a revision/session change, another campaign, or amended values.
+  /// Even older notes omitted by maxNotes must remain unchanged.
+  ///
+  /// No implicit refresh: the caller must explicitly re-read current state.
+  static void requireCurrent(Campaign campaign, NpcIdentityContext context) {
+    if (campaign.id != context.campaignId ||
+        campaign.sessionId != context.sessionId ||
+        campaign.revision != context.revision) {
+      throw const FormatException('NPC-Kontext ist nicht mehr aktuell.');
+    }
+    final actual = read(
+      campaign,
+      npcId: context.npcId,
+      expectedRevision: context.revision,
+      maxNotes: context.notes.isEmpty ? 1 : context.notes.length,
+    );
+    if (actual._sourceStamp != context._sourceStamp ||
+        actual.npcName != context.npcName ||
+        actual.alive != context.alive ||
+        actual.relationship != context.relationship ||
+        actual.notes.length != context.notes.length) {
+      throw const FormatException(
+        'NPC-Kontext wurde zwischenzeitlich geändert.',
+      );
+    }
+    for (var i = 0; i < actual.notes.length; i++) {
+      final current = actual.notes[i];
+      final old = context.notes[i];
+      if (current.id != old.id ||
+          current.npcId != old.npcId ||
+          current.relationship != old.relationship ||
+          current.note != old.note ||
+          current.recordedAt != old.recordedAt) {
+        throw const FormatException(
+          'NPC-Kontext wurde zwischenzeitlich geändert.',
+        );
+      }
+    }
+  }
+}
+
+// Legacy campaign imports can contain invisible bidi and other formatting
+// marks. This is an outbound, read-only projection: preserve the stored raw
+// values so revision validation still compares the original confirmed data.
+// Formatting inside a *name* joins its two visible parts; formatting inside a
+// note or relationship separates words rather than silently merging them.
+final RegExp _formatMarks = RegExp(
+  r'[\u00ad\u034f\u061c\u180e\u200b-\u200f'
+  r'\u202a-\u202e\u2060-\u206f\ufeff]',
+);
+final RegExp _controlMarks = RegExp(
+  r'[\x00-\x1f\x7f-\x9f\u2028\u2029]',
+);
+
+String _oneLine(String value, {bool name = false}) => value
+    .replaceAll(_formatMarks, name ? '' : ' ')
+    .replaceAll(_controlMarks, ' ')
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .trim();
+);
 
   static NpcIdentityContext read(
     Campaign campaign, {
