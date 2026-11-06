@@ -1454,3 +1454,11 @@ Die Alpha-Release-Veröffentlichung legt APK, Release-Notizen und SHA256-Prüfsu
 **Implementierung und Nachweis:** `scripts/prepare_alpha_release.py`; drei neue Python-Regressionen in `scripts/tests/test_prepare_alpha_release.py` für eine spät eingefügte APK-Verknüpfung, eine reguläre fremde Notizdatei und eine SHA256-Verknüpfung. Branch `fix/chat-d/alpha-release-exclusive-output-20261106`, [PR #599](https://github.com/ManuEtt/Dnd/pull/599) (Draft). Der vollständige GitHub-Actions-Nachweis auf dem finalen PR-HEAD steht noch aus; kein lokaler Kompletttest, kein automatischer Merge.
 
 **Kompatibilität:** Keine Änderungen an App-/Android-Version, Flutter-/Story-/Regelmodulen, bestehenden Spielständen, SQLite, JSON oder Backup-Format. Keine Migration. Geräteprüfung und produktive Signierung sind gesondert offen.
+
+### 2026-11-06 – Selbstwiederherstellung bei ungültigen Klassenprofilen sperren
+
+**Problem und Lösung:** Die Mönch-Fähigkeit *Selbstwiederherstellung* konnte bei ungültigen direkt konstruierten oder historischen Mehrklassenprofilen einen bestätigten Zustand beenden, weil lediglich die errechnete Mönchsstufe geprüft wurde. Die Regel prüft jetzt vor der Freischaltung Klassenidentitäten, kanonische Aliase und einen gültigen Stufensplit (Gesamtstufe 1–20). Gültige Mönche ab Klassenstufe 10 behalten ihre Wirkung und die notwendige ausdrückliche Auswahl bei mehreren heilbaren Zuständen.
+
+**Code und Nachweis:** `app/lib/domain/monk_self_restoration.dart`, neue positive/negative Regressionen in `app/test/monk_self_restoration_class_preflight_test.dart`. Branch `feat/chat-a/monk-self-restoration-profile-20261106`, [PR #601](https://github.com/ManuEtt/Dnd/pull/601) (Draft), Code-/Integrationscommit `f2102a99d6d94aa0c64a362f9889abcadbbefa2b`. Lokale Dart-/Flutter-/Android-Tests waren ohne SDK **nicht ausführbar**. Die GitHub-Actions-Abnahme des finalen PR-Heads ist separat zu prüfen; es wird kein grüner Build behauptet.
+
+**Kompatibilität und Grenzen:** SRD 5.2.1, Classes / Monk 10 / Self-Restoration (CC BY 4.0), Anforderung `CLASS-M-NCH-10-BASE-SELF-RESTORATION-1`. Keine Änderung an Spielfiguren-, Ereignis-, JSON-/SQLite-Schemas, Version, Story oder KI. Alte Spielstände bleiben lesbar und werden nicht verändert. Vollständige SRD-Wirkung und Geräteabnahme weiter offen.
