@@ -77,7 +77,8 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                           child: Text(category.label),
                         ),
                     ],
-                    onChanged: (selected) => setState(() => _category = selected),
+                    onChanged: (selected) =>
+                        setState(() => _category = selected),
                   ),
                   Text(
                     '${items.length} Treffer',
@@ -109,8 +110,7 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.all(20),
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.stretch,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
@@ -165,10 +165,7 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 tile,
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: buttons,
-                ),
+                Align(alignment: Alignment.centerRight, child: buttons),
                 const Divider(height: 8),
               ],
             );
