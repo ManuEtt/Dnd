@@ -46,10 +46,14 @@ class FantasyCombatThreatStatus extends StatelessWidget {
             style: const TextStyle(fontSize: 12),
           ),
           const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // Full-width status rows keep long confirmed combat labels
+              // readable with large Android text and a narrow viewport.
+              final wideSeals =
+                  constraints.maxWidth < 500 &&
+                  MediaQuery.textScalerOf(context).scale(1) >= 1.8;
+              final seals = <Widget>[
               if (isEnemyTurn)
                 _ThreatSeal(
                   key: const ValueKey('combat-enemy-turn-state'),
@@ -113,7 +117,19 @@ class FantasyCombatThreatStatus extends StatelessWidget {
                   label: 'Keine laufende Gegneraktion',
                   accent: FantasyPalette.muted,
                 ),
-            ],
+              ];
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final seal in seals)
+                    if (wideSeals)
+                      SizedBox(width: constraints.maxWidth, child: seal)
+                    else
+                      seal,
+                ],
+              );
+            },
           ),
         ],
       ),
