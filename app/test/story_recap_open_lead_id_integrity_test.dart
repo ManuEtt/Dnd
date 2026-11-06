@@ -195,7 +195,7 @@ void main() {
     expect(summary.length, lessThanOrEqualTo(2400));
   });
 
-  test('confirmed recap and source survive SQLite restart and replay', () async {
+  test('recap and source survive SQLite restart', () async {
     final folder = await Directory.systemTemp.createTemp('recap-lead-id-');
     final path = paths.join(folder.path, 'game.sqlite');
     var repository = await SqliteCampaignRepository.open(
