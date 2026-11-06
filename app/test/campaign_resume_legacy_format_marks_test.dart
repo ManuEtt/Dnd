@@ -85,7 +85,7 @@ void main() {
     expect(campaign.revision, 0);
   });
 
-  test('ordinary Unicode stays readable but hidden same-revision edits are stale', () {
+  test('Unicode is retained while hidden edits remain stale', () {
     final campaign = _campaign(
       scene: 'Ärger am Tor – שלום مرحبا 🐉',
       threads: const [
