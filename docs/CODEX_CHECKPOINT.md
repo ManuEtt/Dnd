@@ -1,3 +1,18 @@
+## 06.11.2026 – Korrektur des Problemnachweises und Sitzungsgültigkeit (PR #610)
+
+- **Aktualisierter Fach-/Teststand:** `a6d02c839323b383272ba37309ec3912773ca0e7`; **Branch:** `fix/chat-b/npc-selection-terminal-newline-id-20261106`; **Basis-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **PR:** [#610](https://github.com/ManuEtt/Dnd/pull/610) (Draft).
+- **Berichtigung:** Der normale Dart-/ECMAScript-Endanker `$` ohne Multiline erlaubt den ursprünglichen `^...$`-ID-Guard *nicht*, die angehängten Zeilenumbrüche zu überspringen. Der neue vollständige `stringMatch == id`-Vergleich ist defensiv, nicht der Nachweis einer vorherigen Lücke; die frühere anderslautende Formulierung bleibt nur als historischer Eintrag erhalten.
+- **TATSÄCHLICHES PROBLEM:** `NpcStorySelection.choose` konnte auch bei leerer oder aus Whitespace bestehender `campaign.sessionId` eine angeblich sitzungsgebundene Auswahl erstellen.
+- **IMPLEMENTIERT:** Frühzeitige `campaign.sessionId.trim().isEmpty`-Sperre; die vollständige sichere NPC-ID-Prüfung bleibt bestehen. Keine Änderung am gespeicherten Kampagnenzustand, an Regeln oder APIs.
+- **Tests:** Nun fünf neue Regressionen in `app/test/npc_story_selection_terminal_id_test.dart`, einschließlich expliziter Negativfälle für leere/Whitespace-Sitzungs-IDs und positiver gültiger Sitzung; JSON-Roundtrip und SQLite-Reopen/Replay mit unveränderten Rohdaten.
+- **GETESTET:** Live-GitHub-Analyse von Main, 26 offenen PRs/Fachpfaden, Vergleich und neuer Code-/Teststand auf Branch. Erstes [#610-CI](https://github.com/ManuEtt/Dnd/actions/runs/42201211687) scheiterte in der Dart-Formatierung (`test/npc_story_selection_terminal_id_test.dart`), nicht in einem fachlichen Test; verkürzte Ausdrücke wurden korrigiert. **Noch kein erfolgreicher finaler CI-Nachweis.**
+- **NICHT GETESTET:** Lokale Dart-/Flutter-Tests (SDK fehlt), endgültige GitHub-PR-Gesamtabnahme, Android-APK, echtes Gerät, Produktiv-KI.
+- **BLOCKIERT:** Finale CI und Review, koordinierter Merge gemeinsamer README-/Checkpoints; #602/#605 bleiben unabhängig von diesem PR.
+- **Nächster Schritt:** Finale CI auf Head nach Dokumentationscommit prüfen, Format-/Flutter-/SQLite-Fehler im eigenen Branch beheben und erst nach vollständigem Nachweis Integrationsreview anfordern.
+- **Migration:** Keine; JSON/SQLite/Events, NPC-, Hero- und Questdaten, SRD und App-Version bleiben unverändert.
+
+---
+
 ## 06.11.2026 – Explizite NPC-Auswahl gegen abschließende Zeilentrennzeichen abgesichert (PR #610)
 
 - **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `fix/chat-b/npc-selection-terminal-newline-id-20261106`; **PR:** [#610](https://github.com/ManuEtt/Dnd/pull/610) (Draft).
