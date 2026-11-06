@@ -1399,3 +1399,19 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-06 – Regelkorrektur Selbstwiederherstellung, PR #601
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; parallel vorgezogener main `95c605898f1bcae26e0a23afa55c767ec5b20744` korrekt übernommen.
+- **Branch:** `feat/chat-a/monk-self-restoration-profile-20261106`.
+- **Fach-Code/Test-Commits:** `948315232072cd289d2938bb1fb421eeacb63006`, `3f86e841c799f4100d843fa99b0fdbd094690455`; Format-Nachtrag `db07f88c0ca164ef43e43c12ea5c1b320281d7a5`; Merge mit aktuellem main `f2102a99d6d94aa0c64a362f9889abcadbbefa2b`. Nachfolgende Dokumentationscommits: GitHub-PR-Head maßgeblich.
+- **Pull Request:** [#601](https://github.com/ManuEtt/Dnd/pull/601), Draft und nicht gemergt.
+- **Problem:** Ungültige direkte/Legacy-Klassenkombinationen konnten mit einem bloßen Mönch-Level-Check die Fähigkeit zur Zustandsbeendigung auslösen. Relevante Regel: SRD 5.2.1 (CC BY 4.0), Monk 10, `CLASS-M-NCH-10-BASE-SELF-RESTORATION-1`.
+- **IMPLEMENTIERT:** Vorprüfung Gesamtstufe 1–20, positive Primärstufe, zulässige Zweitstufe, bekannte Klassen und unterschiedliche kanonische Klassennamen. `choices`, `validateChoice` und `atEndOfTurn` verwenden dieselbe Freischaltung. Gültige Einzel- und Mehrklassen weiterhin wirksam; keine automatische fehlerhafte Zustandsänderung.
+- **Geänderte Fachdateien:** `app/lib/domain/monk_self_restoration.dart`; `app/test/monk_self_restoration_class_preflight_test.dart` (Positiv-/Negativ-/Alias-/Grenz-/Immutabilitätsfälle). Zusätzlich nur der persönliche und zentrale Checkpoint sowie ein neutraler README-Nachtrag.
+- **GETESTET:** Tatsächlicher GitHub-Branch und PR erstellt; alle konkurrierenden PR-Dateilisten vor Implementierung geprüft; kein fachlicher Pfadkonflikt. GitHub-Actions-Lauf am vorläufigen Merge-Commit war in Bearbeitung; finalen Kopf getrennt kontrollieren.
+- **NICHT GETESTET:** Lokale Dart-/Flutter-/APK-/Python-Volltests nicht ausführbar (kein Flutter/Dart SDK; kein GitHub-Checkout durch DNS-Blockade). Keine erfundenen Testergebnisse.
+- **BLOCKIERT:** GitHub-CI-Endabnahme. PR-Dokumentation teilt Append-only-Pfade mit anderen PRs; Integration muss alle fremden Zusätze erhalten.
+- **Migrationen:** Keine. JSON/SQLite, Version, Geschichte, Events, öffentliche Fassade unverändert.
+- **NOCH NICHT IMPLEMENTIERT:** Nahrungs-/Trinkaspekt von Self-Restoration und übrige SRD-Wirkungen; Requirement-Status bleibt bis zur Testabnahme unverändert.
+- **Nächster Schritt:** CI auf dem finalen Head von PR #601 abschließen und nur bei belegtem Grün zur Integrationsprüfung übergeben.

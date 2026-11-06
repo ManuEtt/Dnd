@@ -2191,3 +2191,21 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-06 – Mönch-Selbstwiederherstellung: Klassenprofil-Sperre (offener PR #601)
+
+**Stand/Koordination (09:40 MEZ):** Ausgangs-main `9a0fa855374a67805e531ad8574e048d99b33745`; neues main `95c605898f1bcae26e0a23afa55c767ec5b20744` auf dem eigenen Branch durch echten verlustfreien Merge-Commit `f2102a99d6d94aa0c64a362f9889abcadbbefa2b` übernommen. Arbeitsbranch `feat/chat-a/monk-self-restoration-profile-20261106`; [PR #601](https://github.com/ManuEtt/Dnd/pull/601) (Draft, ungemergt). Andere offene PRs und main unberührt; Regeldatei kollidiert mit keinem der zu Beginn geprüften offenen PRs.
+
+**IMPLEMENTIERT:** `app/lib/domain/monk_self_restoration.dart` prüft den vollständigen gültigen Klassen-/Mehrklassenlevel-Vertrag vor `unlocked`, `choices`, `validateChoice` und `atEndOfTurn`. Manipulierte oder widersprüchliche Klasse kann keine Zustandsheilung auslösen; legitime Einzel-/Mehrklassen und Aliasnamen werden bewahrt. Anforderung `CLASS-M-NCH-10-BASE-SELF-RESTORATION-1`, SRD 5.2.1 Classes/Monk 10, CC BY 4.0; Beleg `app/test/monk_self_restoration_class_preflight_test.dart`.
+
+**GETESTET:** Quellcode/Tests und Fremd-PR-Dateipfade direkt geprüft; die Branch-Synchronisierung und GitHub-Commits bestätigt. **Keine lokal bestandene Dart-/Flutter-Testsuite behauptet.** Vor dem Dokumentationsnachtrag lief [PR-Actions 42189212393](https://github.com/ManuEtt/Dnd/actions/runs/42189212393) noch; neuere finale Actions separat prüfen.
+
+**NICHT GETESTET:** `dart format`, `flutter analyze`, `flutter test`, `flutter build apk --debug`, Python-/Backend-Vollsuite, Geräte-/TalkBack-/Upgrade-Abnahme im lokalen Container (Dart/Flutter fehlen; vollständiger Repo-Checkout wegen Netzwerk-DNS nicht verfügbar).
+
+**BLOCKIERT:** Lokale SDKs/Checkout; finale PR-CI noch ohne bestätigten Abschluss. Dokumentations-README-/Checkpoint-Konflikte mit parallelen PRs muss der Integrationslauf verlustfrei additiv zusammenführen.
+
+**NOCH NICHT IMPLEMENTIERT:** Komplette Mönchsmerkmale (insbesondere anderer Self-Restoration-Aspekt: Nahrung/Trinken) und restliche SRD-Automatik; Requirement-Status bewusst unverändert, keine neue globale Testquote.
+
+**Migration:** Keine: SQLite-/JSON-Schema, Story, Regel-Fassade, GameEngine, Flutter-UI und Appversion unverändert. Historische Profile werden nicht stillschweigend korrigiert.
+
+**Nächster einzelner Schritt:** PR #601 auf seinem finalen Commit via GitHub Actions vollständig abnehmen; falls fehlerhaft, die konkrete Ursache im selben Branch beheben, anschließend unabhängige Integrationsprüfung auf dem aktuellen main (ohne fremde Dokumentationsnachträge zu verlieren).
