@@ -799,3 +799,16 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+## 2026-11-06 – Busy-Sperren aller Abenteuer-Schnellaktionen für TalkBack
+
+- **Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`; unabhängiger Main-Fortschritt `84c6259b38c5f742198276ae3d3d0f80d0c4f51e`.
+- **Branch:** `feat/chat-c/quick-actions-busy-semantics-20261106`, **Code-/Testcommit:** `90cb263a396912257974422c7dfdb20969ff8f5a`; **PR:** [#588](https://github.com/ManuEtt/Dnd/pull/588) (Draft).
+- **Ausgangsproblem:** Bei `busy` sind alle vier fixierten Aktionen deaktiviert. Der Angriff erklärte den Zustand bereits, Sprache/Untersuchen/W20 nicht. Die Tab-/Enter-Regression existiert bereits und blieb unangetastet.
+- **IMPLEMENTIERT:** Gemeinsamer sprechbarer Busy-Grund bei den drei bisher nicht erläuterten Schnellaktionen, bei verfügbarem Zustand kein Sperrhinweis, bei kontextgesperrtem Angriff weiterhin eigener Grund.
+- **Dateien:** `app/lib/ui/fantasy_art.dart`, neue `app/test/fantasy_quick_actions_busy_semantics_test.dart`, append-only README und additive Checkpoint-Nachträge.
+- **Widgettests:** Fünf Fälle für 320/360 dp, 2x Schrift, 270 dp Android-IME, Semantik-Labels/-Hints, Disable-Flag, keine unzulässigen Aufrufe, Zustandswechsel Busy → Bereit.
+- **GETESTET:** Quell- und Testanordnung sowie bestehende Fokus-/Hit-Tests geprüft; alle offenen konkurrierenden Fach-PR-Dateilisten ohne UI-Überschneidung.
+- **NICHT GETESTET:** Flutter-Format/Analyse/Vollsuite und Android-/ABI-/Native-CI auf dem finalen Branch-HEAD noch offen; Realgerät/TalkBack/IME nicht durchgeführt.
+- **BLOCKIERT:** Fehlendes lokales Flutter-SDK; abschließende GitHub-CI und Integration durch Review. Keine automatische Mergefreigabe.
+- **Kompatibilität:** Keine Migration/Schema-/JSON-/SQLite-/Regel-/Controller-/Backup-/Versionsänderung.
+- **NÄCHSTER SCHRITT:** Branch-CI auswerten, bei Format-/Widgetfehlern gleiches Paket korrigieren und erneut testen.
