@@ -9,6 +9,8 @@
 - **Kompatibilität:** Kein Schema-/Versionswechsel, keine Migration, keine Regel-, Helden-, Quest-, XP-, Inventar- oder JSON-/SQLite-Mutation, kein neuer Anbieter.
 - **Nächster Schritt:** GitHub Actions auf dem endgültigen Commit bis zu Flutter-/Android-Gates auswerten, fehlschlagende Regressionen im eigenen Branch beheben und danach kontrolliert zur Integration übergeben.
 
+- **CI-/Integrationsnachtrag (06.11.2026):** Die vollständige [GitHub-CI #42194582591](https://github.com/ManuEtt/Dnd/actions/runs/42194582591) war für den ursprünglichen Fach-HEAD `2a2d6bad4926f84d070ba6c393c6cce2d96b8981` erfolgreich. Wegen neuer `main`-Änderungen wurden alle dortigen Dokumentationsnachträge erhalten und der PR-Branch durch einen Merge-Commit aktualisiert; für diesen neuen HEAD ist eine eigene vollständige CI-Abnahme erforderlich. Kein Merge in `main` und keine Geräteabnahme.
+
 ---
 
 ## Konsolidierung 04.11.2026 – PR #536
