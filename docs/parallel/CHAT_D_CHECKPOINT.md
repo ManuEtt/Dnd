@@ -1,3 +1,20 @@
+## 06.11.2026 – Checkpoint-Manifest, Patch, Archive und Prüfsummen: portable Namen
+
+- **Ausgangs-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` nach regulärer Integration von PR #584 mit grünem PR-Lauf [#42108899271](https://github.com/ManuEtt/Dnd/actions/runs/42108899271); Main-CI separat.
+- **Branch:** `fix/chat-d/checkpoint-portable-filenames-20261106`; **Code-/Testcommit:** `3fc10f558b165b39f5ac2f28e568d911391738da`; **PR:** [#587](https://github.com/ManuEtt/Dnd/pull/587), Draft bis vollständiger CI-Nachweis.
+- **Problem:** Checkpoint-`safe_name` akzeptierte Windows-illegale Dateinamen (`scene?.json`), Gerätebasen (`CON.txt`), abschließende Punkte/Leerzeichen, obwohl der Quell-ZIP-Exporter sie schon verwehrt. Historische Sicherungen mit solchen Namen konnten die Prüfsummenliste beeinflussen.
+- **Implementiert:** In `scripts/create_checkpoint.py` werden die bestehenden `WINDOWS_INVALID_CHARACTERS` und `WINDOWS_RESERVED_STEMS` importiert und alle Pfadkomponenten beim Manifest/Archiv/Patch/Checksum-Scan vor Inhaltssichtung geprüft. Vorhandene Artefakte werden nicht migriert oder überschrieben.
+- **Akzeptanz:** Vier neue Python-Regressionstestmethoden: ungültige und gültige Namen, blockierter Quellcheckpoint vor Publikation, bösartige Archivnamen vor Datenlesen und Bewahrung von `LATEST` und `SHA256SUMS.txt` bei gefährlichem historischem Namen.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktkontrolle:** Aktuelles Main und offene PRs #579, #580, #581, #582, #583, #585, #586 geprüft; keine Fachdateiüberschneidung. README nur am absoluten Dateiende, mit fachlichem Titel ohne Chat-Kennung; gemeinsame Checkpoint-Fortschritte bleiben additiv.
+- **GETESTET:** PR #584 vollständige [CI #42108899271](https://github.com/ManuEtt/Dnd/actions/runs/42108899271) bestanden; Branch/PR/Testcode für dieses neue Paket committed und Dateilisten geprüft. **Dieser ältere CI-Erfolg beweist keine neue Änderung.**
+- **NICHT GETESTET:** finale vollständige GitHub-CI auf neuem Dokumentations-HEAD, lokaler Kompletttest (Checkout/DNS), echte Android-Geräteabnahme, bestehende Backups auf anderen Dateisystemen.
+- **BLOCKIERT:** Finale CI zur Mergefreigabe; keine produktive Android-Signierung.
+- **Migrationen:** keine. SQLite 3, JSON 1, Kampagnen-/Spielstände, Backups, App-/Buildversion, SRD und Story unverändert.
+- **Nächster Schritt:** finalen Actions-Lauf auf Python-, Backend-, Flutter-, Debug-APK-, allen ABI-APK- und Alpha-Release-Gates vollständig prüfen und nach neuer Main-/PR-Konfliktprüfung integrieren.
+
+---
+
 ## 05.11.2026 – ZIP-Pfadportabilität in Alpha-APK und Gradle-Wrapper (PR #584)
 
 - **Ausgangs-Main-SHA:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`. Bestehende Main-CI auf diesem SHA erfolgreich (kein Beleg für den neuen Branch).
