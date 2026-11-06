@@ -969,7 +969,7 @@ class AlphaReleaseTests(unittest.TestCase):
         sidecar = source.with_suffix('.zip.sha256')
         self.assertEqual(
             sidecar.read_text(encoding='utf-8'),
-            f'{release.sha256(source)}  {source.name}\\n'.replace('\\n', '\n'),
+            f'{release.sha256(source)}  {source.name}\n',
         )
         with zipfile.ZipFile(source) as archive:
             self.assertIsNone(archive.testzip())
