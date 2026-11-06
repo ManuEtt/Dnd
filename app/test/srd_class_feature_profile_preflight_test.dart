@@ -76,10 +76,7 @@ void main() {
       ];
       for (final hero in invalid) {
         final snapshot = hero.toJson();
-        expect(
-          SrdClassFeatureCatalog.hasConsistentClassLevels(hero),
-          isFalse,
-        );
+        expect(SrdClassFeatureCatalog.hasConsistentClassLevels(hero), isFalse);
         expect(SrdClassFeatureCatalog.unlocked(hero), isEmpty);
         expect(SrdClassAutomation.unlocked(hero), isEmpty);
         expect(SrdClassAutomation.derivedValues(hero), isEmpty);
@@ -92,13 +89,15 @@ void main() {
       final bardSnapshot = bard.toJson();
       expect(SrdClassFeatureCatalog.hasConsistentClassLevels(bard), isTrue);
       expect(
-        SrdClassFeatureCatalog.unlocked(bard)
-            .any((feature) => feature.name == 'Font of Inspiration'),
+        SrdClassFeatureCatalog.unlocked(
+          bard,
+        ).any((feature) => feature.name == 'Font of Inspiration'),
         isTrue,
       );
       expect(
-        SrdClassAutomation.unlocked(bard)
-            .any((entry) => entry.feature.name == 'Font of Inspiration'),
+        SrdClassAutomation.unlocked(
+          bard,
+        ).any((entry) => entry.feature.name == 'Font of Inspiration'),
         isTrue,
       );
       expect(SrdClassAutomation.derivedValues(bard), isNotEmpty);
@@ -106,16 +105,18 @@ void main() {
 
       final barbarian = _hero(primary: 'Barbarian', level: 18);
       expect(
-        SrdClassFeatureCatalog.unlocked(barbarian)
-            .any((feature) => feature.name == 'Indomitable Might'),
+        SrdClassFeatureCatalog.unlocked(
+          barbarian,
+        ).any((feature) => feature.name == 'Indomitable Might'),
         isTrue,
       );
       expect(SrdClassAutomation.derivedValues(barbarian), isNotEmpty);
 
       final monk = _hero(primary: 'Mönchin', level: 4);
       expect(
-        SrdClassFeatureCatalog.unlocked(monk)
-            .any((feature) => feature.name == 'Slow Fall'),
+        SrdClassFeatureCatalog.unlocked(
+          monk,
+        ).any((feature) => feature.name == 'Slow Fall'),
         isTrue,
       );
       expect(SrdClassAutomation.derivedValues(monk), isNotEmpty);
@@ -139,15 +140,12 @@ void main() {
       );
       final values = SrdClassAutomation.derivedValues(mixed);
       expect(
-        values.singleWhere(
-          (value) => value.name == 'Hinterhältiger Angriff',
-        ).value,
+        values
+            .singleWhere((value) => value.name == 'Hinterhältiger Angriff')
+            .value,
         '3W6',
       );
-      expect(
-        values.any((value) => value.name == 'Zweite Luft gesamt'),
-        isTrue,
-      );
+      expect(values.any((value) => value.name == 'Zweite Luft gesamt'), isTrue);
       expect(mixed.toJson(), snapshot);
 
       final ranger = _hero(
@@ -158,8 +156,9 @@ void main() {
       );
       expect(SrdClassFeatureCatalog.hasConsistentClassLevels(ranger), isTrue);
       expect(
-        SrdClassFeatureCatalog.unlocked(ranger)
-            .any((feature) => feature.name == 'Feral Senses'),
+        SrdClassFeatureCatalog.unlocked(
+          ranger,
+        ).any((feature) => feature.name == 'Feral Senses'),
         isTrue,
       );
       expect(SrdClassAutomation.derivedValues(ranger), isNotEmpty);
