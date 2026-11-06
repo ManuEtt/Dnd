@@ -2132,3 +2132,13 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-06 – Zauberwirkzeit-Klassifizierung: bestätigte Triggeridentitäten
+
+Ausgangs-`main` `9a0fa855374a67805e531ad8574e048d99b33745`; eigener Branch `fix/chat-a/triggered-spell-casting-time-identity-20261106`; Fachcode/Test-HEAD `b3b6b502ab1bc93c6a15e135831b7ff8ebb138e4`; [PR #597](https://github.com/ManuEtt/Dnd/pull/597) (Draft). Das Regelmodul akzeptiert nur noch exakt acht im SRD-5.2.1-Arbeitskatalog nachgewiesene Reaction-/Triggered-Bonus-Action-Wirkzeiten, jeweils an den Zaubernamen gebunden. Ein umgeschriebener ausgelöster Zauber fällt nicht länger als normale Action durch. Keine Auswirkungen auf die eigentliche Triggerbestätigung oder die Persistenz.
+
+Fachdateien: `app/lib/domain/srd_spell_casting_time_rules.dart` und `app/test/srd_spell_casting_time_integrity_test.dart`; neue Positiv-/Negativ- und Abgrenzungsfälle. Statischer GitHub-Katalogabgleich 8/8 erfolgreich (**kein Dart-Test**). Vollständiges `dart format`, `flutter analyze`, `flutter test`, Python-/Backend-Prüfungen sowie Android-/ABI-/Release-CI auf finalem PR-HEAD und reale Geräteabnahme sind ausstehend. Keine Migration, kein Versionswechsel, keine Änderungen an SQLite/JSON, GameEngine, Controller, Story oder Flutter-UI. Lokales Flutter/Dart-SDK und Git-DNS fehlen; PR nicht automatisch mergen. Gemeinsame Checkpoint- und README-Einträge additiv integrieren. Regelquelle: [SRD 5.2.1](https://www.dndbeyond.com/srd), Wizards of the Coast LLC, CC BY 4.0.
+
+Nächster Schritt: Finale Actions am PR-HEAD prüfen und danach gewöhnliche Bonus-Action-Zauber auf vergleichbare, noch ungeschützte Direktkonstruktor-Umklassifizierung testen.
+
+---
