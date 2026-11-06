@@ -84,9 +84,7 @@ void main() {
       expect(jsonEncode(campaign.toJson()), original);
     }
 
-    final valid = _campaign(
-      npcs: const [WorldNpc(id: 'mira', name: 'Mira')],
-    );
+    final valid = _campaign(npcs: const [WorldNpc(id: 'mira', name: 'Mira')]);
     expect(NpcStorySelection.choose(valid, 'mira').sessionId, 'session-two');
   });
 
@@ -100,9 +98,7 @@ void main() {
       notes: [_note('safe-note', 'mira', 'Mira kennt den Schlüssel.')],
     );
     final raw = jsonEncode(original.toJson());
-    final restored = Campaign.fromJson(
-      jsonDecode(raw) as Map<String, dynamic>,
-    );
+    final restored = Campaign.fromJson(jsonDecode(raw) as Map<String, dynamic>);
 
     expect(restored.npcs.first.id, 'mira\n');
     expect(
