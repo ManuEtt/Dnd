@@ -149,24 +149,18 @@ class FantasyEffectWard extends StatelessWidget {
             ),
           ),
         if (onManageSpells != null)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton.icon(
-              key: const ValueKey('ward-manage-spell-effects'),
-              onPressed: onManageSpells,
-              icon: const Icon(Icons.auto_fix_high, size: 18),
-              label: const Text('Zauberwirkungen verwalten'),
-            ),
+          _WardManageButton(
+            buttonKey: const ValueKey('ward-manage-spell-effects'),
+            label: 'Zauberwirkungen verwalten',
+            icon: Icons.auto_fix_high,
+            onPressed: onManageSpells!,
           ),
         if (onManage != null)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton.icon(
-              key: const ValueKey('ward-manage-effects'),
-              onPressed: onManage,
-              icon: const Icon(Icons.edit_outlined, size: 18),
-              label: const Text('Zustandsquellen verwalten'),
-            ),
+          _WardManageButton(
+            buttonKey: const ValueKey('ward-manage-effects'),
+            label: 'Zustandsquellen verwalten',
+            icon: Icons.edit_outlined,
+            onPressed: onManage!,
           ),
       ],
     ),
@@ -248,6 +242,55 @@ class FantasyEffectWard extends StatelessWidget {
     'betäubt' || 'bewusstlos' => Icons.nights_stay_outlined,
     _ => Icons.shield_moon_outlined,
   };
+}
+
+/// A full-width multiline action at large Android font sizes keeps the
+/// entire management label and touch target reachable on narrow screens.
+/// Regular font sizes retain the existing compact TextButton.icon layout.
+class _WardManageButton extends StatelessWidget {
+  const _WardManageButton({
+    required this.buttonKey,
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final Key buttonKey;
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final multiline =
+          constraints.maxWidth < 500 &&
+          MediaQuery.textScalerOf(context).scale(1) >= 1.8;
+      if (multiline) {
+        return TextButton(
+          key: buttonKey,
+          onPressed: onPressed,
+          style: TextButton.styleFrom(alignment: Alignment.centerLeft),
+          child: Row(
+            children: [
+              Icon(icon, size: 18),
+              const SizedBox(width: 8),
+              Expanded(child: Text(label, softWrap: true)),
+            ],
+          ),
+        );
+      }
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: TextButton.icon(
+          key: buttonKey,
+          onPressed: onPressed,
+          icon: Icon(icon, size: 18),
+          label: Text(label),
+        ),
+      );
+    },
+  );
 }
 
 class _WardCard extends StatelessWidget {
