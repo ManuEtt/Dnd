@@ -1,3 +1,19 @@
+## 06.11.2026 – Atomare Alpha-Release-Zieldateien bei späten Kollisionen
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; 15 zum Start offene fachfremde PRs mit sämtlichen Dateilisten geprüft.
+- **Branch:** `fix/chat-d/alpha-release-exclusive-output-20261106`; **Code-/Teststand:** `e4a901a9ad5efb4c065ce7c9291bccd309d27497`; **PR:** [#599](https://github.com/ManuEtt/Dnd/pull/599) (Draft bis vollständiger CI).
+- **Ausgangsproblem:** Zwischen anfänglicher Versions-Kollisionsprüfung und tatsächlichem Schreiben der APK-/ReleaseNotes-/SHA256-Ausgaben konnten neue reguläre Dateien oder Symlinks auftreten. Die bisherigen schreibenden Opens konnten diese Dateien oder externe Linkziele überschreiben; der Fehlerpfad konnte auch unbeteiligte Dateinamen löschen.
+- **IMPLEMENTIERT:** `_new_release_file` nutzt exklusive Dateierstellung (`x`/`xb`) ohne Überschreiben von vorhandenen Dateien/Symlinks. Nach erfolgreichen Schritten erfasste eigene Dateien werden beim Abbruch rückwärts entfernt; partiell geschriebene APKs werden im exklusiven Writer aufgeräumt. Bestehende Quell-/APK-Validierung, Version-Lock, Dateinamen, SHA256-Format und erfolgreiche Veröffentlichung bleiben bestehen.
+- **Geänderte Fachdateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`. Projekt-Nachtrag ausschließlich am README-Dateiende sowie dieser und zentraler Checkpoint.
+- **GETESTET:** GitHub-Quellvergleich, Main-HEAD-Abgleich, offene PRs und deren veränderte Fachdateien geprüft; eigenständiger Branch, Code-/Testcommits und Draft-PR tatsächlich auf GitHub erstellt. **Noch kein neu bestandener Testlauf auf dem finalen PR-HEAD nachgewiesen.**
+- **NICHT GETESTET:** Python-Regressionen und vollständige Python-/Backend-/Flutter-/Android-/APK-/Release-Pipeline auf endgültigem Dokumentationscommit, reale Geräte-/Upgradeprüfung. Lokaler Repository-Checkout ist wegen fehlender DNS-Auflösung zu GitHub nicht ausführbar.
+- **BLOCKIERT:** Vollständige GitHub-Actions-Abnahme und abschließender kombinierter PR-/Main-Konfliktabgleich.
+- **NOCH NICHT IMPLEMENTIERT:** Kein automatischer Merge, keine produktive App-Signierung und keine reale Geräteabnahme. Es werden keine zusätzlichen Funktionen behauptet.
+- **Kompatibilität/Migration:** Keine Migration; SQLite-Schema 3, äußeres JSON-Format 1, Spielstanddaten und Backups unverändert. Keine Änderung der App-Version 0.8.52+102, von Story/Regeln/UI oder den Android-Build-Inputs.
+- **Nächster Schritt:** Vollständigen finalen GitHub-Actions-Lauf für PR #599 einschließlich Python/Backend/Flutter, Debug- und drei ABI-APKs, Release-Prüfung abnehmen; bei Fehlern denselben Branch korrigieren, vor eventuellem Merge Main/PRs erneut abgleichen.
+
+---
+
 ## 06.11.2026 – Checkpoint-Manifest, Patch, Archive und Prüfsummen: portable Namen
 
 - **Ausgangs-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` nach regulärer Integration von PR #584 mit grünem PR-Lauf [#42108899271](https://github.com/ManuEtt/Dnd/actions/runs/42108899271); Main-CI separat.
