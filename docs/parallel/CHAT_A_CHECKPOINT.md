@@ -1399,3 +1399,20 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-06 – Paladin-Handauflegen: Klassenprofil-Vorprüfung (PR #609)
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`.
+- **Branch:** `feat/chat-a/paladin-lay-on-hands-profile-20261106`. Codecommit `6936e94edd70fbf53910370ae94f04747427d32b`; Testcommit `81a0e91feadd199476455c3f54ada7d193d95dde`. Nachträgliche Dokumentationscommits sind im PR-HEAD sichtbar.
+- **PR:** [#609](https://github.com/ManuEtt/Dnd/pull/609), Draft, **nicht** nach `main` gemergt.
+- **Regel:** SRD 5.2.1 (CC BY 4.0), Paladin 1 / Lay On Hands; Requirement `CLASS-PALADIN-1-BASE-LAY-ON-HANDS-0` bleibt bis zu bestandener CI unverified.
+- **Ausgangsproblem:** `ClassResourceRules.level` allein konnte bei unbekannten Klassen, Aliasdoppelungen oder widersprüchlichem Level-Split eine Paladin-Heilung bzw. eine Entfernung von „Vergiftet“ ermöglichen.
+- **IMPLEMENTIERT:** lokale Vorprüfung für beide Klassen, Kanonisierung über `findSrdClass`, Stufenbereich 1–20 und positive Primär-/gültige Zweitstufe; schreibfreie `remaining` liefert bei ungültigen Profilen 0; aktive `useOnSelf` wirft `FormatException` vor Zustands-/Ressourcenänderung. Gültige Einzel- und Mehrklassen bleiben unverändert, vorgegebene Bonusaktions-/Kampfverwaltung bleibt in der Engine.
+- **Geändert:** `app/lib/domain/paladin_lay_on_hands.dart`, neuer Test `app/test/paladin_lay_on_hands_class_preflight_test.dart`, neutraler README-Appendix, `docs/CODEX_CHECKPOINT.md` und dieser persönliche Checkpoint. Kein gemeinsames Modell, Story-/Speichermodul oder UI verändert.
+- **Akzeptanz:** Positive Alias-/Multiclass-/Heilfälle und JSON-Roundtrip; negative unbekannte Klasse, doppelte Aliasidentität, Stufen 0/21, Split-Fehler; unveränderte HP/Ressourcen/Zustände bei Ablehnung. Tests vorhanden, CI-Pass noch nicht bestätigt.
+- **GETESTET:** Quelldateien, offizielle SRD-Quelle und konkurrierende Arbeitsbereiche geprüft; Branch und Pull Request auf GitHub gesichert.
+- **NICHT GETESTET:** Lokale Dart-/Flutter-/Python-/Backend-/APK- und Geräteabnahme (SDK/DNS fehlen). Die neue CI und finale Artefakte werden separat überprüft.
+- **BLOCKIERT:** Vollständige CI-Abnahme sowie additiver Integrationsabgleich gemeinsamer README-/Checkpoint-Pfade mit parallelen PRs.
+- **Migrationen:** Keine; SQLite-/JSON-Version, App-Version 0.8.52+102, Story, Ereignisse und alte Spielstände unverändert.
+- **NOCH NICHT IMPLEMENTIERT:** Weitere Paladin-Fähigkeiten und globale Klassenressourcenprofilprüfung; keine behauptete Gesamt-SRD-Vollständigkeit.
+- **Nächster Schritt:** Finale PR-CI #609 abwarten und etwaige konkrete Test-/Formatierungsfehler im selben Branch beheben, dann die Integration der Dokumentationsanhänge koordinieren.
