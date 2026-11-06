@@ -1399,3 +1399,25 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 06.11.2026 – Manuelle Initiative: Akteurintegrität im Regel-Preflight
+
+**Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f` · **Branch:** `feat/chat-a/manual-initiative-actor-integrity-20261106` · **PR:** [#612](https://github.com/ManuEtt/Dnd/pull/612) (Draft). Code-/Test-Commits: `6d1addf4fc9b4e54838d5a71505af5ff7f70f9a2`, `ba3a491002450777554175175a0e50f4ad310e3b`, `fa9d62b759e3e888e45295fdcc3abfdda2465477`; endgültiger Status-Commit ist über PR-HEAD nachzutragen.
+
+**Ausgangsproblem:** `SrdInitiativeRosterRules.isCurrent` filterte fremde/entfernte IDs aus dem lebenden Roster weg. Bei komplett vorhandenen lebenden Akteuren galt die übrige Queue als frisch und konnte vor dem Rundenfortschritt nicht zuverlässig abgewiesen werden. Direkt konstruierte Kampagnen können Import-Preflights umgehen.
+
+**IMPLEMENTIERT:** Vollständige Registrierungsprüfung für gespeicherte Akteur-IDs; zusätzlich Kollisionssperre für doppelte Held-/Gegner-/Zusatzkreatur-IDs. Gültige tote Zusatzkreaturen behalten die vorhandene Skip-Semantik; Reihenfolge unter lebenden Akteuren und bestätigte Gleichstände bleiben unangetastet.
+
+**Geänderte Dateien:** `app/lib/domain/srd_initiative_roster_rules.dart`; `app/test/srd_manual_turn_queue_test.dart` (neue deterministische Negative zu Fremd-ID, entferntem Akteur und Alias-Kollision; positive Regression für besiegte registrierte Kreatur, Import-/Replay-Schutz), `README.md` (nur am Dateiende), `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`. Andere laufende Chat-Fachdateien nicht geändert.
+
+**Fachbeleg:** Wizards of the Coast, SRD 5.2.1, *Playing the Game / Combat / Initiative* (https://www.dndbeyond.com/srd), CC BY 4.0; Anforderung `RULE-COMBAT-INITIATIVE` weiterhin **partial**. Keine weiteren SRD-Features als fertig markiert.
+
+**GETESTET:** Tatsächliche GitHub-Quellen und Branch-/PR-Dateilisten von 28 offenen PRs geprüft; #175 bereits zusammengeführt. Quellseitige Gegenfalltests ergänzt. **Kein lokaler Dart-/Flutter-Test bestanden oder ausgeführt** (kein SDK vorhanden).
+
+**NICHT GETESTET:** Python-Projekt-/Coverage-/Unit-Prüfungen, Backend-Suite, `dart format`, `flutter analyze`, `flutter test`, Flutter Android-Build, UI-/Gerätetest; GitHub-Actions-Status für finalen HEAD nach PR-Änderung kontrollieren.
+
+**BLOCKIERT:** Lokal kein vollständiger Repo-Checkout oder Dart-/Flutter-SDK. Gemeinsame Statusdokumente mit offenen PRs nur additiv/koordiniert integrieren.
+
+**Migrationen und Spielstände:** Keine DB-/JSON-Migration, keine Änderung an Revision/Events/Bewegung/RNG, keinen Story- oder Android-Code verändert. Gültige Altspielstände weiterhin nutzbar.
+
+**Genau nächster Schritt:** GitHub-CI von PR #612 nach letztem Dokumentationscommit vollständig abnehmen und ggf. dort angezeigte konkrete Test-/Formatterfehler ausschließlich auf diesem Branch korrigieren. Danach unabhängige Regelprüfung an anderem noch unbelegten SRD-Mechanismus erst nach neuer PR-Konfliktanalyse.

@@ -169,6 +169,19 @@ class SrdInitiativeRosterRules {
     if (fight == null || fight.isFinished || fight.id != queue.encounterId) {
       return false;
     }
+    // A queued actor must still belong to this encounter. The roster below
+    // deliberately omits defeated creatures; simply filtering the queue by
+    // living IDs would otherwise hide injected or since-removed actor IDs.
+    // Keep registered defeated actors valid so existing queues can skip them.
+    final registeredActorIds = <String>{
+      campaign.hero.id,
+      fight.id,
+      for (final creature in campaign.trackedAreaCreatures) creature.id,
+    };
+    if (registeredActorIds.length != campaign.trackedAreaCreatures.length + 2 ||
+        queue.actorIds.any((id) => !registeredActorIds.contains(id))) {
+      return false;
+    }
     final roster = preview(campaign, baseInitiativeConfirmed: true);
     if (roster.missing.isNotEmpty) return false;
     final living = {
