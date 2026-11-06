@@ -44,46 +44,46 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-            const Text(
-              'Auswahl zum Inventar hinzufügen. '
-              'Weder Gold noch Kampfwerte werden automatisch verändert.',
-              style: TextStyle(fontSize: 12),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              key: const ValueKey('equipment-catalog-search'),
-              textInputAction: TextInputAction.search,
-              onSubmitted: (_) => FocusScope.of(context).unfocus(),
-              onChanged: (query) => setState(() => _query = query),
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                labelText: 'Gegenstand suchen (Deutsch oder Englisch)',
-                isDense: true,
-              ),
-            ),
-            const SizedBox(height: 6),
-            DropdownButton<EquipmentCategory?>(
-              key: const ValueKey('equipment-catalog-category'),
-              value: _category,
-              isExpanded: true,
-              items: [
-                const DropdownMenuItem<EquipmentCategory?>(
-                  value: null,
-                  child: Text('Alle Kategorien'),
+                const Text(
+                  'Auswahl zum Inventar hinzufügen. '
+                  'Weder Gold noch Kampfwerte werden automatisch verändert.',
+                  style: TextStyle(fontSize: 12),
                 ),
-                for (final category in EquipmentCategory.values)
-                  DropdownMenuItem<EquipmentCategory?>(
-                    value: category,
-                    child: Text(category.label),
+                const SizedBox(height: 10),
+                TextField(
+                  key: const ValueKey('equipment-catalog-search'),
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: (_) => FocusScope.of(context).unfocus(),
+                  onChanged: (query) => setState(() => _query = query),
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    labelText: 'Gegenstand suchen (Deutsch oder Englisch)',
+                    isDense: true,
                   ),
-              ],
-              onChanged: (selected) => setState(() => _category = selected),
-            ),
-            Text(
-              '${items.length} Treffer',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 4),
+                ),
+                const SizedBox(height: 6),
+                DropdownButton<EquipmentCategory?>(
+                  key: const ValueKey('equipment-catalog-category'),
+                  value: _category,
+                  isExpanded: true,
+                  items: [
+                    const DropdownMenuItem<EquipmentCategory?>(
+                      value: null,
+                      child: Text('Alle Kategorien'),
+                    ),
+                    for (final category in EquipmentCategory.values)
+                      DropdownMenuItem<EquipmentCategory?>(
+                        value: category,
+                        child: Text(category.label),
+                      ),
+                  ],
+                  onChanged: (selected) => setState(() => _category = selected),
+                ),
+                Text(
+                  '${items.length} Treffer',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 4),
                 ],
               );
             }
@@ -172,7 +172,6 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                 const Divider(height: 8),
               ],
             );
-
           },
         ),
       ),
