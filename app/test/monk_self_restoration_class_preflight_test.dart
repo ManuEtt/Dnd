@@ -22,7 +22,7 @@ HeroCharacter _monk({
 
 void main() {
   group('SRD 5.2.1 Monk 10: confirmed class-profile preflight', () {
-    test('valid single class and canonical English/ASCII aliases still work', () {
+    test('single class and English/ASCII aliases still work', () {
       for (final name in ['Mönch', 'Monk', 'moench']) {
         final hero = _monk(primary: name);
         expect(MonkSelfRestoration.unlocked(hero), isTrue);
@@ -40,8 +40,18 @@ void main() {
 
     test('valid multiclass uses Monk levels, not total character level', () {
       for (final hero in [
-        _monk(primary: 'Fighter', secondary: 'Monk', level: 12, secondLevel: 10),
-        _monk(primary: 'moench', secondary: 'Kämpfer', level: 12, secondLevel: 2),
+        _monk(
+          primary: 'Fighter',
+          secondary: 'Monk',
+          level: 12,
+          secondLevel: 10,
+        ),
+        _monk(
+          primary: 'moench',
+          secondary: 'Kämpfer',
+          level: 12,
+          secondLevel: 2,
+        ),
       ]) {
         expect(MonkSelfRestoration.unlocked(hero), isTrue);
         expect(MonkSelfRestoration.atEndOfTurn(hero).removed, 'vergiftet');
@@ -73,11 +83,21 @@ void main() {
         _monk(primary: 'Mönch', secondary: 'Monk', level: 20, secondLevel: 10),
         _monk(primary: 'Mönch', secondary: 'Kämpfer', level: 10),
         _monk(primary: 'Mönch', level: 12, secondLevel: 2),
-        _monk(primary: 'Kämpfer', secondary: 'Mönch', level: 10, secondLevel: 10),
+        _monk(
+          primary: 'Kämpfer',
+          secondary: 'Mönch',
+          level: 10,
+          secondLevel: 10,
+        ),
         _monk(level: 0),
         _monk(level: 21),
         _monk(level: 10, secondLevel: -1),
-        _monk(primary: 'Kämpfer', secondary: 'Mönch', level: 20, secondLevel: 21),
+        _monk(
+          primary: 'Kämpfer',
+          secondary: 'Mönch',
+          level: 20,
+          secondLevel: 21,
+        ),
       ];
       for (final hero in invalid) {
         final before = hero.toJson();
