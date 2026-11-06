@@ -2191,3 +2191,21 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-06 – Klassenprofilprüfung vor Handauflegen (PR #609, offen)
+
+**Arbeitsstand:** Basis-main `0a813df100aa649c2204018349b0db9af09fb83f`, App-Version `0.8.52+102`; Branch `feat/chat-a/paladin-lay-on-hands-profile-20261106`, Quellcodecommit `6936e94edd70fbf53910370ae94f04747427d32b`, Testcommit `81a0e91feadd199476455c3f54ada7d193d95dde`, [Draft-PR #609](https://github.com/ManuEtt/Dnd/pull/609). Gleichzeitiger unabhängiger [PR #601](https://github.com/ManuEtt/Dnd/pull/601) (Selbstwiederherstellung) hat auf `626bd820645d5dfc5406966182d2c286ee11aff0` [GitHub Actions 42190575034](https://github.com/ManuEtt/Dnd/actions/runs/42190575034) vollständig mit Erfolg bestanden; danach aktualisiert auf `8585edb106c6dad359b95820c6817bf57fa493db`, dessen neue CI getrennt zu prüfen ist.
+
+**IMPLEMENTIERT:** `PaladinLayOnHands` gibt bei inkonsistenten Primär-/Sekundärklassen und Stufen keine ausgebbaren Punkte mehr frei und sperrt den tatsächlichen Selbstheil-/Vergiftungsentfernungsbefehl vor dem Ressourcenverbrauch. Klassennormalisierung über vorhandenen SRD-Katalog. `CLASS-PALADIN-1-BASE-LAY-ON-HANDS-0` (SRD 5.2.1, Classes / Paladin, CC BY 4.0); kein pauschaler Abschlussstatus.
+
+**Geändert:** `app/lib/domain/paladin_lay_on_hands.dart`; neuer Test `app/test/paladin_lay_on_hands_class_preflight_test.dart`, neu angehängter README-Bericht, persönlicher und zentraler Checkpoint. Regeln bleiben unabhängig von Story/Provider. Keine Spielstands-, Ereignis-, SQL- oder JSON-Migration, keine Versionsänderung.
+
+**GETESTET:** Aktueller Code und die offenen PR-Bereiche vor der Implementierung überprüft, Branch und PR auf GitHub angelegt. Keine lokal durchgelaufenen Unit-/Buildtests behauptet.
+
+**NICHT GETESTET:** `dart format`, `flutter analyze`, `flutter test`, `flutter build apk --debug`, lokale Python-/Backend-Vollsuite, native Android-/Geräte- und Upgrade-Abnahme. Auf diesem Ausführungscontainer fehlen Dart/Flutter und der Git-Checkout (DNS).
+
+**BLOCKIERT:** Vollständige GitHub-Actions-CI auf dem finalen PR-HEAD; die gemeinsam benutzten Markdown-Anhänge (README, CODEX_CHECKPOINT, persönlicher Checkpoint) dürfen bei parallelen PRs nur additiv konsolidiert werden.
+
+**NOCH NICHT IMPLEMENTIERT:** vollständige Paladin-SRD-Featureautomatik, sichere Validierung sämtlicher historischen Klassenressourcen und andere Klassenaktivierungen. Der Coverage-Registerstatus bleibt unverändert.
+
+**Genau nächster Schritt:** PR #609 auf finalem HEAD durch CI (Dart-Format, Analyse, neue plus alte Flutter-/Backend-/Python-Tests, Android-Debug und native Tests) abnehmen, Fehler im selben Branch beheben; erst danach zur Integration freigeben.
