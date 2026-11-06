@@ -946,3 +946,20 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+---
+
+## 06.11.2026 – NPC-Wiedereinstieg benötigt gültige Sitzungs-ID (PR #611)
+
+- **Ausgangs-Main-SHA:** `0a813df100aa649c2204018349b0db9af09fb83f`.
+- **Branch:** `fix/chat-b/npc-resume-session-guard-20261106`; **Code-/Test-Commits:** `6444570b1ad5d9fa7e539bef23ebe57aee9399f7`, `9aeb6ce8768a7831e1f0663230d18f068ea5b3fc`; **PR:** [#611](https://github.com/ManuEtt/Dnd/pull/611) (Draft). Letzten Dokumentations-HEAD beim CI-Vergleich ermitteln.
+- **Ausgangsproblem:** `ConfirmedNpcResumeSelector.read` akzeptierte eine direkt konstruierte Kampagne ohne gültige `sessionId`, obwohl ein bestätigter Rückblick an eine konkrete gespeicherte Sitzung gebunden sein muss.
+- **IMPLEMENTIERT:** Leere oder nur Whitespace enthaltende `sessionId` wird bereits beim Read-Preflight mit `FormatException` abgelehnt; der eigentliche NPC-/Notiz-Selektor und der gespeicherte Spielstand werden nicht mutiert.
+- **Geänderte Fachdateien:** `app/lib/story/confirmed_npc_resume_selection.dart`; neu: `app/test/confirmed_npc_resume_session_guard_test.dart`.
+- **Akzeptanztests:** Drei deterministische Tests: leere/ASCII-/Unicode-Whitespace-Sitzung wird abgelehnt und lässt den Original-JSON-Zustand unangetastet; gültige Sitzung zeigt gespeicherte NPC-Notiz; gleich-revisionierte fremde oder leere Sitzung scheitert an `requireCurrent`.
+- **GETESTET:** Aktueller Main-HEAD, 27 konkurrierende PRs und deren relevante Dateipfade vor Start geprüft; der Fachcode und die drei Regressionstests im eigenen Branch committed. Nach PR-Erstellung 28 offene PRs; die beiden neuen Fachdateipfade werden von keinem anderen offenen PR beansprucht.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, Flutter-Unit-/Widgettests, APK, sämtliche PR-#611-CI-Jobs auf finalem Dokumentations-HEAD, Realgerät und produktive KI (lokal keine Dart-/Flutter-SDKs; kein GitHub-DNS-Checkout).
+- **BLOCKIERT:** Fachliche CI-Abnahme und Review stehen aus; gemeinsame README und zentrale Checkpoints aus anderen PRs müssen bei der Integration verlustfrei zusammengeführt werden.
+- **Migrationen:** Keine; JSON/SQLite, Charakterwerte, Quests, Regelzustand und App-Version bleiben unverändert.
+- **NÄCHSTER SCHRITT:** CI von PR #611 auf dessen endgültigem HEAD abnehmen, etwaige Fehler im selben Branch korrigieren; danach ohne Dokumentationsverlust im Integrationsschritt zusammenführen.
