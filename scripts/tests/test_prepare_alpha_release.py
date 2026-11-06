@@ -746,8 +746,9 @@ class AlphaReleaseTests(unittest.TestCase):
         actual_copy = release.copy_validated_apk
 
         def copy_then_insert_file(source, target, expected):
-            actual_copy(source, target, expected)
+            identity = actual_copy(source, target, expected)
             notes.write_bytes(b'other writer notes')
+            return identity
 
         with mock.patch.object(release, 'copy_validated_apk',
                                side_effect=copy_then_insert_file):
