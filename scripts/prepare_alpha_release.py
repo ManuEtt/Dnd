@@ -125,7 +125,7 @@ def _new_release_file(path: Path, *, binary: bool = False):
 
 
 def copy_validated_apk(source: Path, destination: Path,
-                       expected: os.stat_result) -> None:
+                       expected: os.stat_result) -> tuple[int, int]:
     """Pin the validated regular APK before copying, without following links.
 
     On POSIX, pin *each* parent directory with descriptor-relative O_NOFOLLOW.
@@ -164,6 +164,9 @@ def copy_validated_apk(source: Path, destination: Path,
             if not stat.S_ISREG(opened.st_mode) or _source_identity(opened) != identity:
                 raise ValueError('Die ARM64-APK-Quelle wurde seit der Prüfung verändert.')
             with _new_release_file(destination, binary=True) as output:
+                # Capture the ownership from the OPEN file, not a later
+                # pathname lookup that another writer might have replaced.
+                destination_identity = _published_file_identity(os.fstat(output.fileno()))
                 shutil.copyfileobj(stream, output, length=1024 * 1024)
                 after = os.fstat(stream.fileno())
                 if _source_identity(after) != identity:
@@ -178,6 +181,7 @@ def copy_validated_apk(source: Path, destination: Path,
                     'eine andere Datei ersetzt.'
                 ) from error
             raise
+    return destination_identity
 
 
 def validate_arm64_apk(apk: Path) -> None:
@@ -331,8 +335,9 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
         # Recheck after potentially long source ZIP creation as well.
         if _has_symlink_component(source_apk):
             raise ValueError('Die ARM64-APK darf keine symbolischen Pfadlinks verwenden.')
-        copy_validated_apk(source_apk, target_apk, checked_source)
-        created[target_apk] = _published_file_identity(target_apk.lstat())
+        target_identity = copy_validated_apk(source_apk, target_apk, checked_source)
+        created[target_apk] = target_identity
+        _require_owned_file(target_apk, target_identity)
         with _new_release_file(notes) as note_stream:
             created[notes] = _published_file_identity(os.fstat(note_stream.fileno()))
             note_stream.write(
