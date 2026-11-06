@@ -799,3 +799,20 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+## 06.11.2026 – NPC-Beziehungsentwurf bleibt beim Zielwechsel nicht erhalten
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`.
+- **Branch:** `feat/chat-c/npc-relationship-note-reset-20261106`; **Fach-/Test-Commit:** `bc9fe9f24554980e180cfa5c3057b80331237f8d`. Finaler HEAD inklusive Dokumentation ist gesondert abzulesen.
+- **PR:** [#596](https://github.com/ManuEtt/Dnd/pull/596), Draft, kein automatischer Merge.
+- **Ausgangsproblem:** Beim Wechsel von NPC A zu NPC B konnte eine unbestätigte Erklärung aus A unverändert für B bestätigt werden.
+- **IMPLEMENTIERT:** NPC-ID-spezifischer TextFormField-Key und explizites Zurücksetzen des Notizentwurfs beim Figurenwechsel; Beziehungsvorauswahl bleibt aus dem gewählten NPC. Keine Domänen- oder Persistenzänderung.
+- **Geänderte Dateien:** `app/lib/ui/campaign_memory_panel.dart`, `app/test/campaign_memory_npc_switch_draft_test.dart`, additive README- und zentrale sowie persönliche Checkpoint-Nachträge.
+- **Positive und negative Tests ergänzt:** A→B nur mit neuer Begründung speichern, leere Begründung sperrt Bestätigung, A→B→A keine alte Texteingabe, Abbrechen ohne gespeicherte Änderung, Original-JSON bleibt gleich.
+- **GETESTET:** GitHub-main, alle 15 zuvor offenen PR-Dateipfade, eigener Branch, Quellcode-/Testcommits und Draft-PR auf GitHub. Main-CI [#42168660349](https://github.com/ManuEtt/Dnd/actions/runs/42168660349) ist erfolgreich, aber kein neuer Testnachweis.
+- **NICHT GETESTET:** lokaler Flutter/Dart-Test (SDK fehlt); finale GitHub-CI, Flutter-Analyse, Dart-Format, APK/ABI-Android-Build, echtes TalkBack/IME und Altdatenupgrade.
+- **BLOCKIERT:** Abschluss der PR-CI; Konfliktmanagement für gemeinsame README-/Checkpoint-Dateien durch koordinierte Integration.
+- **Migration/Kompatibilität:** Keine SQLite-, JSON-, Controller-, Regeln-, Story- oder Versionsänderung.
+- **NÄCHSTER SCHRITT:** Finale PR-CI und Widgettests prüfen, Format- oder Regressionfehler gezielt beheben, anschließend Android-IME/TalkBack auf Realgerät gesondert abnehmen.
+
+---
