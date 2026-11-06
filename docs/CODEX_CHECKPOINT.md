@@ -1,3 +1,14 @@
+## 06.11.2026 – NPC-Rückblicke an gespeicherte Sitzung binden (PR #611)
+
+- **Main-Basis:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `fix/chat-b/npc-resume-session-guard-20261106`; **PR:** [#611](https://github.com/ManuEtt/Dnd/pull/611) (Draft), Code-/Testcommits `6444570b1ad5d9fa7e539bef23ebe57aee9399f7` und `9aeb6ce8768a7831e1f0663230d18f068ea5b3fc`.
+- **IMPLEMENTIERT:** Bestätigte NPC-Wiederaufnahme `ConfirmedNpcResumeSelector.read` verlangt nun eine nichtleere `campaign.sessionId` nach `trim()`; invalides oder unvollständig restauriertes Sitzungsprofil wird ohne NPC-Auswahl abgelehnt.
+- **TESTS ERGÄNZT:** Drei positive/negative Regressionen in `app/test/confirmed_npc_resume_session_guard_test.dart` für Whitespace-Sitzungen, bestätigte NPC-Beziehungen und gleich-revisionierte fremde Sitzungen; unveränderte bestätigte Kampagnen-/Heldenwerte.
+- **GETESTET:** Live-Main, 27 vorbestehende offene PRs sowie deren relevanten Fachdateipfade abgeglichen; zwei Fachcommits und PR veröffentlicht. Zuvor grüne fremde CI-Ergebnisse gelten nicht als Nachweis für diese Änderung.
+- **NICHT GETESTET/BLOCKIERT:** Lokales Flutter/Dart-SDK fehlt; Format/Analyse/Fluttertests/Android-APK/kompletter PR-#611-Workflow auf finalem Dokumentations-HEAD und Realgerät/produktiver KI noch offen.
+- **Dateien:** `app/lib/story/confirmed_npc_resume_selection.dart`, `app/test/confirmed_npc_resume_session_guard_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **Migrationen und Grenzen:** Keine SQLite-/JSON-Schema-, Regel-, Quest-, Android- oder Versionsänderung. Gleichzeitige README-/Checkpoint-Ergänzungen aus anderen PRs müssen beim späteren Merge additiv konsolidiert werden.
+- **NÄCHSTER SCHRITT:** Finale CI von PR #611 auf exakt dessen Abschluss-HEAD prüfen und nötige Fehler auf demselben Branch beheben; erst danach koordinierte Integration.
+
 ### 06.11.2026 – CI-Negativfall zur abschließenden Zielidentität korrigiert
 
 - **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606); neuer Korrekturcommit `52280992156bbb5f92c351497d6ec9e49ccb8310` nach Code-/Testcommit `a61bd446072d16d143cdf301270da6ca6c22edf7`.
