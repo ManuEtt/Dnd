@@ -1,6 +1,8 @@
 """Unit tests for a strictly gated, versioned Android ARM64 release bundle."""
 
+import contextlib
 import importlib.util
+import os
 import hashlib
 from pathlib import Path
 import tempfile
@@ -775,6 +777,88 @@ class AlphaReleaseTests(unittest.TestCase):
         self.assertEqual(outside.read_bytes(), b'untouched hashes')
         self.assertTrue(sums.is_symlink())
         self.assertEqual(set(self.out.iterdir()), {sums})
+
+
+    def test_apk_replaced_after_copy_before_file_close_is_not_published(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        replacement = self.base / 'foreign-target.apk'
+        replacement.write_bytes(b'other writer APK')
+        actual_copy = release.shutil.copyfileobj
+
+        def copy_then_replace(source, output, *, length=None):
+            actual_copy(source, output, length=length)
+            os.replace(replacement, target)
+
+        with mock.patch.object(release.shutil, 'copyfileobj',
+                               side_effect=copy_then_replace):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei.*ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(target.read_bytes(), b'other writer APK')
+        self.assertEqual(set(self.out.iterdir()), {target})
+
+    def test_notes_replaced_after_open_are_not_deleted_on_failure(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_ReleaseNotes.md'
+        replacement = self.base / 'foreign-notes.md'
+        replacement.write_bytes(b'other writer notes')
+        original_writer = release._new_release_file
+
+        @contextlib.contextmanager
+        def swap_after_note_write(path, *, binary=False):
+            with original_writer(path, binary=binary) as stream:
+                yield stream
+                if path == target:
+                    os.replace(replacement, target)
+
+        with mock.patch.object(release, '_new_release_file',
+                               side_effect=swap_after_note_write):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei.*ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(target.read_bytes(), b'other writer notes')
+        self.assertEqual(set(self.out.iterdir()), {target})
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_checksum_replaced_by_symlink_after_open_keeps_target(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_SHA256.txt'
+        outside = self.base / 'external-checksums.txt'
+        outside.write_bytes(b'untouched external hashes')
+        original_writer = release._new_release_file
+
+        @contextlib.contextmanager
+        def link_after_checksum_write(path, *, binary=False):
+            with original_writer(path, binary=binary) as stream:
+                yield stream
+                if path == target:
+                    target.unlink()
+                    target.symlink_to(outside)
+
+        with mock.patch.object(release, '_new_release_file',
+                               side_effect=link_after_checksum_write):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei.*ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(outside.read_bytes(), b'untouched external hashes')
+        self.assertTrue(target.is_symlink())
+        self.assertEqual(set(self.out.iterdir()), {target})
+
+    def test_valid_apk_swapped_after_release_validation_is_not_published(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        replacement = self.base / 'foreign-validated.apk'
+        with zipfile.ZipFile(replacement, 'w') as archive:
+            for name in release.REQUIRED_ARM64:
+                archive.writestr(name, b'other valid APK bytes')
+        expected = replacement.read_bytes()
+        actual_validate = release.validate_arm64_apk
+
+        def validate_then_replace(path):
+            actual_validate(path)
+            if path == target:
+                os.replace(replacement, target)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=validate_then_replace):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei.*ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(target.read_bytes(), expected)
+        self.assertEqual(set(self.out.iterdir()), {target})
 
 
 if __name__ == '__main__':
