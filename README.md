@@ -1446,3 +1446,11 @@ Beim Erstellen von vollständigen Quellcode-Checkpoints gelten für Manifest- un
 **GitHub:** Branch `fix/chat-d/checkpoint-portable-filenames-20261106`, [PR #587](https://github.com/ManuEtt/Dnd/pull/587). Die vollständige CI des finalen Commits steht noch aus; ein lokaler Kompletttest wurde nicht behauptet.
 
 **Kompatibilität:** Keine Migration, keine Änderungen an SQLite-/JSON-Spielständen, tatsächlichen Backup-Dateiinhalten, Flutter- oder Android-Version, Regel- und Storylogik. Reale Geräteabnahme und produktive Signierung bleiben separat offen.
+
+### 2026-11-06 – Alpha-Release-Dateien vor nachträglichen Kollisionen schützen
+
+Die Alpha-Release-Veröffentlichung legt APK, Release-Notizen und SHA256-Prüfsummen jetzt ausschließlich als neue Dateien an. Treten nach der anfänglichen Versions-/Dateiprüfung zusätzliche Zieldateien oder symbolische Links auf, wird der Lauf abgebrochen statt fremde Inhalte zu überschreiben. Bei Fehlern werden nur die von diesem Lauf erzeugten Ausgaben entfernt; vorhandene fremde Dateien und deren Linkziele bleiben unverändert. Die Version-Sperre und die Validierung der APK-Quelldatei bestehen weiterhin.
+
+**Implementierung und Nachweis:** `scripts/prepare_alpha_release.py`; drei neue Python-Regressionen in `scripts/tests/test_prepare_alpha_release.py` für eine spät eingefügte APK-Verknüpfung, eine reguläre fremde Notizdatei und eine SHA256-Verknüpfung. Branch `fix/chat-d/alpha-release-exclusive-output-20261106`, [PR #599](https://github.com/ManuEtt/Dnd/pull/599) (Draft). Der vollständige GitHub-Actions-Nachweis auf dem finalen PR-HEAD steht noch aus; kein lokaler Kompletttest, kein automatischer Merge.
+
+**Kompatibilität:** Keine Änderungen an App-/Android-Version, Flutter-/Story-/Regelmodulen, bestehenden Spielständen, SQLite, JSON oder Backup-Format. Keine Migration. Geräteprüfung und produktive Signierung sind gesondert offen.
