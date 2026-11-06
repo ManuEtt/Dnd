@@ -1,3 +1,11 @@
+## 06.11.2026 – aktueller Main ohne Regelquellenänderung übernommen
+
+Main `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` (Merge #584, Windows-sichere ZIP-Namen) wurde regulär in den eigenen Perfect-Focus-Branch übernommen. Nur README und zentraler Checkpoint kollidierten; Main-Inhalte vollständig erhalten, eigene README-Nachträge danach angehängt. App-Regel-/Testquellen, Backend, Android und Version sind bytegleich zum vorher vollständig lokal geprüften Head `1bb7c977` (3354 Flutter-, 341 Python-, 79 Backend-Tests, ARM64-Debug und 14 native Fälle bestanden). Die neue Python-Prüfung und der aktuelle kombinierte CI-Head werden erneut abgenommen. Kein Main-Push, kein Force-Push. Die folgenden ursprünglichen Einträge bleiben historische Momentaufnahmen der frühen Basis 0e4474c5.
+
+Zusätzliche APK-Prüfung: vorhandene CI-Alpha enthält keine generierten Button-PNGs, lokales Debug enthält alle 30; Architekturjobs im Workflow erzeugen sie nicht. Eine lokale ARM64-Test-APK im Releasemodus mit den 30 Bildern wird aus identischen App-Quellen gesichert. CI-Paketierung ist ein gesonderter Integrationshinweis; keine Änderungen am CI-Workflow im Regelpaket. Tatsächliche finale Ergebnisse stehen in PR #586 und im externen Importleitfaden.
+
+---
+
 ## 06.11.2026 – Perfekter Fokus aus konsistenten Mönchsklassen
 
 **Arbeitsbranch:** `fix/chat-a/monk-perfect-focus-profile-20261106`. **Main-Basis:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`, zugehörige Main-CI [42099192485](https://github.com/ManuEtt/Dnd/actions/runs/42099192485) tatsächlich vollständig erfolgreich. **Fachcommit:** `62e4544571f86ac5366b90ce2b91fab698e2eab7`. **PR:** [#586](https://github.com/ManuEtt/Dnd/pull/586), [aktuelle Head-Checks](https://github.com/ManuEtt/Dnd/pull/586/checks). Version **0.8.52+102** unverändert.

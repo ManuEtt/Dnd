@@ -1427,6 +1427,16 @@ Regressionen gegen Downgrades: `scripts/tests/test_android_actions_node24.py` un
 
 Der Mindestwert für Stärkeproben und Stärkerettungswürfe ab Barbarenstufe 18 wird bei widersprüchlichen Haupt-/Nebenklassen, doppelten Alias-Klassen, ungültigen Stufen oder unbekannten Klassen nicht mehr freigeschaltet. Gültige deutsche/englische Aliase und Mehrklassenprofile bleiben unterstützt. Betroffen: `srd_indomitable_might_rules.dart` und neue deterministische Profiltests. Branch `feat/chat-a/indomitable-might-class-preflight-20261105`; PR/CI siehe GitHub. Kein JSON-/SQLite-Schemawechsel und keine Migration. SRD 5.2.1, Barbarian 18 / Indomitable Might, CC BY 4.0.
 
+### 2026-11-05 – Portable ZIP-Namen in Release-APK und Gradle-Wrapper
+
+Release-APKs und die im Android-Upload enthaltene Gradle-Wrapper-JAR werden auf Windows-inkompatible ZIP-Dateinamen geprüft. Zeichen wie `:`, `?`, `*`, `|`, `<` oder `>` werden unabhängig von Datei- oder Verzeichnisposition vor ZIP-CRC zurückgewiesen. In der Wrapper-JAR gilt der Schutz zusätzlich für reservierte Gerätenamen wie `CON.txt`, `NUL` und `COM1.dll`. Die bereits vorhandenen zentralen Zeichen-/Namenslisten aus dem Quellarchiv-Prüfer werden verwendet.
+
+**Implementierung:** `scripts/prepare_alpha_release.py` und `scripts/verify_project.py` mit sechs neuen Regressionstestmethoden in den bestehenden Python-Tests. Sie prüfen 21 unzulässige APK-Mitglieder, 21 unzulässige Wrapper-Mitglieder, elf Gerätebasen im Wrapper, gültige Interpunktion/Unicode, unveränderte JAR-Quelldateien und Release-Abbruch ohne Artefakte.
+
+**GitHub:** Branch `fix/chat-d/archive-windows-invalid-chars-20261105`, [PR #584](https://github.com/ManuEtt/Dnd/pull/584). Die vollständige CI des finalen Dokumentations-HEADs steht zum Zeitpunkt dieses Eintrags noch aus; ein lokaler Kompletttest wurde nicht durchgeführt.
+
+**Kompatibilität und Grenzen:** Keine SQLite-/JSON-/Backup-/Spielstands-, Gradle-, Android-Versions- oder SRD-Regeländerung. Realgerätetest und produktive Signierung sind separat offen.
+
 
 ### 2026-11-06 – Perfekter Fokus benötigt konsistente Klassenstufen
 
@@ -1435,3 +1445,8 @@ Die automatische Fokusregeneration bei Initiative setzt jetzt bekannte, untersch
 Branch `fix/chat-a/monk-perfect-focus-profile-20261106`, Fachcommit `62e4544571f86ac5366b90ce2b91fab698e2eab7`, [PR #586](https://github.com/ManuEtt/Dnd/pull/586). **Gezielt bestanden:** 26 neue Domänen-, sechs echte SQLite-/Controller- und zwei App-UI-Fälle sowie 15 bestehende Fachtests. Alle drei Kampfstartpfade, tatsächlicher Alt-JSON-Import, Export/Import, Neustart, ID-Replay, veraltete Revision und später SQL-Rollback sind eingeschlossen. Die regulären Initiativewürfe bleiben bestehen; keine RNG-freie Kampfabweisung behauptet.
 
 App-Version unverändert **0.8.52+102**, SQLite 3 / JSON 1 ohne Migration. Die vollständige lokale Prüfkette läuft auf unverändertem Regel-/Testcode; der finale aktuelle CI-Stand ist bei den [PR-Checks](https://github.com/ManuEtt/Dnd/pull/586/checks) und im abschließenden PR-Bericht nachgewiesen. Dieser Eintrag ist die eingefrorene Dokumentation vor Gesamtabnahme, kein vorweggenommener CI-Erfolg. Reales Gerät, TalkBack, tatsächliches Upgrade und produktive Signierung bleiben offen. Requirement `CLASS-M-NCH-15-BASE-PERFECT-FOCUS-0` wird anhand der tatsächlichen Wirkung konservativ als `partial` geführt. Nächster unabhängiger Schritt: nach frischem Main-/PR-Abgleich die Klassenberechtigung des ausdrücklich gewählten Unheimlichen Stoffwechsels vor Heilung, Fokus und Zusatzwürfel prüfen.
+
+
+### 2026-11-06 – ZIP-Prüfungen mit aktuellem Main zusammengeführt
+
+Main `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` regulär in [PR #586](https://github.com/ManuEtt/Dnd/pull/586) übernommen; sämtliche neuen README-/Checkpoint-Inhalte bleiben erhalten. App-, Backend- und Androidquellen sind gegenüber dem bereits lokal vollständig geprüften Fokusstand unverändert: **3354 Flutter-, 341 Python- und 79 Backend-Tests**, ARM64-Debug und 14 native Fälle bestanden. Die ergänzten Python-Archivprüfungen werden erneut ausgeführt; finale kombinierte Abnahme über die aktuellen PR-Checks. Kein erfolgreicher noch laufender CI-Lauf vorweggenommen. Die lokale ARM64-Test-APK wird zusätzlich mit allen 30 generierten Buttonbildern gesichert; die bisherige CI-Alpha-Paketierung lässt diese Bilder aus und ist als separater Integrationshinweis dokumentiert.
