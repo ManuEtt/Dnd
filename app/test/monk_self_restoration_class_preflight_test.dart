@@ -27,8 +27,10 @@ void main() {
         final hero = _monk(primary: name);
         expect(MonkSelfRestoration.unlocked(hero), isTrue);
         expect(MonkSelfRestoration.choices(hero), ['vergiftet']);
-        expect(() => MonkSelfRestoration.validateChoice(hero, 'vergiftet'),
-            returnsNormally);
+        expect(
+          () => MonkSelfRestoration.validateChoice(hero, 'vergiftet'),
+          returnsNormally,
+        );
         final result = MonkSelfRestoration.atEndOfTurn(hero);
         expect(result.removed, 'vergiftet');
         expect(result.hero.conditions, isEmpty);
@@ -56,37 +58,52 @@ void main() {
 
     test('unknown or duplicate classes cannot unlock automatic healing', () {
       final invalid = <HeroCharacter>[
-        _monk(primary: 'Drachenritter', secondary: 'Mönch',
-            level: 12, secondLevel: 10),
-        _monk(primary: 'Mönch', secondary: 'Drachenritter',
-            level: 12, secondLevel: 2),
-        _monk(primary: 'Mönch', secondary: 'Monk',
-            level: 20, secondLevel: 10),
-        _monk(primary: 'Mönch', secondary: 'Kämpfer',
-            level: 10, secondLevel: 0),
+        _monk(
+          primary: 'Drachenritter',
+          secondary: 'Mönch',
+          level: 12,
+          secondLevel: 10,
+        ),
+        _monk(
+          primary: 'Mönch',
+          secondary: 'Drachenritter',
+          level: 12,
+          secondLevel: 2,
+        ),
+        _monk(primary: 'Mönch', secondary: 'Monk', level: 20, secondLevel: 10),
+        _monk(primary: 'Mönch', secondary: 'Kämpfer', level: 10),
         _monk(primary: 'Mönch', level: 12, secondLevel: 2),
-        _monk(primary: 'Kämpfer', secondary: 'Mönch',
-            level: 10, secondLevel: 10),
+        _monk(primary: 'Kämpfer', secondary: 'Mönch', level: 10, secondLevel: 10),
         _monk(level: 0),
         _monk(level: 21),
         _monk(level: 10, secondLevel: -1),
-        _monk(primary: 'Kämpfer', secondary: 'Mönch',
-            level: 20, secondLevel: 21),
+        _monk(primary: 'Kämpfer', secondary: 'Mönch', level: 20, secondLevel: 21),
       ];
       for (final hero in invalid) {
         final before = hero.toJson();
-        expect(MonkSelfRestoration.unlocked(hero), isFalse,
-            reason: hero.classSummary);
-        expect(MonkSelfRestoration.choices(hero), isEmpty,
-            reason: hero.classSummary);
-        expect(() => MonkSelfRestoration.validateChoice(hero, 'vergiftet'),
-            throwsStateError);
+        expect(
+          MonkSelfRestoration.unlocked(hero),
+          isFalse,
+          reason: hero.classSummary,
+        );
+        expect(
+          MonkSelfRestoration.choices(hero),
+          isEmpty,
+          reason: hero.classSummary,
+        );
+        expect(
+          () => MonkSelfRestoration.validateChoice(hero, 'vergiftet'),
+          throwsStateError,
+        );
         final result = MonkSelfRestoration.atEndOfTurn(
           hero,
           choice: 'vergiftet',
         );
-        expect(identical(result.hero, hero), isTrue,
-            reason: hero.classSummary);
+        expect(
+          identical(result.hero, hero),
+          isTrue,
+          reason: hero.classSummary,
+        );
         expect(result.removed, isEmpty);
         expect(result.choiceRequired, isFalse);
         expect(hero.toJson(), before);
