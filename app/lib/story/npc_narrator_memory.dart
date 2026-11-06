@@ -37,7 +37,7 @@ class NpcNarratorMemory {
 
     final mentioned = <String, WorldNpc>{};
     for (final npc in campaign.npcs) {
-      if (_safeId.hasMatch(npc.id) &&
+      if (_safeId.stringMatch(npc.id) == npc.id &&
           nameCounts[_normalize(npc.name)] == 1 &&
           _mentions(action, npc.name)) {
         // Ambiguous repeated IDs cannot authorize NPC-specific memories.
@@ -57,7 +57,7 @@ class NpcNarratorMemory {
       final note = campaign.npcRelationshipNotes[index];
       final npc = mentioned[note.npcId];
       if (npc == null ||
-          !_safeId.hasMatch(note.id) ||
+          _safeId.stringMatch(note.id) != note.id ||
           noteIdCounts[note.id] != 1 ||
           note.note.trim().isEmpty) {
         continue;
