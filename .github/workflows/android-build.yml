@@ -92,10 +92,7 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: |
-          dart format lib/ui/equipment_catalog_dialog.dart test/equipment_catalog_large_text_ime_test.dart
-          git diff -- lib/ui/equipment_catalog_dialog.dart test/equipment_catalog_large_text_ime_test.dart
-          git diff --exit-code -- lib/ui/equipment_catalog_dialog.dart test/equipment_catalog_large_text_ime_test.dart
+        run: dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
