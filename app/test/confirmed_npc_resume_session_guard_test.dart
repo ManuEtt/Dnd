@@ -30,10 +30,7 @@ void main() {
       final original = jsonEncode(campaign.toJson());
 
       expect(
-        () => ConfirmedNpcResumeSelector.read(
-          campaign,
-          expectedRevision: 3,
-        ),
+        () => ConfirmedNpcResumeSelector.read(campaign, expectedRevision: 3),
         throwsFormatException,
         reason: 'A session identity is required for ${sessionId.codeUnits}.',
       );
