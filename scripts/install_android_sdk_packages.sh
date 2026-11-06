@@ -3,10 +3,18 @@
 set -euo pipefail
 
 sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
-if [[ -z "$sdk_root" || "$sdk_root" == "/" || "$sdk_root" != /* ]]; then
+if [[ -z "$sdk_root" || "$sdk_root" != /* ]]; then
   echo "::error::ANDROID_SDK_ROOT or ANDROID_HOME must name an absolute SDK directory." >&2
   exit 2
 fi
+
+# Resolve symlinks and .. before the retry cleanup can remove SDK directories.
+# Absolute aliases such as /.. and symlinks to / must never become cleanup roots.
+if ! resolved_sdk_root="$(cd -P -- "$sdk_root" 2>/dev/null && pwd -P)" || [[ "$resolved_sdk_root" == "/" ]]; then
+  echo "::error::ANDROID_SDK_ROOT or ANDROID_HOME must name an absolute SDK directory (not /)." >&2
+  exit 2
+fi
+sdk_root="$resolved_sdk_root"
 
 attempts="${ANDROID_SDK_INSTALL_ATTEMPTS:-3}"
 retry_delay="${ANDROID_SDK_RETRY_DELAY_SECONDS:-5}"
