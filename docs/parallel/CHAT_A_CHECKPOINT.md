@@ -1399,3 +1399,22 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 06.11.2026 – Klassenmerkmalskatalog: konsistente Haupt- und Nebenklasse vor Unlock
+
+**Branch:** `fix/chat-a/class-feature-catalog-profile-20261106`, initialer main `0e4474c55ce80f625f373394d6f7855b4a2487ad`, Code-/Testcommit `b86ae91afdf124a028eeb1f61730a92014cc7ec6`. Parallel erschien nach der Branchanlage ein Main-Commit `84c6259b38c5f742198276ae3d3d0f80d0c4f51e`; zur Integration neuen Ausgangsstand verwenden, bestehende Dokumentation nicht überschreiben.
+
+**Fachlicher Defekt:** `SrdClassFeatureCatalog.unlocked` und `SrdClassAutomation.derivedValues` konnten bei manipulierten Legacy-/Direktprofilen Klasse-Features oder Ressourcen anzeigen, obwohl unbekannte Klassen, doppelte Aliasnamen, ungültige Stufen oder verwaiste Nebenstufen vorhanden waren. `SrdClassAutomation.unlocked` übernahm die falschen Unlocks.
+
+**Änderung:** In `app/lib/domain/srd_class_feature_catalog.dart` öffentliche read-only Prüfung `hasConsistentClassLevels`, eingesetzt im Katalog-Unlock; in `app/lib/domain/srd_class_automation.dart` dieselbe Prüfung vor berechneten Klassenwerten. Fehlerfall: leere unveränderliche Liste, kein fiktiver Anspruch, keine Mutation. Gültige Aliase und SRD-Multiclass-Stufen bleiben gültig. Keine echte mechanische Freischaltung wird auf Basis des Katalogs erfunden.
+
+**Regression:** `app/test/srd_class_feature_profile_preflight_test.dart`: 12 ungültige Klassenprofile, bestätigte Bardin-/Barbarian-/Mönchin-Aliase, Fighter/Rogue- und Ranger/Wizard-Mehrklassen, getrennte Klassenstufen, Rundlauf, Ursprungs-JSON, Listen-Immutabilität. Bestehende Katalog- und Automationstests unverändert.
+
+**SRD/Lizenz:** Wizards of the Coast LLC, SRD 5.2.1, Classes / class-level features, CC BY 4.0, <https://www.dndbeyond.com/srd>. Einzelne Requirement-IDs bleiben im bestehenden `partial`- bzw. `unverified`-Status; kein globaler Abdeckungsgrad beansprucht.
+
+**GETESTET:** Aktueller GitHub-Zustand, PR-Fachdateien einschließlich #586, bestehende Implementierung und Tests geprüft; eigene Änderungen auf getrenntem Branch geschrieben. **NICHT GETESTET:** Dart-/Flutter-Tests und Android-APK (kein lokales SDK), finale PR-Actions und physisches Gerät. README append-only und ohne redaktionelle Chat-Kennung erweitert.
+
+**Kompatibilität:** Kein Datenmodell-/GameEngine-/Controller-/Story-/UI-/SQLite-/JSON-/Event-Update, kein Schema- oder Versionswechsel. Parallele README-/Checkpoint-Nachträge von Chat D bei Gesamtintegration verlustfrei vereinigen lassen.
+
+**Nächster Schritt:** CI auf finalem PR-HEAD auswerten und etwaige rote Checks im eigenen Branch beheben; danach Integrationsfreigabe ohne automatischen Main-Merge.
