@@ -1399,3 +1399,22 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 06.11.2026 – Reguläre Mehrklassen-Zauberplätze: Klassenprofil-Preflight
+
+**Branch:** `fix/chat-a/multiclass-normal-slots-profile-20261106`; **Basis-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; **Code-/Testcommit:** `565d1e4cb1fdd8bef596cbee1b30aeabfc62cb3d`. Pull Request und finalen CI-HEAD in GitHub abnehmen.
+
+**Regelfehler:** Der bisherige Multiclass-Rechner zählte die Wizard-Zweitstufe selbst bei unbekannter Hauptklasse und verwandelte ein inkonsistentes Legacy-/Direktprofil in echte normale Zauberplätze. Die bestehende Regression erwartete dieses ungültige Verhalten. `SpellcastingRules.cast` vertraut der berechneten normalen Slotkapazität.
+
+**Implementiert:** `MulticlassRules.combinedSpellcasterLevel` prüft den gesamten SRD-Klassenstatus vor Slotberechnung: 1–20 Gesamtstufen, primäre Stufe >=1, beide kanonischen Klassennamen bestätigt, keine doppelten deutschen/englischen Aliasidentitäten, Nebenklasse und Nebenstufe müssen konsistent sein. Fehlerfall 0 Stufen und keine regulären Slots oder Casts; positive Alias-, Halbzauber- und Pact-Magic-Pfade bleiben erhalten. Kein Cast aus generativem Fließtext und kein Daten-/UI-Schreibzugriff.
+
+**Regressionen:** Alt-Test `app/test/multiclass_spell_slot_alias_test.dart` korrigiert (Unknown Homebrew + Wizard erlaubt nun keine Plätze; Cast verweigert). `app/test/multiclass_spell_slot_class_profile_test.dart`: 14 ungültige Klassenprofile, verbrauchter Legacy-Platz, positive Voll-/Halbzauberklassen- und Multiclass-Aliase, separater Hexenmeister-Pool, regulärer erfolgreicher Cast, unveränderter Ursprung und JSON-Roundtrip.
+
+**Quelle:** Wizards of the Coast LLC, SRD 5.2.1, Character Creation / Multiclassing / Spellcasting, S. 25, CC BY 4.0, <https://www.dndbeyond.com/srd>. `RULE-CHARACTER-CREATION-MULTICLASS-SPELLCASTING` bleibt `unverified`; Zauberinhalte und andere Feature-Wirkungen außerhalb des Scopes.
+
+**Teststatus:** Quellcode und vorhandene Tests via GitHub geprüft; CI auf finalem Branch-HEAD noch nicht ausgeführt. Lokale Flutter-/Dart-Tests nicht ausgeführt (SDK fehlt); Android-Geräteabnahme, Release-Signierung und Kombination mit parallelen PRs separat offen.
+
+**Migration:** Keine Änderung an models.dart, game_engine.dart, SQLite 3, JSON 1, Event-/Controller-/Story-/Backendlogik oder App-Version. README als rein fachlicher, append-only Abschnitt; parallele Dokumentation bei Integration verlustfrei erhalten.
+
+**Nächster Schritt:** Exakten finalen PR-HEAD durch Actions prüfen, bei roten Test-/Formatgates denselben Branch korrigieren; keine Hauptbranch-Integration durch den Regelwerk-Chat.
