@@ -1966,3 +1966,17 @@ Folgende Fach-PRs von Arbeitsbereich D sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+## 2026-11-06 – Physische Android-SDK-Wurzel vor Cachebereinigung (PR #613)
+
+- **Ausgangs-main-SHA:** `0a813df100aa649c2204018349b0db9af09fb83f`.
+- **Eigener Branch:** `fix/chat-d/android-sdk-root-canonical-20261106`; **Fach-/Testcommits:** `e363c7c04c71ccf497bfd124ae86fcb14ec4cdfc` und `3508f83cae8e7a5bfb2297ab980cfa467ab10ca2`; **Pull Request:** [#613](https://github.com/ManuEtt/Dnd/pull/613) (Draft). Dokumentationscommit folgt diesen Commits.
+- **Ausgangsproblem:** Absoluter Pfadstring `/..`, `/.` oder ein auf `/` zeigender Symlink war im CI-SDK-Installer zulässig, obwohl anschließend rekursiv Cache-/NDK-Pfade gelöscht werden.
+- **IMPLEMENTIERT:** `scripts/install_android_sdk_packages.sh` normalisiert den tatsächlichen SDK-Ordner vor dem ersten `sdkmanager`-Aufruf; lehnt Root-/nicht existente Pfade vor jedem Löschversuch ab; nutzt für reguläre Bereinigung den physischen Pfad.
+- **Tests ergänzt:** `scripts/tests/test_install_android_sdk_packages.py` lehnt Root-Aliasse und Symlink auf `/` vor Mock-`sdkmanager` ab, prüft nicht existente SDK-Verzeichnisse negativ und einen normalen Pfad mit `..` positiv.
+- **GETESTET:** `bash -n`, fünf isolierte lokale Mock-Fälle (vier negative, einer positiv) mit dem manuell rekonstruierten Installer; GitHub-Main/PR-Fachdateikonflikte kontrolliert. Es handelt sich nicht um einen kompletten Python-Projekt-Testnachweis.
+- **NICHT GETESTET:** neue Python-Unittests mit echtem Repo-Checkout, Projektverifikation, Backend, Flutter-/Dart-Analyse und Tests, APK-Build, finale Actions-Jobs, Android-Gerät, Upgrade.
+- **BLOCKIERT:** GitHub-DNS im lokalen Container und fehlendes Dart/Flutter-SDK; GitHub-Actions-Ergebnisse der finalen PR-Fassung müssen abgenommen werden. Gemeinsame README-/Checkpoint-Dateien werden auch in #592, #608 und anderen offenen PRs append-only bearbeitet und benötigen koordinierte Integration.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge, keine Migration oder Spielstandänderung. App-Version/Buildcode bleiben unverändert.
+- **NÄCHSTER SCHRITT:** CI auf dem finalen HEAD von PR #613 vollständig prüfen und Fehler beheben; danach aktuellen Main- und PR-Dateiabgleich vor einer ausdrücklich überprüften Integration wiederholen.
