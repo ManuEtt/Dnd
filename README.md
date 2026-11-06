@@ -1454,3 +1454,13 @@ Die Alpha-Release-Veröffentlichung legt APK, Release-Notizen und SHA256-Prüfsu
 **Implementierung und Nachweis:** `scripts/prepare_alpha_release.py`; drei neue Python-Regressionen in `scripts/tests/test_prepare_alpha_release.py` für eine spät eingefügte APK-Verknüpfung, eine reguläre fremde Notizdatei und eine SHA256-Verknüpfung. Branch `fix/chat-d/alpha-release-exclusive-output-20261106`, [PR #599](https://github.com/ManuEtt/Dnd/pull/599) (Draft). Der vollständige GitHub-Actions-Nachweis auf dem finalen PR-HEAD steht noch aus; kein lokaler Kompletttest, kein automatischer Merge.
 
 **Kompatibilität:** Keine Änderungen an App-/Android-Version, Flutter-/Story-/Regelmodulen, bestehenden Spielständen, SQLite, JSON oder Backup-Format. Keine Migration. Geräteprüfung und produktive Signierung sind gesondert offen.
+
+### 2026-11-06 – Kampfstatus bei großer Schrift vollbreit darstellen
+
+**Problem und Lösung:** In der Begegnungsübersicht erscheinen bestätigte Angriffs-/Schild- und Reaktionshinweise bei unter 500 dp Inhalt und ab 180 % Textskalierung jetzt jeweils in einer eigenen vollbreiten Zeile. Der bisherige kompakte Wrap bei Standard-Schriftgröße bleibt erhalten; bestehende TalkBack-Labels und bestätigte Kampfwerte bleiben unverändert.
+
+**Tests:** Neue Widget-Regressionen in `app/test/fantasy_combat_threat_large_text_test.dart` für 320/360 dp, 200 % Schrift, 220 dp Tastaturbereich, semantisch einzeln lesbare Statusmeldungen, unverändertes Standardlayout und ausgeblendete aktive Meldungen nach Kampfende. Die GitHub-Actions-Abnahme auf dem finalen PR-Commit erfolgt separat; bei Veröffentlichung dieses Nachtrags ist noch kein neuer vollständiger CI-Erfolg nachgewiesen.
+
+**Nachweis:** `app/lib/ui/fantasy_combat_threat_status.dart` und die neue Testdatei; Branch `feat/chat-c/combat-threat-wide-seals-20261106`, [PR #603](https://github.com/ManuEtt/Dnd/pull/603) (Draft). Ursprüngliche Basis `9a0fa855374a67805e531ad8574e048d99b33745`, anschließend aktuelle Main-Änderungen aus `95c605898f1bcae26e0a23afa55c767ec5b20744` als mergefähige Git-Historie aufgenommen.
+
+**Kompatibilität:** Keine Änderung an Spielstand-, JSON-/SQLite-, Regel-, Story-, Backend- oder Controller-Verträgen, Berechtigungen und App-Version. Keine Migration. Reale Android-TalkBack-/IME-Bedienung und produktive Signierung bleiben getrennt zu prüfen.
