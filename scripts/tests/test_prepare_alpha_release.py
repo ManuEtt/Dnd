@@ -869,11 +869,11 @@ class AlphaReleaseTests(unittest.TestCase):
         self.assertEqual(target_apk.read_bytes(), self.apk.read_bytes())
         self.assertEqual(
             sidecar.read_text(encoding='utf-8'),
-            f'{release.sha256(source)}  {source.name}\\n'.replace('\\n', '\n'),
+            f'{release.sha256(source)}  {source.name}\n',
         )
         self.assertEqual(
             sums.read_text(encoding='utf-8'),
-            ''.join(f'{release.sha256(path)}  {path.name}\\n'.replace('\\n', '\n')
+            ''.join(f'{release.sha256(path)}  {path.name}\n'
                     for path in (source, target_apk, notes)),
         )
 
