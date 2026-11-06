@@ -11,9 +11,7 @@ Campaign _campaign(String sessionId) => Campaign(
   sessionId: sessionId,
   revision: 3,
   hero: HeroCharacter(id: 'hero', name: 'Aria', hitPoints: 17),
-  npcs: const [
-    WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich'),
-  ],
+  npcs: const [WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich')],
   npcRelationshipNotes: [
     NpcRelationshipNote(
       id: 'note-1',
