@@ -183,9 +183,7 @@ final RegExp _formatMarks = RegExp(
   r'[\u00ad\u034f\u061c\u180e\u200b-\u200f'
   r'\u202a-\u202e\u2060-\u206f\ufeff]',
 );
-final RegExp _controlMarks = RegExp(
-  r'[\x00-\x1f\x7f-\x9f\u2028\u2029]',
-);
+final RegExp _controlMarks = RegExp(r'[\x00-\x1f\x7f-\x9f\u2028\u2029]');
 
 String _oneLine(String value, {bool name = false}) => value
     .replaceAll(_formatMarks, name ? '' : ' ')
