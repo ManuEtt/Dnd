@@ -25,3 +25,10 @@ Kein Slotverbrauch, keine tatsächliche Aktion/Zauberbuchung, keine Trefferpunkt
 **SRD-Register:** `SPELL-ENTRY-ELDRITCH-BLAST`, `RULE-SPELLS-CANTRIP-SCALING` bleiben nur `partial`; der vollständige 339-Zauber-Katalog ist weiterhin nicht offiziell mechanisch komplett implementiert.
 
 **Abnahme:** Erst nach tatsächlich erfolgreicher finaler GitHub-CI dürfen Dart-/Flutter-/Backend-/Android-Tests als bestanden gemeldet werden. Ein reales Android-Gerät ist separat zu prüfen.
+
+
+## 06.11.2026 – Trefferpunkte-Preflight vor dem ersten Eldritch-Blast-Strahl
+
+Bei direkt erzeugten oder historisch inkonsistenten `HeroCharacter`-Snapshots prüft `SrdEldritchBlastRules.resolve` nun nicht allein exakt 0 TP, sondern auch negative aktuelle Trefferpunkte, maximale Trefferpunkte von 0 oder darunter und aktuelle Trefferpunkte oberhalb eines bestätigten positiven Maximums. Diese unplausiblen Ausgangswerte verhindern die Strahlenauflösung mit `StateError` **vor dem ersten Zufallszugriff**. Für unbekannte, als `null` gespeicherte TP-/Maximal-TP-Felder wird kein Wert erfunden; bisher zulässige Legacy-Charaktere bleiben lesbar. Gültige Helden mit 1 TP und bestätigten Zauber-/Aktionsvoraussetzungen behalten Strahlanzahl, W20, Deckung, Energie-Schadenswürfel und rein lesendes Ergebnis unverändert.
+
+**Neue Regressionen in** `app/test/srd_eldritch_blast_rules_test.dart`: sieben unzulässige TP-Kombinationen, ausnahmslos 0 RNG-Aufrufe und unverändertes Helden-JSON; drei zulässige Grenz-/Legacyzustände mit zwei Treffer- und Schadenswürfen pro Strahlenpaar. Kein automatisches Zaubern, kein Ressourcenverbrauch, kein Gegner-TP-Update, kein Event oder Speicherformatwechsel. Offizielle Grundlage: Wizards of the Coast LLC, D&D SRD 5.2.1, *Playing the Game / Damage and Healing / Dropping to 0 Hit Points*, Seite 17, und *Spells / Eldritch Blast*, CC BY 4.0, <https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf>. `SPELL-ENTRY-ELDRITCH-BLAST` bleibt `partial`. CI auf finalem PR-HEAD separat prüfen.
