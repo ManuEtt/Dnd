@@ -70,6 +70,26 @@ def _source_identity(info: os.stat_result) -> tuple[int, ...]:
     )
 
 
+def _published_file_identity(info: os.stat_result) -> tuple[int, int]:
+    """Identity of a newly created file; content size changes during writes."""
+    return info.st_dev, info.st_ino
+
+
+def _still_owned_file(path: Path, identity: tuple[int, int]) -> bool:
+    """Never follow a symlink when checking cleanup/publication ownership."""
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        return False
+    return (stat.S_ISREG(info.st_mode)
+            and _published_file_identity(info) == identity)
+
+
+def _require_owned_file(path: Path, identity: tuple[int, int]) -> None:
+    if not _still_owned_file(path, identity):
+        raise ValueError('Eine Release-Zieldatei wurde während der Veröffentlichung ersetzt.')
+
+
 @contextlib.contextmanager
 def _new_release_file(path: Path, *, binary: bool = False):
     """Create a release file atomically without following late symlinks.
@@ -86,16 +106,26 @@ def _new_release_file(path: Path, *, binary: bool = False):
         raise ValueError(
             'Eine Release-Zieldatei wurde während der Veröffentlichung neu belegt.'
         ) from error
-    with stream:
-        try:
+    identity = _published_file_identity(os.fstat(stream.fileno()))
+    try:
+        with stream:
             yield stream
-        except BaseException:
+            # Flush buffered notes/checksums before checking their on-disk
+            # inode. Do not trust the directory entry just because the open
+            # file descriptor still refers to our original file.
+            stream.flush()
+            _require_owned_file(path, identity)
+        _require_owned_file(path, identity)
+    except BaseException:
+        # A different writer may have replaced the name after exclusive open.
+        # Never unlink its replacement (regular file, link or directory).
+        if _still_owned_file(path, identity):
             path.unlink(missing_ok=True)
-            raise
+        raise
 
 
 def copy_validated_apk(source: Path, destination: Path,
-                       expected: os.stat_result) -> None:
+                       expected: os.stat_result) -> tuple[int, int]:
     """Pin the validated regular APK before copying, without following links.
 
     On POSIX, pin *each* parent directory with descriptor-relative O_NOFOLLOW.
@@ -134,6 +164,9 @@ def copy_validated_apk(source: Path, destination: Path,
             if not stat.S_ISREG(opened.st_mode) or _source_identity(opened) != identity:
                 raise ValueError('Die ARM64-APK-Quelle wurde seit der Prüfung verändert.')
             with _new_release_file(destination, binary=True) as output:
+                # Capture the ownership from the OPEN file, not a later
+                # pathname lookup that another writer might have replaced.
+                destination_identity = _published_file_identity(os.fstat(output.fileno()))
                 shutil.copyfileobj(stream, output, length=1024 * 1024)
                 after = os.fstat(stream.fileno())
                 if _source_identity(after) != identity:
@@ -148,6 +181,7 @@ def copy_validated_apk(source: Path, destination: Path,
                     'eine andere Datei ersetzt.'
                 ) from error
             raise
+    return destination_identity
 
 
 def validate_arm64_apk(apk: Path) -> None:
@@ -291,17 +325,21 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     if any(path.exists() or path.is_symlink() for path in generated):
         publication_lock.rmdir()
         raise ValueError('Es sind bereits Release-Dateien mit derselben Version vorhanden.')
-    created: list[Path] = []
+    # Record inode ownership rather than just intended pathnames: cleanup
+    # must not delete another process's file after a late replacement.
+    created: dict[Path, tuple[int, int]] = {}
     try:
         create_archive(root, source, layout='root')
-        created.extend((source, source_checksum))
+        for generated_path in (source, source_checksum):
+            created[generated_path] = _published_file_identity(generated_path.lstat())
         # Recheck after potentially long source ZIP creation as well.
         if _has_symlink_component(source_apk):
             raise ValueError('Die ARM64-APK darf keine symbolischen Pfadlinks verwenden.')
-        copy_validated_apk(source_apk, target_apk, checked_source)
-        created.append(target_apk)
+        target_identity = copy_validated_apk(source_apk, target_apk, checked_source)
+        created[target_apk] = target_identity
+        _require_owned_file(target_apk, target_identity)
         with _new_release_file(notes) as note_stream:
-            created.append(notes)
+            created[notes] = _published_file_identity(os.fstat(note_stream.fileno()))
             note_stream.write(
                 f'# Würfelraunen {app_version}+{build} – Android-Alpha\n\n'
                 f'- Quellstand: `{commit}`\n'
@@ -315,19 +353,24 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
                 'ausgeführten Tests erfolgreich waren; reale Gerätetests stehen separat an.\n',
             )
         with _new_release_file(sums) as checksum_stream:
-            created.append(sums)
+            created[sums] = _published_file_identity(os.fstat(checksum_stream.fileno()))
             checksum_stream.write(''.join(
                 f'{sha256(path)}  {path.name}\n' for path in (source, target_apk, notes)
             ))
+        for generated_path, identity in created.items():
+            _require_owned_file(generated_path, identity)
         validate_arm64_apk(target_apk)
         with zipfile.ZipFile(source) as archive:
             if archive.testzip() is not None:
                 raise ValueError('Das Quellarchiv ist beschädigt.')
+        for generated_path, identity in created.items():
+            _require_owned_file(generated_path, identity)
     except BaseException:
         # KeyboardInterrupt and SystemExit must not leave a partial release
         # behind after the finally block releases the exclusive version lock.
-        for path in reversed(created):
-            path.unlink(missing_ok=True)
+        for path, identity in reversed(list(created.items())):
+            if _still_owned_file(path, identity):
+                path.unlink(missing_ok=True)
         raise
     finally:
         publication_lock.rmdir()
