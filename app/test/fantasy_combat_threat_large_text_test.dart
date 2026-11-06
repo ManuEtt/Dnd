@@ -130,7 +130,10 @@ void main() {
     for (final key in _activeKeys) {
       expect(find.byKey(ValueKey(key)), findsNothing);
     }
-    expect(find.byKey(const ValueKey('combat-threat-finished')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('combat-threat-finished')),
+      findsOneWidget,
+    );
     expect(find.bySemanticsLabel('Begegnung beendet'), findsOneWidget);
     expect(find.bySemanticsLabel(_activeLabels[2]), findsNothing);
     expect(tester.takeException(), isNull);
