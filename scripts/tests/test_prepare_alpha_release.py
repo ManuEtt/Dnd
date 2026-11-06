@@ -862,5 +862,105 @@ class AlphaReleaseTests(unittest.TestCase):
         self.assertEqual(set(self.out.iterdir()), {target})
 
 
+    def test_final_hashes_match_source_apk_and_both_manifests(self):
+        published = release.prepare_release(self.root, self.out)
+        self.assertEqual(len(published), 5)
+        source, target_apk, notes, sums, sidecar = published
+        self.assertEqual(target_apk.read_bytes(), self.apk.read_bytes())
+        self.assertEqual(
+            sidecar.read_text(encoding='utf-8'),
+            f'{release.sha256(source)}  {source.name}\\n'.replace('\\n', '\n'),
+        )
+        self.assertEqual(
+            sums.read_text(encoding='utf-8'),
+            ''.join(f'{release.sha256(path)}  {path.name}\\n'.replace('\\n', '\n')
+                    for path in (source, target_apk, notes)),
+        )
+
+    def test_same_inode_valid_apk_mutation_after_hash_is_rejected(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        actual_validate = release.validate_arm64_apk
+
+        def mutate_on_final_validation(path):
+            if path == target:
+                # Rewrite the same inode as another CRC-valid native APK.
+                with zipfile.ZipFile(target, 'w') as archive:
+                    for name in release.REQUIRED_ARM64:
+                        archive.writestr(name, b'new valid content')
+                    archive.writestr('assets/extra.txt', b'in-place tampering')
+            return actual_validate(path)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=mutate_on_final_validation):
+            with self.assertRaisesRegex(ValueError, 'nach der Prüfsumme'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    def test_same_inode_valid_source_zip_mutation_is_rejected(self):
+        source = self.out / 'Wuerfelraunen_v0.5.4_24_Source.zip'
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        actual_validate = release.validate_arm64_apk
+
+        def mutate_source_on_final_validation(path):
+            if path == target:
+                with zipfile.ZipFile(source, 'a') as archive:
+                    archive.writestr('docs/late-added.txt', b'changed source bundle')
+            return actual_validate(path)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=mutate_source_on_final_validation):
+            with self.assertRaisesRegex(ValueError, 'nach der Prüfsumme'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    def test_inplace_notes_mutation_after_hash_is_rejected(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        notes = self.out / 'Wuerfelraunen_v0.5.4_24_ReleaseNotes.md'
+        actual_validate = release.validate_arm64_apk
+
+        def mutate_notes_on_final_validation(path):
+            if path == target:
+                notes.write_text('unapproved notes', encoding='utf-8')
+            return actual_validate(path)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=mutate_notes_on_final_validation):
+            with self.assertRaisesRegex(ValueError, 'nach der Prüfsumme'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    def test_checksum_manifest_mutation_after_write_is_rejected(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        sums = self.out / 'Wuerfelraunen_v0.5.4_24_SHA256.txt'
+        actual_validate = release.validate_arm64_apk
+
+        def mutate_sums_on_final_validation(path):
+            if path == target:
+                sums.write_text('wrong SHA256 records', encoding='utf-8')
+            return actual_validate(path)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=mutate_sums_on_final_validation):
+            with self.assertRaisesRegex(ValueError, 'Prüfsummen wurden verändert'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    def test_source_sidecar_mutation_after_write_is_rejected(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        sidecar = self.out / 'Wuerfelraunen_v0.5.4_24_Source.zip.sha256'
+        actual_validate = release.validate_arm64_apk
+
+        def mutate_sidecar_on_final_validation(path):
+            if path == target:
+                sidecar.write_text('wrong source checksum', encoding='utf-8')
+            return actual_validate(path)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=mutate_sidecar_on_final_validation):
+            with self.assertRaisesRegex(ValueError, 'Prüfsummen wurden verändert'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+
 if __name__ == '__main__':
     unittest.main()
