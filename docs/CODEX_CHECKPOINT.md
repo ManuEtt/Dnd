@@ -1,3 +1,20 @@
+## 06.11.2026 – Kanonische IDs für priorisierte NPC-Erinnerungen im Erzählertransport (PR #605)
+
+- **Ausgangs-main:** `2a4fab5a56127d866dd2a8933836fd1136d772b3`, nach erneuter Live-PR-/CI-Prüfung; **Branch:** `feat/chat-b/npc-narrator-note-id-integrity-20261106`; **PR:** [#605](https://github.com/ManuEtt/Dnd/pull/605) (Draft). **Fach-/Testcommit:** `9e6f7f33bdfb4d7cfe60fbfe76cc1784c74d2e7c`; finalen Dokumentations-HEAD im PR ablesen.
+- **Ausgangsproblem:** `NpcNarratorMemory.merge` priorisierte gespeicherte NPC-Notizen ohne gültige und eindeutig belegte Notiz-ID. Ungültige Legacy-IDs sowie kollidierende direkte In-Memory-Notizen konnten so widersprüchliche angeblich bestätigte Erzählererinnerungen bilden.
+- **IMPLEMENTIERT:** Für die namensbasiert ausgewählten NPCs und die priorisierten Beziehungsnotizen nur `^[A-Za-z0-9_-]{1,64}$` akzeptieren; alle Notiz-IDs vor Auswahl zählen, Duplikate unabhängig vom NPC und der Zeit vollständig auslassen. Bleibende sichere Notizen behalten Datum, Reihenfolge und die vorhandenen Wire-Grenzen.
+- **Dateien:** `app/lib/story/npc_narrator_memory.dart`, neuer `app/test/npc_narrator_note_id_integrity_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** Main-HEAD, alle offenen PRs und deren Story-Fachdateien abgeglichen (keine fachliche Überschneidung). Bisherige vollständige Story-PR-CI [#598](https://github.com/ManuEtt/Dnd/actions/runs/42184643176) war auf Commit `a05e50b19572305520a62bb09a4ec0c5753e079b` grün; **kein** Nachweis für den neuen PR.
+- **NICHT GETESTET:** Vier neue Flutter-Tests lokal nicht ausführbar (kein Dart/Flutter-SDK); vollständige neue PR-CI/Flutter-/Android-Gates, reales Android-Gerät und Produktiv-KI noch nicht abgenommen. PR #602 hatte beim letzten Abruf einen laufenden CI-Schritt `SQLite für Linux-Tests installieren`; keine Fehlerdiagnose durch bloßes Warten oder Änderung an fremden PRs.
+- **BLOCKIERT:** Finaler GitHub-CI- und Review-Nachweis; koordinierte, verlustfreie Integration paralleler README-/zentraler Checkpoint-Nachträge.
+- **Migration:** Keine; original gespeicherte Notizen, SQLite, JSON, Events, Hero/Quests/Regeln und App-Version bleiben unangetastet. Keine neuen KI-Kosten oder Lizenzquellen.
+- **NOCH NICHT IMPLEMENTIERT:** Integrierte Abnahme aller parallel offenen Story-PRs auf einem gemeinsamen Main-Stand.
+- **Nächster Schritt:** CI-/Format-/Analyse-/Flutter-/Android-/Release-Gates auf dem exakten finalen #605-Head prüfen, gegebenenfalls diesen Branch reparieren, anschließend mit Chat-D-Integration zusammenführen.
+
+- **CI-/Integrationsnachtrag (06.11.2026):** Die vollständige [GitHub-CI #42194582591](https://github.com/ManuEtt/Dnd/actions/runs/42194582591) war für den ursprünglichen Fach-HEAD `2a2d6bad4926f84d070ba6c393c6cce2d96b8981` erfolgreich. Wegen neuer `main`-Änderungen wurden alle dortigen Dokumentationsnachträge erhalten und der PR-Branch durch einen Merge-Commit aktualisiert; für diesen neuen HEAD ist eine eigene vollständige CI-Abnahme erforderlich. Kein Merge in `main` und keine Geräteabnahme.
+
+---
+
 ### 06.11.2026 – CI-Negativfall zur abschließenden Zielidentität korrigiert
 
 - **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606); neuer Korrekturcommit `52280992156bbb5f92c351497d6ec9e49ccb8310` nach Code-/Testcommit `a61bd446072d16d143cdf301270da6ca6c22edf7`.
