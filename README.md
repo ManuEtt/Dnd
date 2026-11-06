@@ -1446,3 +1446,13 @@ Beim Erstellen von vollständigen Quellcode-Checkpoints gelten für Manifest- un
 **GitHub:** Branch `fix/chat-d/checkpoint-portable-filenames-20261106`, [PR #587](https://github.com/ManuEtt/Dnd/pull/587). Die vollständige CI des finalen Commits steht noch aus; ein lokaler Kompletttest wurde nicht behauptet.
 
 **Kompatibilität:** Keine Migration, keine Änderungen an SQLite-/JSON-Spielständen, tatsächlichen Backup-Dateiinhalten, Flutter- oder Android-Version, Regel- und Storylogik. Reale Geräteabnahme und produktive Signierung bleiben separat offen.
+
+### 2026-11-06 – Entwürfe für NPC-Beziehungsnotizen sicher trennen
+
+**Problem:** Beim Wechsel der ausgewählten Figur im Dialog „NPC-Beziehung festhalten“ blieb die unbestätigte Erklärung des vorherigen NPC im Eingabefeld. Sie hätte bei versehentlicher Bestätigung einem anderen NPC zugeordnet werden können.
+
+**Lösung:** Die Erklärung wird beim Wechsel der NPC-ID zurückgesetzt und das zugehörige Formularfeld NPC-spezifisch neu erzeugt. Zwei Flutter-Widgetregressionen prüfen den Zielwechsel, die zwingend neue Erklärung vor Bestätigung, eine neue bestätigte Notiz und das folgenlose Abbrechen. Das Beziehungsfeld folgt weiterhin der ausdrücklich ausgewählten NPC-ID.
+
+**GitHub:** Branch `feat/chat-c/npc-relationship-note-reset-20261106`; Fach-/Test-Commit `bc9fe9f24554980e180cfa5c3057b80331237f8d`; [PR #596](https://github.com/ManuEtt/Dnd/pull/596) (Draft). Der Main-CI-Lauf [#42168660349](https://github.com/ManuEtt/Dnd/actions/runs/42168660349) war vor der Änderung erfolgreich; die Flutter-/Android-Prüfungen für den endgültigen PR-HEAD sind separat abzunehmen.
+
+**Kompatibilität und Grenzen:** Keine Spielstands-, Regel-, Story-, SQLite-/JSON-, Backend-, Berechtigungs- oder App-Versionsänderung und keine Migration. Native Android-IME-/TalkBack-Geräteabnahme noch offen.
