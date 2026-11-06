@@ -166,13 +166,14 @@ class MemoryEngine {
     String? npcLabel(WorldNpc npc) {
       // Malformed duplicate IDs cannot establish which NPC owns a note.
       if (npc.id.trim().isEmpty || npcIdCounts[npc.id] != 1) return null;
-      final nameKey = _memoryNormalize(npc.name);
-      if (nameKey.isEmpty) return null;
-      if (npcNameCounts[nameKey] == 1) return npc.name;
+      final visibleName = _visibleNpcName(npc.name);
+      if (visibleName.isEmpty) return null;
+      final nameKey = _memoryNormalize(visibleName);
+      if (npcNameCounts[nameKey] == 1) return visibleName;
       // Only a canonical, single-line stored ID can distinguish same-name
       // NPCs in confirmed narrative context.
       if (_safeNpcId.stringMatch(npc.id) != npc.id) return null;
-      return '${npc.name} (NPC-ID: ${npc.id})';
+      return '${visibleName} (NPC-ID: ${npc.id})';
     }
 
     for (final note in campaign.npcRelationshipNotes.reversed) {
@@ -290,19 +291,31 @@ class MemoryEngine {
     final npcIdCounts = <String, int>{};
     for (final npc in campaign.npcs) {
       final name = _memoryNormalize(npc.name);
-      npcNameCounts[name] = (npcNameCounts[name] ?? 0) + 1;
+      if (name.isNotEmpty) {
+        npcNameCounts[name] = (npcNameCounts[name] ?? 0) + 1;
+      }
       npcIdCounts[npc.id] = (npcIdCounts[npc.id] ?? 0) + 1;
     }
-    final npcSummaries = <String>[
-      for (final npc in campaign.npcs)
-        // A duplicated stored ID is not proof of two independent identities.
-        if (npc.id.trim().isNotEmpty &&
-            npcIdCounts[npc.id] == 1 &&
-            (npcNameCounts[_memoryNormalize(npc.name)] == 1 ||
-                _safeNpcId.stringMatch(npc.id) == npc.id))
-          '${npcNameCounts[_memoryNormalize(npc.name)] == 1 ? npc.name : '${npc.name} (NPC-ID: ${npc.id})'} '
-              '(${npc.alive ? 'lebendig' : 'tot'}, ${npc.relationship})',
-    ];
+    String? summaryNpcLabel(WorldNpc npc) {
+      // A duplicated stored ID cannot establish one confirmed identity.
+      if (npc.id.trim().isEmpty || npcIdCounts[npc.id] != 1) return null;
+      final visibleName = _visibleNpcName(npc.name);
+      if (visibleName.isEmpty) return null;
+      if (npcNameCounts[_memoryNormalize(visibleName)] == 1) {
+        return visibleName;
+      }
+      if (_safeNpcId.stringMatch(npc.id) != npc.id) return null;
+      return '${visibleName} (NPC-ID: ${npc.id})';
+    }
+
+    final npcSummaries = <String>[];
+    for (final npc in campaign.npcs) {
+      final label = summaryNpcLabel(npc);
+      if (label == null) continue;
+      npcSummaries.add(
+        '${label} (${npc.alive ? 'lebendig' : 'tot'}, ${npc.relationship})',
+      );
+    }
 
     final npcLine = npcSummaries.isEmpty
         ? null
@@ -455,6 +468,11 @@ String _visiblePlaceName(String value) => value
     .replaceAll(RegExp(r'\s+'), ' ')
     .trim();
 
+// The same display-only normalization applies to NPC identities. A hidden
+// legacy mark never makes two visually identical names distinct, and the
+// original NPC names remain unchanged in the saved campaign.
+String _visibleNpcName(String value) => _visiblePlaceName(value);
+
 String _oneLinePlaceDescription(String value) => value
     .replaceAll(_invisiblePlaceMarks, ' ')
     .replaceAll(_placeControls, ' ')
@@ -466,6 +484,7 @@ String _oneLinePlaceDescription(String value) => value
 final RegExp _safeNpcId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
 
 String _memoryNormalize(String text) => text
+    .replaceAll(_invisiblePlaceMarks, '')
     .toLowerCase()
     .replaceAll('ä', 'ae')
     .replaceAll('ö', 'oe')
