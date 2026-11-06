@@ -8,6 +8,7 @@ Campaign _campaign(String sessionId) => Campaign(
   id: 'npc-session-guard',
   name: 'Erinnerungen am Brunnen',
   world: 'Rabenwacht',
+  scene: 'Der Brunnen liegt im Nebel.',
   sessionId: sessionId,
   revision: 3,
   hero: HeroCharacter(id: 'hero', name: 'Aria', hitPoints: 17),
