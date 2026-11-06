@@ -946,3 +946,17 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+## 2026-11-06 – Sicherer typisierter NPC-Identitätskontext (PR #593)
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`.
+- **Branch:** `feat/chat-b/npc-typed-context-legacy-main-20261106`; [Draft-PR #593](https://github.com/ManuEtt/Dnd/pull/593).
+- **Fach-/Testcommits:** `d6f95935c20312014fb04af456ef24b9d4add108`, `395c43924141bf112a722c6994a5838eaaff7178`; finalen HEAD nach den Checkpoint-/README-Nachträgen und CI-Befunden live prüfen.
+- **Problem:** `NpcIdentityContext.toContextMap` behandelte nur `\s+` als Leerzeichen. Ältere gespeicherte Unicode-Formatcodes und Bidi-Marken blieben in als bestätigt markierten, ID-bezogenen Story-Kontextfeldern erhalten. Der separate Leser akzeptierte sogar unkanonische 128-Zeichen-IDs, obwohl strukturierte und ausdrücklich gewählte NPC-Identitäten nur 1–64 sichere ASCII-Zeichen unterstützen.
+- **Implementiert:** `app/lib/story/npc_identity_memory.dart` gibt eine saubere, nur lesende Einzeilenprojektion aus. Unsichtbare Formatmarken werden in Anzeigenamen verbunden, in Beziehung/Notizen durch Leerraum ersetzt; C0/C1 und U+2028/U+2029 werden entfernt/vereinheitlicht. `NpcIdentityMemory.read` lehnt ungültige NPC-IDs künftig fail-closed ab. Die Quelle `NpcIdentityContext._sourceStamp` und sämtliche gespeicherten Raw-Daten bleiben unverändert; bei einem unbestätigten Rohwertwechsel unter derselben Revision schlägt `requireCurrent` weiterhin fehl.
+- **Neue Regressionen:** `app/test/npc_typed_context_legacy_marks_test.dart` – neun historische Formatmarken, Control-/Newline-Spaces, ungültige IDs und 64-Zeichen-Grenzwert, alte JSONs, Immutabilität, echter SQLite-Neustart mit Revision-0-Erstsave, NPC-Isolation, Journalrekonstruktion und Snapshot-Revisionsschutz.
+- **Fachdateien:** ausschließlich `app/lib/story/npc_identity_memory.dart` und neue Testdatei. Dokumentationsdateien README (append-only mit neutraler Überschrift), `docs/CODEX_CHECKPOINT.md` und dieser Checkpoint ebenfalls ausschließlich additiv.
+- **Getestet:** aktuelle Projekt- und Architekturdokumentation, Quellcode, bekannte Regressionen, Main-Stand und alle offenen PR-Pfade geprüft; separater Branch vom neuen Hauptstand erstellt.
+- **CI noch offen:** kein erfolgreicher Nachweis von finaler Dart-Formatierung, Flutter-Analyse/Vollsuite, Python/Backend und Android für #593 bis zur konkreten Action-Abnahme. Kein lokales Dart/Flutter installiert, kein reales Android-Gerät und kein produktiver KI-Anbieter geprüft.
+- **Kompatibilität:** keine Änderungen an JSON-/SQLite-Schemata, Heldenzuständen, Quests, Regelwerten, Event-Fluss, GameEngine, Backend oder App-Version. Keine Migration. Vorherige getrennte PRs #582/#590 vollständig grün getestet, aber nicht automatisch integriert.
+- **Nächster konkreter Schritt:** finale CI des PR-HEADs beobachten, fehlschlagende Prüfschritte nachweisbar beheben, erfolgreiche Ergebnisse im PR protokollieren; Integration und gemeinsame Dokumentation durch Chat D koordinieren.
