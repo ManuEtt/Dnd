@@ -109,7 +109,7 @@ void main() {
     expect(campaign.hero.hitPoints, 12);
   });
 
-  test('saved canonical continuation survives SQLite restart unchanged', () async {
+  test('canonical continuation survives SQLite restart', () async {
     final folder = await Directory.systemTemp.createTemp('resume-legacy-');
     final path = paths.join(folder.path, 'campaign.sqlite');
     var repository = await SqliteCampaignRepository.open(
