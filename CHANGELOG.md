@@ -1,3 +1,17 @@
+## 06.11.2026 – Statusnachträge für PR #586 separat koordiniert
+
+Die wiederholten README-/Checkpoint-Konflikte werden nach Abschnitt 9 des Parallel-Masterprompts in diesem reinen Dokumentationsbranch gebündelt. Main-Basis `2a4fab5a56127d866dd2a8933836fd1136d772b3` enthält neue Paketierungsprüfungen, aber gegenüber dem geprüften Fokusstand keine App-/Backendänderung. Der funktionale Code und seine 34 neuen Regressionen liegen ausschließlich in [PR #586](https://github.com/ManuEtt/Dnd/pull/586); dieser Dokumentationsbranch ändert keine App, Speicherung oder Spielregel und behauptet keine bereits erfolgte Main-Integration.
+
+Belegte Abnahme des vorherigen Code-Heads `9eb6de6e`: CI [42162661840](https://github.com/ManuEtt/Dnd/actions/runs/42162661840) mit allen sechs Jobs erfolgreich; 3354 Flutter-, 347 Python- und 79 Backend-Tests, Debug/native und drei ABIs. Lokales ARM64-Debug, 14 native Fälle und eine zusätzliche ARM64-Test-APK im Releasemodus mit allen 30 Button-PNGs sind geprüft. Die finale aktuelle Code-Abnahme steht bei den [PR-Checks](https://github.com/ManuEtt/Dnd/pull/586/checks); Geräte-/TalkBack-/Upgrade-Abnahme und produktive Signierung bleiben offen. Folgende ältere Einträge sind historische Momentaufnahmen und werden erhalten. Gemeinsame Nachträge koordiniert durch die Integration übernehmen.
+
+---
+
+## 2026-11-06 – Klassenberechtigung für Perfekten Fokus
+
+- Automatische Fokusgutschrift bei Initiative nur aus bekannten, unterschiedlichen Klassen mit gültigen Stufen; widersprüchliche Altprofile bleiben unverändert.
+- 34 neue Domain-/SQLite-/UI-Fälle sowie 15 bestehende Fachtests gezielt bestanden; TP, anderer Verbrauch und optionaler Stoffwechsel bleiben unverändert.
+- Aktuelle vollständige Abnahme/CI siehe PR #586. App 0.8.52+102, SQLite 3 / JSON 1 ohne Migration. SRD 5.2.1 S. 52, CC BY 4.0; Requirement konservativ partial.
+
 ## 31.10.2026 – Migration abgenommen, Alpha 0.8.49+99
 
 Gesamtintegration #440 und Herkunftsnachtrag #444 sind regulär integriert.
