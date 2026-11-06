@@ -1399,3 +1399,21 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-06 – Ausgelöste Zauberwirkzeiten an ihre SRD-Identität binden (PR #597)
+
+- **Ausgangs-main-SHA:** `9a0fa855374a67805e531ad8574e048d99b33745`.
+- **Eigener Branch:** `fix/chat-a/triggered-spell-casting-time-identity-20261106`; **Fach-HEAD nach Code/Test:** `b3b6b502ab1bc93c6a15e135831b7ff8ebb138e4`; **PR:** https://github.com/ManuEtt/Dnd/pull/597 (Draft). Der finale Dokumentations-HEAD ist in GitHub zu prüfen.
+- **Problem:** Die Wirkzeitprüfung akzeptierte bisher beliebige, formell passende Auslösertexte und ließ direkt erzeugte Definitionen einen ausgelösten Zauber zu einer gewöhnlichen Aktion umklassifizieren.
+- **Implementiert:** Acht aktuelle, im Arbeitskatalog enthaltene SRD-5.2.1-Zauberwirkzeiten sind exakt an ihre Zaubernamen gebunden; unbekannte bzw. vertauschte Trigger und ein Downgrade auf `Action` werden abgewiesen. Die Klassifizierung bestätigt niemals das Eintreten eines Auslösers.
+- **Geänderte Fachdateien:** `app/lib/domain/srd_spell_casting_time_rules.dart` und `app/test/srd_spell_casting_time_integrity_test.dart`. README und zentraler/individueller Checkpoint append-only.
+- **Akzeptanzkriterien:** 8/8 bestätigte Wirkzeitbelegungen akzeptiert, fremde/erfundene Wirkzeiten und Aktion-Downgrades abgewiesen, unveränderte Action-/Ritual-Klassifizierung, keine Slotbuchung bei abgewiesener Vorprüfung.
+- **GETESTET:** Reiner statischer Gleichheitsabgleich über den verbundenen GitHub-Stand: acht Name-Zeit-Paare entsprechen 1:1 dem JSON-Katalog mit 339 Zaubern; der neue Testcode enthält Positiv- und Negativprüfungen. Dies ist **kein** ausgeführter Dart-Test.
+- **NICHT GETESTET:** `dart format`, `flutter analyze`, gezielter/vollständiger `flutter test`, Python-/Backend-Prüfungen, Android-Debug-/ABI- und Release-Builds auf dem endgültigen PR-HEAD, reales Android-Gerät.
+- **BLOCKIERT:** Lokales Flutter/Dart fehlt; direkter Git-Checkout scheitert an DNS. Die GitHub-Actions-CI des finalen HEADs ist gesondert zu kontrollieren; kein ungeprüfter Merge.
+- **Migrationen:** Keine. Heldenmodell, SQLite-/JSON-Schema, API, Controller, Story, UI und App-Version unverändert. Vorher akzeptierte, manipulierte Wirkzeiten werden absichtlich zurückgewiesen.
+- **Koordination:** 15 offene PRs #579–#595 anhand ihrer Fachpfade geprüft; keine Überschneidung mit diesem Regelmodul oder Test. Gemeinsame Dokumentationsnachträge müssen durch den Integrations-Chat verlustfrei zusammengeführt werden.
+- **Quelle:** Wizards of the Coast LLC, SRD 5.2.1, Spells/Casting Time und acht individualisierte Spell Entries, CC BY 4.0, https://www.dndbeyond.com/srd.
+- **Genau nächster unabhängiger Schritt:** Nach finaler CI systematisch die zehn übrigen gewöhnlichen Bonus-Action-Zauber auf semantisch abweichende Direktkonstruktor-Varianten untersuchen; nur bei reproduzierbarer Lücke und ohne Dateikonflikt mit positivem/negativem Testpaket korrigieren.
+
+---
