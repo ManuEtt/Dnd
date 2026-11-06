@@ -1,3 +1,19 @@
+## 06.11.2026 – Checkpoint-Dateinamen nach zentraler Quell-ZIP-Policy validieren
+
+- **Basis-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` (PR #584 integriert; Main-CI auf diesem Commit separat abnehmen).
+- **Eigener Branch:** `fix/chat-d/checkpoint-portable-filenames-20261106`; **Code-/Testcommit:** `3fc10f558b165b39f5ac2f28e568d911391738da`; **PR:** [#587](https://github.com/ManuEtt/Dnd/pull/587) (Draft bis CI).
+- **Problem:** `scripts/create_checkpoint.py.safe_name` lehnte Traversal und unsichtbare Unicode-Zeichen ab, aber nicht Windows-reservierte Namen, abschließende Punkte/Leerzeichen oder übrige Windows-illegale Zeichen. Historische Checksum-Einträge und Quellmanifest-/Patch-/ZIP-Prüfungen nutzten dadurch eine schwächere Policy als der bereits abgesicherte Quell-ZIP-Exporter.
+- **Implementiert:** Wiederverwendung von `WINDOWS_INVALID_CHARACTERS` und `WINDOWS_RESERVED_STEMS` aus `scripts/package_project.py`, und plattformportable Prüfung jeder Pfadkomponente vor Datei-/Archivlektüre. Gültige Unicode- und Satzzeichen bleiben zulässig.
+- **Regressionstests:** Vier neue Methoden in `scripts/tests/test_create_checkpoint.py`: ungültige/Gegenbeispiel-Namen, unportable Quelldateien stoppen die Anlage von Checkpoints vor Veröffentlichung, unportable ZIP-Mitglieder werden vor Archivdatenlesung verworfen, bereits veröffentlichte `Wuerfelraunen_LATEST_Vollprojekt.zip` und `SHA256SUMS.txt` bleiben bei ungültigen historischen Artefakten unverändert.
+- **Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Main-HEAD, sieben offene PRs und ihre Fachdateien auf Konflikte geprüft, Code- und Testcommits und PR auf GitHub gesichert; vollständige CI für PR #584 auf Vor-Integrations-HEAD erfolgreich. **Kein Testnachweis für den neuen finalen PR-Head.**
+- **NICHT GETESTET:** lokale vollständige Suite wegen fehlendem vollständigen Checkout, GitHub-CI des finalen Branch-HEADs, reales Android-Gerät, Altdatenupgrade und Store-Signierung.
+- **BLOCKIERT:** Vollständige CI-Abnahme dieses PRs; kein automatischer Hintergrundlauf.
+- **Migrationen:** keine; SQLite 3, JSON 1, Spielstände, Backups, Regeln, App-/Android-Versionen unverändert.
+- **Nächster Schritt:** finale Python-/Backend-/Flutter-/Android-/ABI-/Release-CI auf exaktem Commit abnehmen, bei Bedarf denselben Branch korrigieren, danach aktuellen Main/PR-Konfliktstand erneut prüfen und kontrolliert integrieren.
+
+---
+
 ## 05.11.2026 – ZIP-Pfadportabilität für APK und Gradle-Wrapper vereinheitlicht
 
 - **Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`; **Branch:** `fix/chat-d/archive-windows-invalid-chars-20261105`; **Code-/Testcommit:** `ec826fa27e7d4bd23935a91f81b7830577677ceb`; **PR:** [#584](https://github.com/ManuEtt/Dnd/pull/584) (Draft).
