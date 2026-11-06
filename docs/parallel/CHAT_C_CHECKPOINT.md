@@ -799,3 +799,20 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+## 06.11.2026 – Große Schrift für Angriffsfolge und Reaktionen
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`, später konfliktfrei mit `95c605898f1bcae26e0a23afa55c767ec5b20744` per Zwei-Eltern-Merge synchronisiert.
+- **Branch:** `feat/chat-c/combat-threat-wide-seals-20261106`. **Fach-/Test-Commit:** `66e1b4ddf3cd0e1fcc9ced00b2bfab47e6907790`, **Main-Sync:** `837c00ffe3f4e97648c482224f16426e7d918204`. **Draft-PR:** [#603](https://github.com/ManuEtt/Dnd/pull/603).
+- **Problem:** Schmale Android-Ansichten bei großer Schrift führten bestätigte Siegel für Gegnerangriffe, Schildentscheidung und Reaktionen in einem engen Wrap.
+- **IMPLEMENTIERT:** Statussiegel ab 180 % Schrift bei unter 500 dp jeweils vollbreit auf eigener Zeile; für Normaltext verbleibt die bisherige kompakte Wrap-Variante. Keys, Warntexte und TalkBack-Ansagen unverändert.
+- **Fachdateien:** `app/lib/ui/fantasy_combat_threat_status.dart` sowie neue `app/test/fantasy_combat_threat_large_text_test.dart`. README, `docs/CODEX_CHECKPOINT.md` und diese Datei append-only.
+- **Tests ergänzt:** 320/360 dp / 200 % / 220 dp IME, alle sechs Meldungen breit, vollständig mehrzeilig und einzeln vorlesbar, positive Normalschriftanordnung, negativer abgeschlossener Kampf ohne laufende Hinweise.
+- **GETESTET:** GitHub-Main, offene PRs, relevante alte Tests, Fachcode und Branch-Synchronisation geprüft. Kein lokales Flutter/Dart-SDK; bisher kein vollständiger Test auf finalem PR-HEAD ausgeführt.
+- **NICHT GETESTET:** neue GitHub-CI des finalen SHA, echte Android-TalkBack-/IME- und Altspielstand-Geräteprüfung sowie signierter Release.
+- **BLOCKIERT:** Finale CI und kontrollierte Zusammenführung gemeinsamer Nachträge; Draft und kein automatischer Merge.
+- **NOCH NICHT IMPLEMENTIERT:** Keine Änderungen an Regel-/Spielstandzustand; reale Hardware-Bedienprüfung.
+- **Migration:** Keine Änderung an JSON/SQLite, Rule-/Story-APIs, Berechtigungen, App-Version oder Upgradeformat.
+- **NÄCHSTER SCHRITT:** Nach grüner CI echte 320-dp-Android-Ansicht mit 200 % Schrift und geöffneter Tastatur prüfen, jede Warnung durch TalkBack einzeln vorlesen und Abschlusssiegel ohne veraltete Warnungen bestätigen.
+
+---
