@@ -5,8 +5,7 @@ import 'package:lebendiger_spielleiter/ui/fantasy_ui.dart';
 
 const _busyHint = 'Eine Handlung wird bereits verarbeitet.';
 
-Finder _action(String name) =>
-    find.byKey(ValueKey('adventure-shortcut-$name'));
+Finder _action(String name) => find.byKey(ValueKey('adventure-shortcut-$name'));
 
 Semantics _semantics(WidgetTester tester, String action) {
   final button = find.descendant(
