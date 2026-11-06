@@ -1476,3 +1476,12 @@ Die Alpha-Release-Erstellung kontrolliert jetzt zusätzlich zum Dateibesitz die 
 Bei der abschließenden Alpha-Release-Prüfung hat die unveränderte Priorität des Dateibesitzschutzes Vorrang vor der neuen Inhaltsprüfung: Wird eine geöffnete Zieldatei durch eine andere reguläre Datei ersetzt, meldet die Prüfung den **Zielaustausch** und bewahrt den fremden Inhalt. Nur bei unveränderter Dateiidentität folgt die zusätzliche SHA256-Inhaltsprüfung. Damit bleiben ältere Regressionstests und die neue Erkennung stiller In-Place-Manipulation zugleich wirksam.
 
 **Fehlerbehebung:** Commit `52280992156bbb5f92c351497d6ec9e49ccb8310` in [PR #606](https://github.com/ManuEtt/Dnd/pull/606). Der erste vollständige Lauf [#42194379586](https://github.com/ManuEtt/Dnd/actions/runs/42194379586) scheiterte in einem vorhandenen Python-Negativtest ausschließlich an einer anderen Fehlerklasse/Fehlermeldung; die Reihenfolge wurde korrigiert, kein Test entfernt. Eine erneute vollständige CI auf dem finalen Dokumentations-HEAD bleibt erforderlich. Keine Migration und keine Änderungen an Spielständen, JSON, SQLite, Story, Regeln oder Android-Version.
+
+
+### 2026-11-06 – NPC-Wiederaufnahme nur mit gültiger Sitzungsidentität
+
+Ein schreibgeschützter NPC-Rückblick durfte bisher aus einer unvollständig restaurierten oder direkt konstruierten Kampagne mit leerer Sitzungs-ID erzeugt werden. `ConfirmedNpcResumeSelector.read` verweigert jetzt leere und ausschließlich aus Whitespace bestehende Sitzungskennungen, bevor gespeicherte NPC-Beziehungen ausgewählt werden. Gültige Sitzungen bleiben unverändert; die Revision und gesicherte NPC-/Notizidentitäten werden wie bisher geprüft.
+
+**Code und Nachweise:** `app/lib/story/confirmed_npc_resume_selection.dart`, drei deterministische positive/negative Fälle in `app/test/confirmed_npc_resume_session_guard_test.dart`; Code-Commit `6444570b1ad5d9fa7e539bef23ebe57aee9399f7`, Test-Commit `9aeb6ce8768a7831e1f0663230d18f068ea5b3fc`; Branch `fix/chat-b/npc-resume-session-guard-20261106`, [PR #611](https://github.com/ManuEtt/Dnd/pull/611) (Draft). Die Testdatei ist versioniert; lokaler Flutter-/Dart-Test und vollständige GitHub-CI auf dem abschließenden Dokumentations-HEAD sind noch nicht nachgewiesen.
+
+**Kompatibilität:** Keine Änderung an Kampagnen-JSON, SQLite-Schema, bestätigten Spielregeln, Heldendaten oder App-Version; keine Migration. Die gemeinsame Dokumentation paralleler PRs muss beim Zusammenführen additiv erhalten bleiben. Reale Android-Geräteprüfung und produktiver KI-Test bleiben offen.
