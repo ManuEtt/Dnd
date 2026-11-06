@@ -1446,3 +1446,9 @@ Beim Erstellen von vollständigen Quellcode-Checkpoints gelten für Manifest- un
 **GitHub:** Branch `fix/chat-d/checkpoint-portable-filenames-20261106`, [PR #587](https://github.com/ManuEtt/Dnd/pull/587). Die vollständige CI des finalen Commits steht noch aus; ein lokaler Kompletttest wurde nicht behauptet.
 
 **Kompatibilität:** Keine Migration, keine Änderungen an SQLite-/JSON-Spielständen, tatsächlichen Backup-Dateiinhalten, Flutter- oder Android-Version, Regel- und Storylogik. Reale Geräteabnahme und produktive Signierung bleiben separat offen.
+
+### 2026-11-06 – Ausgelöste Zauberwirkzeiten gegen falsche Identitäten absichern
+
+Acht im SRD-5.2.1-Arbeitskatalog enthaltene Reaktions- bzw. ausgelöste Bonusaktionszauber werden in der Domänenprüfung nun mit ihren **exakten Wirkzeitangaben und Zaubernamen** verglichen. Erfundenen, vertauschten oder verkürzten Auslösertexten wird keine gültige Wirkzeitklassifizierung mehr gegeben; auch eine Umdeklaration eines solchen Zaubers zu einer gewöhnlichen Aktion wird abgewehrt. Dies erlaubt noch keinen tatsächlichen Reaktionszauber ohne gesondert bestätigten Auslöser.
+
+Betroffen: `app/lib/domain/srd_spell_casting_time_rules.dart` und `app/test/srd_spell_casting_time_integrity_test.dart`; die vorhandenen normalen Action-/Ritualpfade bleiben unverändert. [Pull Request #597](https://github.com/ManuEtt/Dnd/pull/597), Branch `fix/chat-a/triggered-spell-casting-time-identity-20261106`, Fachcode/Test-HEAD `b3b6b502ab1bc93c6a15e135831b7ff8ebb138e4`. Ein statischer Vergleich aller acht Zuordnungen mit dem Katalog war erfolgreich; **Dart-/Flutter-Tests und vollständige GitHub-CI auf finalem Commit sind noch nicht nachgewiesen**. Keine Änderung an Spielstandformat, JSON, SQLite, App-Version oder Schnittstellen; keine Migration. Reale Android-Abnahme offen. Quelle: Wizards of the Coast LLC, [SRD 5.2.1](https://www.dndbeyond.com/srd), CC BY 4.0.
