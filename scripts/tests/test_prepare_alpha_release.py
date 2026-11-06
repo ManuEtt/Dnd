@@ -717,5 +717,65 @@ class AlphaReleaseTests(unittest.TestCase):
             release.prepare_release(self.root, self.out)
 
 
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_late_apk_symlink_does_not_overwrite_external_file(self):
+        # A competing writer inserts a target link after the version check.
+        outside = self.base / 'external-apk'
+        outside.write_bytes(b'untouched external APK')
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        actual_archive = release.create_archive
+
+        def create_then_insert_link(root, destination, *, layout):
+            result = actual_archive(root, destination, layout=layout)
+            target.symlink_to(outside)
+            return result
+
+        with mock.patch.object(release, 'create_archive',
+                               side_effect=create_then_insert_link):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(outside.read_bytes(), b'untouched external APK')
+        self.assertTrue(target.is_symlink())
+        self.assertEqual(set(self.out.iterdir()), {target})
+
+    def test_late_notes_regular_file_is_not_overwritten_or_deleted(self):
+        # Even a normal (non-symlink) collision must be left untouched.
+        notes = self.out / 'Wuerfelraunen_v0.5.4_24_ReleaseNotes.md'
+        actual_copy = release.copy_validated_apk
+
+        def copy_then_insert_file(source, target, expected):
+            actual_copy(source, target, expected)
+            notes.write_bytes(b'other writer notes')
+
+        with mock.patch.object(release, 'copy_validated_apk',
+                               side_effect=copy_then_insert_file):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(notes.read_bytes(), b'other writer notes')
+        self.assertEqual(set(self.out.iterdir()), {notes})
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_late_checksum_symlink_cannot_modify_external_file(self):
+        sums = self.out / 'Wuerfelraunen_v0.5.4_24_SHA256.txt'
+        outside = self.base / 'external-hashes'
+        outside.write_bytes(b'untouched hashes')
+        # The checksum file is opened before SHA256 calculation. Inject the
+        # collision at the actual exclusive-open boundary, not during hashing.
+        actual_writer = release._new_release_file
+
+        def insert_before_open(path, *, binary=False):
+            if path == sums:
+                sums.symlink_to(outside)
+            return actual_writer(path, binary=binary)
+
+        with mock.patch.object(release, '_new_release_file',
+                               side_effect=insert_before_open):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(outside.read_bytes(), b'untouched hashes')
+        self.assertTrue(sums.is_symlink())
+        self.assertEqual(set(self.out.iterdir()), {sums})
+
+
 if __name__ == '__main__':
     unittest.main()

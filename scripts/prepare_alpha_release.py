@@ -70,6 +70,30 @@ def _source_identity(info: os.stat_result) -> tuple[int, ...]:
     )
 
 
+@contextlib.contextmanager
+def _new_release_file(path: Path, *, binary: bool = False):
+    """Create a release file atomically without following late symlinks.
+
+    The initial version collision check is not enough: an unrelated process
+    can add a file between that check and this write. Exclusive creation
+    refuses both existing regular files and symlinks (even dangling ones).
+    Only remove a partial file if this invocation created it.
+    """
+    try:
+        stream = path.open('xb' if binary else 'x',
+                           **({} if binary else {'encoding': 'utf-8'}))
+    except FileExistsError as error:
+        raise ValueError(
+            'Eine Release-Zieldatei wurde während der Veröffentlichung neu belegt.'
+        ) from error
+    with stream:
+        try:
+            yield stream
+        except BaseException:
+            path.unlink(missing_ok=True)
+            raise
+
+
 def copy_validated_apk(source: Path, destination: Path,
                        expected: os.stat_result) -> None:
     """Pin the validated regular APK before copying, without following links.
@@ -109,14 +133,14 @@ def copy_validated_apk(source: Path, destination: Path,
             opened = os.fstat(stream.fileno())
             if not stat.S_ISREG(opened.st_mode) or _source_identity(opened) != identity:
                 raise ValueError('Die ARM64-APK-Quelle wurde seit der Prüfung verändert.')
-            with destination.open('wb') as output:
+            with _new_release_file(destination, binary=True) as output:
                 shutil.copyfileobj(stream, output, length=1024 * 1024)
-            after = os.fstat(stream.fileno())
-            if _source_identity(after) != identity:
-                raise ValueError('Die ARM64-APK-Quelle wurde beim Kopieren verändert.')
-            if (_has_symlink_component(source) or not source.is_file()
-                    or _source_identity(source.stat()) != identity):
-                raise ValueError('Die ARM64-APK-Quelle wurde beim Kopieren verändert.')
+                after = os.fstat(stream.fileno())
+                if _source_identity(after) != identity:
+                    raise ValueError('Die ARM64-APK-Quelle wurde beim Kopieren verändert.')
+                if (_has_symlink_component(source) or not source.is_file()
+                        or _source_identity(source.stat()) != identity):
+                    raise ValueError('Die ARM64-APK-Quelle wurde beim Kopieren verändert.')
         except OSError as error:
             if error.errno in (errno.ELOOP, errno.ENOTDIR, errno.ENOENT):
                 raise ValueError(
@@ -267,28 +291,34 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     if any(path.exists() or path.is_symlink() for path in generated):
         publication_lock.rmdir()
         raise ValueError('Es sind bereits Release-Dateien mit derselben Version vorhanden.')
+    created: list[Path] = []
     try:
         create_archive(root, source, layout='root')
+        created.extend((source, source_checksum))
         # Recheck after potentially long source ZIP creation as well.
         if _has_symlink_component(source_apk):
             raise ValueError('Die ARM64-APK darf keine symbolischen Pfadlinks verwenden.')
         copy_validated_apk(source_apk, target_apk, checked_source)
-        notes.write_text(
-            f'# Würfelraunen {app_version}+{build} – Android-Alpha\n\n'
-            f'- Quellstand: `{commit}`\n'
-            f'- CI-Lauf: {run_url or "lokale Quellcodeübergabe"}\n'
-            '- Plattform: Android ARM64 (`arm64-v8a`)\n'
-            '- Vollständiges Quellarchiv im ZIP-Root-Layout (Flutter, Backend, Tests, Assets).\n'
-            '- Diese APK wird derzeit mit einem **Debug-Testschlüssel** signiert. '
-            'Sie ist keine dauerhaft signierte Produktivversion; Updates können an '
-            'abweichenden Schlüsseln anderer Builds scheitern. Spielstände vorab sichern.\n'
-            '- Eine Veröffentlichung bedeutet nur, dass die im zugehörigen GitHub-Job '
-            'ausgeführten Tests erfolgreich waren; reale Gerätetests stehen separat an.\n',
-            encoding='utf-8',
-        )
-        sums.write_text(''.join(
-            f'{sha256(path)}  {path.name}\n' for path in (source, target_apk, notes)
-        ), encoding='utf-8')
+        created.append(target_apk)
+        with _new_release_file(notes) as note_stream:
+            created.append(notes)
+            note_stream.write(
+                f'# Würfelraunen {app_version}+{build} – Android-Alpha\n\n'
+                f'- Quellstand: `{commit}`\n'
+                f'- CI-Lauf: {run_url or "lokale Quellcodeübergabe"}\n'
+                '- Plattform: Android ARM64 (`arm64-v8a`)\n'
+                '- Vollständiges Quellarchiv im ZIP-Root-Layout (Flutter, Backend, Tests, Assets).\n'
+                '- Diese APK wird derzeit mit einem **Debug-Testschlüssel** signiert. '
+                'Sie ist keine dauerhaft signierte Produktivversion; Updates können an '
+                'abweichenden Schlüsseln anderer Builds scheitern. Spielstände vorab sichern.\n'
+                '- Eine Veröffentlichung bedeutet nur, dass die im zugehörigen GitHub-Job '
+                'ausgeführten Tests erfolgreich waren; reale Gerätetests stehen separat an.\n',
+            )
+        with _new_release_file(sums) as checksum_stream:
+            created.append(sums)
+            checksum_stream.write(''.join(
+                f'{sha256(path)}  {path.name}\n' for path in (source, target_apk, notes)
+            ))
         validate_arm64_apk(target_apk)
         with zipfile.ZipFile(source) as archive:
             if archive.testzip() is not None:
@@ -296,10 +326,8 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
     except BaseException:
         # KeyboardInterrupt and SystemExit must not leave a partial release
         # behind after the finally block releases the exclusive version lock.
-        for path in generated:
+        for path in reversed(created):
             path.unlink(missing_ok=True)
-        # package_project.create_archive creates a sidecar checksum file.
-        source.with_suffix(source.suffix + '.sha256').unlink(missing_ok=True)
         raise
     finally:
         publication_lock.rmdir()
