@@ -1,3 +1,14 @@
+### 06.11.2026 – CI-Negativfall zur abschließenden Zielidentität korrigiert
+
+- **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606); neuer Korrekturcommit `52280992156bbb5f92c351497d6ec9e49ccb8310` nach Code-/Testcommit `a61bd446072d16d143cdf301270da6ca6c22edf7`.
+- **CI-Befund:** Vollständiger [Workflow #42194379586](https://github.com/ManuEtt/Dnd/actions/runs/42194379586) auf altem Dokumentations-HEAD `06daa11473d21e34c85fc9b235edfa629066f749` scheiterte nach **364 Python-Tests mit einem fehlgeschlagenen vorhandenen Test**: Beim Austausch einer bereits validierten APK wurde wegen neuer SHA256-Prüfung eine Inhaltsdrift-Fehlermeldung ausgelöst, bevor die bisherige Zielaustausch-Fehlermeldung geprüft wurde. Alle neuen Negativ-/Positivtests waren im Lauf nicht als weitere Fehler ausgewiesen.
+- **Korrektur:** Nach finaler APK-/Quell-ZIP-Prüfung zunächst Inode-/Besitzprüfungen, anschließend SHA256-Inhalt und Textmanifeste. Ohne Austausch bleibt die neue In-Place-Erkennung aktiv. Keine Tests entfernt oder Erfolg behauptet.
+- **GETESTET:** GitHub-Fehlerlog und konkrete Python-Assertion ausgewertet, Korrekturcommits veröffentlicht. Die ältere grüne PR-#604-CI beweist nicht diese Änderung.
+- **NICHT GETESTET/BLOCKIERT:** Vollständiger neuer GitHub-CI-Lauf für den endgültigen Branch-HEAD, Android-APKs, Release, Realgerät und Upgrade. Kein Main-Merge dieses neuen PRs.
+- **NÄCHSTER SCHRITT:** Erneuten PR-#606-CI-Lauf auf dem **finalen Dokumentationscommit** vollständig abnehmen; erst bei grünem Python-/Backend-/Flutter-/Android-/Release-Ergebnis und erneuter Main-/PR-Konfliktprüfung integrieren.
+
+---
+
 ## 06.11.2026 – In-Place-Veränderungen von Release-Artefakten vor Freigabe erkennen
 
 - **Ausgangs-main:** `2a4fab5a56127d866dd2a8933836fd1136d772b3` nach integriertem PR #604 mit vollständiger grüner PR-CI [#42189668111](https://github.com/ManuEtt/Dnd/actions/runs/42189668111); neuer Main-Workflow separat zu verifizieren.
