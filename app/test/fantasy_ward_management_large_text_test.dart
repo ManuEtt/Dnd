@@ -15,9 +15,7 @@ Widget _screen({
 }) => MaterialApp(
   theme: buildFantasyTheme(),
   builder: (context, child) => MediaQuery(
-    data: MediaQuery.of(
-      context,
-    ).copyWith(textScaler: TextScaler.linear(scale)),
+    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
     child: child!,
   ),
   home: Scaffold(
@@ -148,7 +146,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    final buttons = find.byType(TextButton);
+    final buttons = find.byWidgetPredicate((widget) => widget is TextButton);
     expect(buttons, findsNWidgets(2));
     for (final key in [_spells, _conditions]) {
       final button = find.byKey(key);
