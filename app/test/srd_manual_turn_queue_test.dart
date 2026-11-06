@@ -395,6 +395,20 @@ void main() {
       () => engine.advanceManualTurnQueue(removed),
       throwsFormatException,
     );
+    // A direct snapshot with colliding hero/creature IDs is never current.
+    final collision = queued.copyWith(
+      trackedAreaCreatures: [
+        ...queued.trackedAreaCreatures,
+        _creature('hero', 9),
+      ],
+    );
+    expect(
+      SrdInitiativeRosterRules.isCurrent(
+        collision,
+        collision.manualTurnQueue!,
+      ),
+      isFalse,
+    );
     // No mutation of the originally established, serialized queue.
     expect(queued.manualTurnQueue!.actorIds, [
       'orc',
