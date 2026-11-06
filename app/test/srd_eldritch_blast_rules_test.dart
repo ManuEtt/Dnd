@@ -337,10 +337,7 @@ void main() {
     for (final caster in invalid) {
       final snapshot = jsonEncode(caster.toJson());
       final random = _SequenceRandom([19, 9, 19, 9]);
-      expect(
-        () => _resolve(caster: caster, random: random),
-        throwsStateError,
-      );
+      expect(() => _resolve(caster: caster, random: random), throwsStateError);
       expect(random.calls, 0);
       expect(jsonEncode(caster.toJson()), snapshot);
     }
