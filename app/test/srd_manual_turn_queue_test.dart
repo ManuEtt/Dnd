@@ -351,7 +351,7 @@ void main() {
     expect(game.manualTurnQueue, isNull);
   });
 
-  test('Removed actor invalidates queue but a known defeated actor remains', () {
+  test('Removed actor invalid; registered defeated actor remains', () {
     final engine = GameEngine();
     final game = _game(engine);
     final queued = engine
