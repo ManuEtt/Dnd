@@ -2148,3 +2148,18 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 06.11.2026 – Vollbreite Angriffs- und Schildstatuszeilen für große Android-Schrift
+
+- **Main beim Start:** `9a0fa855374a67805e531ad8574e048d99b33745`; neu übernommener Main `95c605898f1bcae26e0a23afa55c767ec5b20744` (PR #599 integriert).
+- **Branch:** `feat/chat-c/combat-threat-wide-seals-20261106`; **Fach-/Test-Commit:** `66e1b4ddf3cd0e1fcc9ced00b2bfab47e6907790`; **Main-Synchronisationscommit:** `837c00ffe3f4e97648c482224f16426e7d918204`. **Draft-PR:** [#603](https://github.com/ManuEtt/Dnd/pull/603).
+- **IMPLEMENTIERT:** Der reine Flutter-Kampfstatus `FantasyCombatThreatStatus` stellt bei Inhaltsbreite unter 500 dp und Textskalierung ab 180 % Statussiegel vollbreit dar; unter normalen Bedingungen bleiben nebeneinander angeordnete Siegel bestehen. Semantik, Textinhalt und bestätigte Zustandsdaten werden nicht geändert.
+- **Dateien:** `app/lib/ui/fantasy_combat_threat_status.dart`, `app/test/fantasy_combat_threat_large_text_test.dart`, README und drei Checkpoints einschl. dieses.
+- **Regressionen ergänzt:** Vier positive/negative Widgetfälle für 320/360 dp mit 200-%-Text/220-dp-IME, vollständige separate Semantik-/Textanzeige und senkrechte Reihenfolge, kompakte Standardansicht, abgeschlossenen Kampf ohne alte Warnungen.
+- **GETESTET:** Alle zunächst 20 offenen PRs mit Dateipfaden abgeglichen; GitHub-Branch, Fach-/Testcommits und PR #603 erstellt. Die vorherige [CI #42185102701](https://github.com/ManuEtt/Dnd/actions/runs/42185102701) war auf PR #596 erfolgreich, **nicht** auf diesem neuen Stand.
+- **NICHT GETESTET:** Aktueller vollständiger GitHub-Actions-Lauf auf finalem Dokumentations-HEAD, lokale Flutter-/Dart-Ausführung (SDK fehlt), echte Android-/TalkBack-/IME-Abnahme bei 200 % und Altversionsinstallation.
+- **BLOCKIERT:** Endgültige CI/Android-Freigabe und gemeinsame Checkpoint-/README-Integration mit anderen offenen PRs; kein automatischer Merge.
+- **Kompatibilität:** Keine Änderung an Regeln, Story, Kampagnen, Controller, SQLite-Schema, JSON, App-/Android-Version, Berechtigungen; keine Migration.
+- **NÄCHSTER SCHRITT:** Vollständige CI auf dem finalen PR-HEAD abnehmen und bei Bedarf UI-/Widgetfehler im eigenen Branch reparieren, anschließend echtes Android-TalkBack bei 320/360 dp und 200 % Text prüfen.
+
+---
