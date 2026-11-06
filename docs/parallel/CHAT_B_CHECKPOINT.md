@@ -1,3 +1,18 @@
+## 06.11.2026 – Nur kanonische, vollständige NPC-Auswahl-IDs verwenden
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`.
+- **Eigener Branch:** `fix/chat-b/npc-selection-terminal-newline-id-20261106`; **Fach-/Testcommit:** `231b98e1ad68e848674a3a4de87a61fcf5a73972`; **PR:** [#610](https://github.com/ManuEtt/Dnd/pull/610) (Draft; finalen Dok-HEAD/CI gesondert prüfen).
+- **Ausgangslücke:** Der `hasMatch`-Guard der expliziten NPC-Wahl kann die Kennung eines älteren Spielstandes akzeptieren, wenn `$` unmittelbar vor einem abschließenden Zeilentrennzeichen passt.
+- **IMPLEMENTIERT:** `NpcStorySelection.choose` verlangt die volle Übereinstimmung einer sicheren 1–64-stelligen ASCII-ID, bevor ein NPC ausschließlich über seine gespeicherte ID ausgewählt wird. Keine Ableitung aus dem Namen, keine ungeprüften Regeländerungen.
+- **Regressionen:** `app/test/npc_story_selection_terminal_id_test.dart` enthält vier Tests zu Steuer-/Unicode-Zeilenenden, unverändertem JSON-Altbestand, expliziten gleichnamigen NPCs mit Stale-Sperren und SQLite-Neustart/Replay. Fachpfad `app/lib/story/npc_story_selection.dart`.
+- **GETESTET:** Aktueller Main-HEAD und alle offenen PR-Fachdateien auf Kollisionen geprüft. Neuer Code und Tests auf eigenem Branch gesichert; kein fremder Branch überschrieben.
+- **NICHT GETESTET:** Neue Flutter-Tests lokal (kein Dart-/Flutter-SDK), finale vollständige GitHub-PR-CI, Android-APK, reales Gerät, Produktiv-KI. Der alte vollständige grüne [#605-Lauf](https://github.com/ManuEtt/Dnd/actions/runs/42194582591) belegt nicht #610.
+- **BLOCKIERT:** Neue CI-/Review-Abnahme; koordinierte Integration gemeinsamer README-/Checkpoint-Nachträge sowie noch laufende CI auf #602/#605.
+- **Kompatibilität:** Bestehende NPC-IDs, gesicherte Notizen, JSON/SQLite/Events, Quest-/Regel-/Herozustand und App-Version unverändert. Keine Migration.
+- **Nächster Schritt:** Volle GitHub-CI auf dem finalen #610-Head abnehmen, gegebenenfalls Format-/Testfehler auf dem Branch korrigieren und danach konfliktfreie PR-Integration koordinieren.
+
+---
+
 ## Konsolidierung 04.11.2026 – PR #536
 
 Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
