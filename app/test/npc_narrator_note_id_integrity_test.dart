@@ -144,7 +144,7 @@ void main() {
     expect(loaded.hero.hitPoints, 17);
   });
 
-  test('SQLite restart retains raw notes but only sends safe identities', () async {
+  test('SQLite restart retains raw notes and safe memories', () async {
     final folder = await Directory.systemTemp.createTemp('npc-note-ids-');
     final path = paths.join(folder.path, 'campaign.sqlite');
     var repository = await SqliteCampaignRepository.open(
