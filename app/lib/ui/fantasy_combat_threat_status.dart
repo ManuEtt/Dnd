@@ -54,69 +54,69 @@ class FantasyCombatThreatStatus extends StatelessWidget {
                   constraints.maxWidth < 500 &&
                   MediaQuery.textScalerOf(context).scale(1) >= 1.8;
               final seals = <Widget>[
-              if (isEnemyTurn)
-                _ThreatSeal(
-                  key: const ValueKey('combat-enemy-turn-state'),
-                  icon: Icons.sports_martial_arts,
-                  label: 'Gegnerzug läuft',
-                  accent: FantasyPalette.danger,
-                ),
-              if (isEnemyTurn && enemyAttacksRemaining > 0)
-                _ThreatSeal(
-                  key: const ValueKey('combat-remaining-attacks'),
-                  icon: Icons.repeat_outlined,
-                  label: enemyAttacksRemaining == 1
-                      ? '1 weiterer Gegnerangriff'
-                      : '$enemyAttacksRemaining weitere Gegnerangriffe',
-                  accent: FantasyPalette.danger,
-                ),
-              if (pendingShieldDecision && !isFinished)
-                const _ThreatSeal(
-                  key: ValueKey('combat-pending-shield'),
-                  icon: Icons.gpp_maybe_outlined,
-                  label: 'Schildentscheidung offen – Schaden nicht gewürfelt',
-                  accent: FantasyPalette.gold,
-                ),
-              if (heroShieldActive && !isFinished)
-                const _ThreatSeal(
-                  key: ValueKey('combat-hero-shield-active'),
-                  icon: Icons.shield_outlined,
-                  label: 'Schild des Helden aktiv',
-                  accent: FantasyPalette.blue,
-                ),
-              if (enemyShieldActive && !isFinished)
-                const _ThreatSeal(
-                  key: ValueKey('combat-enemy-shield-active'),
-                  icon: Icons.shield_outlined,
-                  label: 'Gegnerschild aktiv',
-                  accent: FantasyPalette.danger,
-                ),
-              if (enemyShieldReactionUsed && !isFinished)
-                const _ThreatSeal(
-                  key: ValueKey('combat-enemy-reaction-used'),
-                  icon: Icons.hourglass_bottom_outlined,
-                  label: 'Gegnerreaktion verbraucht',
-                  accent: FantasyPalette.muted,
-                ),
-              if (isFinished)
-                const _ThreatSeal(
-                  key: ValueKey('combat-threat-finished'),
-                  icon: Icons.check_circle_outline,
-                  label: 'Begegnung beendet',
-                  accent: FantasyPalette.gold,
-                ),
-              if (!isEnemyTurn &&
-                  !isFinished &&
-                  !pendingShieldDecision &&
-                  !heroShieldActive &&
-                  !enemyShieldActive &&
-                  !enemyShieldReactionUsed)
-                const _ThreatSeal(
-                  key: ValueKey('combat-no-pending-threat'),
-                  icon: Icons.visibility_outlined,
-                  label: 'Keine laufende Gegneraktion',
-                  accent: FantasyPalette.muted,
-                ),
+                if (isEnemyTurn)
+                  _ThreatSeal(
+                    key: const ValueKey('combat-enemy-turn-state'),
+                    icon: Icons.sports_martial_arts,
+                    label: 'Gegnerzug läuft',
+                    accent: FantasyPalette.danger,
+                  ),
+                if (isEnemyTurn && enemyAttacksRemaining > 0)
+                  _ThreatSeal(
+                    key: const ValueKey('combat-remaining-attacks'),
+                    icon: Icons.repeat_outlined,
+                    label: enemyAttacksRemaining == 1
+                        ? '1 weiterer Gegnerangriff'
+                        : '$enemyAttacksRemaining weitere Gegnerangriffe',
+                    accent: FantasyPalette.danger,
+                  ),
+                if (pendingShieldDecision && !isFinished)
+                  const _ThreatSeal(
+                    key: ValueKey('combat-pending-shield'),
+                    icon: Icons.gpp_maybe_outlined,
+                    label: 'Schildentscheidung offen – Schaden nicht gewürfelt',
+                    accent: FantasyPalette.gold,
+                  ),
+                if (heroShieldActive && !isFinished)
+                  const _ThreatSeal(
+                    key: ValueKey('combat-hero-shield-active'),
+                    icon: Icons.shield_outlined,
+                    label: 'Schild des Helden aktiv',
+                    accent: FantasyPalette.blue,
+                  ),
+                if (enemyShieldActive && !isFinished)
+                  const _ThreatSeal(
+                    key: ValueKey('combat-enemy-shield-active'),
+                    icon: Icons.shield_outlined,
+                    label: 'Gegnerschild aktiv',
+                    accent: FantasyPalette.danger,
+                  ),
+                if (enemyShieldReactionUsed && !isFinished)
+                  const _ThreatSeal(
+                    key: ValueKey('combat-enemy-reaction-used'),
+                    icon: Icons.hourglass_bottom_outlined,
+                    label: 'Gegnerreaktion verbraucht',
+                    accent: FantasyPalette.muted,
+                  ),
+                if (isFinished)
+                  const _ThreatSeal(
+                    key: ValueKey('combat-threat-finished'),
+                    icon: Icons.check_circle_outline,
+                    label: 'Begegnung beendet',
+                    accent: FantasyPalette.gold,
+                  ),
+                if (!isEnemyTurn &&
+                    !isFinished &&
+                    !pendingShieldDecision &&
+                    !heroShieldActive &&
+                    !enemyShieldActive &&
+                    !enemyShieldReactionUsed)
+                  const _ThreatSeal(
+                    key: ValueKey('combat-no-pending-threat'),
+                    icon: Icons.visibility_outlined,
+                    label: 'Keine laufende Gegneraktion',
+                    accent: FantasyPalette.muted,
+                  ),
               ];
               return Wrap(
                 spacing: 8,
