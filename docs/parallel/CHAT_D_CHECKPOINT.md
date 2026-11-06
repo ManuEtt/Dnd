@@ -1,3 +1,20 @@
+## 06.11.2026 – Kollisionssichere Historie der Quellcode-Checkpoints
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745` nach Integration von PR #587 (vollständige finale PR-CI [#42162161178](https://github.com/ManuEtt/Dnd/actions/runs/42162161178): erfolgreich).
+- **Branch:** `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`.
+- **Fach-/Testcommit:** `c80950bc7ad5d7576d7717aea4c2535d9aa3f240`; **Pull Request:** [#592](https://github.com/ManuEtt/Dnd/pull/592), Draft bis vollständiger CI.
+- **Problem:** Bereits als Einzeldateien geprüfte historische ZIP-/Patch-/Manifestnamen konnten sich nach Unicode-NFC-/Casefold-Normalisierung überschneiden. Ein weiteres Checkpoint mit anders geschriebenem Label bei gleichem Zeitstempel oder eine alternative Schreibweise der stabilen Ausgabe-Aliase barg ein Kollisionsrisiko auf Windows/macOS.
+- **Implementiert:** `scripts/create_checkpoint.py` vergleicht historische Namen vor der Hashbildung mit normalisierten NFC-/Casefold-Schlüsseln. Unter Ausgabe-Lock wird geprüft, dass neue versionierte Namen mit keinem bestehenden Namen identisch werden und dass keine Zweitnamen von `Wuerfelraunen_LATEST_Vollprojekt.zip` und `SHA256SUMS.txt` vorkommen. Kein Force-Push, keine Sicherung umbenannt oder gelöscht.
+- **Regressionen:** Vier neue Methoden in `scripts/tests/test_create_checkpoint.py` für zwei Casefold-Zwillinge, zwei Unicode-NFC-Zwillinge, neu erzeugte identische Versions-/Zeitstempeleinträge mit abweichend geschriebenen Labels und beide Aliasnamen. Bestehende Sicherungen/Prüfsummen bleiben bytegenau erhalten, Lock wird bei Ablehnung freigegeben.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktkontrolle:** Offene PRs aus A/B/C (inklusive #591) ändern keine der zwei Checkpoint-Fachdateien; gemeinsame README-/CODEX-Änderungen bleiben additiv, README-Nachtrag nur am absoluten Dateiende mit neutralem Titel ohne redaktionelle Chat-Zuordnung.
+- **GETESTET:** GitHub-Stand vor Branchstart und vor PR, Fachcode/Tests committed, isolierter PR angelegt. **NICHT GETESTET:** neue Python-/Backend-/Flutter-/Android-CI auf finalem PR-HEAD, lokaler kompletter Repo-Test, Android-Gerät und alte Gerätespielstände.
+- **BLOCKIERT:** CI-Abnahme auf finalem Commit und erneute Main-/PR-Datei-/Ancestry-Prüfung vor Merge.
+- **Migrationen:** keine. Alte Checkpoint- und Backupartefakte bleiben intakt; SQLite, JSON, Regel-/Storyzustand und Android-Version unverändert.
+- **Nächster Schritt:** endgültige Python-, Backend-, Flutter-, Android-Debug-, ABI- und Release-CI prüfen, bei Fehlern branchlokal beheben und erst nach konfliktfreier CI integrieren.
+
+---
+
 ## 06.11.2026 – Checkpoint-Manifest, Patch, Archive und Prüfsummen: portable Namen
 
 - **Ausgangs-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` nach regulärer Integration von PR #584 mit grünem PR-Lauf [#42108899271](https://github.com/ManuEtt/Dnd/actions/runs/42108899271); Main-CI separat.

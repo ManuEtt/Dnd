@@ -1446,3 +1446,13 @@ Beim Erstellen von vollständigen Quellcode-Checkpoints gelten für Manifest- un
 **GitHub:** Branch `fix/chat-d/checkpoint-portable-filenames-20261106`, [PR #587](https://github.com/ManuEtt/Dnd/pull/587). Die vollständige CI des finalen Commits steht noch aus; ein lokaler Kompletttest wurde nicht behauptet.
 
 **Kompatibilität:** Keine Migration, keine Änderungen an SQLite-/JSON-Spielständen, tatsächlichen Backup-Dateiinhalten, Flutter- oder Android-Version, Regel- und Storylogik. Reale Geräteabnahme und produktive Signierung bleiben separat offen.
+
+### 2026-11-06 – Checkpoint-Historie gegen mehrdeutige Dateinamen absichern
+
+Frühere Quellcode-Checkpoints dürfen keine zwei Dateinamen besitzen, die unter Unicode-NFC-Normalisierung und ohne Unterscheidung von Groß-/Kleinschreibung denselben Namen ergeben. Die Checkpoint-Erstellung verweigert solche Paare vor der Prüfsummenberechnung und Veröffentlichung, zum Beispiel `Case`/`case` oder `Café`/`Café`. Zusätzlich werden neue, gleich datierte Checkpoints mit nur anders geschriebenem Label sowie abweichend geschriebene Varianten der festen `LATEST`- und `SHA256SUMS.txt`-Dateien sicher zurückgewiesen.
+
+**Umsetzung:** `scripts/create_checkpoint.py`; vier neue Regressionstests in `scripts/tests/test_create_checkpoint.py` prüfen Casefold-/Unicode-Kollisionen, Publikationssperren und den unveränderten Bestand zuvor veröffentlichter Archive und Prüfsummen.
+
+**GitHub:** Branch `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`, [PR #592](https://github.com/ManuEtt/Dnd/pull/592). Die vollständige GitHub-CI des finalen PR-Commits ist noch abzunehmen; keine lokalen Projekttests als bestanden behauptet.
+
+**Kompatibilität:** Keine Migration und keine Änderung an existierenden Backups, Spielständen, SQLite-/JSON-Daten, App-/Android-Versionen oder Spielregeln. Reale Geräteabnahme und produktive Signierung bleiben separat offen.
