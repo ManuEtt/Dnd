@@ -27,6 +27,7 @@ NpcRelationshipNote _note(
 Campaign _campaign({
   required List<WorldNpc> npcs,
   List<NpcRelationshipNote>? notes,
+  int revision = 3,
 }) => Campaign(
   id: 'structured-npc-legacy',
   name: 'Spiegelstadt',
@@ -34,7 +35,7 @@ Campaign _campaign({
   sessionId: 'session-one',
   hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 17),
   scene: 'Eine unbestätigte Erzählung über Mira.',
-  revision: 3,
+  revision: revision,
   npcs: npcs,
   npcRelationshipNotes:
       notes ?? [_note('first', 'mira-a', 'Mira kennt das Nordtor.')],
@@ -221,6 +222,7 @@ void main() {
     );
     try {
       final campaign = _campaign(
+        revision: 0,
         npcs: const [
           WorldNpc(id: 'mira-a', name: 'Mira'),
           WorldNpc(id: 'mira-b', name: 'Mi\u00adra'),
