@@ -20,9 +20,7 @@ class _RecordingRepository implements CampaignRepository {
   }
 
   @override
-  Future<List<Campaign>> loadCampaigns() async => [
-    if (saved != null) saved!,
-  ];
+  Future<List<Campaign>> loadCampaigns() async => [if (saved != null) saved!];
 
   @override
   Future<List<HeroCharacter>> loadCharacters() async => [];
@@ -95,9 +93,11 @@ void main() {
     expect(tester.state<FormFieldState<String>>(note).value, '');
     expect(find.text('Mira hat mir den Schlüssel gegeben.'), findsNothing);
     expect(
-      tester.state<FormFieldState<String>>(
-        find.byKey(const ValueKey('npc-relationship-value')),
-      ).value,
+      tester
+          .state<FormFieldState<String>>(
+            find.byKey(const ValueKey('npc-relationship-value')),
+          )
+          .value,
       'Neutral',
     );
 
