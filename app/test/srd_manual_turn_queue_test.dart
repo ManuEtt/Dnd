@@ -370,10 +370,7 @@ void main() {
       ],
     );
     expect(
-      SrdInitiativeRosterRules.isCurrent(
-        defeated,
-        defeated.manualTurnQueue!,
-      ),
+      SrdInitiativeRosterRules.isCurrent(defeated, defeated.manualTurnQueue!),
       isTrue,
     );
     final afterDefeat = engine.advanceManualTurnQueue(defeated).campaign;
@@ -403,10 +400,7 @@ void main() {
       ],
     );
     expect(
-      SrdInitiativeRosterRules.isCurrent(
-        collision,
-        collision.manualTurnQueue!,
-      ),
+      SrdInitiativeRosterRules.isCurrent(collision, collision.manualTurnQueue!),
       isFalse,
     );
     // No mutation of the originally established, serialized queue.
