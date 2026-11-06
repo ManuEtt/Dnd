@@ -1,3 +1,18 @@
+## 06.11.2026 – Sitzungsgültigkeit der expliziten NPC-Auswahl und präzisierter Testnachweis
+
+- **Basis-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `fix/chat-b/npc-selection-terminal-newline-id-20261106`; **PR:** [#610](https://github.com/ManuEtt/Dnd/pull/610) (Draft); **Code-/Teststand:** `a6d02c839323b383272ba37309ec3912773ca0e7`.
+- **Berichtigung:** Dart-RegExp weist abschließende Zeilenumbrüche mit dem vorhandenen regulären Ausdruck bereits zurück. Der vollständige `stringMatch` ist defensiver Vertrag und darf nicht als nachgewiesene alte Umgehung dargestellt werden.
+- **IMPLEMENTIERT:** Zusätzlich zur vollständigen Kennungsprüfung weist `NpcStorySelection.choose` eine fehlende/nur Whitespace enthaltende `sessionId` zurück. Dieser vorher akzeptierte direkte In-Memory-Fall ist mit neuem Negativtest abgedeckt.
+- **Dateien:** `app/lib/story/npc_story_selection.dart`, `app/test/npc_story_selection_terminal_id_test.dart`; additive Dokumentation in `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **Regressionen:** Fünf Tests zu ungültigen/normalen IDs, ungültigen/normalen Sitzungen, Alt-JSON und konkretem ID-Kontext, kollisionsfreien gleichnamigen NPCs und Stale-Profil, SQLite-Reopen/Replay. Gespeicherte Identitäten und Heldenzustand bleiben unverändert.
+- **GETESTET:** GitHub-Main-/PR-Abgleich und isolierte Branch-Code-/Testcommits. [CI #42201211687](https://github.com/ManuEtt/Dnd/actions/runs/42201211687) scheiterte bei der Dart-Formatierung; kompakte Testausdrücke wurden korrigiert; finale CI noch nicht grün nachgewiesen.
+- **NICHT GETESTET:** Vollständige Flutter-Tests/Android-Build des aktuellen finalen HEAD, lokales Dart/Flutter, echtes Android, Produktiv-KI.
+- **BLOCKIERT:** Vollständige CI-/Review-Abnahme und Integrationskoordination; kein automatischer Merge oder Force-Push.
+- **Migrationen:** Keine. SQLite/JSON/Events, Quests, Kämpfe, XP, Herozustand und App-Version unverändert.
+- **Nächster Schritt:** Endgültige CI einschließlich Format, Flutter-Tests und Android-Gates auf dem neuen finalen PR-HEAD auswerten und verbleibende Fehler auf demselben Branch beheben.
+
+---
+
 ## 06.11.2026 – Nur kanonische, vollständige NPC-Auswahl-IDs verwenden
 
 - **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`.
