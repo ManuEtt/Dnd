@@ -104,13 +104,16 @@ void main() {
       npcs: const [
         WorldNpc(id: 'mira', name: 'Mira'),
         WorldNpc(id: 'unsafe npc', name: 'Sera'),
+        WorldNpc(id: 'newline\n', name: 'Sela'),
       ],
       notes: [
         _note('bad id', 'mira', 'Falsche Goldbelohnung.'),
+        _note('linebreak\n', 'mira', 'Trügerisches Zeilenende.'),
         _note('hidden\u202e', 'mira', 'Täuschung durch Bidi.'),
         _note('über', 'mira', 'Ungültige Unicode-ID.'),
         _note(List.filled(65, 'x').join(), 'mira', 'Zu lange ID.'),
         _note('safe-for-unsafe', 'unsafe npc', 'Sera kennt ein Geheimnis.'),
+        _note('safe-for-newline', 'newline\n', 'Sela kennt den Tempel.'),
         _note('safe-1', 'mira', 'Mira besitzt die Karte.', hoursAgo: 3),
       ],
     );
@@ -120,7 +123,7 @@ void main() {
     );
     final selected = NpcNarratorMemory.merge(
       loaded,
-      'Ich spreche mit Mira und Sera.',
+      'Ich spreche mit Mira, Sera und Sela.',
       ['Das Stadttor ist offen.'],
       limit: 3,
       npcNoteLimit: 2,
@@ -135,6 +138,8 @@ void main() {
       'Unicode-ID',
       'Zu lange ID',
       'Sera kennt ein Geheimnis',
+      'Sela kennt den Tempel',
+      'Trügerisches Zeilenende',
       '9999 Gold',
     ]) {
       expect(selected.join(' '), isNot(contains(forbidden)));
