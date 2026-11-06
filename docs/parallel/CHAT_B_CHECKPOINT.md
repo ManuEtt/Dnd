@@ -11,6 +11,8 @@
 - **Migrationen:** Keine. Vorhandene SQLite-/JSON-Spielstände, Regel-/Questwerte, Ereignisse und App-Version werden nicht geändert.
 - **Nächster Schritt:** Gesamte CI auf finalem #602-Commit abnehmen, etwaige Fehler isoliert im eigenen Branch korrigieren und anschließend an die Integration übergeben.
 
+- **Nachtrag zur Integration (06.11.2026):** Die bisherige CI [#42189711653](https://github.com/ManuEtt/Dnd/actions/runs/42189711653) wurde in der SQLite-Setup-Phase abgebrochen, nicht erfolgreich abgeschlossen. Der Branch wird deshalb verlustfrei mit dem aktuellen `main` (vor dem Merge-Commit: `0a813df100aa649c2204018349b0db9af09fb83f`) zusammengeführt; gemeinsam geänderte Dokumentation ist additive, die Fachdateien bleiben auf demselben Code-Stand. Vollständige CI auf dem neuen Merge-HEAD steht erneut aus.
+
 ---
 
 ## Konsolidierung 04.11.2026 – PR #536

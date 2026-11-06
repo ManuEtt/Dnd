@@ -11,6 +11,51 @@
 - **NOCH NICHT IMPLEMENTIERT:** Vollständige fächerübergreifende Integration der offenen Story- und UI-PRs.
 - **Nächster konkreter Schritt:** Finale GitHub-CI mit Flutter-Tests, Format-/Analyse-/Android-Gates auf exaktem PR-HEAD auswerten, Fehler auf demselben Branch korrigieren und dann zur konfliktfreien Integration übergeben.
 
+- **Nachtrag zur Integration (06.11.2026):** Die bisherige CI [#42189711653](https://github.com/ManuEtt/Dnd/actions/runs/42189711653) wurde in der SQLite-Setup-Phase abgebrochen, nicht erfolgreich abgeschlossen. Der Branch wird deshalb verlustfrei mit dem aktuellen `main` (vor dem Merge-Commit: `0a813df100aa649c2204018349b0db9af09fb83f`) zusammengeführt; gemeinsam geänderte Dokumentation ist additive, die Fachdateien bleiben auf demselben Code-Stand. Vollständige CI auf dem neuen Merge-HEAD steht erneut aus.
+
+---
+
+### 06.11.2026 – CI-Negativfall zur abschließenden Zielidentität korrigiert
+
+- **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606); neuer Korrekturcommit `52280992156bbb5f92c351497d6ec9e49ccb8310` nach Code-/Testcommit `a61bd446072d16d143cdf301270da6ca6c22edf7`.
+- **CI-Befund:** Vollständiger [Workflow #42194379586](https://github.com/ManuEtt/Dnd/actions/runs/42194379586) auf altem Dokumentations-HEAD `06daa11473d21e34c85fc9b235edfa629066f749` scheiterte nach **364 Python-Tests mit einem fehlgeschlagenen vorhandenen Test**: Beim Austausch einer bereits validierten APK wurde wegen neuer SHA256-Prüfung eine Inhaltsdrift-Fehlermeldung ausgelöst, bevor die bisherige Zielaustausch-Fehlermeldung geprüft wurde. Alle neuen Negativ-/Positivtests waren im Lauf nicht als weitere Fehler ausgewiesen.
+- **Korrektur:** Nach finaler APK-/Quell-ZIP-Prüfung zunächst Inode-/Besitzprüfungen, anschließend SHA256-Inhalt und Textmanifeste. Ohne Austausch bleibt die neue In-Place-Erkennung aktiv. Keine Tests entfernt oder Erfolg behauptet.
+- **GETESTET:** GitHub-Fehlerlog und konkrete Python-Assertion ausgewertet, Korrekturcommits veröffentlicht. Die ältere grüne PR-#604-CI beweist nicht diese Änderung.
+- **NICHT GETESTET/BLOCKIERT:** Vollständiger neuer GitHub-CI-Lauf für den endgültigen Branch-HEAD, Android-APKs, Release, Realgerät und Upgrade. Kein Main-Merge dieses neuen PRs.
+- **NÄCHSTER SCHRITT:** Erneuten PR-#606-CI-Lauf auf dem **finalen Dokumentationscommit** vollständig abnehmen; erst bei grünem Python-/Backend-/Flutter-/Android-/Release-Ergebnis und erneuter Main-/PR-Konfliktprüfung integrieren.
+
+---
+
+## 06.11.2026 – In-Place-Veränderungen von Release-Artefakten vor Freigabe erkennen
+
+- **Ausgangs-main:** `2a4fab5a56127d866dd2a8933836fd1136d772b3` nach integriertem PR #604 mit vollständiger grüner PR-CI [#42189668111](https://github.com/ManuEtt/Dnd/actions/runs/42189668111); neuer Main-Workflow separat zu verifizieren.
+- **Branch:** `fix/chat-d/release-final-checksums-20261106`; **Code-/Testcommit:** `a61bd446072d16d143cdf301270da6ca6c22edf7`; **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606) (Draft bis vollständig grüner CI).
+- **Ausgangsproblem:** Dateibesitz via dev/inode und ZIP-CRC verhindern keine Inhaltsänderung innerhalb einer schon geöffneten und geschriebenen Datei. Release-APK, Quell-ZIP oder Notizen konnten nach Erstellen der SHA256-Liste erneut verändert werden; auch die Textinhalte der beiden Prüfsummen-Manifeste waren nicht nochmals geprüft.
+- **IMPLEMENTIERT:** SHA256 der validierten Quell-APK unter dem Versionslock festhalten; veröffentlichtes Ziel muss dazu passen. Quell-ZIP-Digest direkt vom bestehenden Paket-Exporter übernehmen. Manifest aus diesen festgehaltenen Werten und dem Notiz-Digest schreiben. Nach der abschließenden APK-/Quellarchiv-Validierung erneut alle drei Artefakt-Digests und den exakten Inhalt von `_SHA256.txt` und `_Source.zip.sha256` prüfen. Bestehende Inode-Besitzprüfungen und fremddatenschonender Rollback unverändert.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanztests:** Sechs neue Python-Fälle: verifizierbarer Positivfall inkl. beider Manifeste und identischer Quelle/Release-APK; negativ für im selben Inode veränderte, trotzdem ZIP-gültige APK und Quell-ZIP, Notizen, Release-Prüfsummenliste und Quellarchiv-Sidecar. Bei Abweichung keine erfolgreichen Artefakte, während fremde Dateien erhalten bleiben.
+- **GETESTET:** Vorheriges PR #604 vollständig grün auf dem finalen `0d44f8b9aa28802a4682f6103bef41ec33a7cfc8`; neuer Branch/PR und Code-/Test-Commits veröffentlicht, Main und offene fachfremde PR-Dateipfade geprüft. **Das ist noch kein Testnachweis für den neuen PR.**
+- **NICHT GETESTET:** Neue Python-Tests, vollständiger Backend-/Flutter-/Android-/ABI-APK-/Alpha-Release-Workflow auf dem abschließenden Dokumentations-HEAD, echtes Android-Gerät, Upgrade und Produktivsignierung. Im lokalen Container kein GitHub-Checkout wegen DNS-Auflösung.
+- **BLOCKIERT:** Finale GitHub-Actions-Abnahme und aktualisierte Main-/PR-Konfliktprüfung. Kein absoluter Race-free-Anspruch gegen nach dem letzten Hashvergleich in fremd beschreibbarem Ausgabeordner aktive Prozesse.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge dieses neuen PRs, keine Datenmigration. JSON-/SQLite-Format, lokale Spielstände, App-Version `0.8.52+102`, Android-, UI-, Story- und Regelmodule unverändert.
+- **NÄCHSTER SCHRITT:** CI von PR #606 auf exakt dem finalen HEAD vollständig prüfen; alle Python-, Backend-, Dart-/Flutter-, Debug-APK-, native Android-, drei ABI-APK- und Release-Jobs abnehmen, dann erneute konfliktfreie Main-Integration bewerten.
+
+---
+
+## 06.11.2026 – Besitznachweis für bereits geöffnete Alpha-Release-Ausgaben
+
+- **Basis-main:** `95c605898f1bcae26e0a23afa55c767ec5b20744` nach vollständig erfolgreicher PR-#599-CI [#42184798098](https://github.com/ManuEtt/Dnd/actions/runs/42184798098) und regulärem Merge. Die separate Main-CI [#42188688824](https://github.com/ManuEtt/Dnd/actions/runs/42188688824) war bei Start noch aktiv.
+- **Branch:** `fix/chat-d/release-target-identity-20261106`; **Code-/Testcommit:** `def20a5d406d5abc66a75543b8e097f60c4b07b1`; **PR:** [#604](https://github.com/ManuEtt/Dnd/pull/604) (Draft bis vollständige CI).
+- **Problem:** Nach erfolgreichem exklusivem Anlegen konnte ein geöffneter APK-/Notiz-/Checksum-Zielpfad während des Schreibens ersetzt werden. Die bisherige Rollback-Liste hielt lediglich Dateinamen und konnte fremde Ersatzdateien nach einem Fehler entfernen. Nachträglich ersetzte APKs konnten sonst in eine spätere Prüfphase gelangen.
+- **IMPLEMENTIERT:** `_published_file_identity`, `_still_owned_file` und `_require_owned_file` verifizieren offene/geschriebene Dateien per `st_dev/st_ino` und `lstat` ohne Symlink-Verfolgung. `_new_release_file` prüft nach Flush und nach Schließen und entfernt bei Fehlern nur eigene Teil-Dateien. `copy_validated_apk` liefert die Identität aus dem geöffneten Ziel-Deskriptor. `prepare_release` bewahrt Herkunft jeder erzeugten Datei im Rollback und verifiziert den Bestand vor/nach finaler ZIP-/APK-Prüfung.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** Vier neue Python-Fälle für spät ersetzte Ziel-APK nach Copy, normale ReleaseNotes nach Öffnung, verlinkte SHA256-Datei nach Öffnung und ersetzte gültige APK nach abgeschlossener ZIP-Validierung. Bestehende Positiv-/Negativ-/Rollback- und Lock-Tests bleiben aktiv; eine bestehende Testinjektion gibt jetzt die geöffnete APK-Identität zurück.
+- **GETESTET:** Ausgangs-PR #599 vollständige GitHub-CI auf SHA `109e949c9a768f3fe9bacb482cfe9ef5ceb23c6f` grün; dieser ältere Erfolg gilt ausdrücklich nicht für den neuen Branch. Aktuelles Main, 22 offene fachfremde PRs, Code und Testquellen abgeglichen; eigener Branch und PR veröffentlicht.
+- **NICHT GETESTET:** Neue Python-Tests sowie vollständiger Backend-/Flutter-/Android-/APK-/Release-CI-Lauf auf finalem Dokumentations-HEAD, echte Geräteinstallation, Upgrade und Signierung. Lokaler GitHub-Checkout wegen DNS-Auflösung nicht verfügbar.
+- **BLOCKIERT:** Abnahme der neuen PR-CI und abschließende Main-/PR-Konfliktprüfung. Bei nicht vertrauenswürdiger, fremd beschreibbarer Release-Ausgabe ist auch eine finale Inode-Prüfung keine vollständige Race-free-Garantie gegen einen aktiven Gegner nach dem letzten Check.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge des neuen PRs und keine Datenmigration. Kein weiterer Eingriff in Backup-/JSON-/SQLite-/Story-/Rules-/Flutter-Logik; App-Version weiterhin `0.8.52+102`.
+- **NÄCHSTER SCHRITT:** Finalen Android-Alpha-Workflow zu PR #604 mit Python, Backend, Dart/Flutter, Debug-APK, nativen Dateitests, drei ABI-APKs und vollständigem Release gegen exakten Commit abnehmen und bei Fehlern im selben Branch reparieren; erst anschließend Integration prüfen.
+
 ---
 
 ## 06.11.2026 – Atomare Alpha-Release-Zieldateien bei späten Kollisionen

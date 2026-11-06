@@ -1455,9 +1455,33 @@ Die Alpha-Release-Veröffentlichung legt APK, Release-Notizen und SHA256-Prüfsu
 
 **Kompatibilität:** Keine Änderungen an App-/Android-Version, Flutter-/Story-/Regelmodulen, bestehenden Spielständen, SQLite, JSON oder Backup-Format. Keine Migration. Geräteprüfung und produktive Signierung sind gesondert offen.
 
+### 2026-11-06 – Besitzprüfung geöffneter Alpha-Release-Artefakte
+
+Nach der exklusiven Dateierstellung wird nun zusätzlich die Identität der tatsächlich geöffneten Release-Zieldateien geprüft. Wird ein APK-Ziel, eine Notizdatei oder eine Prüfsummendatei während oder nach dem Schreiben durch einen fremden Eintrag ersetzt, bricht die Veröffentlichung ab; der Rollback entfernt nur weiterhin eigene reguläre Dateien. Auch vor und nach den abschließenden Archiv-/APK-Prüfungen werden die erwarteten Dateiidentitäten abgeglichen.
+
+**Code und Regressionen:** `scripts/prepare_alpha_release.py` und `scripts/tests/test_prepare_alpha_release.py` mit vier neuen Fehlerfällen für Austausch während des APK-Kopierens, nach dem Schreiben von Notizen/Prüfsummen und nach gültiger APK-Validierung. Branch `fix/chat-d/release-target-identity-20261106`, [PR #604](https://github.com/ManuEtt/Dnd/pull/604) (Draft). Die vollständige CI auf finalem Dokumentations-HEAD steht noch aus; kein lokaler Kompletttest. Der grüne CI-Nachweis von Vorgänger-PR #599 gilt ausschließlich für dessen Code.
+
+**Kompatibilität und Grenzen:** Kein Schema-/Formatwechsel für Spielstände, SQLite, JSON oder Backup, keine App-/Android-Version, keine Änderungen an Regeln, Story oder Flutter. Keine Migration. Aktive Manipulation eines fremd beschreibbaren Release-Verzeichnisses nach dem letzten Verifikationstakt bleibt außerhalb einer garantierten Race-free-Sicherheitsgrenze; Release-Verzeichnisse müssen geschützt bleiben. Echte Geräteabnahme und produktive Signierung sind getrennt offen.
+
+### 2026-11-06 – Release-Artefakte vor Freigabe inhaltlich erneut prüfen
+
+Die Alpha-Release-Erstellung kontrolliert jetzt zusätzlich zum Dateibesitz die **tatsächlichen Inhalte** der erzeugten Dateien vor dem erfolgreichen Abschluss. Ein gültiges ZIP oder eine unveränderte Dateikennung allein reichen nicht aus: Quell-ZIP, validierte und veröffentlichte ARM64-APK sowie Release-Notizen werden erneut mit den zuvor festgehaltenen SHA256-Digests verglichen. Auch die exakten Einträge des Release-Prüfsummen-Manifests und des Quell-ZIP-Sidecars werden geprüft. Bei Abweichungen wird abgebrochen und nur die weiterhin zu dieser Veröffentlichung gehörende Ausgabe bereinigt.
+
+**Code und Nachweise:** `scripts/prepare_alpha_release.py` und `scripts/tests/test_prepare_alpha_release.py` mit sechs neuen positiven/negativen Regressionstests für gültige Hashlisten, im selben Inode veränderte weiterhin ZIP-gültige Dateien sowie manipulierte Notizen und Prüfsummen. Branch `fix/chat-d/release-final-checksums-20261106`, [PR #606](https://github.com/ManuEtt/Dnd/pull/606) (Draft, finale CI-Abnahme ausstehend). Separate GitHub-Actions-Ergebnisse gelten nur für den jeweils geprüften Commit; ein lokaler Kompletttest wurde nicht durchgeführt.
+
+**Kompatibilität und Grenzen:** Keine Änderung von SQLite-/JSON-Spielständen, Backups, Flutter, Android-Build-/Versionsnummern, Story oder Regeln; keine Migration. Die abschließende Inhaltsprüfung ist keine Garantie gegen aktive Manipulation nach dem letzten Prüfzeitpunkt. Realgeräteabnahme und produktive Signierung sind weiterhin getrennt offen.
+
+### 2026-11-06 – Zielaustausch vor Inhaltsdrift melden
+
+Bei der abschließenden Alpha-Release-Prüfung hat die unveränderte Priorität des Dateibesitzschutzes Vorrang vor der neuen Inhaltsprüfung: Wird eine geöffnete Zieldatei durch eine andere reguläre Datei ersetzt, meldet die Prüfung den **Zielaustausch** und bewahrt den fremden Inhalt. Nur bei unveränderter Dateiidentität folgt die zusätzliche SHA256-Inhaltsprüfung. Damit bleiben ältere Regressionstests und die neue Erkennung stiller In-Place-Manipulation zugleich wirksam.
+
+**Fehlerbehebung:** Commit `52280992156bbb5f92c351497d6ec9e49ccb8310` in [PR #606](https://github.com/ManuEtt/Dnd/pull/606). Der erste vollständige Lauf [#42194379586](https://github.com/ManuEtt/Dnd/actions/runs/42194379586) scheiterte in einem vorhandenen Python-Negativtest ausschließlich an einer anderen Fehlerklasse/Fehlermeldung; die Reihenfolge wurde korrigiert, kein Test entfernt. Eine erneute vollständige CI auf dem finalen Dokumentations-HEAD bleibt erforderlich. Keine Migration und keine Änderungen an Spielständen, JSON, SQLite, Story, Regeln oder Android-Version.
+
 ### 2026-11-06 – Gespeicherte Rückblicke verwenden eindeutige Handlungsstrang-IDs
 
 - **Problem und Lösung:** Die als bestätigt bezeichneten offenen Anknüpfungspunkte in neuen Sitzungsrückblicken verwendeten bisher alle gespeicherten `open`-Einträge. Der Story-Summarizer lässt jetzt nur kanonische ASCII-IDs mit 1–64 Zeichen und exakt einmaligem Vorkommen zu. Dadurch werden unsichere Legacy-IDs und widersprüchliche Open-/Closed-Dubletten nicht als gültige Fortsetzungshinweise präsentiert. Die bestehende Wiederaufnahmeansicht nutzt dieselbe Identitätsregel.
 - **Umsetzung und Nachweis:** `app/lib/story/story_campaign_engine.dart`; neue Flutter-Regressionen in `app/test/story_recap_open_lead_id_integrity_test.dart` für erlaubte/unerlaubte IDs, doppelte Status, das Drei-Hinweise-Limit und den SQLite-Replay nach Neustart. Branch `feat/chat-b/recap-open-lead-id-integrity-20261106`, [PR #602](https://github.com/ManuEtt/Dnd/pull/602), Fach-/Testcommit `3cafb7a29079c0e6f47a67e0d04350b062c41941`.
 - **Tests und Freigabe:** Vier neue Regressionen erstellt, lokale Dart-/Flutter-Tests mangels SDK nicht ausgeführt. GitHub-CI auf dem finalen PR-HEAD gesondert prüfen; keine Build-/APK-Freigabe allein aus geschriebenen Tests ableiten.
 - **Kompatibilität:** Keine Änderung gespeicherter IDs, bestätigter Fakten, Helden-/Kampf-/Questwerte, SQLite-/JSON-Formate oder App-Version; keine Migration. Echte Geräteabnahme und Produktiv-KI bleiben separat offen.
+
+**CI- und Integrationsstand (06.11.2026):** Der erste Formatierungsfehler wurde korrigiert; der anschließende Workflow [#42189711653](https://github.com/ManuEtt/Dnd/actions/runs/42189711653) endete während der SQLite-Installation als *abgebrochen*, nicht als bestandener Flutter-/Android-Nachweis. Die unveränderte Fachkorrektur wurde nun gegen das neuere `main` zusammengeführt, ohne dessen README-/Checkpoint-Nachträge zu ersetzen. CI des Merge-HEADs muss erneut geprüft werden.
