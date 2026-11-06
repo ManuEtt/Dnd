@@ -1,3 +1,19 @@
+## 06.11.2026 – Versionsgebundene Quell-ZIP-Ausgabe exklusiv veröffentlichen
+
+- **Basis-main:** `0a813df100aa649c2204018349b0db9af09fb83f` nach erfolgreich integriertem PR #606; dessen vollständiger CI-Lauf [#42194724285](https://github.com/ManuEtt/Dnd/actions/runs/42194724285) war auf `693dee5540ac4d8b2024dda307e5e8ee2b7c7aaf` vollständig grün.
+- **Branch:** `fix/chat-d/release-source-exclusive-publish-20261106`; **Code-/Testcommit:** `4f74335d7126c83ec9cdfc888b97335cef1cda5c`; **PR:** [#608](https://github.com/ManuEtt/Dnd/pull/608) (Draft).
+- **Befund:** Während der allgemeine Projekt-Exporter `package_project.create_archive` Bestands-ZIPs absichtlich per `os.replace` ersetzen darf, musste die versionierte Alpha-Release-Veröffentlichung auch späte fremde Quell-ZIP-/Sidecar-Kollisionen ohne Überschreiben behandeln. Die vorab geprüften public Output-Pfade genügten nicht als Schutz.
+- **IMPLEMENTIERT:** Privates `TemporaryDirectory` unter dem Release-Ausgabeordner, Erstellung von ZIP und Sidecar in diesem Staging mit unverändertem Paket-Exporter, öffentliche Freigabe per exklusivem `os.link` (gleicher Datenträger, scheitert an jedem bestehenden Pfadeintrag), `FileExistsError` als klare Release-Zieldateikollision, Rollback auf Basis der gemessenen Inodes der privaten Staging-Dateien und abschließende Eigentums- und Hashprüfungen der veröffentlichten Artefakte.
+- **Geänderte Fachdateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`; dazu README am **absoluten Ende** und additive `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`. Paket-Exporter und sein allgemeines Overwrite-Verhalten unverändert.
+- **Akzeptanztests (neu, fünf):** Veröffentlichung exakt der fünf erwarteten Dateien ohne Stage-/Lock-Reste und korrektes Sidecar; spät aufgetauchte reguläre Source-ZIP; spät aufgetauchter Source-ZIP-Symlink und unverändertes externes Ziel; Sidecar erst nach Verlinkung der Source-ZIP durch Konkurrenzprozess belegt; Source-ZIP direkt nach Verlinkung durch fremde Datei ersetzt. Im Fehlerfall fremde Dateien/Links erhalten und eigene Dateien bereinigt.
+- **GETESTET:** Fachcode und Regressionen auf separatem Branch committed; aktuelles Main und offene PRs abgeglichen, kein fremder PR überschneidet sich mit den Fachdateien. Ausschließlich der vorherige PR #606 besitzt einen vollständig grünen CI-Nachweis.
+- **NICHT GETESTET:** Neuer Python-Testumfang und vollständiger GitHub-Actions-Workflow des aktuellen PRs, Backend-/Flutter-/Android-Debug-/drei ABI-/Release-Ergebnis, echte Android-Geräteinstallation, Upgrade und produktive Signierung. Kein lokaler Checkout wegen eingeschränkter GitHub-DNS-Auflösung.
+- **BLOCKIERT:** Vollständig grüne CI auf finalem Dokumentations-HEAD, aktuelle Main-/PR-Konfliktprüfung, danach Merge-Entscheidung. Keine Aussage über absolute Racefreiheit gegen Manipulation nach dem letzten Verifikationstakt.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge von PR #608, keine Änderung an Datenbank/JSON/Spielständen/Backups/UI/Story/Regeln/App-Version, keine Migration.
+- **NÄCHSTER SCHRITT:** Finalen PR-#608-CI-Commit vollständig abnehmen, alle Python-/Backend-/Flutter-/Android-/Release-Jobs verifizieren und eventuell auftretende Regressionen im selben Branch reparieren. Anschließend nur bei konfliktfreiem aktuellem Main kontrolliert integrieren.
+
+---
+
 ### 06.11.2026 – CI-Negativfall zur abschließenden Zielidentität korrigiert
 
 - **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606); neuer Korrekturcommit `52280992156bbb5f92c351497d6ec9e49ccb8310` nach Code-/Testcommit `a61bd446072d16d143cdf301270da6ca6c22edf7`.
