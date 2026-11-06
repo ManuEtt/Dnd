@@ -1,3 +1,16 @@
+## 06.11.2026 – Nur eindeutige NPC-Notiz-IDs im bestätigten Erzählergedächtnis
+
+- **Basis-main:** `2a4fab5a56127d866dd2a8933836fd1136d772b3`; **Branch:** `feat/chat-b/npc-narrator-note-id-integrity-20261106`; **PR:** [#605](https://github.com/ManuEtt/Dnd/pull/605) (Draft); **Fach-/Testcommit:** `9e6f7f33bdfb4d7cfe60fbfe76cc1784c74d2e7c`.
+- **IMPLEMENTIERT:** `NpcNarratorMemory.merge` priorisiert Beziehungsnotizen nur mit eindeutiger kanonischer 1–64-Zeichen-ASCII-ID und ebenso sicheren NPC-IDs. Kollisionen selbst über NPC-Grenzen hinweg sperren beide Notizen; Quellen-/Rohdaten bleiben unverändert.
+- **Neue Tests:** `app/test/npc_narrator_note_id_integrity_test.dart` mit vier neuen Tests zu widersprüchlichen gleichen IDs, Cross-NPC-ID-Kollisionen, Legacy-JSON mit unsicheren Notiz-/NPC-IDs, und SQLite-Reopen/Replay mit identischem bestätigtem Spielstand und sauberem Wire-Kontext.
+- **GETESTET:** Aktuelle GitHub-Main-/PR-/Fachpfadprüfung, eigenständige Code- und Testcommits. Letzter vollständig belegter eigener Story-PR-Vorgänger: [#598-CI](https://github.com/ManuEtt/Dnd/actions/runs/42184643176) auf `a05e50b19572305520a62bb09a4ec0c5753e079b` grün; nicht der aktuelle PR.
+- **NICHT GETESTET:** Neue Tests und finale Flutter-/Dart-/Android-CI von #605, Gerätebetrieb, produktive KI; lokal kein Dart/Flutter-SDK. Laufender #602-SQLite-CI-Schritt ist unabhängig.
+- **BLOCKIERT:** CI-/Review-Abnahme des finalen #605-Commits und spätere Dokumentationskonsolidierung; an fremden Branches und `main` nichts verändert.
+- **Kompatibilität:** Kein Schema-/Versionswechsel, keine Migration, keine Regel-, Helden-, Quest-, XP-, Inventar- oder JSON-/SQLite-Mutation, kein neuer Anbieter.
+- **Nächster Schritt:** GitHub Actions auf dem endgültigen Commit bis zu Flutter-/Android-Gates auswerten, fehlschlagende Regressionen im eigenen Branch beheben und danach kontrolliert zur Integration übergeben.
+
+---
+
 ## Konsolidierung 04.11.2026 – PR #536
 
 Die ursprüngliche Chat-Dokumentation wird unter Erhalt ihrer bisherigen Abschnitte im übergreifenden Integrationsbranch `fix/chat-d/branch-migration-actions-20261104` ergänzt. Die Gesamt-CI ist unabhängig von den Einzel-PRs zu prüfen.
