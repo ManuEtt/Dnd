@@ -1436,3 +1436,9 @@ Release-APKs und die im Android-Upload enthaltene Gradle-Wrapper-JAR werden auf 
 **GitHub:** Branch `fix/chat-d/archive-windows-invalid-chars-20261105`, [PR #584](https://github.com/ManuEtt/Dnd/pull/584). Die vollständige CI des finalen Dokumentations-HEADs steht zum Zeitpunkt dieses Eintrags noch aus; ein lokaler Kompletttest wurde nicht durchgeführt.
 
 **Kompatibilität und Grenzen:** Keine SQLite-/JSON-/Backup-/Spielstands-, Gradle-, Android-Versions- oder SRD-Regeländerung. Realgerätetest und produktive Signierung sind separat offen.
+
+### 2026-11-06 – Verständliche Sperrhinweise für die vier Abenteuer-Schnellaktionen
+
+Bei laufender Spielaktion sind `Sprache`, `Untersuchen`, `Angriff` und `W20` weiterhin gesperrt. Alle vier Aktionen erklären TalkBack nun durch denselben eindeutigen Hinweis, dass bereits eine Handlung verarbeitet wird. Im Leerlauf bleibt die konkrete Begründung eines nicht verfügbaren Angriffs erhalten; die übrigen Aktionen erhalten keinen veralteten Sperrhinweis. Touch-, Tab-/Enter-, Mikrofon-, Würfel- und Aktionsverhalten bleiben unverändert.
+
+Fünf neue Flutter-Widgettests prüfen 320/360 dp bei 200 % Schrift und geöffneter Tastatur, jeweils eindeutige Screenreader-Beschriftung, Busy-Hinweise, ausbleibende unerlaubte Aktionen sowie die wiederhergestellte Bedienbarkeit nach Ende der Sperre. Fachdatei `app/lib/ui/fantasy_art.dart`, Test `app/test/fantasy_quick_actions_busy_semantics_test.dart`. Branch `feat/chat-c/quick-actions-busy-semantics-20261106`, [PR #588](https://github.com/ManuEtt/Dnd/pull/588) (Draft). CI auf dem finalen PR-HEAD und echte Android-/TalkBack-Geräteabnahme zum Zeitpunkt des Nachtrags noch offen. Keine Regel-, Story-, JSON-/SQLite-, Berechtigungs-, Backup- oder Versionsänderung; keine Migration.

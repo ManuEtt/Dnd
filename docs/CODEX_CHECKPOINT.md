@@ -2116,3 +2116,16 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-06 – TalkBack-Hinweise bei gesperrten Abenteuer-Schnellaktionen
+
+- **Zuständig:** Chat C. **Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`, nach Paketbeginn wurde `main` auf `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` durch unabhängig bearbeitete Release-/ZIP-Dateien aktualisiert.
+- **Branch:** `feat/chat-c/quick-actions-busy-semantics-20261106`; **PR:** [#588](https://github.com/ManuEtt/Dnd/pull/588) (Draft), **Code-/Testcommit:** `90cb263a396912257974422c7dfdb20969ff8f5a`.
+- **Problem:** Die vier fixierten Abenteuer-Schnellaktionen sind bei laufender Aktion deaktiviert, doch nur der Angriff erläuterte für TalkBack den Busy-Grund. Tab-/Enter-Navigation bei 320 dp/2x/IME ist bereits regressionsgetestet und wird nicht dupliziert.
+- **IMPLEMENTIERT:** `app/lib/ui/fantasy_art.dart` übergibt bei `busy` auch `Sprache`, `Untersuchen` und `W20` den Semantik-Hinweis „Eine Handlung wird bereits verarbeitet.“. Kein zusätzlicher Tooltip, keine Callback- oder InkWell-Änderung. Der separate Angriffskontext bleibt erhalten.
+- **TESTS HINZUGEFÜGT:** `app/test/fantasy_quick_actions_busy_semantics_test.dart`: fünf positive/negative Widgettests bei 320/360 dp, 200 % Schrift und simuliertem 270-dp-IME, alle Busy-Hinweise/Labels/Disable-Flags, unerlaubte Aktionen nicht ausgeführt, Bereitschaft nach Busy ohne veraltete Hints, Angriff mit eigenständigem Kontextgrund.
+- **GETESTET:** GitHub-Quellcode und vorhandene Keyboard-/Barrierefreiheitsregressionen untersucht, acht offene PR-Dateilisten gegen diese Fachmodule geprüft. Keine neue Regeländerung.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, Widget-/Gesamttests, Android-APK und native Tests auf finalem PR-HEAD bis zur CI-Auswertung; echtes Android/TalkBack/IME.
+- **BLOCKIERT:** Kein lokales Flutter/Dart-SDK; Review und finale CI erforderlich. Gemeinsame Dokumentationsnachträge anderer Chats append-only und verlustfrei integrieren.
+- **Migration:** Nicht erforderlich; keine App-Format-, Spielstands-, Versions- oder Berechtigungsänderung.
+- **NÄCHSTER SCHRITT:** GitHub-CI final prüfen und eventuelle Test-/Formatfehler im selben Branch beheben.
