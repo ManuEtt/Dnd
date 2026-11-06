@@ -78,8 +78,7 @@ class SrdEldritchBlastRules {
     final invalidHitPoints =
         (currentHp != null && currentHp <= 0) ||
         (maximumHp != null &&
-            (maximumHp <= 0 ||
-                (currentHp != null && currentHp > maximumHp)));
+            (maximumHp <= 0 || (currentHp != null && currentHp > maximumHp)));
     if (caster.isDead ||
         invalidHitPoints ||
         !ConditionRules.canTakeActions(caster) ||
