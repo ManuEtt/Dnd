@@ -63,7 +63,6 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       final semantics = tester.ensureSemantics();
-      addTearDown(semantics.dispose);
 
       await tester.pumpWidget(_screen());
       await tester.pumpAndSettle();
@@ -91,6 +90,7 @@ void main() {
         }
       }
       expect(tester.takeException(), isNull);
+      semantics.dispose();
     });
   }
 
@@ -122,7 +122,6 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
 
     await tester.pumpWidget(_screen(finished: true));
     await tester.pumpAndSettle();
@@ -137,5 +136,6 @@ void main() {
     expect(find.bySemanticsLabel('Begegnung beendet'), findsOneWidget);
     expect(find.bySemanticsLabel(_activeLabels[2]), findsNothing);
     expect(tester.takeException(), isNull);
+    semantics.dispose();
   });
 }
