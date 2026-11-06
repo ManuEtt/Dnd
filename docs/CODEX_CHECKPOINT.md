@@ -2132,3 +2132,16 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-06 – Zustandskreis-Verwaltung mit 200 % Android-Schrift
+
+- **Zuständigkeit:** CHAT C, Flutter-UI/Widgettests. **Basis-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e`. Neuer main-Stand `9a0fa855374a67805e531ad8574e048d99b33745` enthält unabhängige Checkpoint-/README- und Skriptänderungen, die vor endgültiger Freigabe als Merge-Vorfahren zu übernehmen sind.
+- **Branch:** `feat/chat-c/ward-management-large-text-20261106`; **PR:** [#591](https://github.com/ManuEtt/Dnd/pull/591) (Draft). **Code-/Testcommit:** `8a562f633262ae304dc927465f337d3bc8ca5e27`.
+- **Problem:** Die langen `TextButton.icon`-Beschriftungen „Zauberwirkungen verwalten“ und „Zustandsquellen verwalten“ können bei 200 % Systemschrift auf 320/360 dp aufgrund ihres kompakten Row-Layouts den verfügbaren Raum überschreiten; neue spezifische 200-%-/IME-Tests fehlten.
+- **IMPLEMENTIERT:** `app/lib/ui/fantasy_effect_ward.dart` verwendet nur bei Textskalierung ab 1,8 und unter 500 dp Inhaltsbreite einen vollbreiten `TextButton` mit `Row` und `Expanded(Text)`, sonst das originale `TextButton.icon`-Layout. Bestehende Keys, Icon-Typen, Callbacks und Anzeige-Bedingungen bleiben erhalten. Keine Fach- oder Datenänderung.
+- **TESTS HINZUGEFÜGT:** `app/test/fantasy_ward_management_large_text_test.dart` – fünf Fälle: 320/360 dp mit 200 % Text und 220 dp IME, vollständige umbrechende Beschriftungen, Hit-Areale und beide Callbacks, unveränderter Heldensnapshot; fehlende Verwaltungsrechte zeigen keine Aktionen, normale Schrift erhält kompakte Buttons.
+- **GETESTET:** Repository-Quellen, vorhandene Effekt-/Zauber-/UI-Tests, `main`-SHA und die fachlich geänderten Dateipfade aller offenen PRs verglichen; keine Überschneidung der Fach-/Testdatei.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse und Tests, Debug-/ABI-APKs, native Androidtests und Realgerät/TalkBack/IME auf dem finalen Commit bis zur tatsächlichen CI.
+- **BLOCKIERT:** Lokales Flutter/Dart-SDK nicht verfügbar. CI und Review vor Integration erforderlich; README-/Checkpoint-Nachträge paralleler PRs verlustfrei zusammenführen.
+- **Migrationen:** keine. Spielregeln, Story, Controller, Persistenz, JSON-/SQLite-Version und Berechtigungen unverändert.
+- **NÄCHSTER SCHRITT:** Branch mit neuem main konfliktfrei synchronisieren, finale CI inklusive fünf Widgettests prüfen und ggf. Format-/Widgetfehler im selben PR korrigieren.

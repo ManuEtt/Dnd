@@ -1446,3 +1446,9 @@ Beim Erstellen von vollständigen Quellcode-Checkpoints gelten für Manifest- un
 **GitHub:** Branch `fix/chat-d/checkpoint-portable-filenames-20261106`, [PR #587](https://github.com/ManuEtt/Dnd/pull/587). Die vollständige CI des finalen Commits steht noch aus; ein lokaler Kompletttest wurde nicht behauptet.
 
 **Kompatibilität:** Keine Migration, keine Änderungen an SQLite-/JSON-Spielständen, tatsächlichen Backup-Dateiinhalten, Flutter- oder Android-Version, Regel- und Storylogik. Reale Geräteabnahme und produktive Signierung bleiben separat offen.
+
+### 2026-11-06 – Vollständig lesbare Zustandskreis-Verwaltung bei großer Schrift
+
+Die Aktionen „Zauberwirkungen verwalten“ und „Zustandsquellen verwalten“ im Charakter- und Kampf-Zustandskreis bleiben auf 320/360-dp-Android-Displays bei 200 % Schrift vollständig lesbar: Bei schmalem Inhalt erscheinen sie vollbreit mit automatisch umbrechenden Beschriftungen. Bei normaler Schrift behalten sie ihre bisherige kompakte Icon-Schaltfläche. Die Buttons behalten dieselben IDs und öffnen ausschließlich die bestehenden Bestätigungsdialoge; fehlende Verwaltungsaktionen werden weiterhin nicht angeboten.
+
+Fünf neue Widgettests prüfen 320/360 dp, 200 % Text und simulierte 220 dp Bildschirmtastatur, mehrzeilige Beschriftung, sichtbare Touchflächen, getrennte Callback-Auslösung, fehlende Aktionen sowie den unveränderten Spielstand. Betroffen sind `app/lib/ui/fantasy_effect_ward.dart` und `app/test/fantasy_ward_management_large_text_test.dart`. Arbeitsbranch `feat/chat-c/ward-management-large-text-20261106`, [PR #591](https://github.com/ManuEtt/Dnd/pull/591) (Draft). Flutter-/Android-CI und echte Android-/TalkBack-Prüfung sind zum Zeitpunkt dieses Eintrags noch offen. Keine Änderungen an Regelengine, JSON, SQLite, Backup, Version oder Berechtigungen; keine Migration.
