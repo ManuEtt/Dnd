@@ -22,9 +22,9 @@ Future<List<EquipmentEntry?>> _openCatalog(
     MaterialApp(
       theme: buildFantasyTheme(),
       builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(textScale),
-        ),
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(textScale)),
         child: child!,
       ),
       home: Scaffold(
@@ -59,9 +59,7 @@ void main() {
 
         final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
         expect(dialog.scrollable, isTrue);
-        final search = find.byKey(
-          const ValueKey('equipment-catalog-search'),
-        );
+        final search = find.byKey(const ValueKey('equipment-catalog-search'));
         expect(
           tester.widget<TextField>(search).textInputAction,
           TextInputAction.search,
@@ -83,10 +81,7 @@ void main() {
         final info = find.byTooltip('Werte für Langschwert anzeigen');
         expect(add, findsOneWidget);
         expect(info, findsOneWidget);
-        expect(
-          find.bySemanticsLabel('Langschwert hinzufügen'),
-          findsOneWidget,
-        );
+        expect(find.bySemanticsLabel('Langschwert hinzufügen'), findsOneWidget);
         await tester.ensureVisible(add);
         await tester.pumpAndSettle();
         expect(add.hitTestable(), findsOneWidget);
@@ -104,9 +99,7 @@ void main() {
     'IME und große Schrift: keine Treffer, Abbruch liefert keine Auswahl',
     (tester) async {
       final results = await _openCatalog(tester, width: 320);
-      final search = find.byKey(
-        const ValueKey('equipment-catalog-search'),
-      );
+      final search = find.byKey(const ValueKey('equipment-catalog-search'));
 
       await tester.enterText(search, 'unauffindbarer Gegenstand xyz');
       await tester.pumpAndSettle();
