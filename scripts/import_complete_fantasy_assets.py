@@ -7,8 +7,10 @@ the SHA-256 manifest before writing. Do not overwrite divergent local art.
 import argparse
 import hashlib
 import json
+import os
 import pathlib
 import sys
+import tempfile
 import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -108,6 +110,39 @@ def imported_assets(zip_path: pathlib.Path, target_root: pathlib.Path):
         return validated
 
 
+
+def publish_verified_asset(
+    path: pathlib.Path, data: bytes, target_root: pathlib.Path
+) -> None:
+    """Publish one complete file without exposing a truncated target.
+
+    Stage in the destination directory and hard-link only after the entire
+    verified payload has been written and synced. os.link fails if another
+    writer creates the target meanwhile, so existing artwork is never replaced.
+    A failed write or link only leaves a private temporary file to clean up.
+    """
+    ensure_safe_destination(path, target_root)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    ensure_safe_destination(path, target_root)
+    if path.exists():
+        if path.read_bytes() != data:
+            raise FileExistsError(f"Abweichendes Original nicht ueberschreiben: {path}")
+        return
+    descriptor, temp_name = tempfile.mkstemp(
+        prefix=f".{path.name}.", suffix=".partial", dir=path.parent
+    )
+    try:
+        with os.fdopen(descriptor, "wb") as staged:
+            staged.write(data)
+            staged.flush()
+            os.fsync(staged.fileno())
+        # A link or a newly created destination must not be followed.
+        ensure_safe_destination(path, target_root)
+        os.link(temp_name, path)
+    finally:
+        pathlib.Path(temp_name).unlink(missing_ok=True)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("graphics_zip", type=pathlib.Path)
@@ -118,16 +153,9 @@ def main(argv=None):
         files = imported_assets(args.graphics_zip, args.target)
         for path, data in files:
             if not args.verify_only:
-                # Revalidate immediately before filesystem mutation; the
-                # initial ZIP scan and this write phase are separate.
-                ensure_safe_destination(path, args.target)
-                path.parent.mkdir(parents=True, exist_ok=True)
-                ensure_safe_destination(path, args.target)
-                if not path.exists():
-                    # Exclusive creation refuses late symlink/file replacement
-                    # instead of following a link or overwriting existing art.
-                    with path.open("xb") as stream:
-                        stream.write(data)
+                # Publish via a complete temporary file; a failed write must
+                # never leave a corrupt original that blocks later retries.
+                publish_verified_asset(path, data, args.target)
             print(f"{'OK' if args.verify_only else 'Bereit'}: {path.name} ({len(data)} Bytes)")
         print(f"{len(files)} Originaldateien verifiziert.")
         return 0
