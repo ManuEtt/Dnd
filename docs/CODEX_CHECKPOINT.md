@@ -2242,3 +2242,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Fehlender vollständiger lokaler Checkout und die endgültige GitHub-Actions-Abnahme auf dem Dokumentations-HEAD; gemeinsame README-/Checkpoint-Nachträge müssen bei späterer Integration verlustfrei erhalten bleiben.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge von PR #629; keine Spielstand-, Datenbank- oder Versionsänderung.
 - **NÄCHSTER SCHRITT:** Die neu gestartete finale CI vollständig kontrollieren, gegebenenfalls Test-/Formatfehler im eigenen Branch korrigieren, dann aktuellen Main und offene PR-Dateien vergleichen. Keine ungeprüfte Integration.
+
+## 2026-11-07 – Lioras erste Wahl absichern (PR #636)
+
+- **Ausgangs-main:** `bbe6ee0901f1873af67647bf54462e4a44821762`; **Branch:** `feat/chat-b/liora-square-explicit-intent-20261107`; **PR:** [#636](https://github.com/ManuEtt/Dnd/pull/636) (Draft). Fachcommit `e78365af402026ea90774a995cb343e9eb6ea3d9`, Testcommit `64815cfbf1d92d6914d74909a65d0ece12a79166`; zusätzlicher Dokumentationscommit folgt.
+- **IMPLEMENTIERT:** Schutz, Anschuldigung und vorläufiges Ermitteln bei der ersten Liora-Begegnung erfordern ausdrücklich formulierte Handlungen. Erwähnungen und Fragen setzen keine Beziehungs- oder Questentscheidung; eine gespeicherte erste Wahl kann nicht durch späteren widersprüchlichen Text überschrieben werden.
+- **Dateien:** `app/lib/story/fourteenth_voice_campaign.dart`, neuer `app/test/rabenwacht_liora_square_explicit_intent_test.dart`, README und persönliche/zentrale Checkpoints. Fünf Testgruppen mit positiven und negativen Beispielen, Mehrfachversuchen, anderen Zeugen, JSON und SQLite-Neustart ergänzt.
+- **GETESTET:** Aktuelle Main-/Branch-SHA und offene PRs einschließlich #632 erneut geprüft. Kein fremder Fachdatei-Konflikt: #632 bearbeitet Akt VII; dieses Paket Akt VI. Eigener sich überschneidender Entwurf #635 wurde vor Integration geschlossen. Neue Testfälle sind versioniert, nicht als bestanden behauptet.
+- **NICHT GETESTET:** Lokale Projekt-/SRD-/Python-/Backend-/Dart-/Flutter-/APK-Tests, finaler CI-Lauf auf Dokumentations-HEAD, produktive KI, echtes Android-Gerät und Upgrade. GitHub-Android-Alpha-CI [#42411071998](https://github.com/ManuEtt/Dnd/actions/runs/42411071998) war auf Testcommit `64815c` noch in Arbeit.
+- **BLOCKIERT:** Lokal keine GitHub-DNS-Auflösung und kein Flutter-/Dart-SDK. Vollständige CI-Abnahme und verlustfreie Zusammenführung parallel veränderter README-/Checkpoint-Einträge stehen noch aus.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge; keine Änderungen an Regelzustand, Controller, Backend, SQLite-/JSON-Schema, App-Version oder vorhandenen Spielständen; keine Migration.
+- **NÄCHSTER SCHRITT:** CI aller betroffenen Prüfjobs auf dem endgültigen PR-HEAD prüfen, gegebenenfalls Format-/Testsfehler auf eigenem Branch korrigieren, danach aktuellen Main und konkurrierende PR-Dateipfade vor der koordinierten Integration erneut vergleichen.
+

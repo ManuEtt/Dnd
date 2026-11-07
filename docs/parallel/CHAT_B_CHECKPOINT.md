@@ -946,3 +946,17 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+## 2026-11-07 – Ausdrückliche erste Liora-Entscheidung (#636)
+
+- **Ausgangs-main:** `bbe6ee0901f1873af67647bf54462e4a44821762`.
+- **Eigener Branch:** `feat/chat-b/liora-square-explicit-intent-20261107`, [PR #636](https://github.com/ManuEtt/Dnd/pull/636) (Draft). Codecommit `e78365af402026ea90774a995cb343e9eb6ea3d9`, Testcommit `64815cfbf1d92d6914d74909a65d0ece12a79166`; finaler Dokumentations-HEAD wird separat geprüft.
+- **Ausgangsproblem:** Freie Texte mit bloßen Schlüsselwortfragmenten konnten Liora schützen, beschuldigen oder die Beweissuche festlegen, selbst wenn nur eine Möglichkeit erwähnt wurde. Erneute Eingabe konnte die bereits bestätigte erste NPC-Beziehung nachträglich überschreiben.
+- **IMPLEMENTIERT:** Explizite erste Handlung für Schutz/Anschuldigung/Beweissuche nötig; nicht verpflichtende Aussagen bleiben ohne Quest- und NPC-Änderung. Die erste bestätigte Wahl ist gegen widersprechende Wiederholungen geschützt; Ermittlung bleibt über Elda und weitere Spuren möglich.
+- **Betroffene Dateien:** `app/lib/story/fourteenth_voice_campaign.dart`, `app/test/rabenwacht_liora_square_explicit_intent_test.dart`, zusätzlich README, `docs/CODEX_CHECKPOINT.md` und dieser Checkpoint.
+- **Tests:** Fünf deterministische Flutter-Testgruppen (Fragen, Negation, Bericht, explizite Auswahl, Wiederholung, andere Zeugen, JSON- und SQLite-Wiederaufnahme), positive und negative Fälle. **GETESTET:** Repository-/PR-/SHA-Konfliktprüfung; neue Tests geschrieben. **NICHT GETESTET:** Flutter-Tests/Dart-Format, vollständige Python-/Backend-/Android-CI am finalen Commit; Hardware/Upgrade/Produktiv-KI. Frühere CI ist kein Nachweis für dieses Paket.
+- **Aktuelle CI:** [Android-Alpha #42411071998](https://github.com/ManuEtt/Dnd/actions/runs/42411071998) auf Testcommit `64815c` zum Dokumentationszeitpunkt in Bearbeitung. Neue Dokumentation erfordert getrennte finale Prüfung.
+- **BLOCKIERT/Koordination:** Kein lokaler Flutter-/Dart-SDK-Zugriff und kein GitHub-DNS-Checkout. Parallel entstandener PR #632 verändert ausschließlich anderes Story-Fachmodul (Akt VII); eigener überlappender PR #635 wurde ohne Merge geschlossen. Gemeinsame README/CODEX-Dateien append-only integrieren.
+- **Kompatibilität:** Kein Daten-/Schema-/Versionswechsel, keine Änderung am bestätigten Regelzustand; ältere Kampagnen und ihre bereits gewählten Werte werden unverändert weitergegeben.
+- **NÄCHSTER SCHRITT:** Abschließende GitHub-Actions-Jobs für PR #636 am endgültigen Branch-HEAD prüfen und echte Fehler auf diesem Branch beheben, danach Integration koordinieren.
+
