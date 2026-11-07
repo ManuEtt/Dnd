@@ -1437,3 +1437,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 **Blockiert:** Kein Regel-/Repositoryzugriffsblocker; gemeinsame README und zentraler Checkpoint bleiben append-only und werden von D bei Integration verlustfrei zusammengeführt. Keine Datenbankmigration.
 
 **Nächster Schritt:** Lauf der vollständigen finalen PR-CI prüfen, abweichende Fehlertypen oder weitere Regressionen korrigieren, dann Reviewstatus freigeben; keine automatische Zusammenführung in Main.
+
+## 07.11.2026 – Zweite vollständige CI-Reparatur für PR #621
+
+**Main-Basis:** `0a813df100aa649c2204018349b0db9af09fb83f`, Branch `feat/chat-a/spell-range-metadata-integrity-20261107`, PR https://github.com/ManuEtt/Dnd/pull/621, Draft.
+
+**Belegter Befund:** Der finale CI-Lauf https://github.com/ManuEtt/Dnd/actions/runs/42355054722 auf `f3e332fda6fedc62fdf5286e830ad181d1f253ff` hatte **3.324 Flutter-Pässe und einen Fehltest**. Darin forderte `app/test/srd_spell_target_rules_test.dart` die positive Zulassung einer von `Magic Missile` abweichenden, frei konstruierten `1 foot`-Reichweite, obwohl neue Katalog-Metadatenregel gerade diese Manipulation verhindern soll.
+
+**Implementiert:** Die historische, inhaltlich widersprüchliche Positiverwartung ist nun als Negativfall für beide Abstände (1 und 2 Fuß) formuliert, beide müssen `UnsupportedError` auslösen. Allgemeine rein mathematische Umrechnungen in `maxRangeFeet` bleiben uneingeschränkt; ihre bisherigen positiven Assertions bleiben erhalten. Fachmodul und separate 339-Katalog-Regressionen nicht abgeschwächt. Keine Tests deaktiviert.
+
+**Test-/CI-Status:** Vorheriger Lauf weiterhin als **failed** dokumentiert; finaler Testlauf auf neuem Commit ausstehend. Lokal kein Dart/Flutter; keine behauptete erfolgreiche APK oder Geräteabnahme. Kollisionen mit 38 offenen PRs: neue Testdatei von keinem berührt. Änderungen ausschließlich Test und drei append-only Dokumentationsdateien; JSON/SQLite/Modelle/GameEngine/Story/UI unverändert.
+
+**Nächster Schritt:** Wiederholte vollständige CI samt Format/Analyzer/Flutter/Android/ABI und Quelle abnehmen; nur bei vollständig grünem Head PR für Review freigeben. D koordiniert später verlustfreien Merge der zentralen Checkpoint- und README-Nachträge.
