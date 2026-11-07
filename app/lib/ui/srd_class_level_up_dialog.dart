@@ -144,22 +144,28 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
                 },
               ),
               const SizedBox(height: 12),
-              SegmentedButton<LevelUpMethod>(
-                segments: const [
-                  ButtonSegment(
-                    value: LevelUpMethod.experience,
-                    label: Text('Erfahrung'),
-                  ),
-                  ButtonSegment(
-                    value: LevelUpMethod.milestone,
-                    label: Text('Meilenstein'),
-                  ),
-                ],
-                selected: {_method},
-                onSelectionChanged: (values) => setState(() {
-                  _method = values.single;
-                  _error = null;
-                }),
+              // Both choices must remain reachable at large Android text
+              // sizes instead of squeezing/clipping the segment labels.
+              SingleChildScrollView(
+                key: const ValueKey('levelup-method-scroll'),
+                scrollDirection: Axis.horizontal,
+                child: SegmentedButton<LevelUpMethod>(
+                  segments: const [
+                    ButtonSegment(
+                      value: LevelUpMethod.experience,
+                      label: Text('Erfahrung'),
+                    ),
+                    ButtonSegment(
+                      value: LevelUpMethod.milestone,
+                      label: Text('Meilenstein'),
+                    ),
+                  ],
+                  selected: {_method},
+                  onSelectionChanged: (values) => setState(() {
+                    _method = values.single;
+                    _error = null;
+                  }),
+                ),
               ),
               const SizedBox(height: 10),
               Text(
