@@ -2191,3 +2191,17 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+
+---
+
+## 2026-11-07 – Gesicherte Anzeige ungültiger Zauberressourcen
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; unabhängiger Branch `feat/chat-c/spell-resource-dialog-guard-20261107`.
+- **IMPLEMENTIERT:** Im Zauberressourcen-Dialog werden ungültige reguläre oder Paktmagie-Verbrauchswerte als Fehlermeldung mit Live-Region angezeigt und die Ausführung explizit gesperrt; der Dialog ist weiterhin abbrechbar. Kein Verändern des Helden beim Öffnen. Code: `app/lib/ui/spellcasting_dialog.dart`, neue positive und negative Widgettests in `app/test/spell_resource_dialog_invalid_state_test.dart`.
+- **GETESTET:** Bestehende Domain-Fehlerfälle und Widgettest-Konventionen geprüft; automatisierter CI-Lauf auf neuem Branch noch ausstehend.
+- **NICHT GETESTET:** Flutter/Dart-Format/Analyse/Widgets auf neuem HEAD, Android-APK, echtes Gerät/TalkBack.
+- **BLOCKIERT:** Flutter-SDK lokal nicht verfügbar; GitHub CI ist verbindliche Abnahme.
+- **KOMPATIBILITÄT:** Speicher- und Regelverhalten, SQLite-3- und JSON-1-Kompatibilität, App `0.8.52+102` unverändert.
+- **NÄCHSTER SCHRITT:** Eigenen PR veröffentlichen und tatsächliche CI inkl. Negativ-/Positivtests vollständig prüfen; keine fremden Branches mergen.
