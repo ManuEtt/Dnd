@@ -188,5 +188,75 @@ class FantasyImportTests(unittest.TestCase):
         self.assertFalse((self.root / "project").exists())
 
 
+
+    def test_interrupted_disk_write_never_publishes_partial_image(self):
+        payload = self._make_archive()
+        target = self.root / "project"
+        image_dir = target / MODULE.PREFIX.rstrip("/")
+        with mock.patch.object(
+            MODULE.os, "fsync", side_effect=OSError("simulated full disk")
+        ):
+            self.assertEqual(
+                MODULE.main([str(self.archive), "--target", str(target)]), 1
+            )
+        self.assertFalse((image_dir / MODULE.ASSETS[0]).exists())
+        self.assertEqual(list(image_dir.glob("*.partial")), [])
+        self.assertEqual(list(image_dir.glob(".*.partial")), [])
+
+        # A failed attempt has not poisoned the next import.
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(target)]), 0
+        )
+        self.assertEqual((image_dir / MODULE.ASSETS[0]).read_bytes(), payload)
+
+    def test_late_competing_target_is_never_overwritten(self):
+        self._make_archive()
+        target = self.root / "project"
+        image_dir = target / MODULE.PREFIX.rstrip("/")
+        original_link = MODULE.os.link
+        rival = b"competing writer's original artwork"
+
+        def competing_link(source, destination):
+            pathlib.Path(destination).write_bytes(rival)
+            return original_link(source, destination)
+
+        with mock.patch.object(MODULE.os, "link", side_effect=competing_link):
+            self.assertEqual(
+                MODULE.main([str(self.archive), "--target", str(target)]), 1
+            )
+        self.assertEqual((image_dir / MODULE.ASSETS[0]).read_bytes(), rival)
+        self.assertEqual(list(image_dir.glob(".*.partial")), [])
+
+    def test_later_publication_failure_allows_idempotent_resume(self):
+        payload = self._make_archive()
+        target = self.root / "project"
+        image_dir = target / MODULE.PREFIX.rstrip("/")
+        original_link = MODULE.os.link
+        attempts = 0
+
+        def fail_second_link(source, destination):
+            nonlocal attempts
+            attempts += 1
+            if attempts == 2:
+                raise OSError("simulated link publication failure")
+            return original_link(source, destination)
+
+        with mock.patch.object(MODULE.os, "link", side_effect=fail_second_link):
+            self.assertEqual(
+                MODULE.main([str(self.archive), "--target", str(target)]), 1
+            )
+        self.assertEqual(attempts, 2)
+        self.assertEqual((image_dir / MODULE.ASSETS[0]).read_bytes(), payload)
+        self.assertFalse((image_dir / MODULE.ASSETS[1]).exists())
+        self.assertEqual(list(image_dir.glob(".*.partial")), [])
+
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(target)]), 0
+        )
+        self.assertEqual(
+            {file.name for file in image_dir.glob("*.webp")}, set(MODULE.ASSETS)
+        )
+        self.assertEqual(list(image_dir.glob(".*.partial")), [])
+
 if __name__ == "__main__":
     unittest.main()
