@@ -50,7 +50,7 @@ class NpcContinuitySnapshot {
 class NpcContinuityReader {
   const NpcContinuityReader._();
 
-  static final RegExp _safeNoteId = RegExp(r'^[a-zA-Z0-9_-]{1,64}
+  static final RegExp _safeNoteId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
 
   static NpcContinuitySnapshot read(
     Campaign campaign, {
@@ -92,88 +92,6 @@ class NpcContinuityReader {
             _safeNoteId.stringMatch(campaign.npcRelationshipNotes[i].id) ==
                 campaign.npcRelationshipNotes[i].id &&
             noteIdCounts[campaign.npcRelationshipNotes[i].id] == 1)
-          (position: i, value: campaign.npcRelationshipNotes[i]),
-    ];
-    notes.sort((a, b) {
-      final byTime = b.value.recordedAt.compareTo(a.value.recordedAt);
-      return byTime != 0 ? byTime : b.position.compareTo(a.position);
-    });
-
-    return NpcContinuitySnapshot(
-      npcId: npc.id,
-      name: npc.name,
-      alive: npc.alive,
-      currentRelationship: npc.relationship,
-      disambiguateName: disambiguate,
-      recentNotes: notes.take(limit).map((entry) => entry.value).toList(),
-    );
-  }
-}
-
-// Legacy imports may hide identity differences with zero-width marks, soft
-// hyphens, grapheme joiners, deprecated vowel separators and bidi controls.
-// These are invisible, not distinguishing NPC name characters.
-// Strip these characters for *identity comparison and name display only*.
-// They must never distinguish one NPC from a visually identical second NPC.
-final RegExp _invisibleNameMarks = RegExp(
-  r'[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]',
-);
-
-String _visibleName(String value) =>
-    _singleLine(value.replaceAll(_invisibleNameMarks, ''));
-
-// Saved relationships/notes may also carry legacy format controls.
-// Render a bounded *read-only* one-line projection, never mutate saved text.
-String _singleLine(String value) => value
-    .replaceAll(
-      RegExp(
-        r'[\x00-\x1f\x7f-\x9f\u00ad\u034f\u061c\u180e\u200b-\u200f'
-        r'\u2028-\u202e\u2060-\u206f\ufeff]',
-      ),
-      ' ',
-    )
-    .replaceAll(RegExp(r'\s+'), ' ')
-    .trim();
-
-// Compare the same visible name that confirmedContext actually renders.
-// Ordinary letters, genuine spaces, punctuation and German umlauts remain.
-String _npcNameKey(String value) => _visibleName(value)
-    .toLowerCase()
-    .replaceAll('ä', 'ae')
-    .replaceAll('ö', 'oe')
-    .replaceAll('ü', 'ue')
-    .replaceAll('ß', 'ss');
-);
-
-  static NpcContinuitySnapshot read(
-    Campaign campaign, {
-    required String npcId,
-    int limit = 5,
-  }) {
-    if (npcId.trim().isEmpty || limit < 1 || limit > 20) {
-      throw const FormatException('Ungültige NPC-Erinnerungsanfrage.');
-    }
-
-    final matches = campaign.npcs.where((npc) => npc.id == npcId).toList();
-    if (matches.length != 1) {
-      throw const FormatException('NPC nicht eindeutig bestätigt.');
-    }
-    final npc = matches.single;
-    // A saved NPC ID is the identity; a display name is not. Any other NPC
-    // with the same normalized name makes text-only continuity ambiguous.
-    final nameKey = _npcNameKey(npc.name);
-    final disambiguate = campaign.npcs.any(
-      (other) => other.id != npc.id && _npcNameKey(other.name) == nameKey,
-    );
-    if (disambiguate && !RegExp(r'^[a-zA-Z0-9_-]{1,64}$').hasMatch(npc.id)) {
-      throw const FormatException(
-        'NPC-ID kann nicht sicher dargestellt werden.',
-      );
-    }
-
-    final notes = <({int position, NpcRelationshipNote value})>[
-      for (var i = 0; i < campaign.npcRelationshipNotes.length; i++)
-        if (campaign.npcRelationshipNotes[i].npcId == npcId)
           (position: i, value: campaign.npcRelationshipNotes[i]),
     ];
     notes.sort((a, b) {
