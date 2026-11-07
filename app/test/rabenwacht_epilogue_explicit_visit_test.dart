@@ -15,10 +15,7 @@ Campaign _campaign({String stage = 'voice-epilogue-square'}) => Campaign(
   sessionId: 'session-epilogue',
   hero: HeroCharacter(id: 'hero', name: 'Aria', hitPoints: 17),
   scene: 'Der Dorfplatz wartet auf die eigene Entscheidung.',
-  storyBible: {
-    'mode': 'rabenwacht-voice-v1',
-    'stage': stage,
-  },
+  storyBible: {'mode': 'rabenwacht-voice-v1', 'stage': stage},
   facts: const {
     'voice:ending': 'end-oath',
     'voice:witnessChain': 'true',
@@ -86,8 +83,10 @@ void main() {
       expect(FourteenthVoiceEpilogue.witnessCount(changed), 1);
       expect(changed.hero.toJson(), campaign.hero.toJson());
       expect(changed.revision, campaign.revision);
-      expect(changed.quests.map((q) => q.toJson()).toList(),
-          campaign.quests.map((q) => q.toJson()).toList());
+      expect(
+        changed.quests.map((q) => q.toJson()).toList(),
+        campaign.quests.map((q) => q.toJson()).toList(),
+      );
     }
     expect(jsonEncode(campaign.toJson()), before);
   });
@@ -140,7 +139,9 @@ void main() {
     expect(jsonEncode(restored.toJson()), before);
   });
 
-  test('SQLite restart preserves only genuinely confirmed NPC visits', () async {
+  test(
+    'SQLite restart preserves only genuinely confirmed NPC visits',
+    () async {
     final dir = await Directory.systemTemp.createTemp('epilogue-visits-');
     final dbPath = paths.join(dir.path, 'campaign.sqlite');
     var repository = await SqliteCampaignRepository.open(
@@ -180,5 +181,6 @@ void main() {
       await repository.close();
       await dir.delete(recursive: true);
     }
-  });
+  },
+  );
 }
