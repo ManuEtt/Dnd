@@ -799,3 +799,36 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+---
+
+## 2026-11-06 – SRD-Ausrüstungskatalog bei IME und 200 % Schrift
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`.
+- **Branch:** `feat/chat-c/equipment-catalog-large-text-ime-20261106`.
+- **Fach-/Test-Commit:** `7fe870aab784880f7982c9fa1a298d50727d106c` (UI-Fachcommit `beb80e5c2e1995d44028e220840857db7fe919bf`).
+- **Pull Request:** [#614](https://github.com/ManuEtt/Dnd/pull/614), Draft bis CI auf finalem HEAD geprüft.
+- **IMPLEMENTIERT:** `EquipmentCatalogDialog` berücksichtigt `viewInsets.bottom` für die Ergebnishöhe und erlaubt auf kleinen Fenstern das Scrollen des Dialogs. Bei unter 500 dp und mindestens 180 % Schrift stehen beide 48-dp-Iconaktionen unterhalb der Gegenstandsdaten; die kompakte Zeile bei Standardschrift bleibt erhalten. Das Suchfeld bietet die Android-IME-Aktion „Suchen“ und gibt den Fokus nach Bestätigung frei. Keine automatische Auswahl oder Inventaränderung.
+- **Änderungen:** `app/lib/ui/equipment_catalog_dialog.dart`; neuer Regressionstest `app/test/equipment_catalog_large_text_ime_test.dart`.
+- **Akzeptanz und Regressionen:** 320/360 dp, 200 % Schrift, 220 dp Tastatur-Inset: Schaltflächen, Gegenstand und Kategorie erreichbar, explizite Auswahl; kein Treffer mit sicherem Abbruch; Kompaktansicht mit Standardschrift. Bestehende `app/test/ui_equipment_catalog_test.dart` bleibt unverändert.
+- **GETESTET:** Aktuellen Main-HEAD, alle initial 26 und anschließend 30 offenen PRs samt geänderten Dateipfaden geprüft; die Fachdateien sind konfliktfrei. Branch, zwei Fach-/Test-Commits und PR veröffentlicht. Lokal ist `python3 --version` verfügbar, `flutter` und `dart` jedoch nicht.
+- **NICHT GETESTET:** Neue oder bestehende Flutter-Widgettests, Dart-Format/Analyse, vollständige Python-/Backend-/Flutter-Tests, Android-Debug/native/ABI-/Alpha-Build auf dem finalen PR-HEAD, echtes Android/TalkBack, Upgrade und Signierung. GitHub-Actions-Ergebnis ist für den finalen Dokumentationsstand gesondert zu prüfen.
+- **BLOCKIERT:** Kein Flutter-/Dart-SDK und kein Git-Checkout wegen DNS-Sperre im lokalen Container. Es wird **kein** lokaler Testlauf oder fertiges APK behauptet.
+- **Kompatibilität:** Keine Datenbank-/JSON-Migration, kein verändertes Inventar-/SRD-Regelmodell, keine neuen Assets oder Rechte; App-Version `0.8.52+102` bleibt bestehen.
+- **Koordination:** `README.md` und `docs/CODEX_CHECKPOINT.md` nur additiv, fremde Nachträge von Chat D bei Integration verlustfrei übernehmen; keine eigenmächtigen Merges.
+- **NÄCHSTER SCHRITT:** Finalen #614-CI-Lauf auf seinem exakten HEAD mit Flutter-Format, Analyse, Widget-/Gesamttests sowie Android-/Backend-/Python-Pipeline prüfen; bei tatsächlichen Fehlern denselben Branch korrigieren und erst nach grüner CI zur Integration vorlegen.
+
+
+---
+
+## 2026-11-07 – Korrektur nach CI-Regressionsbefund in PR #614
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `feat/chat-c/equipment-catalog-large-text-ime-20261106`; **PR:** [#614](https://github.com/ManuEtt/Dnd/pull/614), weiterhin Draft.
+- **Vorheriger HEAD:** `30312de82392635abd012ea7d7677cf48ce082e6`; [CI #42288957572](https://github.com/ManuEtt/Dnd/actions/runs/42288957572) **fehlgeschlagen**: 3.321 Flutter-Tests bestanden, drei neu hinzugefügte Katalog-Widgettests fehlgeschlagen, weil die tatsächlichen lazily gebauten Ergebniszeilen zunächst nicht im Widgetbaum lagen. Formatierung, Analyse, Backend-/Python-Prüfungen vor den Flutter-Tests waren erfolgreich. Debug-/ABI-APKs nicht gebaut.
+- **IMPLEMENTIERT:** Widgettests scrollen gezielt innerhalb der Katalog-ListView bis zum gesuchten Eintrag bzw. leeren Ergebniszustand, **bevor** dessen Widgets erwartet werden (positiver und negativer Fall, 320/360 dp bei 200 % und 220 dp IME). Zusätzlich bewahrt ein am Dialog-State verwalteter `TextEditingController` die Suchanfrage, wenn das erste ListView-Element während des Scrollens recycelt wird. Keine automatische Inventarauswahl.
+- **Fach-/Test-Commits:** `556707edfa5b9686138c934e505b010630361674` und `3c26b44144b2b3cd138fb10152928861a96244ba`; finale Dokumentations-SHA nach Commit ermitteln.
+- **Geänderte Fachdateien:** `app/lib/ui/equipment_catalog_dialog.dart`, `app/test/equipment_catalog_large_text_ime_test.dart`. Gemeinsam genutzte Projektdokumente nur append-only.
+- **GETESTET:** Exakte Fehlerursachen und drei fehlgeschlagene Testnamen aus kompletter CI-Ausgabe geprüft; keine Tests deaktiviert. Branch und PR erneut auf unverändertes `main` und weitere PRs geprüft.
+- **NICHT GETESTET:** Die zwei Fixes sind bisher noch nicht durch einen vollständigen Dart-/Flutter-/Android-CI-Lauf auf exakt dem finalen neuen HEAD abgenommen. Flutter/Dart lokal nicht installiert. Reales Gerät, TalkBack, Update, Store-Signierung offen.
+- **BLOCKIERT:** CI-Abschluss des finalen HEADs erforderlich; keine Datenmigration (SQLite 3 / JSON 1 unverändert, App `0.8.52+102`).
+- **NÄCHSTER SCHRITT:** Neue finale CI gezielt auf alle drei früher fehlgeschlagenen Katalogfälle, vollständige Flutter-Suite und Android-/Alpha-Artefakte prüfen, bei weiteren Fehlern nur denselben isolierten PR reparieren.

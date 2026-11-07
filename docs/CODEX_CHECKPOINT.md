@@ -2191,3 +2191,30 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+---
+
+## 2026-11-06 – Ausrüstungskatalog: große Schrift und Android-Tastatur
+
+- **IMPLEMENTIERT:** Im eigenständigen Flutter-UI-Paket `app/lib/ui/equipment_catalog_dialog.dart` richtet sich die Ergebnishöhe nun nach dem Bildschirm inklusive Tastatur-Inset; bei sehr großen Schriften und schmalem Display folgen die Aktionsicons auf einer eigenen Zeile nach dem vollständigen Gegenstandstext. Die Suche besitzt die IME-Aktion „Suchen“, die den Fokus freigibt. Das Ergebnis bleibt eine ausdrücklich zu bestätigende Auswahl ohne Inventar-/Ressourcenbuchung.
+- **Änderungen:** `app/lib/ui/equipment_catalog_dialog.dart`; neue Widgettests in `app/test/equipment_catalog_large_text_ime_test.dart`.
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `feat/chat-c/equipment-catalog-large-text-ime-20261106`; **Fach-/Test-SHA:** `7fe870aab784880f7982c9fa1a298d50727d106c`; [PR #614](https://github.com/ManuEtt/Dnd/pull/614) (Draft).
+- **GETESTET:** Repository-/PR-Dateipfadvergleich und GitHub-Veröffentlichung; keine Code-Tests lokal ausgeführt.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse/Tests, Python-/Backend-Tests, Android-Debug-/native-/ABI-/Alpha-Build und echte TalkBack-/Tastatur-/Upgrade-Prüfung; GitHub-CI auf dem exakten PR-HEAD noch separat abzunehmen.
+- **BLOCKIERT:** Kein Flutter-/Dart-SDK und kein GitHub-DNS-Checkout im lokalen Container. Keine lokale APK oder grüne CI für den neuen Code behauptet.
+- **NOCH NICHT IMPLEMENTIERT:** Kein realer Android-Gerätetest, kein Merge, keine Produktivsignierung. SQLite-/JSON-Schema und App-Version `0.8.52+102` unverändert, keine Migration.
+- **NÄCHSTER SCHRITT:** #614 auf finalem Dokumentations-HEAD vollständig CI-prüfen; auftretende Fehler im selben Branch mit Regression korrigieren, erst dann menschliche Integration und separate Geräteabnahme.
+
+
+---
+
+## 2026-11-07 – Katalog-IME-Tests nach CI-Negativlauf korrigiert
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; eigener Arbeitsbranch `feat/chat-c/equipment-catalog-large-text-ime-20261106`; [PR #614](https://github.com/ManuEtt/Dnd/pull/614) (Draft).
+- **Vorheriger Stand:** CI [#42288957572](https://github.com/ManuEtt/Dnd/actions/runs/42288957572) auf `30312de82392635abd012ea7d7677cf48ce082e6`: 3.321 Flutter-Tests bestanden, drei neue Widgettests scheiterten ausschließlich an noch nicht aufgebauten Lazy-List-Elementen; Flutter-Format und Analyse erfolgreich, Backend und Python grün. APK-Kette wegen Testfehler nicht ausgeführt.
+- **IMPLEMENTIERT:** Scroll bis zum gesuchten Katalogeintrag und bis zur Leermeldung explizit vor Widgeterwartungen; gespeicherte Suchanfrage durch State-`TextEditingController` auch nach ListView-Recycling erhalten. Fach-/Testcommits `556707edfa5b9686138c934e505b010630361674`, `3c26b44144b2b3cd138fb10152928861a96244ba`.
+- **GETESTET:** Fehlgeschlagene Fälle anhand kompletter CI-Logs klassifiziert, deren Prüfungen nicht deaktiviert; PR-Dateiüberschneidung mit offenen Arbeiten ausgeschlossen.
+- **NICHT GETESTET:** Neue Regressionen auf finalem Dokumentations-HEAD, gesamte Flutter-/Python-/Backend-/Android-CI, echtes Android-Gerät, TalkBack und Upgrade. Die bereits gestartete CI auf Zwischen-Commits gilt nicht als finale Abnahme.
+- **BLOCKIERT:** Lokales Flutter-/Dart-SDK fehlt; vollständige neue GitHub-Actions-Abnahme erforderlich.
+- **NOCH NICHT IMPLEMENTIERT:** Weder Main-Merge noch produktive Signierung oder Gerätetest; keine Datenmigration, SQLite-/JSON-Schema und Versionsnummer `0.8.52+102` unverändert.
+- **NÄCHSTER SCHRITT:** CI des finalen #614-HEADs prüfen; erst nach vollständigem erfolgreichen Flutter-/Backend-/Python-/Android-/Alpha-Workflow fachliche Freigabe und menschliche Integration.
