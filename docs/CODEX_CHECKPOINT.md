@@ -2268,3 +2268,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Vollständiger GitHub-Checkout im lokalen Container bleibt DNS-bedingt nicht möglich. Ein PR-Branch aus dem vorigen Main enthält jetzt die additive Dokumentations-Historie des integrierten #631; vor Merge GitHub-Mergefähigkeit und alle Parallel-PRs erneut prüfen, bei Konflikt koordinierte Branch-Neuerstellung auf neuem Main statt Überschreiben.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #637; keine Migration, Spielstand- oder Versionsänderung. Die Zeitstempel älterer Checkpoints sind unveränderte historische Momentaufnahmen.
 - **NÄCHSTER SCHRITT:** Finalen PR-CI-Lauf vollständig abnehmen und mögliche Fehler im Branch korrigieren. Dokumentationsmerge gegen neuesten Main und offene Arbeiten prüfen; bei sechs grünen Jobs konfliktfrei integrieren, danach neue Main-CI abnehmen.
+
+## 2026-11-07 – Feuerwand-Vorschauen nur mit vollständiger Katalogidentität (PR #639)
+
+- **Ausgangs-main:** `6623e4d61b664a066352068500959cf2988133fb`; **aktualisiert auf main:** `1efb5e219dc0b00965e3be2dfb4b2b52d621d362`. **Branch:** `feat/chat-a/wall-of-fire-catalog-identity-20261107`. **Fachcommit:** `8f8713a6e5676afa4926d73bcc3eb86d9a1769ba`. **PR:** https://github.com/ManuEtt/Dnd/pull/639 (Draft).
+- **Problem:** Zwei `Wall of Fire`-Vorschauen ließen öffentlich konstruierte `SrdSpellDefinition` mit falscher Schule, Klassenliste, Wirkzeit, Komponenten, Dauer oder Konzentration zu, sofern vier Grundfelder passten.
+- **Implementiert:** Gemeinsamer `srd_wall_of_fire_catalog_identity.dart`-Validator prüft alle 14 katalogisierten Felder vor Wandseiten-/Hitze- und Ring-Raster-Preflight. Beide bisherigen Previewfunktionen bleiben lesend und ohne Kampfzustandsänderung.
+- **Regressionen:** Neue `app/test/srd_wall_of_fire_catalog_identity_test.dart` mit Originalkatalog-Positivfällen und 16 manipulierten Metadatenvarianten an beiden Eingängen und direkt am Validator; bestehende Feuerwandtests unverändert.
+- **GETESTET:** Originalcode, tatsächliche Katalogdaten, amtliche SRD-5.2.1-Fachreferenz sowie offene PR-Änderungsbereiche überprüft; neuer Main-Merge #637 einschließlich vollständiger README-/Checkpoint-Anhänge übernommen. **Nicht lokal ausgeführt:** Gesamte Python-/Backend-/Dart-/Flutter-/Android-Suite (kein vollständiger Checkout wegen DNS, kein Dart-/Flutter-SDK). GitHub-Actions-Status auf dem finalen Dokumentations-HEAD gesondert prüfen.
+- **Kompatibilität:** Bestehender `FormatException`-Vertrag; Ablehnung manipuliert abweichender Zauberdefinitionen. Keine Änderung an `models.dart`, `game_engine.dart`, `rules_api.dart`, SQLite/JSON, Controller, App-Version, Android, Story oder vorhandener Kampagne; keine Migration. Entitätsstatus `SPELL-ENTRY-WALL-OF-FIRE` bleibt `unverified`.
+- **Koordination:** Offene PRs berühren nicht die vier Regel-/Testdateien; README und Checkpoints nur am absoluten Ende fortgeschrieben. Parallele Anhänge anderer PRs später additiv durch Integrationsarbeit zusammenführen.
+- **Nächster Schritt:** Finale CI von PR #639 prüfen und mögliche Format-/Testfehler im Branch korrigieren; nicht ohne Prüfung mergen.
+
