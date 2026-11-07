@@ -80,7 +80,7 @@ void main() {
           scrollable: find.descendant(
             of: find.byKey(const ValueKey('equipment-catalog-results')),
             matching: find.byType(Scrollable),
-          ),
+          ).first,
         );
         await tester.pumpAndSettle();
         expect(item, findsOneWidget);
@@ -124,7 +124,7 @@ void main() {
         scrollable: find.descendant(
           of: find.byKey(const ValueKey('equipment-catalog-results')),
           matching: find.byType(Scrollable),
-        ),
+        ).first,
       );
       await tester.pumpAndSettle();
       expect(empty, findsOneWidget);
