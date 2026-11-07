@@ -68,9 +68,21 @@ void main() {
         await tester.enterText(search, 'Langschwert');
         await tester.pumpAndSettle();
 
+        // The search controls share one lazily built result list. At 200%
+        // text and with the IME open, the first matching item is initially
+        // below the viewport; scroll it into the render tree before checking.
         final item = find.byKey(
           const ValueKey('equipment-catalog-item-weapon-longsword'),
         );
+        await tester.scrollUntilVisible(
+          item,
+          120,
+          scrollable: find.descendant(
+            of: find.byKey(const ValueKey('equipment-catalog-results')),
+            matching: find.byType(Scrollable),
+          ),
+        );
+        await tester.pumpAndSettle();
         expect(item, findsOneWidget);
         final tile = tester.widget<ListTile>(item);
         expect(tile.trailing, isNull);
@@ -103,8 +115,19 @@ void main() {
 
       await tester.enterText(search, 'unauffindbarer Gegenstand xyz');
       await tester.pumpAndSettle();
-      expect(find.text('Keine Gegenstände gefunden.'), findsOneWidget);
       expect(find.text('0 Treffer'), findsOneWidget);
+      // The empty-state item is also built lazily below the search form.
+      final empty = find.text('Keine Gegenstände gefunden.');
+      await tester.scrollUntilVisible(
+        empty,
+        120,
+        scrollable: find.descendant(
+          of: find.byKey(const ValueKey('equipment-catalog-results')),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(empty, findsOneWidget);
       final cancel = find.text('Abbrechen');
       await tester.ensureVisible(cancel);
       await tester.pumpAndSettle();
