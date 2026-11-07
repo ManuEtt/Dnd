@@ -946,3 +946,18 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+---
+
+## 07.11.2026 – Epilog-NPC-Besuche nur nach expliziter Handlung (PR #628)
+
+- **Basis-main:** `1816115990cc7420ecfb2d1ba7c6babb557f76da`. **Branch:** `fix/chat-b/epilogue-explicit-npc-visit-20261107`; **PR:** [#628](https://github.com/ManuEtt/Dnd/pull/628) (bis vollständiger CI Draft). **Fachcommit:** `00786d0f2ad77da11c63c03f55880226cf7edeb1`; **Testcommit:** `d0010c7b924ab7fd27511ce0404722fef211311d`.
+- **Problem:** `FourteenthVoiceEpilogue.advance` behandelte rohe Teilzeichenfolgen wie `elda`, `zeichnung`, `brief`, `brunnen`, `platz` als gültige Besuche oder Rückkehr. Eine Erörterung ohne Reiseabsicht veränderte Story-Stage und setzte `voice:epilogue:<npc>=true`, also den Zähler für bestätigte Zeugen und die Freigabe der Dorfzukunft.
+- **IMPLEMENTIERT:** `_visits` verlangt eine eindeutige vollständige Besuchs-/Reise-/Gesprächshandlung. `_returnsToSquare` verlangt eine ausdrückliche Rückkehr-/Ortswechselhandlung; bloße Dorfplatz-Erwähnungen bleiben ohne gespeicherten Zustandswechsel. Altkommandos `Ich besuche Elda`, `Ich besuche Tarek`, `Ich besuche Liora`, `Zurück zum Dorfplatz` bleiben gültig. Negationssperre und Mindestzahl unterschiedlicher Stimmen unverändert.
+- **Geänderte Dateien:** `app/lib/story/fourteenth_voice_epilogue.dart`, neue Tests in `app/test/rabenwacht_epilogue_explicit_visit_test.dart`, append-only README sowie additive zentrale und lokale Checkpoints.
+- **Tests ergänzt:** Fünf Fälle für unerwünschte NPC-, Gegenstand- und Ortsnennungen; acht echte Besuchs-/Gesprächs-/Reisevarianten; klare Rückkehr; JSON-Import/Wiederaufnahme; SQLite-Reopen und Journalrekonstruktion. Assertions auf unveränderte ursprüngliche Daten, Questzustände, Heldenwerte, Revision.
+- **GETESTET:** Live-Masterprompt, Projektanweisungen, aktuelle Code-/Testdateien, 42 offene PRs und deren Story-/Rabenwacht-Dateipfade geprüft; keine parallele Änderung des Fachmoduls. Main ist bei Start `1816115990cc7420ecfb2d1ba7c6babb557f76da`, erste Code- und Testcommits sind remote gesichert.
+- **NICHT GETESTET:** Vollständige Flutter-/Dart-/Android-Release-CI auf finalem Branch-HEAD bei Erstellung dieses Nachtrags offen, echtes Android-Gerät, produktive KI, Bestands-Upgrade. Alte grüne CI von PR #623 ist kein Nachweis für #628.
+- **Kompatibilität:** Keine Migration, keine Schema-/JSON-Änderung, keine Regeln-/Kampf-/Ressourcenbuchung, keine KI-Provider-Änderung. Bisher gespeicherte NPC-Notizen und Besuche bleiben unangetastet.
+- **NÄCHSTER SCHRITT:** CI auf finalem Commit vollständig prüfen, Fehler auf eigenem Branch korrigieren, danach Draft zur Review freigeben; Chat D übernimmt konfliktfreie Dokumentationsintegration und Merge.
