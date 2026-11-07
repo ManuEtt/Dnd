@@ -222,6 +222,37 @@ class VerifyProjectTests(unittest.TestCase):
                         for message in verify_project(self.root)
                     ))
 
+    def test_wrapper_rejects_superscript_windows_devices_before_crc(self):
+        # The same shared portable-name rule must guard uploaded Gradle JARs.
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        for device in ('COM', 'LPT'):
+            for digit in ('¹', '²', '³'):
+                for name in (
+                    f'META-INF/{device}{digit}.class',
+                    f'META-INF/{device.lower()}{digit}/child.dat',
+                ):
+                    with self.subTest(name=name):
+                        with zipfile.ZipFile(jar, 'w') as archive:
+                            archive.writestr(
+                                WRAPPER_MAIN, b'\\xca\\xfe\\xba\\xbevalid'
+                            )
+                            archive.writestr(name, b'unportable')
+                        with mock.patch.object(
+                            zipfile.ZipFile, 'testzip',
+                            side_effect=AssertionError('CRC called too early'),
+                        ):
+                            self.assertTrue(any(
+                                'Gradle-Wrapper-JAR' in error
+                                for error in verify_project(self.root)
+                            ))
+
+    def test_wrapper_allows_nondevice_superscript_names(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\\xca\\xfe\\xba\\xbevalid')
+            archive.writestr('META-INF/COM¹-extra.class', b'allowed')
+        self.assertEqual(verify_project(self.root), [])
+
     def test_wrapper_rejects_windows_invalid_zip_characters_before_crc(self):
         # Common Windows filesystems reject these characters in any path
         # component. The ZIP entry must be rejected before decompression.
