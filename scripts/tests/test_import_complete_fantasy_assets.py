@@ -227,6 +227,27 @@ class FantasyImportTests(unittest.TestCase):
         self.assertEqual((image_dir / MODULE.ASSETS[0]).read_bytes(), rival)
         self.assertEqual(list(image_dir.glob(".*.partial")), [])
 
+    def test_changed_existing_asset_after_preflight_is_rejected(self):
+        self._make_archive()
+        target = self.root / "project"
+        image = target / MODULE.PREFIX / MODULE.ASSETS[0]
+        original_preflight = MODULE.imported_assets
+
+        def create_rival_after_preflight(*args):
+            validated = original_preflight(*args)
+            image.parent.mkdir(parents=True, exist_ok=True)
+            image.write_bytes(b"modified after validation")
+            return validated
+
+        with mock.patch.object(
+            MODULE, "imported_assets", side_effect=create_rival_after_preflight
+        ):
+            self.assertEqual(
+                MODULE.main([str(self.archive), "--target", str(target)]), 1
+            )
+        self.assertEqual(image.read_bytes(), b"modified after validation")
+        self.assertEqual(list(image.parent.glob(".*.partial")), [])
+
     def test_later_publication_failure_allows_idempotent_resume(self):
         payload = self._make_archive()
         target = self.root / "project"
