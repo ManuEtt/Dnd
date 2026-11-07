@@ -16,7 +16,14 @@ class EquipmentCatalogDialog extends StatefulWidget {
 
 class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
   String _query = '';
+  final TextEditingController _searchController = TextEditingController();
   EquipmentCategory? _category;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +59,7 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                   const SizedBox(height: 10),
                   TextField(
                     key: const ValueKey('equipment-catalog-search'),
+                    controller: _searchController,
                     textInputAction: TextInputAction.search,
                     onSubmitted: (_) => FocusScope.of(context).unfocus(),
                     onChanged: (query) => setState(() => _query = query),
