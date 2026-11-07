@@ -92,7 +92,10 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          dart format lib test
+          git diff -- test/srd_spell_audited_recipe_identity_test.dart
+          exit 1  # Temporary formatter diagnostic; restore strict check
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
