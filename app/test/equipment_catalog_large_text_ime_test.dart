@@ -74,13 +74,14 @@ void main() {
         final item = find.byKey(
           const ValueKey('equipment-catalog-item-weapon-longsword'),
         );
+        final scrollables = find.descendant(
+          of: find.byKey(const ValueKey('equipment-catalog-results')),
+          matching: find.byType(Scrollable),
+        );
         await tester.scrollUntilVisible(
           item,
           120,
-          scrollable: find.descendant(
-            of: find.byKey(const ValueKey('equipment-catalog-results')),
-            matching: find.byType(Scrollable),
-          ).first,
+          scrollable: scrollables.first,
         );
         await tester.pumpAndSettle();
         expect(item, findsOneWidget);
@@ -118,13 +119,14 @@ void main() {
       expect(find.text('0 Treffer'), findsOneWidget);
       // The empty-state item is also built lazily below the search form.
       final empty = find.text('Keine Gegenstände gefunden.');
+      final scrollables = find.descendant(
+        of: find.byKey(const ValueKey('equipment-catalog-results')),
+        matching: find.byType(Scrollable),
+      );
       await tester.scrollUntilVisible(
         empty,
         120,
-        scrollable: find.descendant(
-          of: find.byKey(const ValueKey('equipment-catalog-results')),
-          matching: find.byType(Scrollable),
-        ).first,
+        scrollable: scrollables.first,
       );
       await tester.pumpAndSettle();
       expect(empty, findsOneWidget);
