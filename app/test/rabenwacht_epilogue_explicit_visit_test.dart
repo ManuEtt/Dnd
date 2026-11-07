@@ -142,45 +142,45 @@ void main() {
   test(
     'SQLite restart preserves only genuinely confirmed NPC visits',
     () async {
-    final dir = await Directory.systemTemp.createTemp('epilogue-visits-');
-    final dbPath = paths.join(dir.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: dbPath,
-    );
-    try {
-      final original = _campaign();
-      final ignored = FourteenthVoiceEpilogue.advance(
-        original,
-        'Ist Elda heute am Brunnen?',
-      );
-      expect(identical(ignored.campaign, original), isTrue);
-      final confirmed = FourteenthVoiceEpilogue.advance(
-        original,
-        'Ich besuche Liora.',
-      ).campaign;
-      await repository.saveCampaign(confirmed);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+      final dir = await Directory.systemTemp.createTemp('epilogue-visits-');
+      final dbPath = paths.join(dir.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: dbPath,
       );
-      final restored = (await repository.getCampaign(original.id))!;
-      final before = jsonEncode(restored.toJson());
-      expect(restored.storyBible['stage'], 'voice-epilogue-liora');
-      expect(FourteenthVoiceEpilogue.witnessCount(restored), 1);
-      expect(restored.facts['voice:epilogue:elda'], isNull);
-      expect(restored.facts['voice:epilogue:liora'], 'true');
-      expect(restored.hero.toJson(), original.hero.toJson());
-      expect(
-        (await repository.reconstructCampaign(restored.id))!.toJson(),
-        restored.toJson(),
-      );
-      expect(jsonEncode(restored.toJson()), before);
-    } finally {
-      await repository.close();
-      await dir.delete(recursive: true);
-    }
-  },
+      try {
+        final original = _campaign();
+        final ignored = FourteenthVoiceEpilogue.advance(
+          original,
+          'Ist Elda heute am Brunnen?',
+        );
+        expect(identical(ignored.campaign, original), isTrue);
+        final confirmed = FourteenthVoiceEpilogue.advance(
+          original,
+          'Ich besuche Liora.',
+        ).campaign;
+        await repository.saveCampaign(confirmed);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: dbPath,
+        );
+        final restored = (await repository.getCampaign(original.id))!;
+        final before = jsonEncode(restored.toJson());
+        expect(restored.storyBible['stage'], 'voice-epilogue-liora');
+        expect(FourteenthVoiceEpilogue.witnessCount(restored), 1);
+        expect(restored.facts['voice:epilogue:elda'], isNull);
+        expect(restored.facts['voice:epilogue:liora'], 'true');
+        expect(restored.hero.toJson(), original.hero.toJson());
+        expect(
+          (await repository.reconstructCampaign(restored.id))!.toJson(),
+          restored.toJson(),
+        );
+        expect(jsonEncode(restored.toJson()), before);
+      } finally {
+        await repository.close();
+        await dir.delete(recursive: true);
+      }
+    },
   );
 }
