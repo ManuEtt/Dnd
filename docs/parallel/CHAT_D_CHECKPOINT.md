@@ -2038,3 +2038,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** GitHub-DNS für vollständigen lokalen Checkout; abschließende Actions-CI, frischer Main-/PR-Review und Schutz anderer append-only-Checkpoint-Nachträge stehen noch aus.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge, keine 13-Dateien-Transaktion (jedes Bild einzeln atomar und wiederholbar), keine SQLite-/JSON-/Spielstandmigration und keine Änderung der App-Version.
 - **NÄCHSTER SCHRITT:** Vollständige CI auf endgültigem #631-HEAD auswerten, Testfehler im Branch beheben, bei Erfolg mit frischem Konfliktcheck regulär in Main integrieren.
+
+
+## 2026-11-07 – COM/LPT-Hochziffern als Windows-Reserved-Namen blockieren (PR #637)
+
+- **Main-Herkunft:** Ausgangs-`bbe6ee0901f1873af67647bf54462e4a44821762` nach PR #629. PR #631 wurde zwischenzeitlich auf Main `6623e4d61b664a066352068500959cf2988133fb` integriert; alle sechs Jobs auf [Run #42410645141](https://github.com/ManuEtt/Dnd/actions/runs/42410645141) waren erfolgreich. Die neuen Main-Dokumentationsabschnitte aus #631 wurden vor diesem Nachtrag in allen drei gemeinsamen Dateien vollständig übernommen.
+- **Arbeitsbranch/PR:** `fix/chat-d/windows-device-superscript-20261107`, [#637](https://github.com/ManuEtt/Dnd/pull/637) (Draft, offen). Code `db7cb684ab0ff7af90dad28bf53a209559602ff0`; Tests `163c4ea0d05b40761775b543eeb875251e147aa3`, `f99e061d40e1e12e700888dfd1b6e73622271b45`, `b0b9c7dad58c6dc4ca9ddccabe300072ebe39f00`.
+- **Ausgangsproblem:** Quell-ZIP-Exporter und Wrapper-JAR-Validator erkennen Windows-Gerätenamen mit normalen Ziffern, jedoch nicht `COM¹/²/³` und `LPT¹/²/³`, obwohl diese unter Windows ebenfalls reserviert sind.
+- **IMPLEMENTIERT:** `WINDOWS_RESERVED_STEMS` um sechs genaue Namen ergänzt; keine separate zweite Prüfroutine. Archive und JAR-Uploads werden vor Freigabe portabilitätskonform geprüft.
+- **Tests:** Vier neue Python-Testmethoden, Datei-/Unterordnerfälle, Archivschutz bei gescheiterter Portabilitätsprüfung, JAR-Ablehnung vor CRC und erlaubte Vergleichsnamen. Frühere GitHub-Python-Stufe erfolgreich; finaler CI-Nachweis muss nach Dokumentationscommits neu eingeholt werden.
+- **GETESTET:** Isolierter lokaler Vergleich der Portabilitäts-Prädikate, auf GitHub die frühen Python-Regressionen bestanden. Unveränderte Fach-PRs auf Codepfad-Konflikte überprüft; Story/Regeln/UI/Release andere Fachpfade.
+- **NICHT GETESTET:** Finale vollständige GitHub-Actions-Matrix inklusive Android-/Alpha-Release, Windows-Dateisystem, Android-Gerät, Upgrade und Signierung.
+- **BLOCKIERT:** Kein lokaler vollständiger Checkout wegen DNS; mögliche aufeinanderfolgende README-/Checkpoint-Nachträge anderer PRs beim Merge müssen erhalten bleiben.
+- **NOCH NICHT IMPLEMENTIERT:** #637 nicht gemergt, keine Änderung an SQLite, JSON, Spielständen, App-Version oder Spielmechanik.
+- **NÄCHSTER SCHRITT:** Nach finaler CI alle sechs Jobs und exakten Head prüfen, Main-Stand mit Dokumentations-Historie vergleichen, gegebenenfalls konfliktfreies Neusetzen auf neuem Main; dann Review und reguläre Integration.
