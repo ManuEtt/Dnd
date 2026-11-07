@@ -163,6 +163,9 @@ class SrdClassAutomation {
   /// These are NOT grants of invocations, spells, feats or active effects.
   /// Each value is computed again after a level-up and does not alter a save.
   static List<SrdClassAutomaticValue> derivedValues(HeroCharacter hero) {
+    if (!SrdClassFeatureCatalog.hasConsistentClassLevels(hero)) {
+      return const [];
+    }
     final result = <SrdClassAutomaticValue>[];
     for (final klass in srdCharacterClasses) {
       final level = ClassResourceRules.level(hero, klass.name);
