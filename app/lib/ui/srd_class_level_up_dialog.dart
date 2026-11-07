@@ -125,6 +125,7 @@ class _SrdClassLevelUpDialogState extends State<SrdClassLevelUpDialog> {
               DropdownButtonFormField<String>(
                 key: const ValueKey('levelup-class'),
                 initialValue: _target,
+                isExpanded: true,
                 decoration: const InputDecoration(labelText: 'Klasse steigern'),
                 items: [
                   for (final className in classNames)
