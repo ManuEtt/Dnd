@@ -2203,3 +2203,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** GitHub-Checkout im Container durch DNS-Auflösung, Flutter und Dart dort nicht installiert; finale CI-Abnahme sowie additiver Integrationsabgleich gemeinsamer Statusdateien aus den parallel offenen PRs erforderlich.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge und keine SQLite-/JSON-Migration; App-Buildversion, Spielstandformate, Spielregeln, Story und UI unverändert.
 - **NÄCHSTER SCHRITT:** PR #613 auf finalem Commit in GitHub Actions vollständig prüfen (Python, Backend, Flutter, Debug-/ABI-APKs und Release); bei Fehler gezielt im selben Branch korrigieren und vor jedem Merge alle offenen PR-Dateilisten erneut abgleichen.
+
+
+## 07.11.2026 – Rabenwacht-Nachgeschichte: Abschluss nur nach bestätigter Spielerwahl (PR #623)
+
+- **Main-Basis:** `f580d4c40f6a29df0098f656094844bfca1ed573` (bereits mit PR #613); **Branch:** `fix/chat-b/morrow-ending-explicit-choice-20261107`; **PR:** [#623](https://github.com/ManuEtt/Dnd/pull/623), vor CI-Abnahme Draft.
+- **IMPLEMENTIERT:** Im `FourteenthVoiceMorrow.advance` bindet `_choosesEnding` die drei finalen Ratsentscheidungen an vollständige direkte Kommandos oder klare Ich-/Wir-Absichtserklärungen. Fragen wie „Sollten wir den Brief versiegelt verwahren?“, Zitate, Erwägungen und hypothetische Alternativen lösen dadurch kein eigenmächtiges finales `voice-morrow-end-*` mehr aus. Exakte alte Kommandos bleiben gültig; `_negated`, erforderliche zwei Spuren, gelesener Brief und bestehende Einmaligkeit bleiben erhalten.
+- **Positive/negative Tests:** `app/test/rabenwacht_morrow_explicit_ending_test.dart` mit fünf Szenarien: unverbindliche Fragen/Zitate, alle finalen Optionen mit echten Wahläußerungen, abgewiesene unvollständige Beweise, JSON-Neustart, SQLite-Roundtrip und Journalrekonstruktion. Heldenwerte/Revision/ursprünglicher Spielstand und bereits abgeschlossene Entscheidungen bleiben unverändert.
+- **Dateien:** `app/lib/story/fourteenth_voice_morrow.dart`, neue Testdatei, append-only `README.md`, `docs/CODEX_CHECKPOINT.md` und `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** Live-GitHub-main, Masterprompt, Pflichtdokumentation, 38 offene PRs mit geänderten Fachdateien und Bestands-Tests geprüft; Fachänderung und Tests versioniert. PRs #615 und #619 erfolgreich über volle CI abgenommen, jedoch **kein** Nachweis für dieses neue Paket.
+- **NICHT GETESTET/BLOCKIERT:** CI auf finalem PR-#623-HEAD bei Erstellung dieses Eintrags offen (Dart-Format, Flutter-Analyse/-Tests, Android-Debug/ABI/Release). Echter Gerätetest und produktive KI/Upgrade nicht durchgeführt.
+- **Kompatibilität:** Keine Migration, Versionserhöhung oder Veränderung der SQLite-/JSON-Struktur, Regelengine, Questlogik, KI-Provider oder Inventarbuchung. Bestehende Story- und Abschlussdaten bleiben gültig. Andere README-/Checkpoint-Nachträge bei Integration verlustfrei zusammenführen.
+- **NÄCHSTER SCHRITT:** Vollständige CI einschließlich aller Artefakt-Jobs auf dem endgültigen Commit kontrollieren und bei Fehlern korrigieren; danach PR zur Review freigeben. Kein autonomer Merge.

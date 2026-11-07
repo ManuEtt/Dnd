@@ -946,3 +946,18 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+---
+
+## 07.11.2026 – Verbindliche Nachgeschichten-Enden nur nach ausdrücklicher Wahl (PR #623)
+
+- **Basis-main:** `f580d4c40f6a29df0098f656094844bfca1ed573` (inkl. PR #613), **Branch:** `fix/chat-b/morrow-ending-explicit-choice-20261107`; **PR:** [#623](https://github.com/ManuEtt/Dnd/pull/623), zunächst Draft. **Fachcommit:** `8d29f2f71687f3cc54e0ca25c7e8da737fabad0c`; **Testcommit:** `746865150ccdd3916a1f90a184a759f1e432c176`.
+- **Ausgangsproblem:** Im `voice-morrow-council` konnte die rohe `_said`-Teilwortsuche aus bloßen Fragen, Zitaten oder hypothetischen Handlungsformen (`Sollten wir den Brief versiegelt verwahren?`) ein unumkehrbares Finale machen und Quests/Handlungsstränge als abgeschlossen markieren.
+- **IMPLEMENTIERT:** Ein neues `_choosesEnding` akzeptiert für die drei Endoptionen nur vollständige direkte Kommandos bzw. explizite Ich-/Wir-Absichtserklärungen. Negationen, unvollständige Hinweise und ungelesener Brief blockieren weiterhin. Keine Änderung an bestätigten Regeln, KI-Autorität, Helden-, Inventar- oder sonstigem Speicherzustand durch eine unverbindliche Frage.
+- **Dateien:** `app/lib/story/fourteenth_voice_morrow.dart`, neuer Test `app/test/rabenwacht_morrow_explicit_ending_test.dart`; ausschließlich additive README- und Checkpoint-Nachträge.
+- **Akzeptanztests:** Fünf Tests für Fragen/Zitate/Hypothesen, drei direkte/erweiterte echte Entscheidungsvarianten, fehlende Beweise, JSON-Wiederaufnahme, SQLite-Schließen/Neuöffnen samt Quest-/Thread-/Heldenstatus und Journalrekonstruktion.
+- **GETESTET:** Live-Masterprompt, aktuelle Projektanweisungen, alle 38 offenen PRs hinsichtlich fachlicher Dateikonflikte, unveränderte Story-Fachdatei nach neuem `main`-Merge von #613 und Zwei-Datei-Fach-Diff. Vorherige PRs #615/#619 im CI erfolgreich, aber kein Nachweis für #623.
+- **NICHT GETESTET/BLOCKIERT:** Dart-Format, Flutter-Analyse/Tests, kompletter Android-/Release-Workflow auf finalem PR-HEAD bei Erstellung dieser Notiz noch offen; echtes Android-Gerät, produktive KI und App-Upgrade nicht geprüft.
+- **Migrationen:** Keine SQLite-/JSON-/App-Version-Änderung. Die KI darf keinen Regelzustand bestätigen; Abschlussentscheidungen verbleiben in bestehendem `facts`, `quests` und `storyBible`-Schema.
+- **NÄCHSTER SCHRITT:** Gesamt-CI auf endgültigem PR-HEAD abnehmen, etwaige Probleme innerhalb des Branches reparieren, dann PR zur Review freigeben. Zusammenführung inklusive gemeinsam genutzter README-/Checkpoint-Abschnitte durch Chat D, kein automatischer Merge.
