@@ -1399,3 +1399,53 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 07.11.2026 – Zulässige Zauberreichweiten und Identität, PR #621
+
+**Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`. **Branch:** `feat/chat-a/spell-range-metadata-integrity-20261107`. **Code-/Testcommit:** `fe95d546faa128cb80af73b3fa2ee6c93c9d9f8a`. **PR:** https://github.com/ManuEtt/Dnd/pull/621 (Draft). Der finale Dokumentations-HEAD folgt nach diesem Commit.
+
+**Problem:** Der lesende `SrdSpellTargetRules.validateOrigin` klassifizierte auch beliebig erzeugte Reichweitenangaben wie `999 feet` (obwohl kein Zauber des erfassten 339er-Katalogs diese Länge verwendet), außerdem konnten per öffentlichem Konstruktor 12 ausgewählte kritische SRD-Namen eine andere zulässige Reichweite erhalten. Die unveränderte allgemeine Umrechnung `maxRangeFeet` war nicht als prüfender Katalogvertrag gedacht.
+
+**Implementiert:** Die Ursprungsvorabprüfung erlaubt nur die 18 tatsächlich aktuellen Reichweitenformen, wovon `Unlimited` und `Special` noch ihre eigenen Regeln benötigen. Zwölf ausgewählte Zauber verlangen passende Kombinationen aus Name, stabiler ID und exakter Reichweite. Fremde Metadaten scheitern vor der Ursprungsklassifikation. Die Domänen-API bleibt speicherlos und verändert keine Würfel-/Slot-/Kampagnenressourcen.
+
+**Fachdateien:** `app/lib/domain/srd_spell_target_rules.dart`; neuer Unit-Test `app/test/srd_spell_range_catalog_guard_test.dart`. Dokumentation append-only in `README.md`, `docs/CODEX_CHECKPOINT.md` und diesem persönlichen Checkpoint.
+
+**Getestet:** Offizielle SRD-5.2.1-Stelle *Spells / Range, Targets* S. 105–106 geprüft; alle 339 Arbeitsindex-Einträge und zwölf gepinnte Name-/ID-/Reichweiten-Tupel statisch abgeglichen. Alle zum Zeitpunkt der Branch-Erstellung 36 offenen Pull Requests (darunter #612, #616, #617, #620) auf betroffene Fachdateien geprüft: keine Überschneidung. Deterministische Positiv-/Negativtests eingecheckt, aber **noch nicht durch Dart ausgeführt**.
+
+**Nicht getestet:** Dart-Formatter/Analyzer, komplette Flutter-Tests, Android-Debug, native Tests und optimierte ABI-APKs für #621. Finaler CI-Lauf muss an finale SHA gebunden werden.
+
+**Blockiert:** Kein Dart-/Flutter-SDK im lokalen Container. Die parallelen README-/Checkpoint-Ergänzungen werden zur Integration durch Qualitätsbereich D zusammengeführt.
+
+**SRD/Abdeckung:** Wizards of the Coast LLC, SRD 5.2.1, S. 105–106, *Range und Targets*, CC BY 4.0, https://www.dndbeyond.com/srd. `RULE-SPELLS-SPELL-RANGE` und `RULE-SPELLS-SPELL-TARGETS` verbleiben `partial`; keine Behauptung vollständiger Ziel-/Deckungs-/Effektregeln oder amtlich vollständig geprüfter 339 Einträge.
+
+**Migration/Spielstand:** Keine Änderung von `models.dart`, `game_engine.dart`, JSON/SQLite, Story/UI/Backend/CI; gültige ältere Daten bleiben erhalten.
+
+**Genau nächster Schritt:** Actions-Abnahme des finalen PR #621 auf vollständige Dart-/Flutter-/Android-/native Grünheit, konkrete Fehler im eigenen Branch beheben, anschließend Review durch Bereich D. 
+
+## 07.11.2026 – Korrektur der Reichweiten-Ausnahmearten, PR #621
+
+**Basis-main:** `0a813df100aa649c2204018349b0db9af09fb83f`. **Branch:** `feat/chat-a/spell-range-metadata-integrity-20261107`. **Korrekturcommit:** `f07efba564223a944f830649cfbaa2acff4f832b`. **PR:** https://github.com/ManuEtt/Dnd/pull/621 (Draft).
+
+**Konkreter CI-Fehler:** GitHub-Actions-Lauf #42352116576 (Commit `994c2334`) bestand 3.322 Flutterfälle und verfehlte exakt zwei Legacy-Regressionen: syntaktisch unbekannte Werte auf bekannten Zaubern erzeugten die neue Identitäts-`FormatException` statt des bisherigen `UnsupportedError`. Aufgrund des fehlgeschlagenen `flutter test` wurden APK- und Release-Jobs übersprungen.
+
+**Implementierte Reparatur:** Nur in `app/lib/domain/srd_spell_target_rules.dart` die Whitelist-Prüfung vor das gepinnte Zauberidentitäts-Tupel gesetzt. Nicht katalogisierte Werte (`120 FEET`, `1746850764555829 miles`, `999 feet`) bleiben unsupported, bekannte fremde Reichweiten wie `150 feet` bei `Magic Missile` lösen die ausdrücklich gepinnte Identitätsausnahme aus. Neuer deterministischer Test in `app/test/srd_spell_range_catalog_guard_test.dart`. Keine CI-Tests deaktiviert.
+
+**Getestet:** Tatsächlichen Actions-Joblog und Legacy-Fachtests analysiert, semantisch konservative Korrektur gepusht. Erneute Gesamt-CI auf Dokumentations-HEAD ausstehend; kein grüner Gesamtabschluss behauptet.
+
+**Nicht getestet:** Lokal Flutter/Dart/Android mangels Toolchain; Android-Debug/Native und drei ABI-Alphas auf Korrektur-HEAD bis zur neuen GitHub-CI offen.
+
+**Blockiert:** Kein Regel-/Repositoryzugriffsblocker; gemeinsame README und zentraler Checkpoint bleiben append-only und werden von D bei Integration verlustfrei zusammengeführt. Keine Datenbankmigration.
+
+**Nächster Schritt:** Lauf der vollständigen finalen PR-CI prüfen, abweichende Fehlertypen oder weitere Regressionen korrigieren, dann Reviewstatus freigeben; keine automatische Zusammenführung in Main.
+
+## 07.11.2026 – Zweite vollständige CI-Reparatur für PR #621
+
+**Main-Basis:** `0a813df100aa649c2204018349b0db9af09fb83f`, Branch `feat/chat-a/spell-range-metadata-integrity-20261107`, PR https://github.com/ManuEtt/Dnd/pull/621, Draft.
+
+**Belegter Befund:** Der finale CI-Lauf https://github.com/ManuEtt/Dnd/actions/runs/42355054722 auf `f3e332fda6fedc62fdf5286e830ad181d1f253ff` hatte **3.324 Flutter-Pässe und einen Fehltest**. Darin forderte `app/test/srd_spell_target_rules_test.dart` die positive Zulassung einer von `Magic Missile` abweichenden, frei konstruierten `1 foot`-Reichweite, obwohl neue Katalog-Metadatenregel gerade diese Manipulation verhindern soll.
+
+**Implementiert:** Die historische, inhaltlich widersprüchliche Positiverwartung ist nun als Negativfall für beide Abstände (1 und 2 Fuß) formuliert, beide müssen `UnsupportedError` auslösen. Allgemeine rein mathematische Umrechnungen in `maxRangeFeet` bleiben uneingeschränkt; ihre bisherigen positiven Assertions bleiben erhalten. Fachmodul und separate 339-Katalog-Regressionen nicht abgeschwächt. Keine Tests deaktiviert.
+
+**Test-/CI-Status:** Vorheriger Lauf weiterhin als **failed** dokumentiert; finaler Testlauf auf neuem Commit ausstehend. Lokal kein Dart/Flutter; keine behauptete erfolgreiche APK oder Geräteabnahme. Kollisionen mit 38 offenen PRs: neue Testdatei von keinem berührt. Änderungen ausschließlich Test und drei append-only Dokumentationsdateien; JSON/SQLite/Modelle/GameEngine/Story/UI unverändert.
+
+**Nächster Schritt:** Wiederholte vollständige CI samt Format/Analyzer/Flutter/Android/ABI und Quelle abnehmen; nur bei vollständig grünem Head PR für Review freigeben. D koordiniert später verlustfreien Merge der zentralen Checkpoint- und README-Nachträge.

@@ -273,16 +273,15 @@ void main() {
     );
     expect(SrdSpellTargetRules.maxRangeFeet('1 foot'), 1);
     expect(SrdSpellTargetRules.maxRangeFeet('2 miles'), 10560);
+    // A valid unit conversion is not proof of any spell's SRD range.
+    // Magic Missile cannot be silently rewritten into a 1-foot spell.
     expect(
-      SrdSpellTargetRules.validateOrigin(
-        withRange('1 foot'),
-        _ranged(1),
-      ).maxOriginDistanceFeet,
-      1,
+      () => SrdSpellTargetRules.validateOrigin(withRange('1 foot'), _ranged(1)),
+      throwsUnsupportedError,
     );
     expect(
       () => SrdSpellTargetRules.validateOrigin(withRange('1 foot'), _ranged(2)),
-      throwsFormatException,
+      throwsUnsupportedError,
     );
   });
 
