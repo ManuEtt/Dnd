@@ -20,6 +20,35 @@ class FourteenthVoiceAct7 {
     r'\b(?:nicht|niemals|ohne|kein(?:e|en|em|er|es)?)\b',
   ).hasMatch(text);
 
+  // Choosing who guards the oath is a confirmed, irreversible story choice.
+  // Merely discussing, questioning or quoting that choice must not unlock
+  // Act VIII. Accept the existing commands and explicit intent variants.
+  static bool _choosesNameCustody(String text, {required bool liora}) {
+    final action = text.replaceAll(RegExp(r'[.!]+$'), '').trim();
+    if (liora) {
+      return const {
+        'ich vertraue liora den namen an',
+        'ich will liora den namen anvertrauen',
+        'ich möchte liora den namen anvertrauen',
+        'ich werde liora den namen anvertrauen',
+        'liora den namen anvertrauen',
+        'ich vertraue liora den namen',
+      }.contains(action);
+    }
+    return const {
+      'ich will den namen selbst bewahren',
+      'ich möchte den namen selbst bewahren',
+      'ich werde den namen selbst bewahren',
+      'ich bewahre den namen selbst',
+      'ich behalte den namen',
+      'ich behalte den namen selbst',
+      'ich will den namen selbst verwahren',
+      'ich möchte den namen selbst verwahren',
+      'ich verwahre den namen selbst',
+      'den namen selbst bewahren',
+    }.contains(action);
+  }
+
   static RabenwachtTurn _move(
     Campaign campaign,
     String stage,
@@ -305,8 +334,7 @@ class FourteenthVoiceAct7 {
           gained: {'voice:oathPageFound': 'true'},
         );
       }
-      if (_has(text, 'liora anvertrau|vertraue liora|liora den namen') &&
-          !_negated(text)) {
+      if (_choosesNameCustody(text, liora: true) && !_negated(text)) {
         if (campaign.facts['voice:oathPageFound'] != 'true') {
           return RabenwachtTurn(
             campaign,
@@ -331,8 +359,7 @@ class FourteenthVoiceAct7 {
           gained: {'voice:nameCustody': 'liora', 'voice:act7Reached': 'true'},
         );
       }
-      if (_has(text, 'selbst bewahr|selbst verwahr|ich behalte den namen') &&
-          !_negated(text)) {
+      if (_choosesNameCustody(text, liora: false) && !_negated(text)) {
         if (campaign.facts['voice:oathPageFound'] != 'true') {
           return RabenwachtTurn(
             campaign,
