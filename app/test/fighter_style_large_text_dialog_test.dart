@@ -74,7 +74,8 @@ Future<void> _selectLongStyle(WidgetTester tester) async {
   await tester.pumpAndSettle();
   await tester.tap(option);
   await tester.pumpAndSettle();
-  expect(tester.state<FormFieldState<String>>(field).value, 'great-weapon-fighting');
+  final selectedStyle = tester.state<FormFieldState<String>>(field).value;
+  expect(selectedStyle, 'great-weapon-fighting');
 }
 
 Future<void> _completeFighter(WidgetTester tester) async {
@@ -90,7 +91,7 @@ Future<void> _completeFighter(WidgetTester tester) async {
 void main() {
   for (final width in [320.0, 360.0]) {
     testWidgets(
-      '$width dp / 200 % / IME: langer Kampfstil und Meisterschaften erreichbar',
+      '$width dp / 200 % / IME: langer Kampfstil auswählbar',
       (tester) async {
         final results = await _open(tester, width: width, scale: 2);
         final style = _key('fighter-fighting-style');
@@ -107,8 +108,9 @@ void main() {
         await _tapVisible(tester, confirm);
         expect(results, hasLength(1));
         expect(results.single?.selection.characterClass.name, 'Kämpfer');
-        expect(results.single?.fighterChoices?.styleId, 'great-weapon-fighting');
-        expect(results.single?.fighterChoices?.masteryWeaponIds, hasLength(3));
+        final fighter = results.single?.fighterChoices;
+        expect(fighter?.styleId, 'great-weapon-fighting');
+        expect(fighter?.masteryWeaponIds, hasLength(3));
         expect(tester.takeException(), isNull);
       },
     );
