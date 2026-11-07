@@ -2024,3 +2024,31 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Ausstehende finale CI auf dem endgültigen Branch-HEAD, gemeinsame parallel ergänzte Dokumentationsdateien; kein Überschreiben fremder Beiträge.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge des neuen PR, keine Schemaänderung, keine Migration, keine Änderung an gespeichertem Nutzerzustand oder App-Version.
 - **NÄCHSTER SCHRITT:** CI am finalen HEAD abnehmen, eventuelle Fehler auf dem eigenen Branch beheben und nur nach erneutem Integrationsabgleich regulär mergen.
+
+
+## 2026-11-07 – Grafiken bei Schreibfehlern ohne Teil-Dateien veröffentlichen (PR #631)
+
+- **Basis:** Main `bbe6ee0901f1873af67647bf54462e4a44821762` nach regulärer Integration von PR #629 mit nachgewiesener erfolgreicher sechsfacher GitHub-CI [#42398305255](https://github.com/ManuEtt/Dnd/actions/runs/42398305255). Das neu bearbeitete Paket ist unabhängig von offenen Regel-, Story-, UI- und Release-PRs.
+- **Branch:** `fix/chat-d/fantasy-import-atomic-publication-20261107`; **PR:** [#631](https://github.com/ManuEtt/Dnd/pull/631) (Draft). **Code:** `bce63cd0c146d06b7f0045abae7961cb7a048622`, `e3b4c39b019c3733ccff2669a3c00eb06db0709f`; **Tests:** `aeeb26bad86c76554b6c03df4a599d906195f893`, `b7d36d4e0fbc1b4fb32213bf04ca452840404d4a`.
+- **Problem:** Direkter `open("xb")`-Import konnte bei Datenträger-/Schreibfehler eine defekte Originalgrafik mit finalem Namen hinterlassen; nachfolgender Import durfte sie nicht überschreiben und brach ebenfalls ab. Ein unmittelbar nach Preflight vorhandener Fremdinhalt konnte ohne erneuten Byte-Vergleich übersprungen werden.
+- **IMPLEMENTIERT:** Schreibe nur im Zielverzeichnis unter zufälligem temporärem Namen, abschließender `flush()/fsync()`, exklusive Veröffentlichung per `os.link()`; Staging-Datei nach Erfolg und Fehler löschen; vorhandene Assets beim Publizieren erneut gegen validierte Bytes prüfen.
+- **Tests ergänzt:** Vier Python-Regressionen mit Mock-Ausfall in `os.fsync` und `os.link`, simuliertem konkurrierendem Ziel sowie Änderung nach ZIP-Preflight. Fortsetzung nach teils erfolgreich veröffentlichten Dateien wird positiv geprüft.
+- **GETESTET:** Quellcode und bestehende Tests über GitHub gelesen, CI des unmittelbaren Vorgänger-PR #629 bestätigt. Die neue Suite von #631 ist vor der tatsächlichen GitHub-Abnahme noch nicht als erfolgreich bewertet.
+- **NICHT GETESTET:** Vollständige neue Python-/Backend-/Flutter-/APK-/Release-Pipeline auf finalem Branch-HEAD, Realgerät, Upgrade, produktive Signierung.
+- **BLOCKIERT:** GitHub-DNS für vollständigen lokalen Checkout; abschließende Actions-CI, frischer Main-/PR-Review und Schutz anderer append-only-Checkpoint-Nachträge stehen noch aus.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge, keine 13-Dateien-Transaktion (jedes Bild einzeln atomar und wiederholbar), keine SQLite-/JSON-/Spielstandmigration und keine Änderung der App-Version.
+- **NÄCHSTER SCHRITT:** Vollständige CI auf endgültigem #631-HEAD auswerten, Testfehler im Branch beheben, bei Erfolg mit frischem Konfliktcheck regulär in Main integrieren.
+
+
+## 2026-11-07 – COM/LPT-Hochziffern als Windows-Reserved-Namen blockieren (PR #637)
+
+- **Main-Herkunft:** Ausgangs-`bbe6ee0901f1873af67647bf54462e4a44821762` nach PR #629. PR #631 wurde zwischenzeitlich auf Main `6623e4d61b664a066352068500959cf2988133fb` integriert; alle sechs Jobs auf [Run #42410645141](https://github.com/ManuEtt/Dnd/actions/runs/42410645141) waren erfolgreich. Die neuen Main-Dokumentationsabschnitte aus #631 wurden vor diesem Nachtrag in allen drei gemeinsamen Dateien vollständig übernommen.
+- **Arbeitsbranch/PR:** `fix/chat-d/windows-device-superscript-20261107`, [#637](https://github.com/ManuEtt/Dnd/pull/637) (Draft, offen). Code `db7cb684ab0ff7af90dad28bf53a209559602ff0`; Tests `163c4ea0d05b40761775b543eeb875251e147aa3`, `f99e061d40e1e12e700888dfd1b6e73622271b45`, `b0b9c7dad58c6dc4ca9ddccabe300072ebe39f00`.
+- **Ausgangsproblem:** Quell-ZIP-Exporter und Wrapper-JAR-Validator erkennen Windows-Gerätenamen mit normalen Ziffern, jedoch nicht `COM¹/²/³` und `LPT¹/²/³`, obwohl diese unter Windows ebenfalls reserviert sind.
+- **IMPLEMENTIERT:** `WINDOWS_RESERVED_STEMS` um sechs genaue Namen ergänzt; keine separate zweite Prüfroutine. Archive und JAR-Uploads werden vor Freigabe portabilitätskonform geprüft.
+- **Tests:** Vier neue Python-Testmethoden, Datei-/Unterordnerfälle, Archivschutz bei gescheiterter Portabilitätsprüfung, JAR-Ablehnung vor CRC und erlaubte Vergleichsnamen. Frühere GitHub-Python-Stufe erfolgreich; finaler CI-Nachweis muss nach Dokumentationscommits neu eingeholt werden.
+- **GETESTET:** Isolierter lokaler Vergleich der Portabilitäts-Prädikate, auf GitHub die frühen Python-Regressionen bestanden. Unveränderte Fach-PRs auf Codepfad-Konflikte überprüft; Story/Regeln/UI/Release andere Fachpfade.
+- **NICHT GETESTET:** Finale vollständige GitHub-Actions-Matrix inklusive Android-/Alpha-Release, Windows-Dateisystem, Android-Gerät, Upgrade und Signierung.
+- **BLOCKIERT:** Kein lokaler vollständiger Checkout wegen DNS; mögliche aufeinanderfolgende README-/Checkpoint-Nachträge anderer PRs beim Merge müssen erhalten bleiben.
+- **NOCH NICHT IMPLEMENTIERT:** #637 nicht gemergt, keine Änderung an SQLite, JSON, Spielständen, App-Version oder Spielmechanik.
+- **NÄCHSTER SCHRITT:** Nach finaler CI alle sechs Jobs und exakten Head prüfen, Main-Stand mit Dokumentations-Historie vergleichen, gegebenenfalls konfliktfreies Neusetzen auf neuem Main; dann Review und reguläre Integration.
