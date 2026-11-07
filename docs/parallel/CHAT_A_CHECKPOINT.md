@@ -1399,3 +1399,21 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-07 – Sending: vollständige Katalogidentität
+
+- **Basis-Main-SHA:** `bbe6ee0901f1873af67647bf54462e4a44821762`
+- **Eigener Branch:** `feat/chat-a/sending-catalog-identity-20261107`
+- **Codecommit:** `a8f143ff3d945fb1197b25c4fd4e7c38c1e147cb`
+- **Testcommit:** `d8b2cb9fe8f7973da26bf202801be4496965c91f`; nachfolgende Dokumentationscommits ergänzen nur Markdown.
+- **PR:** https://github.com/ManuEtt/Dnd/pull/633 (Draft, nicht gemergt)
+- **Ausgangsproblem:** Die öffentliche `SrdSpellDefinition` konnte mit manipulierten ID-, Schul-, Klassen-, Komponenten- und Ritualfeldern die Sending-Vorschau bestehen, solange Name, Grad, Reichweite, Wirkzeit und Konzentration plausibel waren.
+- **IMPLEMENTIERT:** `app/lib/domain/srd_sending_rules.dart` bindet die lesende `prepare`-Freigabe an die vollständige aktuell erfasste Katalogidentität von `spell-sending`: Name, Grad, Schule, komplette geordnete Klassenliste, Wirkzeit, Reichweite, Komponentenbeschreibung, drei Komponentenflags, Dauer, Konzentration und Ritual. Fremde Identitäten scheitern vor der Planerstellung mit `UnsupportedError`.
+- **TESTS ERGÄNZT:** `app/test/srd_sending_rules_test.dart` prüft 15 abweichende Metadatenvarianten sowie die weiterhin zulässige originale Sending-Definition. Vorhandene positive/negative Tests zu Empfängerwissen, Wörtern, Unicode, Blockade und 5-%-Ebenenwurf werden nicht verändert.
+- **GETESTET:** GitHub-Main/PR-Abgrenzung und Quellcode/Tests statisch geprüft; keine ausgeführten Dart- oder Flutter-Tests behauptet.
+- **NICHT GETESTET:** `flutter test`, `flutter analyze`, Dart-Format, vollständige Python-/Backend-/Flutter-/Android-Gates, APK und Gerät auf dem finalen PR-HEAD. Lokales SDK nicht installiert; PR-CI separat prüfen.
+- **BLOCKIERT:** Keine fachlichen Quellüberschneidungen der zwei Dateipfade mit den 19 geprüften offenen Regel-PRs; Zusammenführung gemeinsamer README-/Checkpoint-Nachträge bei der Integration koordinieren. Full-CI-Freigabe steht aus.
+- **KOMPATIBILITÄT:** Keine Änderung an bestehenden JSON-/SQLite-/Eventformaten, Heldendaten, UI, Story, Controller, API-Signaturen oder Version; keine Migration. Sending ist weiterhin eine reine Vorschau, keine automatisierte Zauberwirkung.
+- **QUELLE:** SRD 5.2.1, *Sending*, CC BY 4.0, https://www.dndbeyond.com/srd; `SPELL-ENTRY-SENDING` bleibt `partial`, der Arbeitskatalog ist nicht amtlich vollständig verifiziert.
+- **NÄCHSTER SCHRITT:** CI des letzten PR-HEAD vollständig kontrollieren und im Fehlerfall Format/Tests im selben Branch korrigieren; erst danach die Koordination der Integration einleiten. Bei neuer Arbeit zuerst aktuellen Main und sämtliche offenen PRs neu vergleichen.
+
