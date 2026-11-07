@@ -2191,3 +2191,15 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 2026-11-06 – Android-SDK-Pfad vor wiederholter CI-Bereinigung kanonisieren (PR #613)
+
+- **Main-Basis:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Arbeitsbranch:** `fix/chat-d/android-sdk-root-canonical-20261106`; **Fach-/Testcommits:** `e363c7c04c71ccf497bfd124ae86fcb14ec4cdfc`, `3508f83cae8e7a5bfb2297ab980cfa467ab10ca2`; **PR:** [#613](https://github.com/ManuEtt/Dnd/pull/613), Draft bis vollständiger CI.
+- **IMPLEMENTIERT:** SDK-Installer löst `ANDROID_SDK_ROOT`/`ANDROID_HOME` vor potenziell löschender Retry-Bereinigung physisch auf und verweigert Root-Aliasse (`/.`, `/..`, Symlink auf `/`) sowie nicht existente Verzeichnisse. Unverändert: Retry-Zahl, Paketliste, Schutz bereits installierter NDKs.
+- **Geänderte Fachdateien:** `scripts/install_android_sdk_packages.sh`, `scripts/tests/test_install_android_sdk_packages.py`; zusätzlich README und persönliche/zentrale Checkpoint-Nachträge, ohne vorhandene Abschnitte zu ersetzen.
+- **GETESTET:** `bash -n` und isolierte Mock-Shell-Ausführungen mit vier negativen und einem positiven Pfadfall im lokalen Container erfolgreich. Herkunft: manuell rekonstruierter identischer Installationsskript-Ausschnitt, kein vollständiger Repository-Test. GitHub-Code/PR-Dateien anderer offener Arbeiten geprüft, keine Fachdateiüberschneidung.
+- **NICHT GETESTET:** Neu hinzugefügte Python-Unittest-Suite im vollständigen Repository, Gesamt-Python-/Backend-/Dart-/Flutter-Tests, Android-APK, GitHub-Actions-Ergebnis auf finalem PR-HEAD, Realgerät und Upgrade.
+- **BLOCKIERT:** GitHub-Checkout im Container durch DNS-Auflösung, Flutter und Dart dort nicht installiert; finale CI-Abnahme sowie additiver Integrationsabgleich gemeinsamer Statusdateien aus den parallel offenen PRs erforderlich.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge und keine SQLite-/JSON-Migration; App-Buildversion, Spielstandformate, Spielregeln, Story und UI unverändert.
+- **NÄCHSTER SCHRITT:** PR #613 auf finalem Commit in GitHub Actions vollständig prüfen (Python, Backend, Flutter, Debug-/ABI-APKs und Release); bei Fehler gezielt im selben Branch korrigieren und vor jedem Merge alle offenen PR-Dateilisten erneut abgleichen.
