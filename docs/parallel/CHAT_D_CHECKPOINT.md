@@ -1980,3 +1980,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** GitHub-DNS im lokalen Container und fehlendes Dart/Flutter-SDK; GitHub-Actions-Ergebnisse der finalen PR-Fassung müssen abgenommen werden. Gemeinsame README-/Checkpoint-Dateien werden auch in #592, #608 und anderen offenen PRs append-only bearbeitet und benötigen koordinierte Integration.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge, keine Migration oder Spielstandänderung. App-Version/Buildcode bleiben unverändert.
 - **NÄCHSTER SCHRITT:** CI auf dem finalen HEAD von PR #613 vollständig prüfen und Fehler beheben; danach aktuellen Main- und PR-Dateiabgleich vor einer ausdrücklich überprüften Integration wiederholen.
+
+
+## 2026-11-07 – Optionalen Android-HOME-Cache vor unkontrollierter Löschung schützen
+
+- **Basis-main:** `f580d4c40f6a29df0098f656094844bfca1ed573` (PR #613 regulär integriert); Main-CI `42361647524` war beim Start noch aktiv. Der vollständig erfolgreiche Vorgänger-PR-Lauf [#42287506256](https://github.com/ManuEtt/Dnd/actions/runs/42287506256) gehört zum Vorgänger-Code und ist kein Beleg für diese neuen Änderungen.
+- **Branch:** `fix/chat-d/android-home-cache-safe-20261107`; **Code-/Testcommits:** `205a8b8daa6152efda67eef5d5c8b29b5b48e72e`, `34757df4d025a757ea7c08b8c093e93075ce3cd6`; **PR:** [#624](https://github.com/ManuEtt/Dnd/pull/624) (Draft, nicht gemergt). Folgende Dokumentationscommits ergänzen diese Quelle.
+- **Ausgangsproblem:** Auf Fehler im CI-SDK-Download folgte unkontrollierte Bereinigung des optionalen `$HOME/.android/cache`; ein Root-Alias oder Symlink konnte dazu führen, dass ein fremdes Verzeichnis adressiert wird.
+- **IMPLEMENTIERT:** Absolutheit, physische kanonische HOME-Auflösung, Root-Ausschluss, Link-Abwehr bei `.android` und `cache`; nur ein reales Verzeichnis wird gelöscht, sonst Warnung und Fortsetzung des SDK-Retry ohne Eingriff in fremde Dateien.
+- **Geänderte Fachdateien:** `scripts/install_android_sdk_packages.sh`, `scripts/tests/test_install_android_sdk_packages.py`. Drei neue Python-Testmethoden prüfen vier HOME-Warnfälle via sicherem Mock-`rm`, zwei reale Sandbox-Symlinkfälle mit Sentinel und einen positiven HOME-Alias mit regulärer Cache-Bereinigung.
+- **GETESTET:** Isoliertes `bash -n` und sieben Shell-Mock-/Sentinel-Proben im lokalen Container bestanden. Zur Prüfung wurde das vollständige betroffene Skript anhand des GitHub-Quelltextes rekonstruiert; die neue Python-Suite als Bestandteil des Git-Repositories war lokal nicht ausführbar.
+- **NICHT GETESTET:** Finale vollständige Python-/Backend-/Flutter-/Android-Debug-/drei ABI-APK-/Release-Actions-CI, Realgerät, Systemwechsel/Upgrade und Produktivsignierung.
+- **BLOCKIERT:** Fehlende GitHub-DNS-Auflösung für lokalen Checkout; gemeinsame README-/CODEX-Checkpoint-Dateien sind Gegenstand anderer offener PRs und dürfen bei späterer Integration nicht überschrieben werden. Kein aktueller CI-Erfolg für #624 behauptet.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge dieses PRs, keine SQLite-/JSON-Migration, keine Änderung an App-Version oder gespeicherten Kampagnen.
+- **NÄCHSTER SCHRITT:** CI auf endgültigem #624-HEAD vollständig abnehmen und eventuelle Fehler im Branch beheben; vor Integration neuen Main- und PR-Stand auf Konflikte prüfen.
