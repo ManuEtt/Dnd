@@ -53,8 +53,17 @@ for (( attempt = 1; attempt <= attempts; attempt++ )); do
   if [[ ! -f "$sdk_root/ndk/27.0.12077973/source.properties" ]]; then
     rm -rf -- "$sdk_root/ndk/27.0.12077973"
   fi
+  # This optional cache is outside the SDK root. Do not traverse a
+  # misplaced HOME or symlinked .android/cache and erase unrelated files.
   if [[ -n "${HOME:-}" ]]; then
-    rm -rf -- "$HOME/.android/cache"
+    if [[ "$HOME" != /* ]] ||
+       ! resolved_home="$(cd -P -- "$HOME" 2>/dev/null && pwd -P)" ||
+       [[ "$resolved_home" == "/" ]] ||
+       [[ -L "$resolved_home/.android" || -L "$resolved_home/.android/cache" ]]; then
+      echo "::warning::Skipping unsafe Android user cache cleanup." >&2
+    elif [[ -d "$resolved_home/.android/cache" ]]; then
+      rm -rf -- "$resolved_home/.android/cache"
+    fi
   fi
   sleep "$(( attempt * retry_delay ))"
 done
