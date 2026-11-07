@@ -2242,3 +2242,13 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Fehlender vollständiger lokaler Checkout und die endgültige GitHub-Actions-Abnahme auf dem Dokumentations-HEAD; gemeinsame README-/Checkpoint-Nachträge müssen bei späterer Integration verlustfrei erhalten bleiben.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge von PR #629; keine Spielstand-, Datenbank- oder Versionsänderung.
 - **NÄCHSTER SCHRITT:** Die neu gestartete finale CI vollständig kontrollieren, gegebenenfalls Test-/Formatfehler im eigenen Branch korrigieren, dann aktuellen Main und offene PR-Dateien vergleichen. Keine ungeprüfte Integration.
+
+## 2026-11-07 – Sending-Vorschau mit vollständiger Katalogidentität
+
+- **Basis / PR:** Main `bbe6ee0901f1873af67647bf54462e4a44821762`; Branch `feat/chat-a/sending-catalog-identity-20261107`; [PR #633](https://github.com/ManuEtt/Dnd/pull/633) (Draft, nicht integriert).
+- **Problem / Lösung:** Die Sending-Vorschau prüfte bisher nur fünf Zauberangaben. Nun müssen alle bekannten Metadaten des aktuellen SRD-Katalogeintrags `spell-sending` einschließlich ID, Schule, geordneter Klassenliste, Komponenten/V-S-M-Flags, Dauer und Ritual übereinstimmen; gefälschte Definitionen scheitern vor der Planerstellung.
+- **Betroffene Dateien:** `app/lib/domain/srd_sending_rules.dart` (Commit `a8f143ff3d945fb1197b25c4fd4e7c38c1e147cb`); `app/test/srd_sending_rules_test.dart` (Commit `d8b2cb9fe8f7973da26bf202801be4496965c91f`). 15 negative Mutationen plus positiver Originalfall ergänzt.
+- **GETESTET / NICHT GETESTET:** Repository/PR-Dateipfade und Quellen geprüft; kein lokales Dart-/Flutter-SDK, daher neue Tests nicht lokal ausgeführt. Vollständige Actions-Abnahme auf finalem Head, Android-APK und Gerät noch nicht nachgewiesen; kein grüner Gesamtlauf behauptet.
+- **Kompatibilität / Grenzen:** Nur lesende Regelprüfung. Keine Slotbuchung, RNG, Persistenz, Events, UI, Story, Schema- oder Versionsänderung. SRD 5.2.1 *Sending*, CC BY 4.0; `SPELL-ENTRY-SENDING` weiterhin `partial`. Andere offene Regel-PRs bleiben unangetastet; gemeinsame Dokumentationsnachträge additiv zusammenführen.
+- **Nächster Schritt:** Finale PR-CI kontrollieren und eventuelle Format-/Testfehler vor Integration auf diesem Branch korrigieren.
+
