@@ -1399,3 +1399,25 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 07.11.2026 – Zulässige Zauberreichweiten und Identität, PR #621
+
+**Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`. **Branch:** `feat/chat-a/spell-range-metadata-integrity-20261107`. **Code-/Testcommit:** `fe95d546faa128cb80af73b3fa2ee6c93c9d9f8a`. **PR:** https://github.com/ManuEtt/Dnd/pull/621 (Draft). Der finale Dokumentations-HEAD folgt nach diesem Commit.
+
+**Problem:** Der lesende `SrdSpellTargetRules.validateOrigin` klassifizierte auch beliebig erzeugte Reichweitenangaben wie `999 feet` (obwohl kein Zauber des erfassten 339er-Katalogs diese Länge verwendet), außerdem konnten per öffentlichem Konstruktor 12 ausgewählte kritische SRD-Namen eine andere zulässige Reichweite erhalten. Die unveränderte allgemeine Umrechnung `maxRangeFeet` war nicht als prüfender Katalogvertrag gedacht.
+
+**Implementiert:** Die Ursprungsvorabprüfung erlaubt nur die 18 tatsächlich aktuellen Reichweitenformen, wovon `Unlimited` und `Special` noch ihre eigenen Regeln benötigen. Zwölf ausgewählte Zauber verlangen passende Kombinationen aus Name, stabiler ID und exakter Reichweite. Fremde Metadaten scheitern vor der Ursprungsklassifikation. Die Domänen-API bleibt speicherlos und verändert keine Würfel-/Slot-/Kampagnenressourcen.
+
+**Fachdateien:** `app/lib/domain/srd_spell_target_rules.dart`; neuer Unit-Test `app/test/srd_spell_range_catalog_guard_test.dart`. Dokumentation append-only in `README.md`, `docs/CODEX_CHECKPOINT.md` und diesem persönlichen Checkpoint.
+
+**Getestet:** Offizielle SRD-5.2.1-Stelle *Spells / Range, Targets* S. 105–106 geprüft; alle 339 Arbeitsindex-Einträge und zwölf gepinnte Name-/ID-/Reichweiten-Tupel statisch abgeglichen. Alle zum Zeitpunkt der Branch-Erstellung 36 offenen Pull Requests (darunter #612, #616, #617, #620) auf betroffene Fachdateien geprüft: keine Überschneidung. Deterministische Positiv-/Negativtests eingecheckt, aber **noch nicht durch Dart ausgeführt**.
+
+**Nicht getestet:** Dart-Formatter/Analyzer, komplette Flutter-Tests, Android-Debug, native Tests und optimierte ABI-APKs für #621. Finaler CI-Lauf muss an finale SHA gebunden werden.
+
+**Blockiert:** Kein Dart-/Flutter-SDK im lokalen Container. Die parallelen README-/Checkpoint-Ergänzungen werden zur Integration durch Qualitätsbereich D zusammengeführt.
+
+**SRD/Abdeckung:** Wizards of the Coast LLC, SRD 5.2.1, S. 105–106, *Range und Targets*, CC BY 4.0, https://www.dndbeyond.com/srd. `RULE-SPELLS-SPELL-RANGE` und `RULE-SPELLS-SPELL-TARGETS` verbleiben `partial`; keine Behauptung vollständiger Ziel-/Deckungs-/Effektregeln oder amtlich vollständig geprüfter 339 Einträge.
+
+**Migration/Spielstand:** Keine Änderung von `models.dart`, `game_engine.dart`, JSON/SQLite, Story/UI/Backend/CI; gültige ältere Daten bleiben erhalten.
+
+**Genau nächster Schritt:** Actions-Abnahme des finalen PR #621 auf vollständige Dart-/Flutter-/Android-/native Grünheit, konkrete Fehler im eigenen Branch beheben, anschließend Review durch Bereich D. 
