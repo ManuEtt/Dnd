@@ -27,6 +27,28 @@ class FourteenthVoiceMorrow {
     r'\b(?:nicht|niemals|ohne|kein(?:e|en|em|er|es)?)\b',
   ).hasMatch(text);
 
+  // An irreversible ending needs an explicit choice, not a quotation,
+  // question, hypothetical scenario or incidental mention of its wording.
+  // Keep the three existing player-facing commands and allow clear promises.
+  static bool _choosesEnding(String text, String action) {
+    final words = text.replaceAll(RegExp(r'[.!]+$'), '').trim();
+    if (words == action || words == 'bitte $action') return true;
+    for (final prefix in [
+      'ich will',
+      'ich möchte',
+      'ich werde',
+      'wir wollen',
+      'wir möchten',
+      'wir werden',
+    ]) {
+      if (words == '$prefix $action' ||
+          (action.startsWith('brief ') && words == '$prefix den $action')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   static bool _mayStart(Campaign c) =>
       c.facts['voice:ending'] != null &&
       const {
@@ -395,7 +417,7 @@ class FourteenthVoiceMorrow {
           'Eine verneinte Entscheidung ist keine Zustimmung.',
         );
       }
-      if (_said(text, 'brief versiegelt verwahren')) {
+      if (_choosesEnding(text, 'brief versiegelt verwahren')) {
         return _ending(
           c,
           'voice-morrow-end-sealed',
@@ -405,10 +427,8 @@ class FourteenthVoiceMorrow {
               'seine Behauptungen gelten nicht als bewiesen.',
         );
       }
-      if (_said(
-        text,
-        'brief mit quellen veröffentlichen|brief mit quellen veroeffentlichen',
-      )) {
+      if (_choosesEnding(text, 'brief mit quellen veröffentlichen') ||
+          _choosesEnding(text, 'brief mit quellen veroeffentlichen')) {
         return _ending(
           c,
           'voice-morrow-end-published',
@@ -418,7 +438,7 @@ class FourteenthVoiceMorrow {
               'Versionen zur absoluten Wahrheit erklären.',
         );
       }
-      if (_said(text, 'liora selbst entscheiden lassen')) {
+      if (_choosesEnding(text, 'liora selbst entscheiden lassen')) {
         return _ending(
           c,
           'voice-morrow-end-liora',
