@@ -15,10 +15,7 @@ Campaign _atLedger({bool pageFound = true}) => Campaign(
   sessionId: 'act7-session',
   scene: 'Der Name ist nur als beschädigte Abschrift gesichert.',
   hero: HeroCharacter(id: 'hero', name: 'Valen', hitPoints: 17),
-  storyBible: const {
-    'mode': 'rabenwacht-voice-v1',
-    'stage': 'voice-ledger',
-  },
+  storyBible: const {'mode': 'rabenwacht-voice-v1', 'stage': 'voice-ledger'},
   facts: {
     'voice:chronistChoice': 'refused',
     if (pageFound) 'voice:oathPageFound': 'true',
