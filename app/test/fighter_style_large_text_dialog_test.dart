@@ -90,30 +90,29 @@ Future<void> _completeFighter(WidgetTester tester) async {
 
 void main() {
   for (final width in [320.0, 360.0]) {
-    testWidgets(
-      '$width dp / 200 % / IME: langer Kampfstil auswählbar',
-      (tester) async {
-        final results = await _open(tester, width: width, scale: 2);
-        final style = _key('fighter-fighting-style');
-        expect(
-          tester.widget<DropdownButtonFormField<String>>(style).isExpanded,
-          isTrue,
-        );
-        final confirm = _key('srd-confirm-class');
-        expect(tester.widget<FantasyButton>(confirm).onPressed, isNull);
-        await _completeFighter(tester);
-        expect(tester.takeException(), isNull);
-        expect(results, isEmpty);
-        expect(tester.widget<FantasyButton>(confirm).onPressed, isNotNull);
-        await _tapVisible(tester, confirm);
-        expect(results, hasLength(1));
-        expect(results.single?.selection.characterClass.name, 'Kämpfer');
-        final fighter = results.single?.fighterChoices;
-        expect(fighter?.styleId, 'great-weapon-fighting');
-        expect(fighter?.masteryWeaponIds, hasLength(3));
-        expect(tester.takeException(), isNull);
-      },
-    );
+    testWidgets('$width dp / 200 % / IME: langer Kampfstil auswählbar', (
+      tester,
+    ) async {
+      final results = await _open(tester, width: width, scale: 2);
+      final style = _key('fighter-fighting-style');
+      expect(
+        tester.widget<DropdownButtonFormField<String>>(style).isExpanded,
+        isTrue,
+      );
+      final confirm = _key('srd-confirm-class');
+      expect(tester.widget<FantasyButton>(confirm).onPressed, isNull);
+      await _completeFighter(tester);
+      expect(tester.takeException(), isNull);
+      expect(results, isEmpty);
+      expect(tester.widget<FantasyButton>(confirm).onPressed, isNotNull);
+      await _tapVisible(tester, confirm);
+      expect(results, hasLength(1));
+      expect(results.single?.selection.characterClass.name, 'Kämpfer');
+      final fighter = results.single?.fighterChoices;
+      expect(fighter?.styleId, 'great-weapon-fighting');
+      expect(fighter?.masteryWeaponIds, hasLength(3));
+      expect(tester.takeException(), isNull);
+    });
   }
 
   testWidgets('320 dp / 200 % / IME: keine Freigabe ohne Kampfstil', (
