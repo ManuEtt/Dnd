@@ -2205,3 +2205,13 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Blockiert:** Kein lokales Flutter-SDK. README und zentrale Checkpoints in anderen offenen PRs append-only geändert; Integrationsbereich D muss alle Nachträge verlustfrei übernehmen.
 - **Kompatibilität:** Keine Modelle, GameEngine, Backend/Story/UI, SQLite-/JSON-Felder, externe Events oder Migrationen verändert; valide SRD-Katalogwerte behalten ihre bisherigen Ergebnisse.
 - **Nächster konkreter Schritt:** Finale PR-#621-CI (Formatter, Analyzer, vollständige Flutter-Tests, Debug-/ABI-APKs und native Tests) abnehmen und ggf. konkrete Fehler auf demselben Branch korrigieren; anschließend PR zur Integration durch Bereich D freigeben.
+
+## 07.11.2026 – Bestehende Fehlertypen bei Reichweiten-Ablehnung bewahren (PR #621)
+
+- **Branch:** `feat/chat-a/spell-range-metadata-integrity-20261107`; **Basis-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Code-/Testkorrektur:** `f07efba564223a944f830649cfbaa2acff4f832b`; **PR:** https://github.com/ManuEtt/Dnd/pull/621 (Draft).
+- **Befund:** [Actions #42352116576](https://github.com/ManuEtt/Dnd/actions/runs/42352116576) beendete den vollständigen Flutter-Lauf mit **3.322 bestanden / 2 fehlgeschlagen**. `srd_spell_range_metadata_guard_test.dart` (gemischte Schreibweise) und `srd_spell_target_rules_test.dart` (nicht kanonische/überlaufende Zahlen) erwarteten `UnsupportedError`, erhielten aber infolge der neuen Identitätsprüfung `FormatException`. Python, Backend, strikte Formatierung und Flutter-Analyse bestanden; Android-Jobs wurden wegen Flutter-Testfehlern übersprungen.
+- **Korrektur:** Im einzigen Fachmodul `app/lib/domain/srd_spell_target_rules.dart` die Existenz einer katalogbelegten Reichweitenform *vor* dem ID-/Name-Pin prüfen; bekanntes, aber fremdes Reichweitenmetadatum bleibt Identitäts-`FormatException`. `app/test/srd_spell_range_catalog_guard_test.dart` ergänzt beide Fehlertypen als expliziten Regressionstest.
+- **GETESTET:** Fehlerdaten aus tatsächlichem GitHub-Joblog gelesen; korrigierter Code und Regression im eigenen Branch gesichert. Nachfolgende vollständige Actions-CI auf finalem HEAD ausstehend.
+- **NICHT GETESTET:** Dart/Flutter/Android lokal mangels SDK. Android-Release/Native auf Korrektur-HEAD noch nicht abgenommen.
+- **BLOCKIERT:** Kein fachlicher Blocker; fehlende lokale Flutter-Toolchain. Keine Änderung an Persistenz, GameEngine, Modellen oder unabhängigen PR-Fachdateien.
+- **Nächster Schritt:** Finale PR-#621-CI einschließlich gesamter Flutter-Tests und Android-ABI-Artefakte kontrollieren, Fehler im gleichen Branch korrigieren, erst bei Erfolg zur Review freigeben.
