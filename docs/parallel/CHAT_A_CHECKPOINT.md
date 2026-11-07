@@ -1414,6 +1414,6 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **NICHT GETESTET:** `flutter test`, `flutter analyze`, Dart-Format, vollständige Python-/Backend-/Flutter-/Android-Gates, APK und Gerät auf dem finalen PR-HEAD. Lokales SDK nicht installiert; PR-CI separat prüfen.
 - **BLOCKIERT:** Keine fachlichen Quellüberschneidungen der zwei Dateipfade mit den 19 geprüften offenen Regel-PRs; Zusammenführung gemeinsamer README-/Checkpoint-Nachträge bei der Integration koordinieren. Full-CI-Freigabe steht aus.
 - **KOMPATIBILITÄT:** Keine Änderung an bestehenden JSON-/SQLite-/Eventformaten, Heldendaten, UI, Story, Controller, API-Signaturen oder Version; keine Migration. Sending ist weiterhin eine reine Vorschau, keine automatisierte Zauberwirkung.
-- **QUELLE:** SRD 5.2.1, *Sending*, CC BY 4.0, https://www.dndbeyond.com/srd; `SPELL-ENTRY-SENDING` bleibt `partial`, der Arbeitskatalog ist nicht amtlich vollständig verifiziert.
+- **QUELLE:** SRD 5.2.1, *Sending*, CC BY 4.0, https://www.dndbeyond.com/srd; Der Registerstatus von `SPELL-ENTRY-SENDING` bleibt `unverified`, da der Arbeitskatalog nicht amtlich vollständig abgeglichen ist; die lesende Vorschau wurde nur punktuell gehärtet.
 - **NÄCHSTER SCHRITT:** CI des letzten PR-HEAD vollständig kontrollieren und im Fehlerfall Format/Tests im selben Branch korrigieren; erst danach die Koordination der Integration einleiten. Bei neuer Arbeit zuerst aktuellen Main und sämtliche offenen PRs neu vergleichen.
 
