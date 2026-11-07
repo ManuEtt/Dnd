@@ -2038,3 +2038,31 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** GitHub-DNS für vollständigen lokalen Checkout; abschließende Actions-CI, frischer Main-/PR-Review und Schutz anderer append-only-Checkpoint-Nachträge stehen noch aus.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge, keine 13-Dateien-Transaktion (jedes Bild einzeln atomar und wiederholbar), keine SQLite-/JSON-/Spielstandmigration und keine Änderung der App-Version.
 - **NÄCHSTER SCHRITT:** Vollständige CI auf endgültigem #631-HEAD auswerten, Testfehler im Branch beheben, bei Erfolg mit frischem Konfliktcheck regulär in Main integrieren.
+
+
+## 2026-11-07 – COM/LPT-Hochziffern als Windows-Reserved-Namen blockieren (PR #637)
+
+- **Main-Herkunft:** Ausgangs-`bbe6ee0901f1873af67647bf54462e4a44821762` nach PR #629. PR #631 wurde zwischenzeitlich auf Main `6623e4d61b664a066352068500959cf2988133fb` integriert; alle sechs Jobs auf [Run #42410645141](https://github.com/ManuEtt/Dnd/actions/runs/42410645141) waren erfolgreich. Die neuen Main-Dokumentationsabschnitte aus #631 wurden vor diesem Nachtrag in allen drei gemeinsamen Dateien vollständig übernommen.
+- **Arbeitsbranch/PR:** `fix/chat-d/windows-device-superscript-20261107`, [#637](https://github.com/ManuEtt/Dnd/pull/637) (Draft, offen). Code `db7cb684ab0ff7af90dad28bf53a209559602ff0`; Tests `163c4ea0d05b40761775b543eeb875251e147aa3`, `f99e061d40e1e12e700888dfd1b6e73622271b45`, `b0b9c7dad58c6dc4ca9ddccabe300072ebe39f00`.
+- **Ausgangsproblem:** Quell-ZIP-Exporter und Wrapper-JAR-Validator erkennen Windows-Gerätenamen mit normalen Ziffern, jedoch nicht `COM¹/²/³` und `LPT¹/²/³`, obwohl diese unter Windows ebenfalls reserviert sind.
+- **IMPLEMENTIERT:** `WINDOWS_RESERVED_STEMS` um sechs genaue Namen ergänzt; keine separate zweite Prüfroutine. Archive und JAR-Uploads werden vor Freigabe portabilitätskonform geprüft.
+- **Tests:** Vier neue Python-Testmethoden, Datei-/Unterordnerfälle, Archivschutz bei gescheiterter Portabilitätsprüfung, JAR-Ablehnung vor CRC und erlaubte Vergleichsnamen. Frühere GitHub-Python-Stufe erfolgreich; finaler CI-Nachweis muss nach Dokumentationscommits neu eingeholt werden.
+- **GETESTET:** Isolierter lokaler Vergleich der Portabilitäts-Prädikate, auf GitHub die frühen Python-Regressionen bestanden. Unveränderte Fach-PRs auf Codepfad-Konflikte überprüft; Story/Regeln/UI/Release andere Fachpfade.
+- **NICHT GETESTET:** Finale vollständige GitHub-Actions-Matrix inklusive Android-/Alpha-Release, Windows-Dateisystem, Android-Gerät, Upgrade und Signierung.
+- **BLOCKIERT:** Kein lokaler vollständiger Checkout wegen DNS; mögliche aufeinanderfolgende README-/Checkpoint-Nachträge anderer PRs beim Merge müssen erhalten bleiben.
+- **NOCH NICHT IMPLEMENTIERT:** #637 nicht gemergt, keine Änderung an SQLite, JSON, Spielständen, App-Version oder Spielmechanik.
+- **NÄCHSTER SCHRITT:** Nach finaler CI alle sechs Jobs und exakten Head prüfen, Main-Stand mit Dokumentations-Historie vergleichen, gegebenenfalls konfliktfreies Neusetzen auf neuem Main; dann Review und reguläre Integration.
+
+
+## 2026-11-07 – Eindeutige Originalgrafik-Manifestdaten vor Import erzwingen (PR #638)
+
+- **Main-Abgleich:** Branch begann auf `6623e4d61b664a066352068500959cf2988133fb`; PR #637 wurde inzwischen regulär in Main `1efb5e219dc0b00965e3be2dfb4b2b52d621d362` übernommen. Dessen PR-README-/Checkpoint-Nachträge wurden bei der Zusammenführung ohne Kürzung übernommen. [CI #42412398499](https://github.com/ManuEtt/Dnd/actions/runs/42412398499) für #637 vollständig grün.
+- **Branch/PR:** `fix/chat-d/fantasy-manifest-unique-json-20261107`, [#638](https://github.com/ManuEtt/Dnd/pull/638) (Draft). Fachcommit `42871dbea42d81fbc4d5abc81339f32e83762784`, Testcommit `9b025bbd6931f41840183b3aab52626110a33b94`.
+- **Problem:** `json.loads` akzeptiert doppelte Objekt-Eigenschaften (letzter Wert gewinnt) und ungültige JSON-Zahlen. Diese Mehrdeutigkeit passt nicht zu einem SHA256-/Dateigrößen-Freigabemanifest für Originalgrafiken.
+- **IMPLEMENTIERT:** Strikter `object_pairs_hook` gegen doppelte JSON-Eigenschaften auf jeder Objektebene, `parse_constant` gegen `NaN`, `Infinity`, `-Infinity`. Kein Import oder CRC-Scan vor eindeutiger Manifestprüfung; alle 13 WebP-Hash-/Format-/Größenchecks sowie atomare Veröffentlichungen bleiben.
+- **Tests ergänzt:** Vier Regressionen zu doppeltem Assetpfad, doppelter geschachtelter `bytes`-Angabe (vor CRC), drei ungültigen Zahlkonstanten und gültigen Originaldaten. Die erste GitHub-Python-Stufe bestand auf dem vorläufigen Fach-HEAD; finaler dokumentierter HEAD benötigt vollständige CI.
+- **GETESTET:** Live-GitHub-Stand und offene PRs geprüft, Fachtests dem neuen Commit hinzugefügt; keine behauptete abgeschlossene finale Actions-Abnahme.
+- **NICHT GETESTET:** Vollständiger finaler GitHub-Pipeline-Durchlauf bis Android-Debug, drei ABI-APKs und Alpha-Release; Realgerät, Updates, Produktivsignierung.
+- **BLOCKIERT:** GitHub-DNS im lokalen Container; abschließende Actions-CI und frischer Merge-/Dokumentationscheck.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #638, keine Spielstands-/SQLite-/JSON-Migration, keine Story-/Regel-/UI-Änderung.
+- **NÄCHSTER SCHRITT:** Finalen CI-Commit abnehmen und nur bei konfliktfreiem Stand und sechs grünen Jobs regulär mergen.
