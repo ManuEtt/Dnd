@@ -799,3 +799,16 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+---
+
+## 2026-11-07 – Stufenaufstiegsverfahren bei großer Android-Schrift erreichbar
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **eigener Branch:** `feat/chat-c/levelup-method-large-text-20261107`. Kein Merge auf main, keine Übernahme fremder Dateien. Andere UI-PRs #614 und #618 betreffen getrennte Fachdateien und sind CI-geprüft sowie bereit für Review.
+- **Ausgangsproblem:** Der bisher ungerahmte `SegmentedButton` mit „Erfahrung“/„Meilenstein“ im Stufenaufstiegsdialog besitzt bei doppelter Schrift keine horizontal scrollbare Bedienfläche. Bei niedrigem XP-Stand darf die erreichbare Meilenstein-Alternative nicht abgeschnitten oder unbeabsichtigt gewählt werden.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_class_level_up_dialog.dart`: beide Auswahlsegmente in horizontalem `SingleChildScrollView` mit stabilem Key `levelup-method-scroll`; Auswahl und Bestätigungsablauf bleiben unverändert, kein automatischer Stufenanstieg.
+- **REGRESSIONSTESTS:** `app/test/srd_class_level_up_large_text_method_test.dart`: bei 320/360 dp und 200 % Schrift durch explizite Meilensteinwahl trotz 0 EP Vorschlag erreichbar; bei 0 EP ohne Meilenstein bestätigen blockiert, Abbruch liefert null; bei normaler Schrift bleibt EP-Vorauswahl; gespeichertes Heldenmodell bleibt vor Apply unverändert.
+- **TESTSTATUS:** Fach- und Testdatei im eigenen GitHub-Branch eingecheckt. Dart-Format, Flutter-Analyse, Widgettests, Python/Backend und Android-APK auf diesem Branch **noch nicht CI-geprüft**; kein lokales Flutter-/Dart-SDK.
+- **KOMPATIBILITÄT:** Unverändertes SRD-Regelwerk, Version `0.8.52+102`, SQLite-/JSON-Schema und Speicherdaten. Keine Migration, kein KI-/Domain-Eingriff.
+- **NÄCHSTER SCHRITT:** Eigenen Draft-PR gegen unverändertes main erstellen; CI-Format, Flutter-Analyse, gezielte Tests, gesamte Suite und APK-Matrix prüfen und bei Fehlern nur denselben Branch korrigieren; anschließend Review-Freigabe.
