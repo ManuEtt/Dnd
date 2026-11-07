@@ -107,10 +107,7 @@ void main() {
       ),
       'casting time': _copy(fire, castingTime: 'Bonus Action'),
       'range padding': _copy(fire, range: '120 feet '),
-      'components': _copy(
-        fire,
-        components: 'V, S, M (a piece of sulfur)',
-      ),
+      'components': _copy(fire, components: 'V, S, M (a piece of sulfur)'),
       'duration': _copy(fire, duration: 'Instantaneous'),
       'verbal': _copy(fire, verbal: false),
       'somatic': _copy(fire, somatic: false),
