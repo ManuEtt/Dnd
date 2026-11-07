@@ -95,10 +95,11 @@ void main() {
     ) async {
       final results = await _open(tester, width: width, scale: 2);
       final style = _key('fighter-fighting-style');
-      expect(
-        tester.widget<DropdownButtonFormField<String>>(style).isExpanded,
-        isTrue,
+      final inner = find.descendant(
+        of: style,
+        matching: find.byType(DropdownButton<String>),
       );
+      expect(tester.widget<DropdownButton<String>>(inner).isExpanded, isTrue);
       final confirm = _key('srd-confirm-class');
       expect(tester.widget<FantasyButton>(confirm).onPressed, isNull);
       await _completeFighter(tester);
