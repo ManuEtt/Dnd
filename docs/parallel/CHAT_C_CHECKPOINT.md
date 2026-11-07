@@ -799,3 +799,19 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+
+---
+
+## 2026-11-07 – Hintergrundwechsel in der Magieinitiierten-Zauberwahl sicher zurücksetzen
+
+- **Ausgangs-main:** `bbe6ee0901f1873af67647bf54462e4a44821762` inklusive integrierter Grafik-ZIP-Importer-Sicherung aus PR #629.
+- **Branch:** `feat/chat-c/magic-initiate-background-swap-20261107`; keine Überschneidung der beiden Flutter-Fachdateien mit den geprüften offenen PRs. Eigenständiges Android-/Barrierefreiheits-UI-Inkrement.
+- **PROBLEM:** Der wiederverwendete `SrdMagicInitiateDialog` speicherte die ausgewählten Zaubertricks, den Grad-1-Zauber und das Attribut im State und die Dropdowns hielten ihre FormField-Werte intern fest. Wenn `background` in der gleichen Route wechselte, konnte die Auswahl aus dem anderen SRD-Hintergrund bestehen bleiben. Auch identische Zaubernamen beider Listen dürfen nicht als erneute ausdrückliche Zustimmung gelten.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_magic_initiate_dialog.dart` setzt bei `didUpdateWidget` und geändertem `background` alle vier noch unbestätigten Werte zurück; `KeyedSubtree` remountet die vier Dropdown-Felder bei geändertem Hintergrund unter Beibehaltung ihrer bisherigen Finder-Keys. Nicht unterstützte Hintergründe werden neutral als `nicht verfügbar` statt fälschlich als `Magier` angezeigt. Keine Freigabe für unbestätigte oder ungültige Entscheidungen.
+- **TESTS IMPLEMENTIERT:** `app/test/srd_magic_initiate_background_swap_test.dart` mit 360 dp/200 %/IME: vollständige Akolythenwahl, Wechsel zu Gelehrtenzaubern und erneute ausdrückliche Bestätigung. 320 dp/200 %/IME: gemeinsam vorkommende `Light`, `Mending`, `Detect Magic` nach Hintergrundwechsel vollständig zurückgesetzt; neutraler Abbruch. Unsupported `criminal`: keine positive Bestätigung und korrektes UI-Label.
+- **GETESTET:** Aktueller main, offener PR-Bestand, SRD-Auswahllisten und vorhandene Flutter-/IME-Tests in GitHub geprüft; Quell- und Testdateien eingecheckt. Automatische Dart-/Flutter-/Backend-/Python-/APK-CI für diesen HEAD **noch nicht abgeschlossen**.
+- **NICHT GETESTET:** Lokale Flutter-Formatierung/Analyse/Tests (SDK lokal nicht vorhanden), vollständig erfolgreiche GitHub-CI, echte Android-/TalkBack-/IME-Bedienung, Upgrade alter Spielstände.
+- **KOMPATIBILITÄT:** SRD-Regel- und Katalogeinträge, Domänenobjekte, Slots, SQLite-3/JSON-1-Speicherformat, App-Version `0.8.52+102` und bereits gespeicherte Entscheidungen bleiben unverändert. Nur noch unbestätigte UI-Auswahl wird beim Quellenwechsel verworfen.
+- **NÄCHSTER SCHRITT:** Draft-PR gegen aktuelles main, CI bis zu gezielten und vollständigen Flutter-Tests sowie allen APK-/Quell-Artefakten prüfen; Fehler isoliert auf diesem Branch beheben, nur vollständig grünen HEAD zur Review geben. Kein Main-Merge.
