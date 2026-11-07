@@ -1399,3 +1399,29 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 07.11.2026 – Zauber-Preflight prüft das vollständige Klassenprofil (PR #616)
+
+**Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `feat/chat-a/spell-preflight-class-profile-20261107`; **Code-/Testcommit:** `27bc0b69f5a0f175b01a289090afaf5efd54a6b4`; **Pull Request:** https://github.com/ManuEtt/Dnd/pull/616 (Draft). Finaler Dokumentations-HEAD steht nach Commit fest.
+
+**Ausgangsproblem:** `SrdSpellPreflightRules.preflight` prüfte nur, ob die gewählte Klasse irgendwie zum Helden gehört. Direkt konstruierte oder Legacy-Snapshots mit unbekannten Zweitklassen, doppelten Klassenaliassen oder nicht plausiblen Levels konnten bei vorhandenen Zaubertricks ein positives Cast-Preflight-Ergebnis erzielen.
+
+**IMPLEMENTIERT:** Konsistente SRD-Haupt-/Zweitklasse wird vor der restlichen Zaubervorprüfung verlangt: Primärlevel mindestens 1, Gesamtlevel 1–20, Zweitklasse nur mit positiver Stufe, kanonische Klassen bekannt und verschieden, ohne Zweitklasse auch keine verwaisten Stufen. Bekannte deutsche/englische Aliasformen und legale Multiclass-Quellen bleiben gültig. Kein Slot-/Ablauf-/KI-Änderungseffekt.
+
+**Dateien:** `app/lib/domain/srd_spell_preflight_rules.dart`, `app/test/srd_spell_preflight_profile_guard_test.dart`, additiv `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`.
+
+**GETESTET:** GitHub-Main und offene PR-Dateilisten geprüft, SRD-Quelle verifiziert, positive/negative reproduzierbare Dart-Tests geschrieben (Cantrip und Magic Missile, unterschiedliche Klassen- und Stufenkombinationen, Ressourcenschutz). Echter Lauf dieser neuen Tests zu diesem Zeitpunkt **nicht** behauptet. PR #612 auf anderem Branch ist auf finalem HEAD `3b8cf401` durch Workflow #42288981450 vollständig erfolgreich; noch kein Merge.
+
+**NICHT GETESTET:** `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test`, Android-Build, Python-/Backend-Prüfungen und reale Android-Geräteabnahme für diesen neuen PR. CI nach endgültigem Stand prüfen.
+
+**BLOCKIERT:** Kein Dart-/Flutter-SDK und kein lokaler Repository-Checkout mit Internet; GitHub-CI führt die Remote-Abnahme aus. Gemeinsam genutzte README-/Checkpoint-Dateien haben parallele Additionen anderer Chats; Integrationsbereich D muss sie verlustfrei vereinigen.
+
+**SRD/Abdeckung:** Wizards of the Coast LLC, SRD 5.2.1, *Multiclassing / Spellcasting*, CC BY 4.0, https://www.dndbeyond.com/srd. `RULE-CHARACTER-CREATION-MULTICLASS-SPELLCASTING` bleibt `unverified`. Keine globalen Fertigstellungsquoten behauptet.
+
+**Migrationen:** Keine. Datenbank-/JSON-Kompatibilität, Story-/Rule-Grenze und alte gültige Spielstände unverändert.
+
+**Genau nächster Schritt:** CI des endgültigen #616-HEAD inklusive Dart-Format, Flutter-Unit-Tests, Android-Debug und nativer Tests abnehmen und ggf. konkrete Fehler auf demselben Branch korrigieren; erst danach Koordinationsreview durch Bereich D.
+
+## 07.11.2026 – Korrigierte Fehleranalyse und zusätzlicher positiver Nachweis
+
+Bei vertiefter Prüfung zeigte sich, dass `HealingSpellRules.maximumPreparedSpellLevel` bereits eine nachgelagerte Validierung widersprüchlicher Klassenprofile vornimmt. **Neu** ist die explizite Grenze **vor** `_preparedName`: Bereits ein nicht vorbereiteter Zauber liefert die Klassenprofil-Fehlermeldung, ohne vorbereitete Zauberinformationen als Vorrang preiszugeben. Dieser Regressionstest wurde zusätzlich zu den bisherigen Single-/Multiclass- und Negativfällen in `app/test/srd_spell_preflight_profile_guard_test.dart` ergänzt. Die ursprüngliche Formulierung einer generell erfolgreich zulässigen Zauberausführung mit ungültigen Profilen war nicht ausreichend belegt und wird hiermit präzisiert. Commit `c7cb76e4956684c6d6e1af3ea221a4780cb18228` enthält die exakte Dart-Formatierung und stellt den temporär untersuchten Workflow ohne verbleibenden Diff wieder her. CI auf dem finalen Dokumentations-HEAD steht aus; keine Schema-/JSON-Änderung.
