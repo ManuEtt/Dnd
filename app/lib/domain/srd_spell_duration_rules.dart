@@ -106,10 +106,7 @@ class SrdSpellDurationRules {
     'Mage Armor': (id: 'spell-mage-armor', duration: '8 hours'),
     'Magic Missile': (id: 'spell-magic-missile', duration: 'Instantaneous'),
     'Shield': (id: 'spell-shield', duration: '1 round'),
-    'Tsunami': (
-      id: 'spell-tsunami',
-      duration: 'Concentration, up to 6 rounds',
-    ),
+    'Tsunami': (id: 'spell-tsunami', duration: 'Concentration, up to 6 rounds'),
   };
 
   static SrdSpellDurationAssessment inspect(SrdSpellDefinition spell) {

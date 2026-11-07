@@ -120,8 +120,8 @@ void main() {
                 ? 'Concentration, up to 1 hour'
                 : 'Concentration, up to 1 minute'
           : originalDuration == '1 minute'
-                ? '8 hours'
-                : '1 minute';
+          ? '8 hours'
+          : '1 minute';
       // Even a well-formed catalogue duration is not interchangeable.
       expect(
         SrdSpellDurationRules.parse(
