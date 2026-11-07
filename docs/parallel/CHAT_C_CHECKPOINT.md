@@ -799,3 +799,19 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+
+---
+
+## 2026-11-07 – Ressourcenfehler im Zauberdialog ohne UI-Absturz behandeln
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`.
+- **Branch:** `feat/chat-c/spell-resource-dialog-guard-20261107`; eigenständiges UI-Paket unabhängig vom Ausrüstungskatalog-PR #614 sowie allen geprüften offenen PR-Fachdateien.
+- **IMPLEMENTIERT:** `app/lib/ui/spellcasting_dialog.dart` prüft `SpellcastingRules.availableSlots` und `availablePactSlots` jetzt während der UI-Erstellung in einem gesicherten Block. Bei einer `FormatException` oder `StateError` erscheint eine zugängliche Fehlermeldung, keine falsche freie Platzanzahl; die Bestätigung ist deaktiviert. Abbrechen ist weiter verfügbar. Keine implizite Ressourcenbuchung.
+- **REGRESSIONSTESTS:** `app/test/spell_resource_dialog_invalid_state_test.dart` prüft normalen überhöhten Platzverbrauch, negativen Paktverbrauch sowie unveränderte positive Bestätigung; bestehender `app/test/spellcasting_dialog_test.dart` bleibt bestehen.
+- **GETESTET:** Quellcode- und bestehende Teststruktur geprüft, bereits vorhandene Regel-Exceptions und Schalter validiert; noch kein GitHub-Actions-Lauf auf diesem neuen Branch abgeschlossen.
+- **NICHT GETESTET:** Dart-Formatierung, Flutter-Analyse und Flutter-Suite, Backend, Android-APK und reale TalkBack-/Android-Geräte.
+- **KOMPATIBILITÄT:** Keinerlei Regel-, Schema-, JSON- oder SQLite-Änderung; App `0.8.52+102` unverändert. Ungültiger gespeicherter Verbrauch wird nicht automatisch korrigiert, sondern angezeigt und fail-closed behandelt.
+- **BLOCKIERT:** Lokale Flutter-/Dart-Installation fehlt; CI-Prüfung über GitHub erforderlich.
+- **NÄCHSTER SCHRITT:** Draft-PR gegen main erstellen, CI auswerten, eventuell Fehler im selben Branch korrigieren; erst nach vollständiger Prüfung zur Review geben.
