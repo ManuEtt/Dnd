@@ -2205,6 +2205,19 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **NÄCHSTER SCHRITT:** PR #613 auf finalem Commit in GitHub Actions vollständig prüfen (Python, Backend, Flutter, Debug-/ABI-APKs und Release); bei Fehler gezielt im selben Branch korrigieren und vor jedem Merge alle offenen PR-Dateilisten erneut abgleichen.
 
 
+## 2026-11-07 – Android-HOME-Cache sicher und getrennt von SDK bereinigen (PR #624)
+
+- **Zeit/Basis:** 07.11.2026, Europe/Berlin; Ausgangs-main `f580d4c40f6a29df0098f656094844bfca1ed573` nach regulärem Merge des vollständig geprüften [PR #613](https://github.com/ManuEtt/Dnd/pull/613). Main-CI [#42361647524](https://github.com/ManuEtt/Dnd/actions/runs/42361647524) bei Arbeitsbeginn noch laufend. Letzte nachgewiesene vollständige PR-CI: [#42287506256](https://github.com/ManuEtt/Dnd/actions/runs/42287506256), `9d1a4102b825ef77fcdcc1e2bbdd505738085fa7`, alle sechs Jobs erfolgreich.
+- **Branch/PR:** `fix/chat-d/android-home-cache-safe-20261107`, [#624](https://github.com/ManuEtt/Dnd/pull/624) (Draft). Codecommit `205a8b8daa6152efda67eef5d5c8b29b5b48e72e`, Testcommit `34757df4d025a757ea7c08b8c093e93075ce3cd6`; Dokumentationscommit ist anschließender PR-HEAD.
+- **IMPLEMENTIERT:** Optionales rekursives Löschen von `$HOME/.android/cache` nur noch bei absolutem, vorhandenem, physisch aufgelöstem HOME ungleich `/`; Symlinks in `.android` und `cache` werden übersprungen. Das schützt fremde Daten bei HOME-Root-Aliassen, relativen Werten und verlinkten Caches. Der SDK-Retry bleibt von der Warnung unabhängig. Positiv-/Negativ-Regressionen ergänzen die bisherigen SDK- und NDK-Prüfungen.
+- **Geänderte Dateien:** `scripts/install_android_sdk_packages.sh`, `scripts/tests/test_install_android_sdk_packages.py`, `README.md`, `docs/CODEX_CHECKPOINT.md` und `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Isoliert im lokalen Container `bash -n` sowie sieben sichere Shell-Mock- und Sentinel-Proben (vier unsichere HOME-Werte, zwei Symlink-Varianten, ein erlaubter Alias) bestanden; identisch zur auf GitHub veröffentlichten Skriptlogik rekonstruiert. Keine tatsächliche vollständige lokale Repo-Prüfung behauptet.
+- **NICHT GETESTET:** Die veröffentlichten Python-Unittest-Methoden als Teil des vollständigen Repositories, Projekt-/SRD-/Grenzprüfungen, Backend, Dart-Format/Flutter-Analyse/Tests, Debug-/ABI-APKs, Alpha-Release auf finalem PR-HEAD; echtes Android-Gerät und Updates.
+- **BLOCKIERT:** GitHub-DNS im lokalen Container verhindert vollständigen Checkout; die finale GitHub-Actions-Abnahme sowie bei Integration die verlustfreie Zusammenführung paralleler README-/Checkpoint-Nachträge stehen noch aus.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #624. App-Version `0.8.52+102`, SQLite-/JSON-Formate und Spielstände unverändert; keine Migration, kein Eingriff in Regeln/Story/UI.
+- **NÄCHSTER SCHRITT:** Exakte CI aller Jobs für den abschließenden PR-#624-HEAD prüfen; bei Fehler im selben Branch reparieren. Danach aktuellen Main und offene PR-Fachdateien erneut vergleichen, erst bei vollständigem Erfolg eine Integration bewerten.
+
+
 ---
 
 ## 2026-11-07 – Auswahl der Stufenaufstiegsmethode bei 200 % Android-Schrift
