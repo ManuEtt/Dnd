@@ -11,10 +11,7 @@ Campaign _readyCampaign() => Campaign(
   scene: 'Das vierzehnte Blatt liegt sicher verwahrt.',
   sessionId: 'session-8',
   hero: HeroCharacter(id: 'hero', name: 'Valen', hitPoints: 17),
-  storyBible: const {
-    'mode': 'rabenwacht-voice-v1',
-    'stage': 'voice-threshold',
-  },
+  storyBible: const {'mode': 'rabenwacht-voice-v1', 'stage': 'voice-threshold'},
   facts: const {
     'voice:oathPageFound': 'true',
     'voice:nameCustody': 'hero',
@@ -38,11 +35,7 @@ void main() {
       'Ich berufe den Rat nicht ein.',
     ]) {
       final turn = FourteenthVoiceAct8.advance(campaign, decision);
-      expect(
-        identical(turn.campaign, campaign),
-        isTrue,
-        reason: decision,
-      );
+      expect(identical(turn.campaign, campaign), isTrue, reason: decision);
       expect(turn.campaign.storyBible['stage'], 'voice-threshold');
       expect(turn.campaign.facts['voice:visited:council'], isNull);
       expect(turn.campaign.facts['location'], isNull);
@@ -76,18 +69,9 @@ void main() {
   test('missing custody or evidence still blocks explicit summoning', () {
     final campaign = _readyCampaign();
     for (final facts in [
-      {
-        ...campaign.facts,
-        'voice:oathPageFound': 'false',
-      },
-      {
-        ...campaign.facts,
-        'voice:nameCustody': 'chronist',
-      },
-      {
-        ...campaign.facts,
-        'voice:splitInkLetter': 'false',
-      },
+      {...campaign.facts, 'voice:oathPageFound': 'false'},
+      {...campaign.facts, 'voice:nameCustody': 'chronist'},
+      {...campaign.facts, 'voice:splitInkLetter': 'false'},
     ]) {
       final blocked = campaign.copyWith(facts: facts);
       final before = jsonEncode(blocked.toJson());
