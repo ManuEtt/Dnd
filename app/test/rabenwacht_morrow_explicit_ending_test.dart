@@ -64,11 +64,7 @@ void main() {
         reason: input,
       );
       expect(turn.campaign.facts['voice:morrow:outcome'], isNull);
-      expect(
-        turn.campaign.quests.last.status,
-        'active',
-        reason: input,
-      );
+      expect(turn.campaign.quests.last.status, 'active', reason: input);
       expect(jsonEncode(original.toJson()), before);
     }
   });
@@ -152,44 +148,47 @@ void main() {
     expect(jsonEncode(restored.toJson()), before);
   });
 
-  test('SQLite reopening retains a confirmed ending and read-only inputs', () async {
-    final directory = await Directory.systemTemp.createTemp('morrow-choice-');
-    final path = paths.join(directory.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      final original = _campaign();
-      final decided = FourteenthVoiceMorrow.advance(
-        original,
-        'Brief mit Quellen veröffentlichen.',
-      ).campaign;
-      await repository.saveCampaign(decided);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+  test(
+    'SQLite reopening retains a confirmed ending and read-only inputs',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('morrow-choice-');
+      final path = paths.join(directory.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      final restored = (await repository.getCampaign(decided.id))!;
-      final before = jsonEncode(restored.toJson());
-      expect(restored.storyBible['stage'], 'voice-morrow-end-published');
-      expect(restored.facts['voice:morrow:outcome'], 'published');
-      expect(restored.quests.last.status, 'completed');
-      final next = FourteenthVoiceMorrow.advance(
-        restored,
-        'Liora selbst entscheiden lassen.',
-      );
-      expect(identical(next.campaign, restored), isTrue);
-      expect(jsonEncode(restored.toJson()), before);
-      expect(restored.hero.toJson(), original.hero.toJson());
-      expect(
-        (await repository.reconstructCampaign(restored.id))!.toJson(),
-        restored.toJson(),
-      );
-    } finally {
-      await repository.close();
-      await directory.delete(recursive: true);
-    }
-  });
+      try {
+        final original = _campaign();
+        final decided = FourteenthVoiceMorrow.advance(
+          original,
+          'Brief mit Quellen veröffentlichen.',
+        ).campaign;
+        await repository.saveCampaign(decided);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final restored = (await repository.getCampaign(decided.id))!;
+        final before = jsonEncode(restored.toJson());
+        expect(restored.storyBible['stage'], 'voice-morrow-end-published');
+        expect(restored.facts['voice:morrow:outcome'], 'published');
+        expect(restored.quests.last.status, 'completed');
+        final next = FourteenthVoiceMorrow.advance(
+          restored,
+          'Liora selbst entscheiden lassen.',
+        );
+        expect(identical(next.campaign, restored), isTrue);
+        expect(jsonEncode(restored.toJson()), before);
+        expect(restored.hero.toJson(), original.hero.toJson());
+        expect(
+          (await repository.reconstructCampaign(restored.id))!.toJson(),
+          restored.toJson(),
+        );
+      } finally {
+        await repository.close();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }
