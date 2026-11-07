@@ -2242,3 +2242,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Fehlender vollständiger lokaler Checkout und die endgültige GitHub-Actions-Abnahme auf dem Dokumentations-HEAD; gemeinsame README-/Checkpoint-Nachträge müssen bei späterer Integration verlustfrei erhalten bleiben.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge von PR #629; keine Spielstand-, Datenbank- oder Versionsänderung.
 - **NÄCHSTER SCHRITT:** Die neu gestartete finale CI vollständig kontrollieren, gegebenenfalls Test-/Formatfehler im eigenen Branch korrigieren, dann aktuellen Main und offene PR-Dateien vergleichen. Keine ungeprüfte Integration.
+
+
+## 07.11.2026 – Akt VII: Namenverwahrung erfordert eine bewusste Spielerwahl (PR #632)
+
+- **Basis-main:** `bbe6ee0901f1873af67647bf54462e4a44821762`; **Branch:** `fix/chat-b/act7-custody-explicit-intent-20261107`; **PR:** [#632](https://github.com/ManuEtt/Dnd/pull/632) (initial Draft).
+- **IMPLEMENTIERT:** Im Ledger des siebten Rabenwacht-Akts wählt die lokale Storylogik die Verwahrung des vierzehnten Namens bei Liora oder dem Helden nur noch nach einer vollständigen ausdrücklichen Entscheidung. Bisher konnte eine bloße Erwähnung von `liora den namen` oder `selbst bewahr` bereits `voice:nameCustody`, `voice:act7Reached` und den Übergang nach Akt VIII auslösen. Fragen, Negationen und hypothetische Erwägungen bestätigen nun keinen Übergang. Die bestätigte Untersuchung des Eidblatts bleibt zwingend.
+- **CODE UND TESTS:** `app/lib/story/fourteenth_voice_act7.dart` und neuer `app/test/rabenwacht_act7_custody_intent_test.dart`: sechs Negativ-/Positivtests (zehn unverbindliche Formulierungen, Liora-Übergabe, Selbstverwahrung, fehlendes Blatt, JSON-Neustart, SQLite-Neuöffnung und Journalrekonstruktion). Original-Snapshot, Hero, Quest- und Revisionswerte bleiben erhalten.
+- **DOKUMENTATION:** Neutrale README-Notiz ausschließlich am Dateiende angefügt, `docs/CODEX_CHECKPOINT.md` und `docs/parallel/CHAT_B_CHECKPOINT.md` additiv fortgeschrieben.
+- **GETESTET:** Live-Repository-/Main-/Masterprompt-/PR-/Actions-Bestandsaufnahme; 43 offene PRs hinsichtlich Fachdateikonflikten geprüft, betroffene Tests/Storyquelle gelesen, Fach- und Teständerungen committed. Vorherige erfolgreiche CI (#628) ist nicht auf diesen PR übertragbar.
+- **NICHT GETESTET/BLOCKIERT:** Vollständiger Workflow auf endgültigem Commit noch offen (Dart-Format, Flutter-Analyse/Tests, Python/Backend, Android-Debug/optimierte APKs, Release), Gerätetest, produktiver KI-Anbieter, Bestandsupdate.
+- **KOMPATIBILITÄT:** Keine Schema-/JSON-/App-Versions-/Rule-Engine-Änderung. Bereits gespeicherte Verwahrungen werden nicht verändert. Kein automatischer Merge, parallele README-/Checkpoint-Nachträge verlustfrei integrieren.
+- **NÄCHSTER SCHRITT:** GitHub Actions für finalen Head vollständig abnehmen und gegebenenfalls im Branch korrigieren; danach Review-Freigabe und Integration durch Chat D.
