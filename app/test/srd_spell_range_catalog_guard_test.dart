@@ -137,6 +137,33 @@ void main() {
     );
   });
 
+  test('unlisted metadata retains unsupported versus mismatch errors', () {
+    final spell = catalog.find('Magic Missile')!;
+    final facts = _facts(spell.range);
+    for (final unlisted in [
+      '120 FEET',
+      '120 Feet',
+      '1746850764555829 miles',
+      '999 feet',
+    ]) {
+      expect(
+        () => SrdSpellTargetRules.validateOrigin(
+          _alter(spell, range: unlisted),
+          facts,
+        ),
+        throwsUnsupportedError,
+        reason: unlisted,
+      );
+    }
+    expect(
+      () => SrdSpellTargetRules.validateOrigin(
+        _alter(spell, range: '150 feet'),
+        facts,
+      ),
+      throwsFormatException,
+    );
+  });
+
   test('pinned spell names accept only their own exact ID and range', () {
     const names = [
       'Aid',

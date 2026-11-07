@@ -129,6 +129,9 @@ class SrdSpellTargetRules {
         'Zauberreichweite enthält nicht bestätigte Randzeichen.',
       );
     }
+    if (!_knownRangeForms.contains(range)) {
+      throw UnsupportedError('Ungeprüfte SRD-Zauberreichweite: $range');
+    }
     final pinned = _pinnedRanges[spell.name];
     if (pinned != null) {
       if (spell.id != pinned.id || range != pinned.range) {
@@ -140,9 +143,6 @@ class SrdSpellTargetRules {
       throw const FormatException(
         'Die SRD-Zauberidentität passt nicht zur geprüften Reichweite.',
       );
-    }
-    if (!_knownRangeForms.contains(range)) {
-      throw UnsupportedError('Ungeprüfte SRD-Zauberreichweite: $range');
     }
     final distance = facts.originDistanceFeet;
     if (distance != null && distance < 0) {
