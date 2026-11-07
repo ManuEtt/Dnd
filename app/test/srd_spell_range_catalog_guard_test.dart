@@ -86,10 +86,7 @@ void main() {
     for (final spell in catalog.spells) {
       if (const {'Special', 'Unlimited'}.contains(spell.range)) {
         expect(
-          () => SrdSpellTargetRules.validateOrigin(
-            spell,
-            _facts(spell.range),
-          ),
+          () => SrdSpellTargetRules.validateOrigin(spell, _facts(spell.range)),
           throwsUnsupportedError,
           reason: spell.name,
         );
