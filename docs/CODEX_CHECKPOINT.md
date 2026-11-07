@@ -2216,3 +2216,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** GitHub-DNS im lokalen Container verhindert vollständigen Checkout; die finale GitHub-Actions-Abnahme sowie bei Integration die verlustfreie Zusammenführung paralleler README-/Checkpoint-Nachträge stehen noch aus.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #624. App-Version `0.8.52+102`, SQLite-/JSON-Formate und Spielstände unverändert; keine Migration, kein Eingriff in Regeln/Story/UI.
 - **NÄCHSTER SCHRITT:** Exakte CI aller Jobs für den abschließenden PR-#624-HEAD prüfen; bei Fehler im selben Branch reparieren. Danach aktuellen Main und offene PR-Fachdateien erneut vergleichen, erst bei vollständigem Erfolg eine Integration bewerten.
+
+
+## 07.11.2026 – Explizite NPC-Besuche im Rabenwacht-Epilog (PR #628)
+
+- **Main-Basis:** `1816115990cc7420ecfb2d1ba7c6babb557f76da`; **Branch:** `fix/chat-b/epilogue-explicit-npc-visit-20261107`; **PR:** [#628](https://github.com/ManuEtt/Dnd/pull/628), initial Draft.
+- **IMPLEMENTIERT:** `FourteenthVoiceEpilogue.advance` legt NPC-Besuche nur bei expliziter Spielerhandlung fest, nicht mehr durch beliebige Teilwortnennungen von Elda/Tarek/Liora, Brief, Brunnen, Zeichnung oder Teller. Rückkehr zum Dorfplatz benötigt gleichfalls ein eindeutiges Kommando. Eine bloße Erörterung setzt keine `voice:epilogue:<npc>`-Fakten und zählt nicht zur Mindestzahl bestätigter Zeugen.
+- **Code/Tests:** `app/lib/story/fourteenth_voice_epilogue.dart` und neuer `app/test/rabenwacht_epilogue_explicit_visit_test.dart` (fünf positive/negative Gruppen: bloße Erwähnungen, acht reale Besuchsaktionen, explizite Rückkehr, JSON-Wiederaufnahme, SQLite-Reopen mit Journalrekonstruktion). Read-only Negativfälle, unveränderte ursprüngliche Spielstände, Helden-/Questdaten und Revision.
+- **Dokumentation:** `README.md` ausschließlich am absoluten Dateiende ergänzt, zentraler und Chat-B-Checkpoint additiv aktualisiert. Bereits bestehende Abschnitte erhalten.
+- **GETESTET:** Live-Masterprompt und Projektunterlagen gelesen, Main/CI überprüft, 42 offene PRs anhand Fachdateien auf Überschneidungen geprüft, eigener Branch erstellt, Code und Tests committed. Der vorige PR #623 hat grüne CI, das ist kein Nachweis für #628.
+- **NICHT GETESTET/BLOCKIERT:** Finaler CI-Lauf mit Dart-Format, Flutter-Analyse/-Gesamttests, Android-Debug/ABI-Builds und Alpha-Release bei Erstellung dieser Notiz noch offen. Keine Realgerät-, Produktiv-KI- oder Upgrade-Abnahme.
+- **Kompatibilität:** Keine Migration und keine Änderung an SQLite-/JSON-Schema, Regelengine, Heldenwerten, NPC-Speichermodell, Questlogik oder App-Version. Nur die bewusste Story-Navigation wird enger validiert.
+- **NÄCHSTER SCHRITT:** Final-HEAD-CI vollständig abnehmen; bei Problemen Code-/Testursachen auf eigenem Branch korrigieren; erst bei grünem Gesamtworkflow PR zur Review freigeben. Chat D integriert README-/Checkpoint-Konflikte verlustfrei, kein automatischer Merge.
