@@ -946,3 +946,20 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+---
+
+## 07.11.2026 – NPC-Chronik mit global eindeutiger Notiz-ID (PR #615)
+
+- **Main-Basis:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `fix/chat-b/npc-continuity-note-id-20261107`.
+- **PR:** [#615](https://github.com/ManuEtt/Dnd/pull/615), zunächst Draft bis zur vollständigen CI-Abnahme. **Fachcommit:** `3bf714e1fe9cc616a7c47a8ccd6ad8180e758acb` (korrigierter Reader), **Testcommit:** `3bad7257c43227695106d6033fdbdf95d3efc1ba`; README-Nachtrag `066198341e307fe2dc6bd07653915719f850fd81`. Finalen Dokumentations-HEAD bei CI ermitteln.
+- **Ausgangsproblem:** `NpcContinuityReader` wählte rohe gespeicherte NPC-Beziehungsnotizen ausschließlich anhand des NPC-Ziels und Zeitstempels. Ungültige/doppelte Notiz-IDs in direkt konstruierten oder beschädigten Kampagnen konnten als separate bestätigte Erinnerungen erscheinen und valide Notizen durch das Limit verdrängen.
+- **IMPLEMENTIERT:** Kampagnenweite ID-Zählung und vollständige sichere Notiz-ID-Prüfung; alle doppelt/ungültig identifizierten Notizen werden schon vor Zeitstempel-Ranking/Limit verworfen. Gültige Notizen bleiben in alter zeitlicher Reihenfolge und ihrem Inhalt unverändert; keinerlei Schreibzugriff auf Spielstand oder Regeln.
+- **Dateien:** `app/lib/story/npc_continuity_reader.dart`, neu `app/test/npc_continuity_note_id_integrity_test.dart`, ausschließlich additive README-/Checkpoint-Nachträge.
+- **Akzeptanztests:** Vier deterministische positive/negative Fälle: Dubletten innerhalb und außerhalb des ausgewählten NPCs, gefährliche Leerzeichen/Zeilenende/Unicode-ID, Limit nach Filterung bei Zeitstempelgleichstand, gültiges/älteres JSON, SQLite-Neustart einschließlich unverändertem Helden und rekonstruierbarem Savegame.
+- **GETESTET:** Repository, Masterprompt, Pflichtdokumente, Main-HEAD, 31 offene PRs samt relevanten Dateipfaden und Vorläufer-CI geprüft; Fachcode und Tests committed; sauberer Zwei-Datei-Code-Diff bestätigt. Vorläufer-PR #611 vollständig grün in [CI #42288725397](https://github.com/ManuEtt/Dnd/actions/runs/42288725397), was ausdrücklich kein Nachweis für #615 ist.
+- **NICHT GETESTET:** Neue Flutter-/Dart-Tests, kompletter GitHub-Actions-Lauf inklusive APK/Release auf finalem PR-Head, Gerätetest, produktive KI, Upgrade (bei Anlage dieser Notiz noch offen).
+- **BLOCKIERT:** CI-Abnahme und Review; zentrale README-/Checkpoint-Änderungen anderer PRs vor Integration verlustfrei zusammenführen.
+- **Migrationen:** Keine; unveränderte SQLite-/JSON-Struktur, SchemaVersion, Helden-, Quest-, Regel- und KI-Provider-Daten.
+- **NÄCHSTER SCHRITT:** Alle CI-Jobs für den finalen PR-#615-HEAD abnehmen und auffällige Tests im selben Branch korrigieren; danach PR zur Review freigeben und Chat D die konfliktfreie Dokumentationsintegration überlassen.

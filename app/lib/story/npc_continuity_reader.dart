@@ -50,6 +50,8 @@ class NpcContinuitySnapshot {
 class NpcContinuityReader {
   const NpcContinuityReader._();
 
+  static final RegExp _safeNoteId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
+
   static NpcContinuitySnapshot read(
     Campaign campaign, {
     required String npcId,
@@ -76,9 +78,20 @@ class NpcContinuityReader {
       );
     }
 
+    // A note ID identifies one confirmed event across the whole campaign.
+    // In malformed in-memory/legacy snapshots, a duplicate or unsafe ID
+    // cannot establish which version of a remembered event is confirmed.
+    // Exclude all such notes before ranking; never guess by timestamp.
+    final noteIdCounts = <String, int>{};
+    for (final note in campaign.npcRelationshipNotes) {
+      noteIdCounts[note.id] = (noteIdCounts[note.id] ?? 0) + 1;
+    }
     final notes = <({int position, NpcRelationshipNote value})>[
       for (var i = 0; i < campaign.npcRelationshipNotes.length; i++)
-        if (campaign.npcRelationshipNotes[i].npcId == npcId)
+        if (campaign.npcRelationshipNotes[i].npcId == npcId &&
+            _safeNoteId.stringMatch(campaign.npcRelationshipNotes[i].id) ==
+                campaign.npcRelationshipNotes[i].id &&
+            noteIdCounts[campaign.npcRelationshipNotes[i].id] == 1)
           (position: i, value: campaign.npcRelationshipNotes[i]),
     ];
     notes.sort((a, b) {
