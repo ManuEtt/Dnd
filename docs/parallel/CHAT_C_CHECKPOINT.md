@@ -799,3 +799,17 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+---
+
+## 2026-11-07 – Große Schrift: Stufenaufstieg per EP oder Meilenstein erreichbar
+
+- **Ausgangs-main:** `f580d4c40f6a29df0098f656094844bfca1ed573` (inkl. integriertem CI-PR #613). **Branch:** `feat/chat-c/levelup-method-large-text-20261107-mainf580`; neuer branch vom aktuellsten main, um bereits von anderen ergänzte README-/Checkpoint-Nachträge verlustfrei mitzunehmen. Ein noch nicht publizierter Vorläuferbranch `feat/chat-c/levelup-method-large-text-20261107` ist dadurch ersetzt; er wird nicht gemergt.
+- **Problem:** Der nicht scrollbare `SegmentedButton` im Stufenaufstiegsdialog kann bei 200 % Android-Schrift den „Meilenstein“-Eintrag abschneiden. Gerade bei unzureichenden EP darf das notwendige explizite Alternativverfahren nicht unzugänglich werden.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_class_level_up_dialog.dart` rahmt die bisherige Auswahl in einen horizontalen `SingleChildScrollView` mit stabilem `levelup-method-scroll`-Key ein. Dieselben zwei Auswahlzustände, vorhandene Regelvorprüfung und ausdrückliche Bestätigung bleiben unverändert; keine sofortige Änderung an Charakterdaten.
+- **REGRESSIONSTESTS:** `app/test/srd_class_level_up_large_text_method_test.dart`: bei 320/360 dp und 200 % Schrift bleibt der Meilenstein bei 0 EP erreichbar, ein Vorschlag entsteht erst nach bewusster Wahl und Bestätigung; bei 0 EP ohne Meilenstein erfolgt kein Aufstieg, Abbrechen liefert null; bei normaler Schrift bleibt die EP-Vorauswahl; Heldendaten werden nicht stillschweigend mutiert.
+- **GETESTET:** Target-Datei auf dem neueren main gegen die vorige Ausgangsbasis geprüft und als unverändert festgestellt; Originalcode und vorhandene UI-/Domain-Tests gelesen; keine vollständige CI auf dem neuen Branch bisher.
+- **NICHT GETESTET:** Format, Analyse, vollständige Flutter-/Python-/Backend-Tests auf finalem HEAD, Debug- und ABI-APK, Android-Gerät/TalkBack. Lokales Dart/Flutter-SDK fehlt.
+- **KOMPATIBILITÄT:** SRD-Regeln, App `0.8.52+102`, SQLite-/JSON-Schema, Spielstände und bereits bestätigte Ressourcen unverändert; keine Migration.
+- **NÄCHSTER SCHRITT:** Draft-PR gegen aktuelles main eröffnen; vollständigen CI-Lauf inklusive Widgetregression und Android-Matrix auswerten, bei Fehlern im eigenen Branch korrigieren; nur bei vollständig grüner CI Review-Freigabe, kein Main-Merge.

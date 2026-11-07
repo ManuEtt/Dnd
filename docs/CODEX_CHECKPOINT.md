@@ -2216,3 +2216,16 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** GitHub-DNS im lokalen Container verhindert vollständigen Checkout; die finale GitHub-Actions-Abnahme sowie bei Integration die verlustfreie Zusammenführung paralleler README-/Checkpoint-Nachträge stehen noch aus.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #624. App-Version `0.8.52+102`, SQLite-/JSON-Formate und Spielstände unverändert; keine Migration, kein Eingriff in Regeln/Story/UI.
 - **NÄCHSTER SCHRITT:** Exakte CI aller Jobs für den abschließenden PR-#624-HEAD prüfen; bei Fehler im selben Branch reparieren. Danach aktuellen Main und offene PR-Fachdateien erneut vergleichen, erst bei vollständigem Erfolg eine Integration bewerten.
+
+
+---
+
+## 2026-11-07 – Auswahl der Stufenaufstiegsmethode bei 200 % Android-Schrift
+
+- **Ausgangs-main:** `f580d4c40f6a29df0098f656094844bfca1ed573`; **Branch:** `feat/chat-c/levelup-method-large-text-20261107-mainf580` (nach Integration von #613 neu von main erzeugt). Keine Überschneidung mit anderen offenen UI-PRs #614/#618 und Domain-/Story-PRs.
+- **IMPLEMENTIERT:** Horizontales Scrollen für „Erfahrung“/„Meilenstein“ im bestehenden Dialog `app/lib/ui/srd_class_level_up_dialog.dart`. Neuer Widgettest `app/test/srd_class_level_up_large_text_method_test.dart` prüft 320/360 dp, 2× Text, bewusste Meilensteinwahl ohne EP, Abbruch ohne Zustandsänderung und normale EP-Bestätigung.
+- **GETESTET:** Code-/bestehende UI-Test-/Domain-Regeln und identische Fachdatei auf neuer main-Basis geprüft. Branch-Änderungen sind gesichert.
+- **NICHT GETESTET:** Automatisierte Dart-/Flutter-/Python-/Backend-/Android-CI für diesen neuen HEAD sowie Realgerät/TalkBack; lokale Flutter-SDK-Installation fehlt.
+- **BLOCKIERT:** Vollständige CI auf endgültigem Branch-HEAD erforderlich.
+- **KOMPATIBILITÄT:** Keine Spielregel- oder Datenmodelländerung, kein gespeicherter Aufstieg ohne bestätigte Aktion, SQLite/JSON und Version `0.8.52+102` unverändert.
+- **NÄCHSTER SCHRITT:** PR erstellen, CI bis APK-Artefakte auswerten, fehlschlagende Tests gezielt korrigieren und erst danach Review-Status ändern.
