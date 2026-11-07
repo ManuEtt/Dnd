@@ -28,7 +28,7 @@ Campaign _campaign({List<NpcRelationshipNote> notes = const []}) => Campaign(
   name: 'Die Brunnenchronik',
   world: 'Valdorn',
   sessionId: 'session-saved',
-  revision: 4,
+  revision: 0,
   hero: HeroCharacter(id: 'hero', name: 'Aria', hitPoints: 17),
   scene: 'Ein unbestätigter Erzähler behauptet, Mira habe 999 Gold.',
   npcs: const [
