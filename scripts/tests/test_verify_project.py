@@ -234,7 +234,7 @@ class VerifyProjectTests(unittest.TestCase):
                     with self.subTest(name=name):
                         with zipfile.ZipFile(jar, 'w') as archive:
                             archive.writestr(
-                                WRAPPER_MAIN, b'\\xca\\xfe\\xba\\xbevalid'
+                                WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid'
                             )
                             archive.writestr(name, b'unportable')
                         with mock.patch.object(
@@ -249,7 +249,7 @@ class VerifyProjectTests(unittest.TestCase):
     def test_wrapper_allows_nondevice_superscript_names(self):
         jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
         with zipfile.ZipFile(jar, 'w') as archive:
-            archive.writestr(WRAPPER_MAIN, b'\\xca\\xfe\\xba\\xbevalid')
+            archive.writestr(WRAPPER_MAIN, b'\xca\xfe\xba\xbevalid')
             archive.writestr('META-INF/COM¹-extra.class', b'allowed')
         self.assertEqual(verify_project(self.root), [])
 
