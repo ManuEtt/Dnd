@@ -1,3 +1,14 @@
+## 07.11.2026 – Rabenwacht-Rat nur nach ausdrücklicher Einberufung (PR #619)
+
+- **Main-Basis:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `fix/chat-b/act8-council-explicit-intent-20261107`; **PR:** [#619](https://github.com/ManuEtt/Dnd/pull/619), initial Draft.
+- **IMPLEMENTIERT:** `FourteenthVoiceAct8.advance` löst `voice-threshold` → `voice-council` ausschließlich bei einer erkennbaren Einberufungsaktion plus bezeichnetem Rat/Zeugen aus. Vorher genügte „rat“ als Teil eines anderen Wortes (z. B. „verrate“) oder „Dorfplatz“ ohne Beschluss. Gespeicherte Beweise, eidliche Verwahrung und Negationssperre bleiben zwingend.
+- **Tests ergänzt:** `app/test/rabenwacht_act8_council_intent_test.dart` mit vier Szenarien: nicht handelnde Dialoge/Ortsangaben, vier explizite Einberufungen, unerfüllte Beweis-/Verwahrungsbedingungen, Wiederaufnahme aus JSON. Assertions auf unveränderte Heldendaten, Revision, gespeicherte Fakten und Ursprungsobjekt.
+- **Dateien:** `app/lib/story/fourteenth_voice_act8.dart`, neue Testdatei, neutrale README-Ergänzung am Dateiende, `docs/CODEX_CHECKPOINT.md` und `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **GETESTET:** Live-main, offene PRs und betroffene Quellbereiche auf fachliche Dateikonflikte geprüft; selbstständiger Branch, Code und Tests committed; keine Codeüberschneidung mit den bei Beginn offenen PRs.
+- **NICHT GETESTET/BLOCKIERT:** Vollständige CI des neuen PR-Head (Flutter-Analyse/Tests, Android/Release), echtes Android-Gerät, produktive KI. Vorherige grüne CI auf [PR #615](https://github.com/ManuEtt/Dnd/pull/615) ist kein Nachweis für #619.
+- **Daten/Rules:** Keine Migration oder Änderung von SQLite-/JSON-Schema, Regelautorität, App-Version, Helden-, Kampf-, Quest- oder Inventardaten. Dokumentationsnachträge der parallelen PRs beim Merge verlustfrei vereinigen.
+- **Nächster Schritt:** CI auf finalem Dokumentations-Head vollständig prüfen, Fehler innerhalb des eigenen Branches beheben, nach grüner Gesamt-CI zur Review freigeben; kein automatischer Merge.
+
 ### 06.11.2026 – CI-Negativfall zur abschließenden Zielidentität korrigiert
 
 - **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606); neuer Korrekturcommit `52280992156bbb5f92c351497d6ec9e49ccb8310` nach Code-/Testcommit `a61bd446072d16d143cdf301270da6ca6c22edf7`.
