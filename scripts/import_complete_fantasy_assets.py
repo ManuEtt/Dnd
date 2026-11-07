@@ -20,6 +20,24 @@ ASSETS = tuple(f"portrait_{i}.webp" for i in range(1, 10)) + (
     "ornate_portrait_border.webp",
 )
 MANIFEST = "docs/graphics/GRAFIK_MANIFEST.json"
+# The official archive contains small WebP images plus a few concept assets.
+# Reject unreasonable ZIP metadata before testzip() decompresses *all* entries.
+MAX_ZIP_ENTRIES = 256
+MAX_ZIP_UNCOMPRESSED_BYTES = 64 * 1024 * 1024
+MAX_MANIFEST_BYTES = 512 * 1024
+MAX_ASSET_BYTES = 8 * 1024 * 1024
+
+
+def read_bounded_zip_member(archive: zipfile.ZipFile, name: str, limit: int) -> bytes:
+    """Read only a bounded regular ZIP member, even with malformed size metadata."""
+    entry = archive.getinfo(name)
+    if entry.is_dir() or entry.file_size < 0 or entry.file_size > limit:
+        raise ValueError(f"Grafik-ZIP-Eintrag zu gross oder kein Dateiinhalt: {name}")
+    with archive.open(entry) as source:
+        data = source.read(limit + 1)
+    if len(data) > limit:
+        raise ValueError(f"Grafik-ZIP-Eintrag zu gross: {name}")
+    return data
 
 
 
@@ -42,13 +60,39 @@ def ensure_safe_destination(path: pathlib.Path, target_root: pathlib.Path) -> No
 
 def imported_assets(zip_path: pathlib.Path, target_root: pathlib.Path):
     with zipfile.ZipFile(zip_path) as archive:
+        entries = archive.infolist()
+        if (len(entries) > MAX_ZIP_ENTRIES
+                or any(entry.file_size < 0 for entry in entries)
+                or sum(entry.file_size for entry in entries) > MAX_ZIP_UNCOMPRESSED_BYTES):
+            raise ValueError("Grafik-ZIP enthaelt zu viele oder zu grosse Eintraege")
+        if len({entry.filename for entry in entries}) != len(entries):
+            raise ValueError("Grafik-ZIP enthaelt doppelte Dateinamen")
+
+        manifest = json.loads(read_bounded_zip_member(
+            archive, MANIFEST, MAX_MANIFEST_BYTES
+        ))
+        if not isinstance(manifest, dict):
+            raise ValueError("Grafikmanifest muss ein Objekt sein")
+        # Validate every requested asset's declared size before testzip() can
+        # decompress untrusted contents, including unrelated extra files.
+        for name in ASSETS:
+            rel = PREFIX + name
+            info = manifest[rel]
+            if not isinstance(info, dict) or type(info.get("bytes")) is not int:
+                raise ValueError(f"Ungueltige Grafikmanifest-Groesse: {name}")
+            size = info["bytes"]
+            if not (0 < size <= MAX_ASSET_BYTES):
+                raise ValueError(f"Grafikmanifest-Groesse ausserhalb des Limits: {name}")
+            entry = archive.getinfo(rel)
+            if entry.is_dir() or entry.file_size != size:
+                raise ValueError(f"Grafik-ZIP-Groesse stimmt nicht: {name}")
+
         if archive.testzip():
             raise ValueError("Grafik-ZIP beschaedigt")
-        manifest = json.loads(archive.read(MANIFEST))
         validated = []
         for name in ASSETS:
             rel = PREFIX + name
-            data = archive.read(rel)
+            data = read_bounded_zip_member(archive, rel, MAX_ASSET_BYTES)
             info = manifest[rel]
             if hashlib.sha256(data).hexdigest() != info["sha256"]:
                 raise ValueError(f"SHA256 stimmt nicht: {name}")
