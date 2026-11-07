@@ -217,5 +217,165 @@ class AndroidSdkPackageRetryTests(unittest.TestCase):
             self.assertEqual(valid.returncode, 0, valid.stderr)
             self.assertTrue(marker.exists())
 
+
+    def test_unsafe_home_aliases_skip_cache_cleanup_but_retry_sdk(self) -> None:
+        # Mock rm for root aliases: even a regression must never delete
+        # anything outside this test sandbox.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            sdk = root / "sdk"
+            sdk.mkdir()
+            binary = root / "bin"
+            binary.mkdir()
+            counter = root / "counter"
+            rm_log = root / "removed"
+            manager = binary / "sdkmanager"
+            manager.write_text(
+                '#!/usr/bin/env bash\n'
+                'n=$(cat "$SDK_TEST_COUNT" 2>/dev/null || echo 0)\n'
+                'n=$((n + 1))\n'
+                'echo "$n" > "$SDK_TEST_COUNT"\n'
+                '(( n > 1 ))\n',
+                encoding="utf-8",
+            )
+            manager.chmod(0o755)
+            removal = binary / "rm"
+            removal.write_text(
+                '#!/usr/bin/env bash\n'
+                'printf "%s\\n" "$*" >> "$SDK_TEST_RM_LOG"\n',
+                encoding="utf-8",
+            )
+            removal.chmod(0o755)
+            home_root_link = root / "root-link"
+            home_root_link.symlink_to("/", target_is_directory=True)
+            env = os.environ.copy()
+            env.update(
+                {
+                    "PATH": f"{binary}{os.pathsep}{env.get('PATH', '')}",
+                    "ANDROID_SDK_ROOT": str(sdk),
+                    "ANDROID_SDK_INSTALL_ATTEMPTS": "2",
+                    "ANDROID_SDK_RETRY_DELAY_SECONDS": "0",
+                    "SDK_TEST_COUNT": str(counter),
+                    "SDK_TEST_RM_LOG": str(rm_log),
+                }
+            )
+            env.pop("ANDROID_HOME", None)
+            for home in ("/", "/..", str(home_root_link), "relative-home"):
+                with self.subTest(home=home):
+                    counter.unlink(missing_ok=True)
+                    rm_log.unlink(missing_ok=True)
+                    env["HOME"] = home
+                    result = subprocess.run(
+                        ["bash", str(SCRIPT)], env=env, capture_output=True,
+                        text=True, check=False,
+                    )
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(counter.read_text(encoding="utf-8").strip(), "2")
+                    self.assertIn("Skipping unsafe Android user cache", result.stderr)
+                    removed = rm_log.read_text(encoding="utf-8")
+                    self.assertIn(str(sdk / ".temp"), removed)
+                    self.assertNotIn(".android/cache", removed)
+
+    def test_symlinked_android_cache_parents_preserve_external_data(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            sdk = root / "sdk"
+            sdk.mkdir()
+            binary = root / "bin"
+            binary.mkdir()
+            counter = root / "counter"
+            manager = binary / "sdkmanager"
+            manager.write_text(
+                '#!/usr/bin/env bash\n'
+                'n=$(cat "$SDK_TEST_COUNT" 2>/dev/null || echo 0)\n'
+                'n=$((n + 1))\n'
+                'echo "$n" > "$SDK_TEST_COUNT"\n'
+                '(( n > 1 ))\n',
+                encoding="utf-8",
+            )
+            manager.chmod(0o755)
+            env = os.environ.copy()
+            env.update(
+                {
+                    "PATH": f"{binary}{os.pathsep}{env.get('PATH', '')}",
+                    "ANDROID_SDK_ROOT": str(sdk),
+                    "ANDROID_SDK_INSTALL_ATTEMPTS": "2",
+                    "ANDROID_SDK_RETRY_DELAY_SECONDS": "0",
+                    "SDK_TEST_COUNT": str(counter),
+                }
+            )
+            env.pop("ANDROID_HOME", None)
+
+            for kind in ("android-parent", "cache"):
+                with self.subTest(kind=kind):
+                    counter.unlink(missing_ok=True)
+                    home = root / f"home-{kind}"
+                    home.mkdir()
+                    external = root / f"external-{kind}"
+                    cache = external / "cache"
+                    cache.mkdir(parents=True)
+                    sentinel = cache / "keep-me"
+                    sentinel.write_text("unrelated", encoding="utf-8")
+                    if kind == "android-parent":
+                        (home / ".android").symlink_to(external, target_is_directory=True)
+                    else:
+                        (home / ".android").mkdir()
+                        (home / ".android/cache").symlink_to(
+                            cache, target_is_directory=True
+                        )
+                    env["HOME"] = str(home)
+                    result = subprocess.run(
+                        ["bash", str(SCRIPT)], env=env, capture_output=True,
+                        text=True, check=False,
+                    )
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertIn("Skipping unsafe Android user cache", result.stderr)
+                    self.assertEqual(counter.read_text(encoding="utf-8").strip(), "2")
+                    self.assertTrue(sentinel.exists())
+                    self.assertEqual(sentinel.read_text(encoding="utf-8"), "unrelated")
+
+    def test_canonical_safe_home_alias_clears_cache_after_retry(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            sdk = root / "sdk"
+            sdk.mkdir()
+            home = root / "home"
+            (home / "nested").mkdir(parents=True)
+            cache = home / ".android/cache"
+            cache.mkdir(parents=True)
+            (cache / "temporary.zip").write_text("incomplete", encoding="utf-8")
+            binary = root / "bin"
+            binary.mkdir()
+            counter = root / "counter"
+            manager = binary / "sdkmanager"
+            manager.write_text(
+                '#!/usr/bin/env bash\n'
+                'n=$(cat "$SDK_TEST_COUNT" 2>/dev/null || echo 0)\n'
+                'n=$((n + 1))\n'
+                'echo "$n" > "$SDK_TEST_COUNT"\n'
+                '(( n > 1 ))\n',
+                encoding="utf-8",
+            )
+            manager.chmod(0o755)
+            env = os.environ.copy()
+            env.update(
+                {
+                    "PATH": f"{binary}{os.pathsep}{env.get('PATH', '')}",
+                    "HOME": str(home / "nested" / ".."),
+                    "ANDROID_SDK_ROOT": str(sdk),
+                    "ANDROID_SDK_INSTALL_ATTEMPTS": "2",
+                    "ANDROID_SDK_RETRY_DELAY_SECONDS": "0",
+                    "SDK_TEST_COUNT": str(counter),
+                }
+            )
+            env.pop("ANDROID_HOME", None)
+            result = subprocess.run(
+                ["bash", str(SCRIPT)], env=env, capture_output=True,
+                text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(counter.read_text(encoding="utf-8").strip(), "2")
+            self.assertFalse(cache.exists())
+
 if __name__ == "__main__":
     unittest.main()
