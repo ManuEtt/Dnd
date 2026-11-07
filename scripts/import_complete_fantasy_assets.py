@@ -125,6 +125,8 @@ def publish_verified_asset(
     path.parent.mkdir(parents=True, exist_ok=True)
     ensure_safe_destination(path, target_root)
     if path.exists():
+        if path.read_bytes() != data:
+            raise FileExistsError(f"Abweichendes Original nicht ueberschreiben: {path}")
         return
     descriptor, temp_name = tempfile.mkstemp(
         prefix=f".{path.name}.", suffix=".partial", dir=path.parent
