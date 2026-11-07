@@ -1399,3 +1399,25 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 07.11.2026 – 29 SRD-Rituale gegen gefälschte Identitäten sichern, PR #622
+
+**Main-Basis:** `0a813df100aa649c2204018349b0db9af09fb83f`. **Eigener Branch:** `feat/chat-a/ritual-catalog-identity-20261107`. **Fachcommit:** `8b98068173f4932d1349f29ca8464034bcfb71a5`. **PR:** https://github.com/ManuEtt/Dnd/pull/622, zunächst Draft.
+
+**Ausgangsfehler:** `SrdRitualCastingRules.preflight` bewertete ein vom Aufrufer kontrollierbares `ritual`-Flag mit `Action or Ritual`, ohne für diesen Zauber die tatsächliche Ritualberechtigung nachzuweisen. Ein öffentlich erzeugtes `SrdSpellDefinition` konnte etwa `Magic Missile` als slotfreies Ritual vorbereiten.
+
+**Fachlich implementiert:** `app/lib/domain/srd_ritual_casting_rules.dart` verlangt für jeden Ritualplan die genaue Kombination aus katalogisiertem englischen Namen, stabiler ID, Level 1–9, Ritualwirkzeit und vollständiger geordneter Klasse(n)-Liste. Nur die 29 im Arbeitskatalog als Ritual markierten Einträge werden anerkannt. Unbekannte Wirkzeitgrammatik liefert weiterhin `UnsupportedError`. Geänderte Level, Klassen, IDs oder Namen scheitern mit `FormatException`, bevor ein Plan entsteht. Die Vorprüfung bleibt read-only; sie verrechnet keine zehn Minuten realer Zeit und verbraucht keine Zauberplätze oder Materialien.
+
+**Neue Testdatei:** `app/test/srd_ritual_catalog_identity_test.dart` mit Positivfällen der 29 Ritualzauber, manipuliertem `Magic Missile`, sieben Metadatenfälschungen, unbekannter Ritualzeit, Helden-/Slot-Immutabilität und Snapshot-Veraltung. Vorhandene Ritualregressionen bleiben aktiviert.
+
+**Quellen/Coverage:** Wizards of the Coast LLC, SRD v5.2.1, *Casting without Slots / Rituals* und *Longer Casting Times* (CC BY 4.0), https://www.dndbeyond.com/srd. Arbeitskatalog 339, davon 29 Ritual-Einträge; keine offizielle Vollprüfung individueller Zaubereffekte behauptet.
+
+**Getestet:** 29/29 feste Tupel automatisiert aus GitHub-Main-Katalog abgeglichen. Vor Beginn alle 38 offenen PRs auf direkte Fachdateiüberschneidung geprüft, Ergebnis keine. Neue Positiv-/Negativtestfälle committed, aber lokales Dart/Flutter fehlt.
+
+**Nicht getestet:** Finale Github Actions nach Dokumentations-HEAD, reales Android, Kombination mit anderen offenen PRs. Kein vorweggenommener grüner APK-Erfolg.
+
+**Blocker:** Nur fehlendes lokales Dart-/Flutter-SDK. Dokumentationskollisionen der parallel offenen PRs durch Bereich D verlustfrei zu integrieren.
+
+**Spielstände/Migration:** Keine Modell-, Event-, JSON-, SQLite-, Backend-, UI-, Story- oder Android-Version geändert; kein Migrationsbedarf.
+
+**Nächster konkreter Schritt:** Volle CI am finalen PR-HEAD auf Dart-Format, Flutter-Analyse, alle Flutter-Tests und Android-Builds prüfen; Abweichungen reparieren und PR erst bei vollständigem CI-Erfolg aus Draft freigeben.
