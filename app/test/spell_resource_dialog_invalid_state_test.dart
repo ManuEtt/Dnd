@@ -56,9 +56,11 @@ void main() {
     );
     expect(find.text('Keine regulären Zauberplätze'), findsNothing);
     expect(
-      tester.widget<FantasyTextButton>(
-        find.byKey(const ValueKey('spell-dialog-cast')),
-      ).onPressed,
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('spell-dialog-cast')),
+          )
+          .onPressed,
       isNull,
     );
     expect(tester.takeException(), isNull);
@@ -87,9 +89,11 @@ void main() {
       findsOneWidget,
     );
     expect(
-      tester.widget<FantasyTextButton>(
-        find.byKey(const ValueKey('spell-dialog-cast')),
-      ).onPressed,
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('spell-dialog-cast')),
+          )
+          .onPressed,
       isNull,
     );
     expect(find.textContaining('Paktmagie Grad'), findsNothing);
@@ -117,9 +121,11 @@ void main() {
     );
     expect(find.textContaining('1: 2 frei'), findsOneWidget);
     expect(
-      tester.widget<FantasyTextButton>(
-        find.byKey(const ValueKey('spell-dialog-cast')),
-      ).onPressed,
+      tester
+          .widget<FantasyTextButton>(
+            find.byKey(const ValueKey('spell-dialog-cast')),
+          )
+          .onPressed,
       isNotNull,
     );
     await tester.tap(find.byKey(const ValueKey('spell-dialog-cast')));
