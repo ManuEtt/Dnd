@@ -82,7 +82,12 @@ void main() {
         _alter(spell, level: 1),
         _alter(spell, school: 'Evocation'),
         _alter(spell, classes: ['Wizard', 'Ranger']),
-        _alter(spell, classes: spell.classes.reversed.toList()),
+        _alter(
+          spell,
+          classes: spell.classes.length > 1
+              ? spell.classes.reversed.toList()
+              : ['Warlock'],
+        ),
         _alter(
           spell,
           castingTime: spell.castingTime == 'Action' ? '1 hour' : 'Action',
