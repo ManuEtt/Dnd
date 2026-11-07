@@ -1476,3 +1476,10 @@ Die Alpha-Release-Erstellung kontrolliert jetzt zusätzlich zum Dateibesitz die 
 Bei der abschließenden Alpha-Release-Prüfung hat die unveränderte Priorität des Dateibesitzschutzes Vorrang vor der neuen Inhaltsprüfung: Wird eine geöffnete Zieldatei durch eine andere reguläre Datei ersetzt, meldet die Prüfung den **Zielaustausch** und bewahrt den fremden Inhalt. Nur bei unveränderter Dateiidentität folgt die zusätzliche SHA256-Inhaltsprüfung. Damit bleiben ältere Regressionstests und die neue Erkennung stiller In-Place-Manipulation zugleich wirksam.
 
 **Fehlerbehebung:** Commit `52280992156bbb5f92c351497d6ec9e49ccb8310` in [PR #606](https://github.com/ManuEtt/Dnd/pull/606). Der erste vollständige Lauf [#42194379586](https://github.com/ManuEtt/Dnd/actions/runs/42194379586) scheiterte in einem vorhandenen Python-Negativtest ausschließlich an einer anderen Fehlerklasse/Fehlermeldung; die Reihenfolge wurde korrigiert, kein Test entfernt. Eine erneute vollständige CI auf dem finalen Dokumentations-HEAD bleibt erforderlich. Keine Migration und keine Änderungen an Spielständen, JSON, SQLite, Story, Regeln oder Android-Version.
+
+
+### 2026-11-07 – Stufenaufstiegsverfahren bei großer Schrift scrollbar wählen
+
+Der Stufenaufstiegsdialog hält die Wahl zwischen Erfahrungspunkten und Meilenstein auf schmalen Android-Bildschirmen mit vergrößerter Schrift horizontal bedienbar. Insbesondere bei unzureichenden Erfahrungspunkten muss die alternative Meilensteinmethode weiterhin ausdrücklich gewählt werden. Die vorhandene Prüfung der Aufstiegsvoraussetzungen und die getrennte Speicherung des Charakters bleiben unverändert.
+
+**Nachweis:** `app/lib/ui/srd_class_level_up_dialog.dart`, `app/test/srd_class_level_up_large_text_method_test.dart`; Branch `feat/chat-c/levelup-method-large-text-20261107`. Neue Widgettests für 320/360 dp bei 200 % Schrift und positive/negative Aufstiegsentscheidungen erstellt; eine erfolgreiche CI-Abnahme auf diesem neuen Branch liegt noch nicht vor. Keine Änderung an App-Version `0.8.52+102`, SRD-Regeln, SQLite-/JSON-Daten oder bestehenden Spielständen. Tests auf einem physischen Android-Gerät und mit TalkBack stehen aus.
