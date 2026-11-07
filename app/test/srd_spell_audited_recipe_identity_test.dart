@@ -48,25 +48,28 @@ void main() {
     catalog = await SrdSpellCatalogLoader.load();
   });
 
-  test('four original multi-item material recipes retain two audited items', () {
-    const names = [
-      'Astral Projection',
-      'Clone',
-      'Legend Lore',
-      'Secret Chest',
-    ];
-    for (final name in names) {
-      final spell = catalog.find(name)!;
-      final items = SrdSpellComponentRules.auditedItems(spell);
-      expect(items, hasLength(2), reason: name);
-      expect(items.map((item) => item.id).toSet(), hasLength(2));
-      expect(items.every((item) => item.label.isNotEmpty), isTrue);
-    }
-    expect(
-      SrdSpellComponentRules.auditedItems(catalog.find('Magic Missile')!),
-      isEmpty,
-    );
-  });
+  test(
+    'four original multi-item material recipes retain two audited items',
+    () {
+      const names = [
+        'Astral Projection',
+        'Clone',
+        'Legend Lore',
+        'Secret Chest',
+      ];
+      for (final name in names) {
+        final spell = catalog.find(name)!;
+        final items = SrdSpellComponentRules.auditedItems(spell);
+        expect(items, hasLength(2), reason: name);
+        expect(items.map((item) => item.id).toSet(), hasLength(2));
+        expect(items.every((item) => item.label.isNotEmpty), isTrue);
+      }
+      expect(
+        SrdSpellComponentRules.auditedItems(catalog.find('Magic Missile')!),
+        isEmpty,
+      );
+    },
+  );
 
   test('audited recipes reject forgery of every indexed spell property', () {
     for (final name in [
