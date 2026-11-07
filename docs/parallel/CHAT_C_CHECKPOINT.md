@@ -799,3 +799,17 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+---
+
+## 2026-11-07 – Kämpfer-Kampfstil bei 200 % Android-Schrift nutzbar
+
+- **Ausgangs-main:** `5766d64880fee8e35d15ac39fc14dc7ef965ccba` (einschließlich integriertem SDK-PR #626). **Branch:** `feat/chat-c/fighter-style-large-text-20261107`. Parallele offene PRs inklusive #625 und #618 auf Fachdateiüberschneidungen geprüft; keine identische UI-/Testdatei.
+- **PROBLEM:** Im Klassenstartassistenten war der Kämpfer-Kampfstil die einzige noch nicht breitenbegrenzte Dropdown-Auswahl. Auf 320/360 dp und großer Android-Schrift kann der Text „Kampf mit großen Waffen“ über den Dialogrand hinausragen.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_class_selection_dialog.dart` setzt am Kämpfer-Kampfstil `isExpanded: true`, `isDense: false`, `itemHeight: null`, begrenzt Anzeige auf eine visuelle Zeile mit Ellipse. Die SRD-Auswahlliste und der gespeicherte Schlüssel bleiben unverändert.
+- **REGRESSIONSTESTS:** `app/test/fighter_style_large_text_dialog_test.dart`: 320/360 dp bei verdoppelter Textgröße und offener IME, Auswahl des langen Kampfstils, zwei Fertigkeiten und drei Meisterschaften, Bestätigung mit ursprünglicher Kennung; negativer Abbruch ohne Auswahl; 360 dp bei Normaltext.
+- **GETESTET:** Vorhandene Kämpfer-/SRD-UI- und Domain-Tests sowie Regelkatalog geprüft, Code und neue Tests im eigenen Branch auf GitHub committed. Kein CI-Ergebnis auf diesem neuen HEAD bisher.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse und gesamte Widgetsuite, Python-/Backend-/Android-CI sowie reales Android-Gerät/TalkBack. Flutter/Dart lokal nicht vorhanden.
+- **KOMPATIBILITÄT:** Keine Änderung der Spielregeln, Klassen-/Inventardaten, App-Version, SQLite-/JSON-Schema oder Spielstände. Kein Main-Merge.
+- **NÄCHSTER SCHRITT:** Draft-PR gegen aktuellen Main-HEAD eröffnen, CI inklusive 320/360-dp-Tests und APK-Matrix auswerten, nötigenfalls nur im eigenen Branch reparieren und erst bei vollständigem Erfolg zum Review freigeben.
