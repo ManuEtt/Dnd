@@ -5,6 +5,8 @@ import json
 import pathlib
 import tempfile
 import unittest
+import warnings
+from unittest import mock
 import zipfile
 
 SCRIPT = pathlib.Path(__file__).resolve().parents[1] / "import_complete_fantasy_assets.py"
@@ -117,6 +119,73 @@ class FantasyImportTests(unittest.TestCase):
         self._make_archive(corrupt=MODULE.ASSETS[4])
         with self.assertRaises(ValueError):
             MODULE.imported_assets(self.archive, self.root)
+
+
+
+    def test_excess_zip_entries_are_rejected_before_crc_scan(self):
+        self._make_archive()
+        with zipfile.ZipFile(self.archive) as archive:
+            original_count = len(archive.infolist())
+        with zipfile.ZipFile(self.archive, "a") as archive:
+            archive.writestr("unrelated/extra.bin", b"new")
+        with (mock.patch.object(MODULE, "MAX_ZIP_ENTRIES", original_count),
+              mock.patch.object(zipfile.ZipFile, "testzip",
+                                side_effect=AssertionError("ZIP scan started"))):
+            with self.assertRaisesRegex(ValueError, "zu viele oder zu grosse"):
+                MODULE.imported_assets(self.archive, self.root)
+
+    def test_excess_total_expanded_size_is_rejected_before_crc_scan(self):
+        self._make_archive()
+        with zipfile.ZipFile(self.archive) as archive:
+            original_bytes = sum(entry.file_size for entry in archive.infolist())
+        with zipfile.ZipFile(self.archive, "a") as archive:
+            archive.writestr("unrelated/extra.bin", b"more")
+        with (mock.patch.object(
+                MODULE, "MAX_ZIP_UNCOMPRESSED_BYTES", original_bytes + 1
+              ),
+              mock.patch.object(zipfile.ZipFile, "testzip",
+                                side_effect=AssertionError("ZIP scan started"))):
+            with self.assertRaisesRegex(ValueError, "zu viele oder zu grosse"):
+                MODULE.imported_assets(self.archive, self.root)
+
+    def test_oversized_manifest_is_rejected_before_crc_scan(self):
+        self._make_archive()
+        with (mock.patch.object(MODULE, "MAX_MANIFEST_BYTES", 32),
+              mock.patch.object(zipfile.ZipFile, "testzip",
+                                side_effect=AssertionError("ZIP scan started"))):
+            with self.assertRaisesRegex(ValueError, "zu gross"):
+                MODULE.imported_assets(self.archive, self.root)
+
+    def test_oversized_artwork_declaration_is_rejected_before_crc_scan(self):
+        self._make_archive()
+        with (mock.patch.object(MODULE, "MAX_ASSET_BYTES", 8),
+              mock.patch.object(zipfile.ZipFile, "testzip",
+                                side_effect=AssertionError("ZIP scan started"))):
+            with self.assertRaisesRegex(ValueError, "ausserhalb des Limits"):
+                MODULE.imported_assets(self.archive, self.root)
+
+    def test_duplicate_zip_names_are_rejected_without_importing(self):
+        payload = self._make_archive()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UserWarning)
+            with zipfile.ZipFile(self.archive, "a") as archive:
+                archive.writestr(MODULE.PREFIX + MODULE.ASSETS[0], payload)
+        with (mock.patch.object(zipfile.ZipFile, "testzip",
+                                side_effect=AssertionError("ZIP scan started"))):
+            with self.assertRaisesRegex(ValueError, "doppelte Dateinamen"):
+                MODULE.imported_assets(self.archive, self.root)
+        self.assertFalse((self.root / MODULE.PREFIX).exists())
+
+    def test_non_object_manifest_is_rejected_without_importing(self):
+        with zipfile.ZipFile(self.archive, "w") as archive:
+            archive.writestr(MODULE.MANIFEST, '["not a manifest"]')
+        with self.assertRaisesRegex(ValueError, "muss ein Objekt sein"):
+            MODULE.imported_assets(self.archive, self.root)
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(self.root / "project")]),
+            1,
+        )
+        self.assertFalse((self.root / "project").exists())
 
 
 if __name__ == "__main__":

@@ -2229,3 +2229,16 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Ein vollständiger lokaler GitHub-Checkout scheitert an DNS-Auflösung; CI der finalen PR-Version und verlustfreie Integration paralleler README-/Checkpoint-Nachträge stehen aus. Keine race-freie Garantie gegen aktive Fremdmanipulation zwischen Dateiprüfung und Löschvorgang.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge dieses PRs; keine Datenmigration, keine Änderungen an App-Version `0.8.52+102`, SQLite-/JSON-Format, Spielständen, Spielregeln, Story oder Benutzeroberfläche.
 - **NÄCHSTER SCHRITT:** Sämtliche GitHub-Actions-Jobs von PR #626 auf dem endgültigen Commit verifizieren und bei Fehlern im eigenen Branch korrigieren; danach neue Main- und PR-Dateipfade vor einer koordinierten Integration erneut abgleichen.
+
+
+## 2026-11-07 – Grafikimport-ZIP vor CRC-Dekompression begrenzen (PR #629)
+
+- **Basis-main:** `5766d64880fee8e35d15ac39fc14dc7ef965ccba` nach regulärem Merge von [PR #626](https://github.com/ManuEtt/Dnd/pull/626). Vorgänger-PR #626 bestand alle sechs CI-Jobs am finalen HEAD `a5ab732f3a67a275a51ebdd616ce8b934930896a`.
+- **Branch/PR:** `fix/chat-d/fantasy-import-zip-limits-20261107`, [PR #629](https://github.com/ManuEtt/Dnd/pull/629) (Draft); Fachcommit `f13a72634099eadfa79a845c22c5d7290321d91b`, Testcommit `3854288ad951132706c074ef50b038688c4dec1d`.
+- **IMPLEMENTIERT:** `scripts/import_complete_fantasy_assets.py` begrenzt Anzahl der ZIP-Einträge (256), Summe angegebener entpackter Daten (64 MiB), Manifestspeicher (512 KiB) und einzelne WebPs (8 MiB); doppelte ZIP-Namen und nicht-objektförmige Manifeste abgewiesen. Erst nach diesen Grenzen erfolgt `testzip()`; danach ausschließlich begrenzte Datei-Lesezugriffe. Vorhandene SHA256-/WEBP-/Zielsymlink-/Nichtüberschreibungsprüfungen unverändert.
+- **TESTS ERGÄNZT:** `scripts/tests/test_import_complete_fantasy_assets.py`: sechs neue Regressionen gegen ZIP-Metadaten, kumulative Dekompressionsgröße, Manifest-/Asset-Limits, Namensduplikate und ungültiges JSON-Wurzelelement. Negative Fälle sperren die CRC-Prüfung gezielt mittels Mock. Vorhandene Idempotenz-/Symlink-/Korruptions- und Hashprüfungen werden weiter ausgeführt.
+- **GETESTET:** Aktueller GitHub-Main, PR-Arbeitsbereiche und unveränderte andere Fachdateien geprüft. Eine erfolgreiche Ausführung der finalen Unittest-Suite wird bis zum tatsächlichen GitHub-Actions-Abschluss ausdrücklich nicht behauptet.
+- **NICHT GETESTET:** Neuer Code mit vollständiger lokaler Repository-Suite, finale Python-/Backend-/Flutter-/Dart-Tests, Android-Debug-/ABI-APK-/Release-Artefakte, echtes Gerät/Upgrade/Produktivsignierung.
+- **BLOCKIERT:** Fehlender vollständiger lokaler Checkout und die endgültige GitHub-Actions-Abnahme auf dem Dokumentations-HEAD; gemeinsame README-/Checkpoint-Nachträge müssen bei späterer Integration verlustfrei erhalten bleiben.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge von PR #629; keine Spielstand-, Datenbank- oder Versionsänderung.
+- **NÄCHSTER SCHRITT:** Die neu gestartete finale CI vollständig kontrollieren, gegebenenfalls Test-/Formatfehler im eigenen Branch korrigieren, dann aktuellen Main und offene PR-Dateien vergleichen. Keine ungeprüfte Integration.
