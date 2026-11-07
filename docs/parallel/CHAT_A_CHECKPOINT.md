@@ -1399,3 +1399,25 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 07.11.2026 – Zauberdauer-Metadatenintegrität, PR #620
+
+**Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`. **Branch:** `feat/chat-a/spell-duration-metadata-integrity-20261107`; **Code-/Testcommit:** `67fd670040e7f8e16cec430ac9669f2049e99ae1`; **Pull Request:** https://github.com/ManuEtt/Dnd/pull/620 (Draft).
+
+**Ausgangsproblem:** Obwohl 339 Zauber nur 24 Dauerformen besitzen, akzeptierte die lesende `SrdSpellDurationRules.parse` zusätzlich willkürliche Zeitspannen wie `999 days`. Ein öffentlich direkt konstruierter `SrdSpellDefinition` ließ sich für `Shield` trotz falscher, aber syntaktisch gültiger Dauer interpretieren. Beides erzeugt falsche Metadatenfreigaben (keine bestätigte automatische Timerwirkung belegt).
+
+**IMPLEMENTIERT:** Genau 23 auswertbare Zeitformen des aktuellen SRD-5.2.1-Katalogs akzeptieren; `Special` bleibt `UnsupportedError`. 14 ausgewählte Dauer-sensitive Zauber werden gegen genaue Name/ID/Dauer-Kombinationen geprüft. Auch eine geänderte ID oder ein gefälschter Name kann eine bekannte Pin-Identität nicht umgehen. Andere Zauber behalten die beschränkte Metadatenklassifikation.
+
+**DATEIEN:** `app/lib/domain/srd_spell_duration_rules.dart`; neu `app/test/srd_spell_duration_catalog_guard_test.dart`; drei append-only Dokumentationsdateien. Weder `models.dart` noch `game_engine.dart`, Story-/UI-/Backend-/CI-Dateien geändert.
+
+**GETESTET:** Tatsächliche Main-Katalog-Dauerformen und 14 konkrete Namen/IDs verglichen, 35 offene PRs inklusive #597/#616/#617 auf Fachdateiüberschneidung geprüft; keine. Deterministische neue Unit-/Negativtests versioniert, aber Lauf mangels lokaler Toolchain noch nicht durchgeführt.
+
+**NICHT GETESTET:** `dart format`, `flutter analyze`, `flutter test`, Android-Build, native Tests und Gesamt-Python-/Backend-Prüfungen müssen via CI auf finalem HEAD belegt werden.
+
+**BLOCKIERT:** Dart/Flutter nicht in der aktuellen Containerumgebung. Additive README-/Checkpoints mehrerer offener PRs bedürfen verlustfreier Zusammenführung durch Bereich D.
+
+**SRD/ABDECKUNG:** Wizards of the Coast LLC, SRD 5.2.1, *Spells / Duration* und individuelle Zauberbeschreibungen, CC BY 4.0, https://www.dndbeyond.com/srd. `RULE-SPELLS-SPELL-DURATION` bleibt `unverified`, da keine vollständige Wirkungsdauer-/Konzentrationsautomation oder Katalog-Full-Reconciliation erfolgt.
+
+**SPEICHER/MIGRATION:** Keine Änderung an persistierten Feldern, JSON-/SQLite-Versionen oder Events; alte gültige Dauerformen unverändert. Unbekannte Metadaten sollen jetzt scheitern statt geraten zu werden.
+
+**NÄCHSTER SCHRITT:** Finale GitHub-CI für PR #620 einschließlich Formatter, Analyzer, 338/339-Katalogregression, Flutter-Tests und Android-ABI-Alpha abnehmen; scheiternde Tests gezielt auf eigenem Branch korrigieren und erst danach Entwurfsstatus aufheben.
