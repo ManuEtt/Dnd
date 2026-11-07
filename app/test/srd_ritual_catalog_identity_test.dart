@@ -113,10 +113,7 @@ void main() {
       ),
       throwsFormatException,
     );
-    expect(
-      () => _preflight(hero, spell),
-      throwsFormatException,
-    );
+    expect(() => _preflight(hero, spell), throwsFormatException);
     expect(jsonEncode(hero.toJson()), before);
     expect(hero.spentSpellSlots, isEmpty);
     expect(hero.spentPactSlots, 0);
@@ -147,17 +144,17 @@ void main() {
     expect(hero.spentSpellSlots, isEmpty);
   });
 
-  test('unknown ritual-time grammar stays unsupported before identity gate', () {
-    final spell = catalog.find('Detect Magic')!;
-    final hero = _hero('Magier', spell.name);
-    expect(
-      () => _preflight(
-        hero,
-        _alter(spell, castingTime: 'Special or Ritual'),
-      ),
-      throwsUnsupportedError,
-    );
-  });
+  test(
+    'unknown ritual-time grammar stays unsupported before identity gate',
+    () {
+      final spell = catalog.find('Detect Magic')!;
+      final hero = _hero('Magier', spell.name);
+      expect(
+        () => _preflight(hero, _alter(spell, castingTime: 'Special or Ritual')),
+        throwsUnsupportedError,
+      );
+    },
+  );
 
   test('ritual approval is read-only and expires after hero modification', () {
     final spell = catalog.find('Detect Magic')!;
