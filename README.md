@@ -1508,6 +1508,13 @@ Bei der abschließenden Alpha-Release-Prüfung hat die unveränderte Priorität 
 **Nachweis/Abnahme:** Codecommit `f13a72634099eadfa79a845c22c5d7290321d91b`, Testcommit `3854288ad951132706c074ef50b038688c4dec1d`; Branch `fix/chat-d/fantasy-import-zip-limits-20261107`, [PR #629](https://github.com/ManuEtt/Dnd/pull/629) (Draft, nicht integriert). Sechs neue Python-Regressionsfälle prüfen übergroße ZIP-Einträge und Metadaten, doppelte Namen, nicht-objektförmige Manifeste und das Stoppen **vor** `testzip()`. Der vollständige Python-/Backend-/Flutter-/Android-CI-Nachweis auf dem finalen PR-Commit steht zum Dokumentationszeitpunkt noch aus. Keine Datenmigration, keine Änderungen an SQLite/JSON/Spielständen, UI, Regeln, Story oder Buildversion. Andere offene PRs ändern keine der beiden Fachdateien; gemeinsame Dokumentationsdateien bei Integration append-only zusammenführen.
 
 
+### 2026-11-07 – Originalgrafiken erst nach vollständig erfolgreichem Schreiben veröffentlichen
+
+**Fehlerbehebung:** Der optionale Import von 13 geprüften WebP-Originalgrafiken konnte bei einem E/A-Abbruch eine teilweise geschriebene Datei unter ihrem endgültigen Namen hinterlassen, die einen späteren erneuten Import blockierte. `scripts/import_complete_fantasy_assets.py` schreibt jedes neue Bild nun zunächst in eine zufällig benannte temporäre Datei im Zielordner, synchronisiert deren Inhalt und veröffentlicht sie erst danach über einen exklusiven Hardlink. Schlägt das Schreiben oder die Veröffentlichung fehl, wird die temporäre Datei entfernt; bereits fremde Dateien werden nicht überschrieben. Ein zwischen ZIP-Vorprüfung und tatsächlicher Veröffentlichung geändertes Original wird erneut anhand seiner Bytes abgelehnt.
+
+**Tests/Nachweis:** Codecommits `bce63cd0c146d06b7f0045abae7961cb7a048622` und `e3b4c39b019c3733ccff2669a3c00eb06db0709f`, Testcommits `aeeb26bad86c76554b6c03df4a599d906195f893` und `b7d36d4e0fbc1b4fb32213bf04ca452840404d4a`; [PR #631](https://github.com/ManuEtt/Dnd/pull/631) (Draft, nicht integriert), Branch `fix/chat-d/fantasy-import-atomic-publication-20261107`. Vier neue Python-Regressionstests betreffen simulierten Datenträgerausfall, konkurrierende Zieldateien, späte Originaländerungen und Fortsetzung nach gescheiterter zweiter Veröffentlichung. Vollständige Python-/Backend-/Flutter-/Android-/Release-CI am finalen PR-HEAD zur Dokumentation noch ausstehend. Die Veröffentlichung ist **je Einzelbild atomar**, keine Transaktion aller 13 Grafiken: Ein erneuter Import ergänzt bereits korrekt veröffentlichte Dateien. Keine Auswirkungen auf SQLite, JSON, Spielstände, Domainregeln, UI oder Buildversion.
+
+
 
 ### 2026-11-07 – Magieinitiierten-Auswahl beim Hintergrundwechsel neu bestätigen
 

@@ -2244,6 +2244,19 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **NÄCHSTER SCHRITT:** Die neu gestartete finale CI vollständig kontrollieren, gegebenenfalls Test-/Formatfehler im eigenen Branch korrigieren, dann aktuellen Main und offene PR-Dateien vergleichen. Keine ungeprüfte Integration.
 
 
+## 2026-11-07 – Per-Datei-atomare Veröffentlichung verifizierter Originalgrafiken (PR #631)
+
+- **Main-Basis:** `bbe6ee0901f1873af67647bf54462e4a44821762`; darin ist [PR #629](https://github.com/ManuEtt/Dnd/pull/629) nach vollständig erfolgreichem Actions-Lauf [#42398305255](https://github.com/ManuEtt/Dnd/actions/runs/42398305255) (alle sechs Jobs) integriert. Separate neue Main-CI später prüfen.
+- **Branch/PR:** `fix/chat-d/fantasy-import-atomic-publication-20261107`, [PR #631](https://github.com/ManuEtt/Dnd/pull/631) (Draft); Code `bce63cd0c146d06b7f0045abae7961cb7a048622`, `e3b4c39b019c3733ccff2669a3c00eb06db0709f`; Tests `aeeb26bad86c76554b6c03df4a599d906195f893`, `b7d36d4e0fbc1b4fb32213bf04ca452840404d4a`.
+- **IMPLEMENTIERT:** Neue `publish_verified_asset`-Grenze in `scripts/import_complete_fantasy_assets.py`: Ziel und Symlinks erneut prüfen, zufällige Staging-Datei im Zielverzeichnis vollständig schreiben und fsyncen, dann per exklusivem `os.link` publizieren. Vorhandene Bilder unmittelbar vor Überspringen erneut inhaltlich vergleichen; andere Inhalte ablehnen. Im Fehlerfall Staging-Datei entfernen.
+- **TESTS ERGÄNZT:** Vier neue deterministische Python-Regressionsfälle in `scripts/tests/test_import_complete_fantasy_assets.py`: I/O-Ausfall vor Veröffentlichung, konkurrierender finaler Name, Inhalt zwischen Validierung und Publikation geändert, Fehler bei zweitem Bild mit sauberer Fortsetzung. Vorhandene ZIP-Limit-/WebP-/SHA256-/Linkschutztests bleiben bestehen.
+- **GETESTET:** Tatsächliche GitHub-Quelltexte und offene PR-Arbeitsbereiche geprüft; vollständige CI des vorigen Pakets #629 grün auf dessen finalem HEAD. Dieser Nachweis gilt nicht für #631.
+- **NICHT GETESTET:** Neuer Python-Code in vollständiger Repository-Unittest-Suite, Backend, Dart-Format/Analyse, Flutter-Tests, Android-Debug-/ABI-/Alpha-Release am finalen PR-Commit; echtes Android-Gerät, Upgrade und Produktivsignierung.
+- **BLOCKIERT:** Vollständiger lokaler GitHub-Checkout im verfügbaren Container bisher nicht möglich; finale GitHub-Actions-Abnahme, neue Main-CI und dokumentationsbezogener Konfliktabgleich vor Integration. README nur hinten additiv ergänzt.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #631; keine Sammlungstransaktion für 13 Bilder. Teilweise erfolgreich veröffentlichte vollständige Einzelbilder dürfen beim nächsten Import unverändert weiterverwendet werden. Keine Änderungen an App-Version, SQLite, JSON, Story, Regeln oder UI.
+- **NÄCHSTER SCHRITT:** CI exakt auf dem abschließenden #631-HEAD kontrollieren; eventuelle Fehler nur im eigenen Branch korrigieren. Vor Merge Main-/PR-Dateiüberschneidung neu prüfen; nur bei vollständig erfolgreicher CI und Konfliktfreiheit integrieren.
+
+
 
 ---
 
