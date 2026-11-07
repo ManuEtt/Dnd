@@ -92,7 +92,10 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          dart format lib test
+          git diff -- lib/domain/srd_ritual_casting_rules.dart test/srd_ritual_catalog_identity_test.dart
+          exit 1  # Temporary diagnostic only; strict workflow restored after capture
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
