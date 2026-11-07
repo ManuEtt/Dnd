@@ -1476,3 +1476,11 @@ Die Alpha-Release-Erstellung kontrolliert jetzt zusätzlich zum Dateibesitz die 
 Bei der abschließenden Alpha-Release-Prüfung hat die unveränderte Priorität des Dateibesitzschutzes Vorrang vor der neuen Inhaltsprüfung: Wird eine geöffnete Zieldatei durch eine andere reguläre Datei ersetzt, meldet die Prüfung den **Zielaustausch** und bewahrt den fremden Inhalt. Nur bei unveränderter Dateiidentität folgt die zusätzliche SHA256-Inhaltsprüfung. Damit bleiben ältere Regressionstests und die neue Erkennung stiller In-Place-Manipulation zugleich wirksam.
 
 **Fehlerbehebung:** Commit `52280992156bbb5f92c351497d6ec9e49ccb8310` in [PR #606](https://github.com/ManuEtt/Dnd/pull/606). Der erste vollständige Lauf [#42194379586](https://github.com/ManuEtt/Dnd/actions/runs/42194379586) scheiterte in einem vorhandenen Python-Negativtest ausschließlich an einer anderen Fehlerklasse/Fehlermeldung; die Reihenfolge wurde korrigiert, kein Test entfernt. Eine erneute vollständige CI auf dem finalen Dokumentations-HEAD bleibt erforderlich. Keine Migration und keine Änderungen an Spielständen, JSON, SQLite, Story, Regeln oder Android-Version.
+
+
+
+### 2026-11-07 – Zauberressourcen bei ungültigen Verbrauchswerten sicher anzeigen
+
+Der Dialog zur ausdrücklichen Bestätigung von Zauberressourcen zeigt bei widersprüchlichem gespeichertem Zauberplatz- oder Paktmagieverbrauch künftig eine verständliche Fehlermeldung, statt beim Öffnen abzustürzen oder die Werte als frei darzustellen. Die Bestätigung ist in diesem Fall deaktiviert; Abbrechen bleibt möglich. Bereits korrekt gespeicherte Werte und die ausdrücklich bestätigte Zauberauswahl werden weiterhin unverändert behandelt. Es werden weder Ressourcen noch Spielstände eigenmächtig geändert.
+
+**Fachdateien:** `app/lib/ui/spellcasting_dialog.dart`, `app/test/spell_resource_dialog_invalid_state_test.dart`. **Branch:** `feat/chat-c/spell-resource-dialog-guard-20261107`. Positive und negative Widgettests sind ergänzt, aber die GitHub-CI auf dem neuen Branch ist noch ausstehend. Keine Änderungen an SRD-Regeln, SQLite-/JSON-Schema oder Version `0.8.52+102`. Android-Geräteprüfung und TalkBack bleiben offen.
