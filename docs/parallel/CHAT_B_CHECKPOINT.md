@@ -946,3 +946,18 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+---
+
+## 07.11.2026 – Namesverwahrung in Akt VII ausdrücklich wählen (PR #632)
+
+- **Ausgangs-main:** `bbe6ee0901f1873af67647bf54462e4a44821762`; **Branch:** `fix/chat-b/act7-custody-explicit-intent-20261107`; **PR:** [#632](https://github.com/ManuEtt/Dnd/pull/632), zunächst Draft. **Fachcommit:** `f3a8b68f77e4d1cd6e8951a42e471782773f84b9`; **Testcommit:** `fa61a18a75496a858c631e538299fccc8e74fcf6`.
+- **PROBLEM:** Im `voice-ledger` erkannte `FourteenthVoiceAct7.advance` den Textausschnitt `liora den namen` beziehungsweise `selbst bewahr` als bestätigten Verwahrungsauftrag. Bereits eine Frage („Kann ich Liora den Namen anvertrauen?“) oder eine hypothetische Aussage konnte den unveränderlichen Kampagnenfakt `voice:nameCustody` setzen und den Weg zu Akt VIII freischalten.
+- **IMPLEMENTIERT:** `_choosesNameCustody` akzeptiert ausschließlich vollständige Entscheidungen für Liora oder Eigenverwahrung (bestehende Aktionskommandos und eindeutige Ich-Absichtserklärungen). Die zuvor untersuchte Eidseite bleibt notwendig; negative und hypothetische Äußerungen bleiben unverbindlich. Keine eigenmächtigen Regeln, Würfel, XP, Inventar- oder Queständerungen.
+- **DATEIEN:** `app/lib/story/fourteenth_voice_act7.dart`, neuer Test `app/test/rabenwacht_act7_custody_intent_test.dart`, zusätzlicher neutraler README-Nachtrag am Ende, zentrale und persönliche Checkpoints.
+- **TESTS ERGÄNZT:** Sechs Flutter-Szenarien: zehn Negativformulierungen und unveränderte Ursprungsdaten, vier explizite Liora-Übergaben, fünf explizite Eigenverwahrungen, gesperrter Übergang ohne Eidseite, Legacy-/JSON-Roundtrip und echte SQLite-Wiederöffnung samt Journalrekonstruktion.
+- **GETESTET:** Live-main, Masterprompt, Projektarchitektur und bestehende Akt-VII-Tests, letzte Actions und alle 43 offenen PRs mit relevanten Dateipfaden gesichtet; zwei Fachdateien konfliktfrei geändert und auf eigenem Remote-Branch gesichert. Vorherige grüne CI von PR #628 ist kein Nachweis für #632.
+- **NICHT GETESTET/BLOCKIERT:** Vollständige GitHub-Workflow-CI auf endgültigem Dokumentations-HEAD bei Erstellung dieser Notiz offen: Python/Backend, Dart-Format, Flutter-Analyse/-Tests, Android-Debug/ABI und Release. Realgerät, produktiver KI-Provider und Bestandsupgrade ungeprüft.
+- **KOMPATIBILITÄT:** Keine JSON-/SQLite-Migration und keine neuen Felder, keine Änderung an App-Version, Spielregel-/Modelldateien oder persistierten Bestandsentscheidungen. README-/Checkpoint-Konflikte nur durch Chat D integrieren, kein automatischer Merge.
+- **NÄCHSTER SCHRITT:** Final-HEAD-CI auswerten, Fehler innerhalb des eigenen Branches beheben, nach vollständig grünen Jobs PR zur Review freigeben.
