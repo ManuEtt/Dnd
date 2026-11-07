@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lebendiger_spielleiter/domain/character_creation_progression.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/domain/srd_class_level_up.dart';
 import 'package:lebendiger_spielleiter/ui/srd_class_level_up_dialog.dart';
