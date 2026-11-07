@@ -1,3 +1,14 @@
+## 07.11.2026 – NPC-Gedächtnis mit eindeutigen Notizidentitäten (PR #615)
+
+- **Main-Basis:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `fix/chat-b/npc-continuity-note-id-20261107`; **PR:** [#615](https://github.com/ManuEtt/Dnd/pull/615) (Draft bis CI-Abnahme), Fach-HEAD `3bf714e1fe9cc616a7c47a8ccd6ad8180e758acb`, Regressionstest `3bad7257c43227695106d6033fdbdf95d3efc1ba`.
+- **IMPLEMENTIERT:** Der `NpcContinuityReader.read` filtert kampagnenweit doppelte und unsichere Notiz-IDs aus der bestätigten Story-Chronik **vor** Sortierung und `limit`. Gesicherte eindeutige Notizen werden weiter unverändert und deterministisch angezeigt; KI-Texte erhalten keinerlei Regelautorität.
+- **TESTS ERGÄNZT:** `app/test/npc_continuity_note_id_integrity_test.dart` mit vier positiven/negativen Fällen für Kollisionen, gefährliche IDs, begrenzte Auswahl, altes und gültiges JSON, SQLite-Neustart und unveränderte Heldendaten.
+- **GETESTET:** Main/31 offene PRs sowie fremde Fachdateipfade geprüft und konfliktfrei zum Story-Modul abgegrenzt. Quell-Diff nach Korrektur gegen `main` auf 14 hinzugefügte und eine entfernte Zeile im Modul plus neue Testdatei begrenzt. Frühere CI-Erfolge (z. B. PR #611) nicht als Nachweis für diesen Branch werten.
+- **NICHT GETESTET/BLOCKIERT:** Format, Flutter-Analyse und Tests, Android-Debug-/ABI-APKs, Alpha-Release und gesamter PR-#615-Workflow auf endgültigem Commit; echtes Android-Gerät, produktiver KI-Dienst/Upgrade.
+- **Geänderte Dateien:** `app/lib/story/npc_continuity_reader.dart`, `app/test/npc_continuity_note_id_integrity_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **Migrationen:** Keine SQLite-/JSON-/App-Version-Änderungen, keine Mutation von Regeln, Quests, Inventar oder Spielständen. Bei späterem Merge README und zentrale Checkpoints anderer PRs additiv konsolidieren.
+- **NÄCHSTER SCHRITT:** GitHub-CI auf finalem PR-#615-HEAD vollständig abnehmen, CI-Regressionen reparieren und nur mit nachgewiesenem grünen Lauf zur Review freigeben.
+
 ### 06.11.2026 – CI-Negativfall zur abschließenden Zielidentität korrigiert
 
 - **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606); neuer Korrekturcommit `52280992156bbb5f92c351497d6ec9e49ccb8310` nach Code-/Testcommit `a61bd446072d16d143cdf301270da6ca6c22edf7`.
