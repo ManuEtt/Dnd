@@ -2242,3 +2242,18 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Fehlender vollständiger lokaler Checkout und die endgültige GitHub-Actions-Abnahme auf dem Dokumentations-HEAD; gemeinsame README-/Checkpoint-Nachträge müssen bei späterer Integration verlustfrei erhalten bleiben.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge von PR #629; keine Spielstand-, Datenbank- oder Versionsänderung.
 - **NÄCHSTER SCHRITT:** Die neu gestartete finale CI vollständig kontrollieren, gegebenenfalls Test-/Formatfehler im eigenen Branch korrigieren, dann aktuellen Main und offene PR-Dateien vergleichen. Keine ungeprüfte Integration.
+
+
+
+---
+
+## 2026-11-07 – Magieinitiierten-Dialog: Quellenwechsel verliert keine Bestätigungsgrenze
+
+- **Ausgangs-main:** `bbe6ee0901f1873af67647bf54462e4a44821762`, **Branch:** `feat/chat-c/magic-initiate-background-swap-20261107`. Flutter-UI, keine konkurrierenden Fachdateien anderer offener PRs.
+- **IMPLEMENTIERT:** In `app/lib/ui/srd_magic_initiate_dialog.dart` leeren `didUpdateWidget` und nach Hintergrund gekeyte Dropdown-Subtrees bei einem laufenden Wechsel zwischen Akolyth/Weiser alle bisherigen, noch nicht bestätigten Zauber- und Attributsauswahlen. Nicht unterstützte Hintergründe werden nicht als Magierliste bezeichnet. Bestehende öffentliche Feld-Keys bleiben stabil.
+- **REGRESSIONEN:** `app/test/srd_magic_initiate_background_swap_test.dart`: 360 dp und 200 % Text mit IME, gültige Magierwahl nach Quellenwechsel; 320 dp und 200 % Text mit IME, geteilte Zauberwerte werden bei Wechsel nicht erneut anerkannt und Abbruch ändert nichts; nicht unterstützter Hintergrund bleibt deaktiviert.
+- **GETESTET:** Live-Repository/PR-Änderungslisten, Fachcode und bestehende SRD-UI-Tests geprüft; Dateien in GitHub committed. Keine vollständig ausgeführte CI für dieses Paket zum Dokumentationszeitpunkt.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse und Widgetsuite auf dem neuen Branch-HEAD, Python-/Backend-/Android-CI, Realgerät/TalkBack.
+- **BLOCKIERT:** Flutter-/Dart-SDK lokal nicht verfügbar; GitHub-Actions-Gesamtprüfung erforderlich.
+- **KOMPATIBILITÄT:** SRD-/Story-/Domain-/Persistenz-/SQLite-/JSON-Verträge und App-Version `0.8.52+102` unverändert. Kein automatisches Speichern oder Slotverbrauch.
+- **NÄCHSTER SCHRITT:** Eigenen Draft-PR erstellen, CI auf finalem Commit auswerten, Abweichungen korrigieren und bei vollständigem Erfolg zur Review freigeben, ohne nach main zu mergen.
