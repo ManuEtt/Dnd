@@ -66,7 +66,7 @@ void main() {
       'Concentration, up to 2 minutes',
       'Up to 10 days',
       'Special',
-      '1 minute\\u200b',
+      '1 minute\u200b',
     ]) {
       expect(
         () => SrdSpellDurationRules.parse(
