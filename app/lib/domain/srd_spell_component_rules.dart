@@ -68,6 +68,16 @@ class _AuditedMaterialRecipe {
   final List<SrdAuditedMaterialItem> items;
 }
 
+typedef _AuditedSpellIdentity = ({
+  String id,
+  int level,
+  String school,
+  String castingTime,
+  String range,
+  String duration,
+  List<String> classes,
+});
+
 /// SRD 5.2.1, Spells / Casting Spells / Components: a component pouch or an
 /// authorized focus can replace ONLY unpriced, non-consumed materials.
 ///
@@ -76,6 +86,50 @@ class _AuditedMaterialRecipe {
 /// operations must be handled by the future transactional inventory engine.
 class SrdSpellComponentRules {
   const SrdSpellComponentRules._();
+
+  // These four expensive multi-material recipes are security-sensitive:
+  // a component text match must not authorize a forged spell level, class,
+  // casting time or stable catalogue identity. Match the working SRD index
+  // byte-for-byte for each audited spell; a future reconciliation requires
+  // an explicit recipe review before admitting changed metadata.
+  static const _auditedSpellIdentities = <String, _AuditedSpellIdentity>{
+    'Astral Projection': (
+      id: 'spell-astral-projection',
+      level: 9,
+      school: 'Necromancy',
+      castingTime: '1 hour',
+      range: '10 feet',
+      duration: 'Until dispelled',
+      classes: ['Cleric', 'Warlock', 'Wizard'],
+    ),
+    'Clone': (
+      id: 'spell-clone',
+      level: 8,
+      school: 'Necromancy',
+      castingTime: '1 hour',
+      range: 'Touch',
+      duration: 'Instantaneous',
+      classes: ['Wizard'],
+    ),
+    'Legend Lore': (
+      id: 'spell-legend-lore',
+      level: 5,
+      school: 'Divination',
+      castingTime: '10 minutes',
+      range: 'Self',
+      duration: 'Instantaneous',
+      classes: ['Bard', 'Cleric', 'Wizard'],
+    ),
+    'Secret Chest': (
+      id: 'spell-secret-chest',
+      level: 4,
+      school: 'Conjuration',
+      castingTime: 'Action',
+      range: 'Touch',
+      duration: 'Until dispelled',
+      classes: ['Wizard'],
+    ),
+  };
 
   // These four multi-priced recipes have been checked against the exact
   // catalogue metadata. Unknown or edited recipes are never guessed.
@@ -152,11 +206,42 @@ class SrdSpellComponentRules {
   /// A changed transcription must be audited before it is accepted.
   static List<SrdAuditedMaterialItem> auditedItems(SrdSpellDefinition spell) {
     final recipe = _auditedRecipes[spell.name];
-    if (recipe == null) return const [];
-    if (!spell.material || spell.components != recipe.catalogueText) {
+    if (recipe == null) {
+      // Do not downgrade one of the audited spell IDs to a free-form recipe
+      // merely by changing the publicly constructed spell's display name.
+      if (_auditedSpellIdentities.values.any(
+        (identity) => identity.id == spell.id,
+      )) {
+        throw const FormatException(
+          'SRD-Zauber-ID und geprüfter Materialzauber widersprechen sich.',
+        );
+      }
+      return const [];
+    }
+    final expected = _auditedSpellIdentities[spell.name]!;
+    if (spell.id != expected.id ||
+        spell.level != expected.level ||
+        spell.school != expected.school ||
+        spell.castingTime != expected.castingTime ||
+        spell.range != expected.range ||
+        spell.duration != expected.duration ||
+        !spell.verbal ||
+        !spell.somatic ||
+        !spell.material ||
+        spell.concentration ||
+        spell.ritual ||
+        spell.components != recipe.catalogueText ||
+        spell.classes.length != expected.classes.length) {
       throw const FormatException(
-        'Mehrteilige SRD-Materialangabe weicht vom geprüften Text ab.',
+        'Geprüfter SRD-Materialzauber besitzt abweichende Metadaten.',
       );
+    }
+    for (var i = 0; i < expected.classes.length; i++) {
+      if (spell.classes[i] != expected.classes[i]) {
+        throw const FormatException(
+          'Die Klassenliste des geprüften SRD-Materialzaubers weicht ab.',
+        );
+      }
     }
     return recipe.items;
   }

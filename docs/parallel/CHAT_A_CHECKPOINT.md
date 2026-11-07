@@ -1399,3 +1399,23 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 07.11.2026 – Identität vier auditierter SRD-Materialrezepte (PR #627)
+
+**Ausgangs-main:** `1816115990cc7420ecfb2d1ba7c6babb557f76da`. **Branch:** `feat/chat-a/audited-material-recipe-identity-20261107`. **Code:** `33ffcef4396070b17da36c2152bda55f9f6fb33d`; **Testkorrektur:** `aed8755c0fdab14c1f05b1b9a1b339ee4383f35a`. **Pull Request:** https://github.com/ManuEtt/Dnd/pull/627 (Draft).
+
+**Problem:** Teure Mehrfachkomponenten der Zauber *Astral Projection, Clone, Legend Lore* und *Secret Chest* wurden bei öffentlich erstelltem `SrdSpellDefinition` anhand von Name und Materialbeschreibung als auditiert bewertet, selbst wenn sie zu einer anderen SRD-ID/Zauberstufe/Klasse/Wirkzeit gehörten. Diese Grenze ist besonders sensibel, weil die Inventar- und Slot-Pfade anschließend auf den auditierten Rezeptpositionen aufbauen.
+
+**Regeländerung:** `app/lib/domain/srd_spell_component_rules.dart` bindet genau diese vier Rezepte zusätzlich an katalogisierte Name-/ID-/Grad-/Schule-/Klassenlisten-/Casting-/Range-/Duration-Tupel und exakte V/S/M-/Konzentrations-/Ritualkennzeichen. Ein bekannter Rezept-ID unter fremdem Namen kann nicht mehr unbemerkt in ein beliebiges freies Materialrezept herabgestuft werden. `SrdSpellMaterialValueRules` bleibt unverändert: Kostenevidenz muss weiterhin unabhängig bestätigt werden; keine Lagerbestände oder Effekte geraten in den reinen Validator.
+
+**Neue Tests:** `app/test/srd_spell_audited_recipe_identity_test.dart` deckt positive 4/4 Katalogrezepte, zahlreiche Abweichungen an jedem Metadatenfeld inklusive Materialtext und Flags, reverse ID-Fälschung, unverändertes Helden-/Inventar-/Slot-JSON bei fehlender auditierter Identität ab. Testfall für nur eine zugelassene Klasse vor PR bereits korrigiert, damit eine tatsächliche Änderung geprüft wird. Existing Tests bleiben aktiv.
+
+**Quellen:** Wizards of the Coast LLC, SRD v5.2.1, *Spells / Components* und individuelle Zaubereinträge, CC BY 4.0, https://www.dndbeyond.com/srd. Genau vier Arbeitskatalogrezepte fixiert; keine vollumfängliche SRD-Reconciliation behauptet.
+
+**Parallelität:** Bei Auswahl 40 offene Pull Requests vollständig hinsichtlich dieser Fachdateien verglichen, keine Überschneidung. Dokumentation wird append-only ergänzt und muss durch Bereich D verlustfrei konsolidiert werden.
+
+**Teststatus:** Fachcode und deterministische Tests committed, aber Dart/Flutter nicht lokal ausführbar. Keine CI/Android/Emulator/Realgeräte-Aussage vor dem abschließenden Run.
+
+**Grenzen/Kompatibilität:** Keine Spielstands-/JSON-/SQLite-/API-/GameEngine-/UI-/Backend-/Android-Version verändert und keine Migration nötig. Aktive Spell-Effect-Engine für diese vier Rezeptzauber wird durch das reine Validierungspaket nicht automatisch komplett.
+
+**Nächster Schritt:** GitHub-Actions-Workflow auf finalem HEAD prüfen (Format, Analyze, vollständige Unit-/Widget-Tests, Android, Native und ABI-Artefakte). Fehler beheben, Reviewstatus nur nach vollständig grünem Nachweis.
