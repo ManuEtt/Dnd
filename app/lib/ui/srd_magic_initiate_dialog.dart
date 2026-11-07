@@ -21,22 +21,39 @@ class _SrdMagicInitiateDialogState extends State<SrdMagicInitiateDialog> {
   String? _levelOne;
   String? _ability;
 
+  @override
+  void didUpdateWidget(covariant SrdMagicInitiateDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.background == widget.background) return;
+    // A different source list requires new explicit choices, even when
+    // individual spell names exist in both the Cleric and Wizard lists.
+    _first = null;
+    _second = null;
+    _levelOne = null;
+    _ability = null;
+  }
+
   Widget _spellDropdown({
     required String keyName,
     required String label,
     required String? value,
     required List<String> options,
     required ValueChanged<String?> onChanged,
-  }) => DropdownButtonFormField<String>(
-    key: ValueKey(keyName),
-    initialValue: value,
-    isExpanded: true,
-    decoration: InputDecoration(labelText: label),
-    items: [
-      for (final option in options)
-        DropdownMenuItem(value: option, child: Text(option)),
-    ],
-    onChanged: onChanged,
+  }) => KeyedSubtree(
+    // FormFieldState retains the old selected value across widget updates.
+    // Remount the dropdown when its source background changes.
+    key: ValueKey('magic-initiate-${widget.background.name}-$keyName'),
+    child: DropdownButtonFormField<String>(
+      key: ValueKey(keyName),
+      initialValue: value,
+      isExpanded: true,
+      decoration: InputDecoration(labelText: label),
+      items: [
+        for (final option in options)
+          DropdownMenuItem(value: option, child: Text(option)),
+      ],
+      onChanged: onChanged,
+    ),
   );
 
   @override
@@ -53,9 +70,11 @@ class _SrdMagicInitiateDialogState extends State<SrdMagicInitiateDialog> {
         _first != _second &&
         _levelOne != null &&
         _ability != null;
-    final source = widget.background == SrdBackground.acolyte
-        ? 'Kleriker'
-        : 'Magier';
+    final source = switch (widget.background) {
+      SrdBackground.acolyte => 'Kleriker',
+      SrdBackground.sage => 'Magier',
+      _ => 'nicht verfügbar',
+    };
     return AlertDialog(
       scrollable: true,
       insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
