@@ -377,5 +377,120 @@ class AndroidSdkPackageRetryTests(unittest.TestCase):
             self.assertEqual(counter.read_text(encoding="utf-8").strip(), "2")
             self.assertFalse(cache.exists())
 
+
+    def test_symlinked_ndk_parent_preserves_external_partial_install(self) -> None:
+        # Both a transient and a persistent SDK failure must avoid traversing
+        # a linked parent directory. All files stay in this temporary sandbox.
+        for failures, expected_code in ((1, 0), (3, 1)):
+            with self.subTest(failures=failures):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    sdk = root / "sdk"
+                    sdk.mkdir()
+                    (sdk / ".temp").mkdir()
+                    (sdk / ".temp" / "corrupt.zip").write_text(
+                        "incomplete", encoding="utf-8"
+                    )
+                    external_ndk = root / "outside-ndk"
+                    version = external_ndk / "27.0.12077973"
+                    version.mkdir(parents=True)
+                    marker = version / "keep-me"
+                    marker.write_text("unrelated", encoding="utf-8")
+                    (sdk / "ndk").symlink_to(
+                        external_ndk, target_is_directory=True
+                    )
+                    home = root / "home"
+                    cache = home / ".android/cache"
+                    cache.mkdir(parents=True)
+                    (cache / "download.zip").write_text(
+                        "stale", encoding="utf-8"
+                    )
+                    bin_dir = root / "bin"
+                    bin_dir.mkdir()
+                    counter = root / "attempts"
+                    manager = bin_dir / "sdkmanager"
+                    manager.write_text(
+                        "#!/usr/bin/env bash\n"
+                        'n=$(cat "$SDK_TEST_COUNT" 2>/dev/null || echo 0)\n'
+                        'n=$(( n + 1 ))\n'
+                        'echo "$n" > "$SDK_TEST_COUNT"\n'
+                        'if (( n <= SDK_TEST_FAILURES )); then exit 1; fi\n',
+                        encoding="utf-8",
+                    )
+                    manager.chmod(0o755)
+                    env = os.environ.copy()
+                    env.update(
+                        {
+                            "PATH": f"{bin_dir}{os.pathsep}{env.get('PATH', '')}",
+                            "ANDROID_SDK_ROOT": str(sdk),
+                            "HOME": str(home),
+                            "ANDROID_SDK_INSTALL_ATTEMPTS": "2",
+                            "ANDROID_SDK_RETRY_DELAY_SECONDS": "0",
+                            "SDK_TEST_COUNT": str(counter),
+                            "SDK_TEST_FAILURES": str(failures),
+                        }
+                    )
+                    env.pop("ANDROID_HOME", None)
+                    result = subprocess.run(
+                        ["bash", str(SCRIPT)], env=env, capture_output=True,
+                        text=True, check=False,
+                    )
+                    self.assertEqual(result.returncode, expected_code, result.stderr)
+                    self.assertEqual(counter.read_text(encoding="utf-8").strip(), "2")
+                    self.assertIn("ndk parent is a symbolic link", result.stderr)
+                    self.assertTrue((sdk / "ndk").is_symlink())
+                    self.assertEqual(marker.read_text(encoding="utf-8"), "unrelated")
+                    self.assertFalse((sdk / ".temp").exists())
+                    self.assertFalse(cache.exists())
+
+    def test_symlinked_version_unlinks_link_but_not_external_data(self) -> None:
+        # rm -rf may safely remove the *final* symlink: do not regress the
+        # cleanup of a broken version link beneath a regular ndk parent.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            sdk = root / "sdk"
+            ndk = sdk / "ndk"
+            ndk.mkdir(parents=True)
+            external = root / "outside-version"
+            external.mkdir()
+            marker = external / "keep-me"
+            marker.write_text("unrelated", encoding="utf-8")
+            version_link = ndk / "27.0.12077973"
+            version_link.symlink_to(external, target_is_directory=True)
+            home = root / "home"
+            home.mkdir()
+            bin_dir = root / "bin"
+            bin_dir.mkdir()
+            counter = root / "attempts"
+            manager = bin_dir / "sdkmanager"
+            manager.write_text(
+                "#!/usr/bin/env bash\n"
+                'n=$(cat "$SDK_TEST_COUNT" 2>/dev/null || echo 0)\n'
+                'n=$(( n + 1 ))\n'
+                'echo "$n" > "$SDK_TEST_COUNT"\n'
+                '(( n > 1 ))\n',
+                encoding="utf-8",
+            )
+            manager.chmod(0o755)
+            env = os.environ.copy()
+            env.update(
+                {
+                    "PATH": f"{bin_dir}{os.pathsep}{env.get('PATH', '')}",
+                    "ANDROID_SDK_ROOT": str(sdk),
+                    "HOME": str(home),
+                    "ANDROID_SDK_INSTALL_ATTEMPTS": "2",
+                    "ANDROID_SDK_RETRY_DELAY_SECONDS": "0",
+                    "SDK_TEST_COUNT": str(counter),
+                }
+            )
+            env.pop("ANDROID_HOME", None)
+            result = subprocess.run(
+                ["bash", str(SCRIPT)], env=env, capture_output=True,
+                text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertFalse(version_link.is_symlink())
+            self.assertEqual(marker.read_text(encoding="utf-8"), "unrelated")
+
 if __name__ == "__main__":
     unittest.main()

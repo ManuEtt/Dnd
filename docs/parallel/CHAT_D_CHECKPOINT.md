@@ -1994,3 +1994,18 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Fehlende GitHub-DNS-Auflösung für lokalen Checkout; gemeinsame README-/CODEX-Checkpoint-Dateien sind Gegenstand anderer offener PRs und dürfen bei späterer Integration nicht überschrieben werden. Kein aktueller CI-Erfolg für #624 behauptet.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge dieses PRs, keine SQLite-/JSON-Migration, keine Änderung an App-Version oder gespeicherten Kampagnen.
 - **NÄCHSTER SCHRITT:** CI auf endgültigem #624-HEAD vollständig abnehmen und eventuelle Fehler im Branch beheben; vor Integration neuen Main- und PR-Stand auf Konflikte prüfen.
+
+
+## 2026-11-07 – NDK-Symlink als übergeordnete Pfadkomponente bei Retry-Bereinigung (PR #626)
+
+- **Ausgangs-main:** `1816115990cc7420ecfb2d1ba7c6babb557f76da` (PR #624 integriert). Letzte gesicherte vollständige Fach-CI des Vorgängers: [#42361998502](https://github.com/ManuEtt/Dnd/actions/runs/42361998502), Quell-HEAD `1e8be09c2ac8d96dd2970d1bf9bb51eb7f56597e`; das beweist den neuen Code ausdrücklich nicht.
+- **Eigener Branch/PR:** `fix/chat-d/ndk-parent-symlink-20261107`; [#626](https://github.com/ManuEtt/Dnd/pull/626) (Draft). Fach-SHA `20d4e4fc390853e036dc4b3ee0a641ea49e82581`, Test-SHA `b707e215754c761139106dbf5c12ea93fe63d307`; Dokumentationscommit folgt.
+- **Ausgangsproblem:** `rm -rf "$sdk_root/ndk/27.0.12077973"` traversiert einen symbolischen Link der Parent-Komponente `ndk` und kann dadurch Verzeichnisse außerhalb des SDK löschen. Isoliert in einem temporären Dateibaum reproduziert.
+- **IMPLEMENTIERT:** Explizites Symlinkverbot nur für den NDK-Elternpfad vor der Löschung, sonst Warnung und Fortsetzung regulärer Retries. Keine Änderung an Paketliste, Backoff, bereits installiertem NDK, sicherem HOME-Cache oder SDK-Root-Prüfung.
+- **Tests ergänzt:** Zwei neue Python-Regressionstestmethoden für transienten/persistenten Fehler mit äußerem Sentinel sowie den zulässigen Fall eines Symlinks als Endkomponente der zu entfernenden NDK-Version. Frühere positive reguläre NDK-Tests bleiben unverändert.
+- **Geänderte Dateien:** `scripts/install_android_sdk_packages.sh`, `scripts/tests/test_install_android_sdk_packages.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Reproduktion des ursprünglichen Löschverhaltens im isolierten Sandbox-Dateisystem; echte GitHub-PR-/Main-Daten und Fachdateikonflikte geprüft. Kein erfolgreicher neuer GitHub-CI- oder vollständiger Python-Suite-Lauf behauptet.
+- **NICHT GETESTET:** Neue Python-Unittests auf GitHub, vollständige Python-/Backend-/Flutter-/Android-/Release-Pipeline, Realgerät/Upgrade/Signatur.
+- **BLOCKIERT:** GitHub-DNS für lokalen Checkout; neu gestartete PR-CI muss anhand des finalen SHA geprüft werden. README/Checkpoint werden auch in vielen anderen offenen PRs additiv ergänzt; diese Einträge bei Integration erhalten.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #626. Keine Datenmigration; App-Version `0.8.52+102`, SQLite-/JSON-Daten, Spielstände und Domänenverträge unverändert.
+- **NÄCHSTER SCHRITT:** Vollständige Actions-Checks auf dem endgültigen PR-#626-HEAD abnehmen und danach aktuellen Main-/PR-Dateivergleich zur konfliktfreien Integration durchführen.

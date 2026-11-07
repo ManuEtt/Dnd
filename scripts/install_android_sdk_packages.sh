@@ -50,7 +50,12 @@ for (( attempt = 1; attempt <= attempts; attempt++ )); do
   # A failure while installing a different package must not destroy a
   # previously installed NDK. Remove only an incomplete NDK directory;
   # source.properties is the package's installation metadata marker.
-  if [[ ! -f "$sdk_root/ndk/27.0.12077973/source.properties" ]]; then
+  # GNU rm follows symlinks in intermediate path components: an
+  # externally linked ndk/ parent could delete an unrelated NDK installation.
+  # A link at the final version path is safe to unlink; its parent is not.
+  if [[ -L "$sdk_root/ndk" ]]; then
+    echo "::warning::Skipping NDK cleanup: ndk parent is a symbolic link." >&2
+  elif [[ ! -f "$sdk_root/ndk/27.0.12077973/source.properties" ]]; then
     rm -rf -- "$sdk_root/ndk/27.0.12077973"
   fi
   # This optional cache is outside the SDK root. Do not traverse a
