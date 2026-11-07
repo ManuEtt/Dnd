@@ -31,21 +31,19 @@ HeroCharacter _caster({
   maxHitPoints: 20,
 );
 
-SrdSpellCastPlan _preflight(
-  HeroCharacter hero,
-  SrdSpellDefinition spell,
-) => SrdSpellPreflightRules.preflight(
-  hero,
-  spell: spell,
-  castingClass: 'Wizard',
-  slotLevel: spell.level,
-  actionAvailableConfirmed: true,
-  targetRulesConfirmed: true,
-  verbalComponentConfirmed: true,
-  somaticComponentConfirmed: true,
-  materialComponentConfirmed: true,
-  slotTurnLimitConfirmed: true,
-);
+SrdSpellCastPlan _preflight(HeroCharacter hero, SrdSpellDefinition spell) =>
+    SrdSpellPreflightRules.preflight(
+      hero,
+      spell: spell,
+      castingClass: 'Wizard',
+      slotLevel: spell.level,
+      actionAvailableConfirmed: true,
+      targetRulesConfirmed: true,
+      verbalComponentConfirmed: true,
+      somaticComponentConfirmed: true,
+      materialComponentConfirmed: true,
+      slotTurnLimitConfirmed: true,
+    );
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -116,5 +114,20 @@ void main() {
       expect(hero.spentSpellSlots, isEmpty);
       expect(hero.spentPactSlots, 0);
     }
+  });
+
+  test('invalid class profile is checked before spell preparation', () {
+    final hero = _caster(second: 'Unknown', secondLevel: 1);
+    final unprepared = catalog.find('Fireball')!;
+    FormatException? failure;
+    try {
+      _preflight(hero, unprepared);
+    } on FormatException catch (error) {
+      failure = error;
+    }
+    expect(
+      failure?.message,
+      'Zauberfreigabe erfordert ein konsistentes SRD-Klassenprofil.',
+    );
   });
 }

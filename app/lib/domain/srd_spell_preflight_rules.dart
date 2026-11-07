@@ -53,9 +53,7 @@ class SrdSpellPreflightRules {
         hero.secondaryClassLevel < 0 ||
         first == null ||
         (secondDeclared
-            ? hero.secondaryClassLevel < 1 ||
-                  second == null ||
-                  second == first
+            ? hero.secondaryClassLevel < 1 || second == null || second == first
             : hero.secondaryClassLevel != 0)) {
       throw const FormatException(
         'Zauberfreigabe erfordert ein konsistentes SRD-Klassenprofil.',
