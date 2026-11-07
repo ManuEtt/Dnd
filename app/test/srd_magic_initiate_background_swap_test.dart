@@ -52,11 +52,7 @@ Future<List<SrdMagicInitiateChoice?>> _open(
   return results;
 }
 
-Future<void> _choose(
-  WidgetTester tester,
-  String field,
-  String value,
-) async {
+Future<void> _choose(WidgetTester tester, String field, String value) async {
   final dropdown = find.byKey(ValueKey(field));
   await tester.ensureVisible(dropdown);
   await tester.pumpAndSettle();
@@ -88,9 +84,7 @@ void _expectEmptyChoices(WidgetTester tester) {
     final form = find.byKey(ValueKey(field));
     expect(tester.state<FormFieldState<String>>(form).value, isNull);
   }
-  final confirm = find.byKey(
-    const ValueKey('confirm-magic-initiate-choice'),
-  );
+  final confirm = find.byKey(const ValueKey('confirm-magic-initiate-choice'));
   expect(tester.widget<FilledButton>(confirm).onPressed, isNull);
 }
 
@@ -116,9 +110,7 @@ void main() {
     await _choose(tester, 'magic-initiate-cantrip-two', 'Mage Hand');
     await _choose(tester, 'magic-initiate-level-one', 'Magic Missile');
     await _choose(tester, 'magic-initiate-ability', 'charisma');
-    final confirm = find.byKey(
-      const ValueKey('confirm-magic-initiate-choice'),
-    );
+    final confirm = find.byKey(const ValueKey('confirm-magic-initiate-choice'));
     expect(tester.widget<FilledButton>(confirm).onPressed, isNotNull);
     await tester.ensureVisible(confirm);
     await tester.pumpAndSettle();
@@ -141,9 +133,7 @@ void main() {
     await _choose(tester, 'magic-initiate-cantrip-two', 'Mending');
     await _choose(tester, 'magic-initiate-level-one', 'Detect Magic');
     await _choose(tester, 'magic-initiate-ability', 'wisdom');
-    final confirm = find.byKey(
-      const ValueKey('confirm-magic-initiate-choice'),
-    );
+    final confirm = find.byKey(const ValueKey('confirm-magic-initiate-choice'));
     expect(tester.widget<FilledButton>(confirm).onPressed, isNotNull);
 
     source.value = SrdBackground.acolyte;
