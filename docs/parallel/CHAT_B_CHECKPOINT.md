@@ -946,3 +946,17 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+---
+
+## 07.11.2026 – Rat der Zeugen ausschließlich durch explizite Einberufung (PR #619)
+
+- **Main-Basis:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `fix/chat-b/act8-council-explicit-intent-20261107`; **PR:** [#619](https://github.com/ManuEtt/Dnd/pull/619) (zunächst Draft). **Fachcommit:** `9b2e4cc436e9418ed21c12b0c398ecfb492b08f2`; **Testcommit:** `21d191a25f256afdc7cd0ce532f0957b28a3aa97`.
+- **Ausgangsproblem:** `FourteenthVoiceAct8.advance` leitete am `voice-threshold` bereits aus der Teilwort-Erwähnung „rat“ in „verrate“ oder dem Ortsnamen „Dorfplatz“ die Einberufung einer Ratsversammlung ab, obwohl der Spieler keine solche Entscheidung getroffen hatte.
+- **IMPLEMENTIERT:** `_convenesCouncil` verlangt explizite Handlungsabsicht (berufen, versammeln, rufen, einladen) und eindeutiges Rats-/Zeugenziel; bestehende Negationssperre und echte Beweis-/Eidblattvoraussetzungen bleiben erhalten. Nur Story-Szenenübergang in `app/lib/story/fourteenth_voice_act8.dart`; keinerlei Änderung an Rule-/Hero-/Quest-/SQLite-Zustand.
+- **TESTS ERGÄNZT:** `app/test/rabenwacht_act8_council_intent_test.dart` prüft falsche Teilworttreffer und bloße Orts-/Ratserwähnungen, vier gültige Einberufungen, Sperren bei fehlender Verwahrung/Beweisen, JSON-Roundtrip und unveränderten Originalspielstand.
+- **GETESTET:** Live-main, Masterprompt, bestehende Akt-VIII-Abläufe und 35 offene PRs auf Dateikonflikte geprüft. Diff initial zwei Fachdateien ohne parallele Änderungen.
+- **NICHT GETESTET:** Neue Flutter-/Dart-Tests, gesamte CI inkl. Android/Release auf finalem Branch-HEAD, Android-Gerät, produktive KI; bei Erstellung dieser Notiz noch offen.
+- **ABGRENZUNG:** Keine neuen JSON-/SQLite-Felder, keine Migration, keine Regeln oder Bestätigungsbuchungen. Die README erhält ausschließlich einen neuen neutralen Nachtrag am Ende; zentrale Checkpoints bei späterem Merge additiv integrieren.
+- **NÄCHSTER SCHRITT:** GitHub-Actions-Abnahme auf finalem Commit abschließen, Testfehler im Branch beheben, nach vollständig grünen Jobs PR zur Review freigeben, Chat D koordiniert Merge.
