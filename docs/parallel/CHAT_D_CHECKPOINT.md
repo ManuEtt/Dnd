@@ -2024,3 +2024,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Ausstehende finale CI auf dem endgültigen Branch-HEAD, gemeinsame parallel ergänzte Dokumentationsdateien; kein Überschreiben fremder Beiträge.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge des neuen PR, keine Schemaänderung, keine Migration, keine Änderung an gespeichertem Nutzerzustand oder App-Version.
 - **NÄCHSTER SCHRITT:** CI am finalen HEAD abnehmen, eventuelle Fehler auf dem eigenen Branch beheben und nur nach erneutem Integrationsabgleich regulär mergen.
+
+
+## 2026-11-07 – Grafiken bei Schreibfehlern ohne Teil-Dateien veröffentlichen (PR #631)
+
+- **Basis:** Main `bbe6ee0901f1873af67647bf54462e4a44821762` nach regulärer Integration von PR #629 mit nachgewiesener erfolgreicher sechsfacher GitHub-CI [#42398305255](https://github.com/ManuEtt/Dnd/actions/runs/42398305255). Das neu bearbeitete Paket ist unabhängig von offenen Regel-, Story-, UI- und Release-PRs.
+- **Branch:** `fix/chat-d/fantasy-import-atomic-publication-20261107`; **PR:** [#631](https://github.com/ManuEtt/Dnd/pull/631) (Draft). **Code:** `bce63cd0c146d06b7f0045abae7961cb7a048622`, `e3b4c39b019c3733ccff2669a3c00eb06db0709f`; **Tests:** `aeeb26bad86c76554b6c03df4a599d906195f893`, `b7d36d4e0fbc1b4fb32213bf04ca452840404d4a`.
+- **Problem:** Direkter `open("xb")`-Import konnte bei Datenträger-/Schreibfehler eine defekte Originalgrafik mit finalem Namen hinterlassen; nachfolgender Import durfte sie nicht überschreiben und brach ebenfalls ab. Ein unmittelbar nach Preflight vorhandener Fremdinhalt konnte ohne erneuten Byte-Vergleich übersprungen werden.
+- **IMPLEMENTIERT:** Schreibe nur im Zielverzeichnis unter zufälligem temporärem Namen, abschließender `flush()/fsync()`, exklusive Veröffentlichung per `os.link()`; Staging-Datei nach Erfolg und Fehler löschen; vorhandene Assets beim Publizieren erneut gegen validierte Bytes prüfen.
+- **Tests ergänzt:** Vier Python-Regressionen mit Mock-Ausfall in `os.fsync` und `os.link`, simuliertem konkurrierendem Ziel sowie Änderung nach ZIP-Preflight. Fortsetzung nach teils erfolgreich veröffentlichten Dateien wird positiv geprüft.
+- **GETESTET:** Quellcode und bestehende Tests über GitHub gelesen, CI des unmittelbaren Vorgänger-PR #629 bestätigt. Die neue Suite von #631 ist vor der tatsächlichen GitHub-Abnahme noch nicht als erfolgreich bewertet.
+- **NICHT GETESTET:** Vollständige neue Python-/Backend-/Flutter-/APK-/Release-Pipeline auf finalem Branch-HEAD, Realgerät, Upgrade, produktive Signierung.
+- **BLOCKIERT:** GitHub-DNS für vollständigen lokalen Checkout; abschließende Actions-CI, frischer Main-/PR-Review und Schutz anderer append-only-Checkpoint-Nachträge stehen noch aus.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge, keine 13-Dateien-Transaktion (jedes Bild einzeln atomar und wiederholbar), keine SQLite-/JSON-/Spielstandmigration und keine Änderung der App-Version.
+- **NÄCHSTER SCHRITT:** Vollständige CI auf endgültigem #631-HEAD auswerten, Testfehler im Branch beheben, bei Erfolg mit frischem Konfliktcheck regulär in Main integrieren.
