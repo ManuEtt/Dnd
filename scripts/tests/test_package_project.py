@@ -191,6 +191,45 @@ class ProjectArchiveTests(unittest.TestCase):
                 self.assertFalse(output.exists())
                 path.unlink()
 
+    def test_windows_superscript_device_names_reject_source_and_preserve_archive(self):
+        # Win32 treats Latin-1 superscript 1/2/3 like digits in COM/LPT
+        # device names, even if the pathname has an extension.
+        output = self.base / 'saved-portable.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        checksum = output.with_suffix('.zip.sha256')
+        previous = (output.read_bytes(), checksum.read_bytes())
+        for device in ('COM', 'LPT'):
+            for digit in ('¹', '²', '³'):
+                with self.subTest(device=device, digit=digit):
+                    bad = f'{device}{digit}.txt'
+                    relative = self.root / 'app/assets' / bad
+                    # Pure validation also covers folders on Windows, where
+                    # these device names cannot be created as actual paths.
+                    for path in (
+                        relative,
+                        self.root / 'app/assets' / f'{device}{digit}' / 'child.dat',
+                    ):
+                        with self.assertRaisesRegex(ValueError, 'non-portable'):
+                            packaging.validate_portable_source_paths(
+                                self.root, [path]
+                            )
+                    if os.name != 'nt':
+                        relative.write_bytes(b'not portable on Windows')
+                        with self.assertRaisesRegex(ValueError, 'non-portable'):
+                            packaging.create_archive(self.root, output, layout='root')
+                        self.assertEqual(
+                            (output.read_bytes(), checksum.read_bytes()), previous
+                        )
+                        relative.unlink()
+
+    def test_nondevice_superscript_filename_remains_portable(self):
+        name = 'COMM¹-portrait.txt'
+        (self.root / 'app/assets' / name).write_bytes(b'ordinary artwork')
+        output = self.base / 'normal-superscript.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        with zipfile.ZipFile(output) as archive:
+            self.assertIn('app/assets/' + name, archive.namelist())
+
     def test_invisible_unicode_controls_in_filenames_are_rejected(self):
         # C1 controls, bidi/zero-width formatters and Unicode line/paragraph
         # separators must not produce deceptive or platform-dependent ZIP paths.
