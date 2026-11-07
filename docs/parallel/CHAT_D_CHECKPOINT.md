@@ -2009,3 +2009,18 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** GitHub-DNS für lokalen Checkout; neu gestartete PR-CI muss anhand des finalen SHA geprüft werden. README/Checkpoint werden auch in vielen anderen offenen PRs additiv ergänzt; diese Einträge bei Integration erhalten.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #626. Keine Datenmigration; App-Version `0.8.52+102`, SQLite-/JSON-Daten, Spielstände und Domänenverträge unverändert.
 - **NÄCHSTER SCHRITT:** Vollständige Actions-Checks auf dem endgültigen PR-#626-HEAD abnehmen und danach aktuellen Main-/PR-Dateivergleich zur konfliktfreien Integration durchführen.
+
+
+## 2026-11-07 – ZIP-Importressourcen im Grafikarchiv begrenzen (PR #629)
+
+- **Ausgangs-main:** `5766d64880fee8e35d15ac39fc14dc7ef965ccba` nach grüner Integration von PR #626. Die Arbeit am NDK-Symlink-Risiko lag bereits in PR #626 und wurde daher nicht dupliziert; auf Grundlage aller sechs erfolgreichen CI-Jobs wurde dieser PR regulär integriert.
+- **Eigenständiger Branch:** `fix/chat-d/fantasy-import-zip-limits-20261107`; **Pull Request:** [#629](https://github.com/ManuEtt/Dnd/pull/629) (Draft). **Fachcommit:** `f13a72634099eadfa79a845c22c5d7290321d91b`, **Testcommit:** `3854288ad951132706c074ef50b038688c4dec1d`.
+- **Ausgangsproblem:** `import_complete_fantasy_assets.py` las ZIP-Manifest und Bilder sowie `ZipFile.testzip()` unbeschränkt; beliebig viele oder stark komprimierte fremde Einträge konnten vor der Grafikauswahl vollständig dekomprimiert werden.
+- **IMPLEMENTIERT:** Maximal 256 Archiv-Einträge, 64 MiB deklarierte unkomprimierte Daten insgesamt; Manifest bis 512 KiB, je WebP maximal 8 MiB, doppelte Namen blockieren, JSON-Manifest muss Objekt sein; Größenpflichten werden vor `testzip()` geprüft. Danach begrenzte `read(limit+1)`-Operationen; Identität und Nicht-Überschreiben bestehender Assets bleiben gesichert.
+- **Fachdateien:** `scripts/import_complete_fantasy_assets.py`, `scripts/tests/test_import_complete_fantasy_assets.py`; zusätzlich rein additive README- und Checkpoint-Nachträge.
+- **TESTS ERGÄNZT:** Sechs deterministische Python-Regressionen für Eintragsanzahl, Dekompressionssumme, Manifest-/Asset-Grenzen, doppelte Namen und falschen Manifest-JSON-Wurzeltyp; Vorab-Ablehnungen verbieten im Mock den CRC-Scan.
+- **GETESTET:** Live-Main-SHA, neueste offene PRs und CI des Vorgängerpakets geprüft. Für den neuen PR am Dokumentationszeitpunkt keine bestandene finale GitHub-Actions-Suite behauptet.
+- **NICHT GETESTET:** Vollständige Python-Suite, Backend, Dart-/Flutter-Analyse/Tests, Android-Debug/ABI/Alpha-Release, Realgerät und Upgrade am finalen neuen Code. Keine lokalen Gesamttests bei fehlendem Repository-Checkout.
+- **BLOCKIERT:** Ausstehende finale CI auf dem endgültigen Branch-HEAD, gemeinsame parallel ergänzte Dokumentationsdateien; kein Überschreiben fremder Beiträge.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge des neuen PR, keine Schemaänderung, keine Migration, keine Änderung an gespeichertem Nutzerzustand oder App-Version.
+- **NÄCHSTER SCHRITT:** CI am finalen HEAD abnehmen, eventuelle Fehler auf dem eigenen Branch beheben und nur nach erneutem Integrationsabgleich regulär mergen.
