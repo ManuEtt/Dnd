@@ -138,12 +138,7 @@ void main() {
     tester,
   ) async {
     final hero = _hero(xp: 300);
-    final results = await _open(
-      tester,
-      hero: hero,
-      width: 360,
-      textScale: 1,
-    );
+    final results = await _open(tester, hero: hero, width: 360, textScale: 1);
     expect(
       tester
           .widget<SegmentedButton<LevelUpMethod>>(
