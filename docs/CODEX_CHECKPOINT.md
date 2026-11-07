@@ -2229,3 +2229,16 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Ein vollständiger lokaler GitHub-Checkout scheitert an DNS-Auflösung; CI der finalen PR-Version und verlustfreie Integration paralleler README-/Checkpoint-Nachträge stehen aus. Keine race-freie Garantie gegen aktive Fremdmanipulation zwischen Dateiprüfung und Löschvorgang.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge dieses PRs; keine Datenmigration, keine Änderungen an App-Version `0.8.52+102`, SQLite-/JSON-Format, Spielständen, Spielregeln, Story oder Benutzeroberfläche.
 - **NÄCHSTER SCHRITT:** Sämtliche GitHub-Actions-Jobs von PR #626 auf dem endgültigen Commit verifizieren und bei Fehlern im eigenen Branch korrigieren; danach neue Main- und PR-Dateipfade vor einer koordinierten Integration erneut abgleichen.
+
+
+---
+
+## 2026-11-07 – Kämpfer-Kampfstil-Dropdown auf kleinen Android-Displays
+
+- **Ausgangs-main:** `5766d64880fee8e35d15ac39fc14dc7ef965ccba`, **Branch:** `feat/chat-c/fighter-style-large-text-20261107`; getrennt von parallelen Story-/Regel-/CI- und UI-PRs.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_class_selection_dialog.dart` begrenzt die Kämpfer-Kampfstil-Auswahl horizontal, passt Menüeintraghöhen an und verhindert einzeiligen Textüberlauf. `app/test/fighter_style_large_text_dialog_test.dart` testet 320/360 dp, 200 % Schrift, IME, bewusst gewählte Kampfart, Fertigkeiten/Meisterschaften, negatives Abbrechen und Normaltext.
+- **GETESTET:** Verfügbare Fach- und Testdateien abgeglichen, GitHub-Dateien erstellt. Automatisierter Build/Tests auf finalem Commit noch ausstehend.
+- **NICHT GETESTET:** Python, Backend, Dart-Format, Flutter-Analyse und -Suite, Debug-/optimierte APKs und Realgerät.
+- **KOMPATIBILITÄT:** Keine Änderungen an SRD-Regeln, bestehenden Spielständen, SQLite/JSON oder der Versionsnummer; ausgewählter `styleId` bleibt identisch.
+- **BLOCKIERT:** Flutter/Dart lokal nicht verfügbar; vollständige GitHub-Actions-Abnahme erforderlich.
+- **NÄCHSTER SCHRITT:** Draft-PR erstellen, CI prüfen und etwaige neue Layout-/Testfehler isoliert korrigieren, danach Review-Freigabe ohne Main-Merge.
