@@ -1476,3 +1476,12 @@ Die Alpha-Release-Erstellung kontrolliert jetzt zusätzlich zum Dateibesitz die 
 Bei der abschließenden Alpha-Release-Prüfung hat die unveränderte Priorität des Dateibesitzschutzes Vorrang vor der neuen Inhaltsprüfung: Wird eine geöffnete Zieldatei durch eine andere reguläre Datei ersetzt, meldet die Prüfung den **Zielaustausch** und bewahrt den fremden Inhalt. Nur bei unveränderter Dateiidentität folgt die zusätzliche SHA256-Inhaltsprüfung. Damit bleiben ältere Regressionstests und die neue Erkennung stiller In-Place-Manipulation zugleich wirksam.
 
 **Fehlerbehebung:** Commit `52280992156bbb5f92c351497d6ec9e49ccb8310` in [PR #606](https://github.com/ManuEtt/Dnd/pull/606). Der erste vollständige Lauf [#42194379586](https://github.com/ManuEtt/Dnd/actions/runs/42194379586) scheiterte in einem vorhandenen Python-Negativtest ausschließlich an einer anderen Fehlerklasse/Fehlermeldung; die Reihenfolge wurde korrigiert, kein Test entfernt. Eine erneute vollständige CI auf dem finalen Dokumentations-HEAD bleibt erforderlich. Keine Migration und keine Änderungen an Spielständen, JSON, SQLite, Story, Regeln oder Android-Version.
+
+
+### 2026-11-07 – Bestätigte NPC-Chronik gegen doppelte Notizidentitäten absichern
+
+Der schreibgeschützte NPC-Rückblick schließt jetzt Notizen aus, deren gespeicherte ID nicht exakt einem gültigen 1–64 Zeichen langen ASCII-Identifier entspricht oder kampagnenweit mehrfach verwendet wird. Der Filter erfolgt vor Zeitstempel-Sortierung und Notizbegrenzung: Zweifelhaftes kann damit keine ältere, eindeutig bestätigte Erinnerung verdrängen. Die Originaltexte und Spielstände werden dabei nicht verändert.
+
+**Code/Nachweise:** `app/lib/story/npc_continuity_reader.dart`, vier neue positive/negative Tests in `app/test/npc_continuity_note_id_integrity_test.dart` (doppelte/unsichere IDs, Limit/Tie-Break, altes JSON, SQLite-Neustart). Branch `fix/chat-b/npc-continuity-note-id-20261107`; [PR #615](https://github.com/ManuEtt/Dnd/pull/615) (initial Draft). GitHub-Actions-Abnahme auf finalem Dokumentations-HEAD und echtes Android-Gerät stehen zum Zeitpunkt dieses Nachtrags noch aus. Vorherige CI-Nachweise anderer PRs gelten nicht als Testbeleg für diesen Stand.
+
+**Kompatibilität und Grenzen:** Keine Änderung von SQLite-/JSON-Schema, Helden-/Regel-/Questzustand, App-Version oder KI-Provider. Keine Migration; valide eindeutige Altnotizen bleiben abrufbar. Gemeinsame Dokumentations-Nachträge anderer offener PRs müssen bei späterer Integration verlustfrei zusammengeführt werden.
