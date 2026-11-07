@@ -1421,3 +1421,7 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 **Migrationen:** Keine. Datenbank-/JSON-Kompatibilität, Story-/Rule-Grenze und alte gültige Spielstände unverändert.
 
 **Genau nächster Schritt:** CI des endgültigen #616-HEAD inklusive Dart-Format, Flutter-Unit-Tests, Android-Debug und nativer Tests abnehmen und ggf. konkrete Fehler auf demselben Branch korrigieren; erst danach Koordinationsreview durch Bereich D.
+
+## 07.11.2026 – Korrigierte Fehleranalyse und zusätzlicher positiver Nachweis
+
+Bei vertiefter Prüfung zeigte sich, dass `HealingSpellRules.maximumPreparedSpellLevel` bereits eine nachgelagerte Validierung widersprüchlicher Klassenprofile vornimmt. **Neu** ist die explizite Grenze **vor** `_preparedName`: Bereits ein nicht vorbereiteter Zauber liefert die Klassenprofil-Fehlermeldung, ohne vorbereitete Zauberinformationen als Vorrang preiszugeben. Dieser Regressionstest wurde zusätzlich zu den bisherigen Single-/Multiclass- und Negativfällen in `app/test/srd_spell_preflight_profile_guard_test.dart` ergänzt. Die ursprüngliche Formulierung einer generell erfolgreich zulässigen Zauberausführung mit ungültigen Profilen war nicht ausreichend belegt und wird hiermit präzisiert. Commit `c7cb76e4956684c6d6e1af3ea221a4780cb18228` enthält die exakte Dart-Formatierung und stellt den temporär untersuchten Workflow ohne verbleibenden Diff wieder her. CI auf dem finalen Dokumentations-HEAD steht aus; keine Schema-/JSON-Änderung.
