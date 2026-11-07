@@ -2191,3 +2191,16 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+---
+
+## 2026-11-07 – Android-Stufenaufstieg: Meilenstein bei großer Schrift auswählbar
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `feat/chat-c/levelup-method-large-text-20261107`. Getrennt von #614/#618 und fremden Domain-/Story-/CI-PRs.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_class_level_up_dialog.dart` hält die Methode „Erfahrung“/„Meilenstein“ in einem horizontal scrollbaren `SegmentedButton` erreichbar; `app/test/srd_class_level_up_large_text_method_test.dart` deckt 320 und 360 dp bei TextScaler 2, 0-EP-Positiv-/Negativpfad und unveränderten 1x-EP-Pfad ab.
+- **GETESTET:** Fachcode und vorhandene UI-/Regeltests auf main geprüft, keine Regeländerung; automatisierter Lauf für dieses Inkrement steht noch aus.
+- **NICHT GETESTET:** Dart-Formatierung, Flutter-Analyse und -Tests auf eigenem PR-HEAD, Backend-/Python-/Android-CI, reales Gerät/TalkBack.
+- **KOMPATIBILITÄT:** App `0.8.52+102`; SQLite 3/JSON 1 unverändert, keine neue Speicher- oder Spielregelaktion, Heldenwerte bleiben bis zum ausdrücklich bestätigten Apply unberührt.
+- **BLOCKIERT:** Lokales Flutter-/Dart-SDK nicht vorhanden. GitHub Actions verbindlich.
+- **NÄCHSTER SCHRITT:** CI bis einschließlich Debug-/optimierter APKs vollständig abnehmen; bei Fehlern isoliert reparieren und erst nach erfolgreicher Gesamt-CI zu Review wechseln. Kein Main-Merge.
