@@ -92,7 +92,10 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: |
+          dart format lib/ui/healing_spell_dialog.dart test/healing_spell_live_snapshot_test.dart
+          git diff --no-ext-diff -- lib/ui/healing_spell_dialog.dart test/healing_spell_live_snapshot_test.dart
+          exit 1
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
