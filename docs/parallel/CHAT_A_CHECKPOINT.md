@@ -1399,3 +1399,15 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-08 – Säurespritzer Unicode-Identitätskontrolle vor Kampfwürfeln (PR #641)
+
+- **Basis:** `0ce0ad86e9eddf8302e495561d12a889008de49a`; **eigener Branch:** `feat/chat-a/acid-splash-target-unicode-20261108`; **Fachcommit:** `9ecabb4454a1b1aa0e96c05dc88a3d5a2d8d4c69`; **PR:** https://github.com/ManuEtt/Dnd/pull/641 (Draft).
+- **Ausgangslücke:** `AcidSplashRules.cast` akzeptierte in Kreaturennamen unsichtbare C1-/Unicode-Richtungs- und Formatsteuerzeichen, in IDs über ASCII hinaus ebenso. Gespeicherte Kampfereignisse konnten daher irreführende Zielkennungen enthalten.
+- **Code:** `app/lib/domain/acid_splash_rules.dart` validiert Zielkennung und Anzeigenamen mit demselben technischen Kontrollzeichenfilter vor allen Saves und Schadenswürfen.
+- **Tests:** Neue `app/test/acid_splash_unicode_identity_test.dart`: positives sichtbares Unicode, 20 manipulierte Zeichen x beide Textfelder, manipuliertes zweites Ziel ohne teilweise Würfel, echtes Kampagnenereignis bei ungültiger Identität ohne HP-/Revisions-/JSON-Änderung.
+- **Getestet:** Aktueller Main-HEAD, 48 offene PRs samt ihren Dateien, bestehende Säurespritzer-/GameEngine-Fachpfade und SRD-5.2.1-Regelquelle geprüft; vollständige GitHub-CI am abschließenden Branch-HEAD separat abnehmen. **Lokal nicht ausführbar:** Git-Checkout (DNS), Dart-/Flutter-Tooling (fehlt), Python-/Backend-Gesamtläufe ohne Quellbaum, Android-APK. Keine vorweggenommene grüne CI.
+- **Migrationen:** Keine. Keine Änderung von SRD-Zauberschaden/-SG, Modellen, Backups, SQLite/JSON, Eventstruktur, Klassenressourcen, App-Version oder Android-UI; alte Spielstände werden nicht automatisch verändert.
+- **Koordination:** Keine Überschneidung der beiden Fach-/Testdateien mit bestehenden PRs. Gemeinsame README-/Checkpoint-Nachträge append-only; bei Integration verlustfrei vereinen. PR #639 bleibt getrennt und besitzt grüne CI auf seinem damaligen Head; dadurch keine implizite Abnahme oder Zusammenführung.
+- **Nächster Schritt:** Erfolgreiche finale CI auf #641 bestätigen und bei etwaigen Fehlern nur im eigenen Branch nachbessern, dann Integrationsabgleich.
+
