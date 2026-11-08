@@ -2294,3 +2294,14 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Lokaler vollständiger GitHub-Checkout in dieser Arbeitsumgebung nicht verfügbar; finale GitHub-CI, erneuter Mergeability-Check und ggf. Main-Dokumentationsnachträge vor Integration ausstehend.
 - **NOCH NICHT IMPLEMENTIERT:** Keine POSIX-Descriptor-basierte, durchgehende Race-Freiheit bei Verzeichnisänderungen während des Schreibens; kein Main-Merge von #640, keine Spielstands-/Datenbankschema-/Versionsänderung.
 - **NÄCHSTER SCHRITT:** Endgültige #640-CI auf tatsächlichem PR-Head in allen sechs Jobs erfolgreich abschließen, Main und offene PRs erneut prüfen und nur bei Konfliktfreiheit integrieren; danach neue Main-CI kontrollieren.
+
+## 08.11.2026 – SRD-Zauberangriff: aufgehobene Würfelumstände und manuelle W20
+
+- **Basis:** `main` `8bfaa22cded60e7731f5a3dc95684949bad49276`, separater Branch `feat/chat-a/spell-attack-cancelled-manual-roll-20261108`, Fachcommit `60dd34d12e0a6e6f977a4328a218a4423f0d48f4`, [PR #646](https://github.com/ManuEtt/Dnd/pull/646).
+- **IMPLEMENTIERT:** `SrdSpellAttackRollRules.resolve` erlaubt einen ausdrücklich bestätigten manuellen Natur-W20 bei gleichzeitigem Vorteil und Nachteil, weil beide nach SRD 5.2.1, S. 8, neutralisiert werden. Die Vorprüfung verweigert weiterhin einen Einzelwurf bei nur einem aktiven Vorteil-/Nachteil-Flag. Keine Änderung an `DiceEngine` oder Ressourcen-/Zustandsübergängen.
+- **REGRESSIONEN:** Ergänzt im bestehenden `app/test/srd_spell_attack_roll_rules_test.dart`: natürliche Würfe 1/11/20 nach Aufhebung ohne RNG-Verbrauch, unveränderte Kritisch- und Trefferregeln, weiterhin ablehnende Autorisierungs- und Deckungsvorabprüfung sowie Negativfälle für unaufgehobene Flags.
+- **QUELLE:** Wizards of the Coast LLC, *SRD 5.2.1*, Playing the Game, D20 Tests / Advantage/Disadvantage, S. 8, CC BY 4.0, https://www.dndbeyond.com/srd.
+- **GETESTET:** 52 offene Pull Requests mit geänderten Fachdateien verglichen; keine Überschneidung der zwei betroffenen Dateien. Code und Tests auf GitHub veröffentlicht. Eine lokale Dart-/Flutter-Ausführung war mangels SDK nicht möglich.
+- **NOCH NICHT GETESTET:** Endgültige CI des vollständigen dokumentierten Commits mit Python, Backend, Dart-Format, Analyzer, Flutter, Android- und Release-Paketen; kein Gerätetest.
+- **BLOCKIERT/NOCH NICHT IMPLEMENTIERT:** Kein automatischer Main-Merge, keine zusätzliche Zauberfreigabe, keine Änderung an JSON, SQLite, Kampfevents, Ausrüstung, UI, Story oder App-Version. Abnahme der offenen PRs #639 und #641 bleibt getrennt, obwohl deren Einzel-CI auf ihren finalen Commits erfolgreich war.
+- **NÄCHSTER SCHRITT:** Finalen CI-Status auf dem PR-Head prüfen und bei Fehlern nur den isolierten Branch korrigieren; Main-/Mergeability- und Dokumentations-Integrationsprüfung vor Merge durch Koordination.

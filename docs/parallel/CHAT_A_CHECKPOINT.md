@@ -1399,3 +1399,13 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 08.11.2026 – Zauberangriff mit aufgehobenem Vorteil/Nachteil (PR #646)
+
+- **Zuständigkeit:** Regelengine und SRD-5.2.1-D20-Tests; eigenständiger Branch `feat/chat-a/spell-attack-cancelled-manual-roll-20261108`, Basis `main` `8bfaa22cded60e7731f5a3dc95684949bad49276`.
+- **IMPLEMENTIERT:** Einzelne bestätigte manuelle Naturwürfe werden nur bei effektiv normalen W20-Regeln zugelassen. Gleichzeitiger Vorteil + Nachteil neutralisiert sich ausdrücklich; einseitiger Vorteil oder Nachteil verlangt weiterhin reguläre Doppelwürfel. Nur `app/lib/domain/srd_spell_attack_roll_rules.dart` geändert.
+- **TESTS ERGÄNZT:** `app/test/srd_spell_attack_roll_rules_test.dart`: erfolgreiche manuelle 1/11/20 mit beiden Flags, keine RNG-Aufrufe, weiterhin fail-closed bei vollständiger Deckung und fehlender Berechtigung. Vorhandene Tests bleiben erhalten.
+- **QUELLE:** Wizards of the Coast LLC, SRD 5.2.1, Playing the Game / D20 Tests / Advantage-Disadvantage, S. 8, CC BY 4.0, https://www.dndbeyond.com/srd.
+- **KOORDINATION:** Vor der Dateiwahl alle 52 offenen PRs auf geänderte Dateipfade geprüft, keine Fachkollision. PR #639 und #641 bleiben separat, deren sechs CI-Jobs waren erfolgreich, aber ohne Main-Merge. Gemeinsame Dateien wurden nur nach dem letzten Eintrag append-only erweitert.
+- **PR/STATUS:** [#646](https://github.com/ManuEtt/Dnd/pull/646), Fachcommit `60dd34d12e0a6e6f977a4328a218a4423f0d48f4`. Lokal kein Dart/Flutter-SDK; endgültiger CI-Workflow am Dokumentations-HEAD noch ausstehend, PR Draft.
+- **UNVERÄNDERT:** Keine App-Version, kein Datenschema, keine Spielstände, Events, Kampflogik, UI oder Story angepasst. Nächster Schritt: finale CI prüfen, Konfliktfreiheit und Main-Integrierbarkeit erneut prüfen; kein automatischer Merge.
