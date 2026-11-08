@@ -2080,3 +2080,31 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Ausstehende finale GitHub-CI, vor Integration frische Konfliktprüfung und Main-Abgleich.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge, keine descriptorbasierte atomare Absicherung der gesamten Verzeichniskette. Keine SQLite-/JSON-Spielstand-/App-Version-/Domain-/UI-Änderungen.
 - **NÄCHSTER SCHRITT:** GitHub-CI auf finalem Branch-HEAD kontrollieren, dann mit aktualisiertem Main und laufenden PRs verlustfrei integrieren, nur wenn alle sechs Jobs erfolgreich sind.
+
+## 06.11.2026 – Kollisionssichere Historie der Quellcode-Checkpoints
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745` nach Integration von PR #587 (vollständige finale PR-CI [#42162161178](https://github.com/ManuEtt/Dnd/actions/runs/42162161178): erfolgreich).
+- **Branch:** `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`.
+- **Fach-/Testcommit:** `c80950bc7ad5d7576d7717aea4c2535d9aa3f240`; **Pull Request:** [#592](https://github.com/ManuEtt/Dnd/pull/592), Draft bis vollständiger CI.
+- **Problem:** Bereits als Einzeldateien geprüfte historische ZIP-/Patch-/Manifestnamen konnten sich nach Unicode-NFC-/Casefold-Normalisierung überschneiden. Ein weiteres Checkpoint mit anders geschriebenem Label bei gleichem Zeitstempel oder eine alternative Schreibweise der stabilen Ausgabe-Aliase barg ein Kollisionsrisiko auf Windows/macOS.
+- **Implementiert:** `scripts/create_checkpoint.py` vergleicht historische Namen vor der Hashbildung mit normalisierten NFC-/Casefold-Schlüsseln. Unter Ausgabe-Lock wird geprüft, dass neue versionierte Namen mit keinem bestehenden Namen identisch werden und dass keine Zweitnamen von `Wuerfelraunen_LATEST_Vollprojekt.zip` und `SHA256SUMS.txt` vorkommen. Kein Force-Push, keine Sicherung umbenannt oder gelöscht.
+- **Regressionen:** Vier neue Methoden in `scripts/tests/test_create_checkpoint.py` für zwei Casefold-Zwillinge, zwei Unicode-NFC-Zwillinge, neu erzeugte identische Versions-/Zeitstempeleinträge mit abweichend geschriebenen Labels und beide Aliasnamen. Bestehende Sicherungen/Prüfsummen bleiben bytegenau erhalten, Lock wird bei Ablehnung freigegeben.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktkontrolle:** Offene PRs aus A/B/C (inklusive #591) ändern keine der zwei Checkpoint-Fachdateien; gemeinsame README-/CODEX-Änderungen bleiben additiv, README-Nachtrag nur am absoluten Dateiende mit neutralem Titel ohne redaktionelle Chat-Zuordnung.
+- **GETESTET:** GitHub-Stand vor Branchstart und vor PR, Fachcode/Tests committed, isolierter PR angelegt. **NICHT GETESTET:** neue Python-/Backend-/Flutter-/Android-CI auf finalem PR-HEAD, lokaler kompletter Repo-Test, Android-Gerät und alte Gerätespielstände.
+- **BLOCKIERT:** CI-Abnahme auf finalem Commit und erneute Main-/PR-Datei-/Ancestry-Prüfung vor Merge.
+- **Migrationen:** keine. Alte Checkpoint- und Backupartefakte bleiben intakt; SQLite, JSON, Regel-/Storyzustand und Android-Version unverändert.
+- **Nächster Schritt:** endgültige Python-, Backend-, Flutter-, Android-Debug-, ABI- und Release-CI prüfen, bei Fehlern branchlokal beheben und erst nach konfliktfreier CI integrieren.
+
+
+
+## 2026-11-08 – Historische Checkpoint-Dateinamen gegen NFC-/Casefold-Kollisionen schützen (PR #592 aktualisiert)
+
+- **Ausgangspunkt:** PR #592, ursprünglicher HEAD `8600c9b65ce5f851c030b6a099e65e1b0f8ad579`; nach erfolgreichem Merge von #640 aktueller Main `8bfaa22cded60e7731f5a3dc95684949bad49276`. Aktualisierung ohne Überschreiben anderer Änderungen über Merge-Commit `1f685bca92b7a55abeb857f5d88a52d5b11c683d` auf `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`.
+- **IMPLEMENTIERT:** Historische versionierte Checkpoints werden vor Hashbildung und Veröffentlichung gegen NFC-/Casefold-Zwillinge geprüft; neue Versionsnamen und falsche Schreibweisen der beiden stabilen Alias-Dateien werden unter dem exklusiven Checkpoint-Lock abgewiesen.
+- **TESTS:** Vier originale Python-Regressionen in `scripts/tests/test_create_checkpoint.py` bewahrt; Ausgangs-/Neustand der zwei Fachdateien differenziell verglichen und nur den alten, rein additiven Patch übernommen.
+- **GETESTET:** GitHub-Branch, Main-Commit, Open-PR-Umfang und Herkunftshistorie kontrolliert; finale CI auf neuer Dokumentationsfassung läuft erst nach Commit.
+- **NICHT GETESTET:** Alle sechs GitHub-Actions-Jobs auf endgültigem HEAD, reale Windows-/macOS-Dateinamen, Android-Realgerät.
+- **BLOCKIERT:** Abnahme der neuen CI und erneuter Integrationscheck.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von PR #592, keine gespeicherten Daten oder Backup-Dateien umbenannt oder gelöscht.
+- **NÄCHSTER SCHRITT:** Vollständige GitHub-CI abwarten und nur nach sechs grünen Jobs und konfliktfreiem Main-Abgleich integrieren.
