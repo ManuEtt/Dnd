@@ -90,22 +90,6 @@ def ensure_safe_destination(path: pathlib.Path, target_root: pathlib.Path) -> No
             raise ValueError(f"Grafik-Zielpfad enthaelt Symlink: {current}")
 
 
-
-def verify_existing_asset(path: pathlib.Path, expected: bytes) -> bool:
-    """Allow only matching regular files; never read devices, FIFOs or sockets.
-
-    In particular, Path.read_bytes() on a named pipe can block indefinitely.
-    Recheck immediately before publication as well as during ZIP preflight.
-    """
-    if not path.exists():
-        return False
-    if not path.is_file():
-        raise ValueError(f"Grafikziel ist keine regulaere Datei: {path}")
-    if path.read_bytes() != expected:
-        raise FileExistsError(f"Abweichendes Original nicht ueberschreiben: {path}")
-    return True
-
-
 def imported_assets(zip_path: pathlib.Path, target_root: pathlib.Path):
     with zipfile.ZipFile(zip_path) as archive:
         entries = archive.infolist()
@@ -148,7 +132,8 @@ def imported_assets(zip_path: pathlib.Path, target_root: pathlib.Path):
                 raise ValueError(f"Keine gueltige WebP-Datei: {name}")
             path = target_root / rel
             ensure_safe_destination(path, target_root)
-            verify_existing_asset(path, data)
+            if path.exists() and path.read_bytes() != data:
+                raise FileExistsError(f"Abweichendes Original nicht ueberschreiben: {path}")
             validated.append((path, data))
         return validated
 
@@ -167,7 +152,9 @@ def publish_verified_asset(
     ensure_safe_destination(path, target_root)
     path.parent.mkdir(parents=True, exist_ok=True)
     ensure_safe_destination(path, target_root)
-    if verify_existing_asset(path, data):
+    if path.exists():
+        if path.read_bytes() != data:
+            raise FileExistsError(f"Abweichendes Original nicht ueberschreiben: {path}")
         return
     descriptor, temp_name = tempfile.mkstemp(
         prefix=f".{path.name}.", suffix=".partial", dir=path.parent

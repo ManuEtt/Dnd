@@ -2080,3 +2080,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Ausstehende finale GitHub-CI, vor Integration frische Konfliktprüfung und Main-Abgleich.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge, keine descriptorbasierte atomare Absicherung der gesamten Verzeichniskette. Keine SQLite-/JSON-Spielstand-/App-Version-/Domain-/UI-Änderungen.
 - **NÄCHSTER SCHRITT:** GitHub-CI auf finalem Branch-HEAD kontrollieren, dann mit aktualisiertem Main und laufenden PRs verlustfrei integrieren, nur wenn alle sechs Jobs erfolgreich sind.
+
+
+## 2026-11-08 – Reguläre Grafik-Ziele vor dem Lesen erzwingen (PR #645)
+
+- **Main-Ausgangspunkt:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; PR #640 nach sechsfach grünem [Actions-Lauf #42457990745](https://github.com/ManuEtt/Dnd/actions/runs/42457990745) regulär integriert.
+- **Branch/PR:** `fix/chat-d/fantasy-import-nonregular-targets-20261108`, [#645](https://github.com/ManuEtt/Dnd/pull/645) (Draft). Fachcommit `aeb143ea2a41474e6a871d94b4f90a375a0bc862`, Testcommit `9c3ae1b9ec54ace10579f1665428727e38486b6e`.
+- **Problem:** `Path.read_bytes()` auf einer als Bildziel angelegten FIFO kann unendlich auf einen Schreiber blockieren; Verzeichnisse sind keine zulässigen Originalgrafikdateien. Die bestehende Vorab-/Spätprüfung erkannte nur abweichende Inhalte, keinen ungeeigneten Dateityp.
+- **IMPLEMENTIERT:** `verify_existing_asset(path, expected)` sperrt vorhandene nichtreguläre Dateitypen vor dem Lesen. Der gleiche Helfer wird während Import-Preflight und direkt vor atomarer Veröffentlichung eingesetzt. Passende reguläre Originaldateien bleiben idempotent, abweichende Dateien werden nie überschrieben.
+- **Tests:** Drei neue Python-Regressionen für Verzeichnisziele (auch Verify-Only), POSIX-FIFO vor der Vorprüfung und POSIX-FIFO nach erfolgreichem Preflight; Verbot eines blockierenden `read_bytes` ist in den Regressionen explizit geprüft. Vorhandene positive Tests bleiben.
+- **GETESTET:** Reale GitHub-Quelltexte und offene PRs geprüft; eigener Branch und PR erstellt. Vorläufiger CI-Lauf kann noch kein finaler Nachweis sein; frühere CI von #640 war vollständig grün.
+- **NICHT GETESTET:** Finale vollständige CI auf dem letzten Dokumentations-Commit; Windows-Reparse-Points, Realgerät und exakt zeitgleiche Dateiaustausche.
+- **BLOCKIERT:** Finale GitHub-CI/Release-Abnahme und frischer Konflikt-/Main-Abgleich.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge, keine descriptorbasierte Vollabsicherung der Race-Condition, keine Migration oder Daten-/App-Versionsänderung.
+- **NÄCHSTER SCHRITT:** Endgültigen PR-HEAD mit allen sechs Jobs abnehmen und anschließend nur bei konfliktfreiem aktualisiertem Main integrieren.

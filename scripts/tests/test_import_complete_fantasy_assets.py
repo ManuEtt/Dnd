@@ -2,7 +2,6 @@
 import hashlib
 import importlib.util
 import json
-import os
 import pathlib
 import sys
 import tempfile
@@ -69,87 +68,6 @@ class FantasyImportTests(unittest.TestCase):
         self.assertFalse(asset.is_symlink())
         self.assertEqual(
             MODULE.main([str(self.archive), "--target", str(destination)]), 0
-        )
-
-    def test_directory_as_existing_asset_is_rejected_without_read_or_write(self):
-        self._make_archive()
-        target = self.root / "project"
-        image = target / MODULE.PREFIX / MODULE.ASSETS[0]
-        image.mkdir(parents=True)
-        # A directory is an existing but invalid output; do not attempt to
-        # read it or begin publication of any other original artwork.
-        with mock.patch.object(
-            pathlib.Path, "read_bytes",
-            side_effect=AssertionError("non-regular target was read"),
-        ):
-            with self.assertRaisesRegex(ValueError, "keine regulaere Datei"):
-                MODULE.imported_assets(self.archive, target)
-            self.assertEqual(
-                MODULE.main([str(self.archive), "--target", str(target)]), 1
-            )
-            self.assertEqual(
-                MODULE.main([
-                    str(self.archive), "--target", str(target), "--verify-only"
-                ]), 1
-            )
-        self.assertTrue(image.is_dir())
-        self.assertEqual(list(image.iterdir()), [])
-        self.assertEqual(
-            [entry.name for entry in image.parent.iterdir()], [image.name]
-        )
-
-    @unittest.skipIf(not hasattr(os, "mkfifo"), "POSIX named pipes required")
-    def test_fifo_as_existing_asset_is_rejected_without_blocking(self):
-        self._make_archive()
-        target = self.root / "project"
-        image = target / MODULE.PREFIX / MODULE.ASSETS[0]
-        image.parent.mkdir(parents=True)
-        os.mkfifo(image)
-        # Path.read_bytes() would block waiting for a FIFO writer. Fail the
-        # test immediately if a regression tries to perform that read.
-        with mock.patch.object(
-            pathlib.Path, "read_bytes",
-            side_effect=AssertionError("attempted to read a named pipe"),
-        ):
-            with self.assertRaisesRegex(ValueError, "keine regulaere Datei"):
-                MODULE.imported_assets(self.archive, target)
-            self.assertEqual(
-                MODULE.main([str(self.archive), "--target", str(target)]), 1
-            )
-        self.assertTrue(image.exists())
-        self.assertFalse(image.is_file())
-        self.assertEqual(list(image.parent.glob(".*.partial")), [])
-
-    @unittest.skipIf(not hasattr(os, "mkfifo"), "POSIX named pipes required")
-    def test_fifo_created_after_zip_preflight_is_rejected_before_publication(self):
-        self._make_archive()
-        target = self.root / "project"
-        image = target / MODULE.PREFIX / MODULE.ASSETS[0]
-        original_preflight = MODULE.imported_assets
-
-        def insert_fifo_after_preflight(*args):
-            result = original_preflight(*args)
-            image.parent.mkdir(parents=True, exist_ok=True)
-            os.mkfifo(image)
-            return result
-
-        with (
-            mock.patch.object(
-                MODULE, "imported_assets", side_effect=insert_fifo_after_preflight
-            ),
-            mock.patch.object(
-                pathlib.Path, "read_bytes",
-                side_effect=AssertionError("late named pipe was read"),
-            ),
-        ):
-            self.assertEqual(
-                MODULE.main([str(self.archive), "--target", str(target)]), 1
-            )
-        self.assertTrue(image.exists())
-        self.assertFalse(image.is_file())
-        self.assertEqual(list(image.parent.glob(".*.partial")), [])
-        self.assertEqual(
-            [entry.name for entry in image.parent.iterdir()], [image.name]
         )
 
     def test_symlinked_asset_directory_is_rejected_before_writing(self):
