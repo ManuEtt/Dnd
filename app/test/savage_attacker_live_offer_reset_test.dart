@@ -175,9 +175,7 @@ void main() {
 
     final spent = campaign.copyWith(
       revision: campaign.revision + 1,
-      encounter: campaign.encounter!.copyWith(
-        savageAttackerUsedThisTurn: true,
-      ),
+      encounter: campaign.encounter!.copyWith(savageAttackerUsedThisTurn: true),
     );
     final before = spent.toJson();
     await tester.pumpWidget(
