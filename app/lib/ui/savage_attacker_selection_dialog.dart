@@ -56,6 +56,32 @@ class _SavageAttackerSelectionDialogState
     extends State<SavageAttackerSelectionDialog> {
   bool? _chooseAlternative;
 
+  @override
+  void didUpdateWidget(covariant SavageAttackerSelectionDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // A choice belongs to exactly one confirmed attack snapshot. Even when
+    // the new offer is valid, an old tap must never approve its dice or cost.
+    if (!identical(oldWidget.campaign, widget.campaign) ||
+        oldWidget.attackRollId != widget.attackRollId ||
+        oldWidget.encounterId != widget.encounterId ||
+        oldWidget.weaponDamageExpression != widget.weaponDamageExpression ||
+        !identical(oldWidget.original, widget.original) ||
+        !identical(oldWidget.alternative, widget.alternative) ||
+        oldWidget.confirmedWeaponHit != widget.confirmedWeaponHit ||
+        oldWidget.confirmedWeaponAttack != widget.confirmedWeaponAttack ||
+        oldWidget.critical != widget.critical ||
+        !identical(
+          oldWidget.originalCriticalExtra,
+          widget.originalCriticalExtra,
+        ) ||
+        !identical(
+          oldWidget.alternativeCriticalExtra,
+          widget.alternativeCriticalExtra,
+        )) {
+      _chooseAlternative = null;
+    }
+  }
+
   SavageAttackerChoice? _verified() {
     final fight = widget.campaign.encounter;
     if (fight == null ||
