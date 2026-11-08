@@ -70,14 +70,18 @@ def parse_strict_manifest(data: bytes) -> dict:
 
 
 def ensure_safe_destination(path: pathlib.Path, target_root: pathlib.Path) -> None:
-    """Never follow symlinks inside the chosen artwork import destination."""
+    """Never follow symlinks in the destination or any of its ancestors."""
     try:
         components = path.relative_to(target_root).parts
     except ValueError as error:
         raise ValueError("Grafikziel liegt ausserhalb des Projektordners") from error
+    # A target like /work/alias/project may itself be a normal directory,
+    # even though /work/alias redirects the import outside the selected tree.
+    # Check the entire target ancestry before validating its child assets.
+    for ancestor in (target_root, *target_root.parents):
+        if ancestor.is_symlink():
+            raise ValueError(f"Grafik-Zielordner enthaelt Symlink: {ancestor}")
     current = target_root
-    if current.is_symlink():
-        raise ValueError(f"Grafik-Zielordner ist ein Symlink: {current}")
     for component in components:
         current = current / component
         # Path.exists() is false for dangling symlinks, so test is_symlink()

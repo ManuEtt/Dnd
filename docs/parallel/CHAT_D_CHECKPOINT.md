@@ -2066,3 +2066,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** GitHub-DNS im lokalen Container; abschließende Actions-CI und frischer Merge-/Dokumentationscheck.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #638, keine Spielstands-/SQLite-/JSON-Migration, keine Story-/Regel-/UI-Änderung.
 - **NÄCHSTER SCHRITT:** Finalen CI-Commit abnehmen und nur bei konfliktfreiem Stand und sechs grünen Jobs regulär mergen.
+
+
+## 2026-11-08 – Eltern-Symlinks beim Originalgrafik-Import ablehnen (PR #640)
+
+- **Main-Basis:** `0ce0ad86e9eddf8302e495561d12a889008de49a` nach Merge von #638, dessen [CI #42414029366](https://github.com/ManuEtt/Dnd/actions/runs/42414029366) sechsfach erfolgreich war. Bereits bestehende Historie und Nachträge wurden nicht verändert.
+- **Branch/PR:** `fix/chat-d/fantasy-target-ancestor-symlink-20261108`, [#640](https://github.com/ManuEtt/Dnd/pull/640) (Draft). Codecommit `9a0f3bf5bed866371bdf380fadc0455995c6a8f2`, zwei Testfälle in Commit `45806225eb87563e70c7d907802618221f50da89`.
+- **Problem:** `ensure_safe_destination()` verwarf Symlinks in `--target` selbst und darunter, jedoch nicht in dessen Vorfahren. Dadurch konnte `--target=/basis/alias/projekt` über `alias` in einen anderen Verzeichnisbaum weisen.
+- **IMPLEMENTIERT:** Vor der relativen Assetpfad-Prüfung und in der Veröffentlichung jeden Zielordner-Vorfahren zusätzlich auf Symlinks prüfen, auch wenn `--target` selbst kein Symlink und noch nicht vorhanden ist.
+- **Tests:** Zwei neue POSIX-Regressionen für schon symlinkte Vorfahren (inkl. Verify-Only) und späten Austausch des Elternordners nach der ZIP-Vorabprüfung; außerhalb liegende Ordner bleiben unverändert. Frühere positive 13-Dateien-Import-/Reimport-Tests unverändert.
+- **GETESTET:** GitHub-Dateien, unabhängige Fachpfade und Branchzustand geprüft. Vollständig grüne CI gilt nur für #638, nicht für #640.
+- **NICHT GETESTET:** Komplette CI auf finalem #640-Commit sowie Realgerät, Windows-Reparse-Points und Thread-/Prozess-Race während des Schreibens.
+- **BLOCKIERT:** Ausstehende finale GitHub-CI, vor Integration frische Konfliktprüfung und Main-Abgleich.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge, keine descriptorbasierte atomare Absicherung der gesamten Verzeichniskette. Keine SQLite-/JSON-Spielstand-/App-Version-/Domain-/UI-Änderungen.
+- **NÄCHSTER SCHRITT:** GitHub-CI auf finalem Branch-HEAD kontrollieren, dann mit aktualisiertem Main und laufenden PRs verlustfrei integrieren, nur wenn alle sechs Jobs erfolgreich sind.
