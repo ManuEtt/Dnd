@@ -128,7 +128,8 @@ void main() {
       );
       for (final field in ['title', 'description']) {
         final turn = _step();
-        final added = (turn['newThreads'] as List).first as Map<String, dynamic>;
+        final added =
+            (turn['newThreads'] as List).first as Map<String, dynamic>;
         added[field] = 'Vor$mark Nach';
         expect(
           () => AiStoryStep.fromJson(turn, campaign),
