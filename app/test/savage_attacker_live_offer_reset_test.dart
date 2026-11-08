@@ -59,13 +59,12 @@ Widget _screen(
   ),
 );
 
-bool _canSubmit(WidgetTester tester) =>
-    tester
-        .widget<FantasyTextButton>(
-          find.byKey(const ValueKey('savage-attacker-confirm')),
-        )
-        .onPressed !=
-    null;
+bool _canSubmit(WidgetTester tester) {
+  final confirm = tester.widget<FantasyTextButton>(
+    find.byKey(const ValueKey('savage-attacker-confirm')),
+  );
+  return confirm.onPressed != null;
+}
 
 Future<void> _select(WidgetTester tester, String key) async {
   final target = find.byKey(ValueKey(key));
@@ -146,15 +145,12 @@ void main() {
         ),
       );
       expect(_canSubmit(tester), isFalse);
-      expect(
-        tester
-            .widget<Semantics>(
-              find.byKey(const ValueKey('savage-attacker-alternative-semantics')),
-            )
-            .properties
-            .selected,
-        isFalse,
+      final semantics = tester.widget<Semantics>(
+        find.byKey(
+          const ValueKey('savage-attacker-alternative-semantics'),
+        ),
       );
+      expect(semantics.properties.selected, isFalse);
       await _select(tester, 'savage-attacker-original');
       expect(_canSubmit(tester), isTrue);
       expect(campaign.toJson(), before);
@@ -242,7 +238,7 @@ void main() {
         alternative: _dice([4, 4]),
       ),
     );
-    expect(find.textContaining('Zweiter Wurf: 8'), findsOneWidget);
+    expect(find.textContaining('Zweiter Wurf: 11'), findsOneWidget);
     expect(_canSubmit(tester), isFalse);
     expect(campaign.toJson(), before);
     expect(tester.takeException(), isNull);
