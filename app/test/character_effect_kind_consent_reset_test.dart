@@ -70,11 +70,7 @@ Future<void> _kind(WidgetTester tester, String name) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> _enter(
-  WidgetTester tester,
-  String key,
-  String text,
-) async {
+Future<void> _enter(WidgetTester tester, String key, String text) async {
   final field = _control(key);
   await tester.ensureVisible(field);
   await tester.enterText(field, text);
@@ -112,9 +108,7 @@ void main() {
       expect(tester.widget<CheckboxListTile>(_control(key)).value, isFalse);
     }
     expect(
-      tester.state<FormFieldState<DamageType>>(
-        _control('damage-type'),
-      ).value,
+      tester.state<FormFieldState<DamageType>>(_control('damage-type')).value,
       DamageType.force,
     );
 
@@ -141,9 +135,7 @@ void main() {
     await _kind(tester, 'Temporäre TP');
     await _tap(tester, 'replace-temporary');
     expect(
-      tester.widget<CheckboxListTile>(
-        _control('replace-temporary'),
-      ).value,
+      tester.widget<CheckboxListTile>(_control('replace-temporary')).value,
       isTrue,
     );
 
@@ -151,9 +143,7 @@ void main() {
     expect(_control('replace-temporary'), findsNothing);
     await _kind(tester, 'Temporäre TP');
     expect(
-      tester.widget<CheckboxListTile>(
-        _control('replace-temporary'),
-      ).value,
+      tester.widget<CheckboxListTile>(_control('replace-temporary')).value,
       isFalse,
     );
     await _enter(tester, 'source', 'Bestätigte Schutzwirkung');
@@ -176,10 +166,7 @@ void main() {
     await _kind(tester, 'Heilung');
     await _kind(tester, 'Schaden');
     await _tap(tester, 'immune');
-    expect(
-      tester.widget<CheckboxListTile>(_control('immune')).value,
-      isTrue,
-    );
+    expect(tester.widget<CheckboxListTile>(_control('immune')).value, isTrue);
     await _tap(tester, 'cancel');
     expect(results, [null]);
     expect(jsonEncode(hero.toJson()), before);
