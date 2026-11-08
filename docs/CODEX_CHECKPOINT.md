@@ -2294,3 +2294,30 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Lokaler vollständiger GitHub-Checkout in dieser Arbeitsumgebung nicht verfügbar; finale GitHub-CI, erneuter Mergeability-Check und ggf. Main-Dokumentationsnachträge vor Integration ausstehend.
 - **NOCH NICHT IMPLEMENTIERT:** Keine POSIX-Descriptor-basierte, durchgehende Race-Freiheit bei Verzeichnisänderungen während des Schreibens; kein Main-Merge von #640, keine Spielstands-/Datenbankschema-/Versionsänderung.
 - **NÄCHSTER SCHRITT:** Endgültige #640-CI auf tatsächlichem PR-Head in allen sechs Jobs erfolgreich abschließen, Main und offene PRs erneut prüfen und nur bei Konfliktfreiheit integrieren; danach neue Main-CI kontrollieren.
+
+## 06.11.2026 – Historische Checkpoint-Dateinamen kollisionsfrei archivieren
+
+- **Basis-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; Merge von PR #587, finale PR-CI [#42162161178](https://github.com/ManuEtt/Dnd/actions/runs/42162161178) erfolgreich. Main-CI für den Merge separat prüfen.
+- **Branch:** `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`; **Code-/Testcommit:** `c80950bc7ad5d7576d7717aea4c2535d9aa3f240`; **PR:** [#592](https://github.com/ManuEtt/Dnd/pull/592), Draft bis finale CI.
+- **Problem:** Einzelne historische Checkpoint-Dateinamen waren bereits Windows-portabel, aber unterschiedliche gleichwertige Schreibweisen (`Case`/`case`, `Café`/`Cafe\u0301`) konnten gemeinsam im SHA256-Ledger erscheinen. Neue Checkpoints mit gleichem Timestamp/Label in anderer Großschreibung sowie Aliase der beiden stabilen Dateien konnten auf Windows/macOS Dateien überschreiben oder verwechseln.
+- **Implementiert:** In `scripts/create_checkpoint.py` werden historische Dateinamen mit normalisiertem NFC-/Casefold-Schlüssel verglichen; bei Konflikt bricht die Liste vor dem Hashen ab. Unter dem exklusiven Publikationslock werden neue versionierte Namen und alle anders geschriebenen `Wuerfelraunen_LATEST_Vollprojekt.zip`- und `SHA256SUMS.txt`-Aliase vor dem Staging zurückgewiesen.
+- **Regressionen:** Vier neue Tests in `scripts/tests/test_create_checkpoint.py`: historische Groß-/Kleinschreibungszwillinge, historisch Unicode-äquivalente Namen (Linux), gleich datierte Versionen mit unterschiedlich geschriebenem Label und Varianten beider Aliasnamen. Jede Ablehnung bewahrt die vorherigen ZIP-/SHA256SUMS-Bytes und löst den exklusiven Lock.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Main-HEAD, offene PRs und deren Fachdateien abgeglichen; Code, Regressionen und PR committed. Volle PR-CI des Vorgängerpakets #587 erfolgreich. **Keine neue CI als erfolgreich ausgegeben.**
+- **NICHT GETESTET:** GitHub Actions auf finalem Dokumentations-HEAD, reale Android-Geräte, Upgrade eines Altspielstands, lokale vollständige Projekt-/Flutter-Suite (kein zuverlässiger Checkout).
+- **BLOCKIERT:** Vollständige CI des PR #592 und erneute Konfliktkontrolle vor Integration.
+- **Migrationen:** keine, ältere Sicherungen werden weder verändert noch gelöscht. SQLite 3, JSON 1, Backups, SRD-Regeln, App-/Buildversion unverändert.
+- **Nächster Schritt:** finale Actions-CI vollständig abnehmen (Python, Backend, Flutter, Android, alle ABI-APKs, Release), Fehler auf eigenem Branch korrigieren und erst nach grünem Lauf kontrolliert integrieren.
+
+
+
+## 2026-11-08 – Koordinierte Wiederaufnahme von PR #592 auf aktuellem Main
+
+- **Basis-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276` nach erfolgreichem PR #640. Der historische PR #592 wurde von der alten Commit-Linie `8600c9b65ce5f851c030b6a099e65e1b0f8ad579` mit dem aktuellen Main über einen zweiparentigen Merge-Commit `1f685bca92b7a55abeb857f5d88a52d5b11c683d` vereinigt; kein Force-Push, keine fremden Fachdateien überschrieben.
+- **IMPLEMENTIERT:** Der normalisierte Unicode-NFC-/Casefold-Dateinamenschlüssel schützt historische Quellcode-Checkpoints gegen mehrdeutige Dateien und prüft neue versionierte Dateinamen samt stabiler `LATEST`- und `SHA256SUMS.txt`-Aliase vor Veröffentlichung.
+- **Regressionen:** Vier vorhandene Python-Tests aus dem historischen PR bewahrt; der alte Fachpatch wurde bytegenau mit dem aktuellen Main verglichen und erwies sich als rein additiv.
+- **GETESTET:** Historischer Fachpatch/Tests gegen aktuellen Main abgeglichen, Ausgangsdateien und offenen PR-Umfang überprüft; neuer Merge-Branch gesichert. Finale Actions-CI auf Dokumentations-HEAD ist ausstehend, daher kein Integrationsnachweis.
+- **NICHT GETESTET:** Finale Python-/Backend-/Flutter-/Android- und Alpha-Matrix, reale Windows/macOS-Dateisysteme, Android-Realgerät und Bestandsmigrationen.
+- **BLOCKIERT:** Abschließende neue sechsfach grüne CI und frischer Main-/Konfliktcheck.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge dieses PRs in Main, keine Schema-, Spielstand- oder App-Versionsänderungen.
+- **NÄCHSTER SCHRITT:** CI auf dem finalen PR-HEAD prüfen; bei Erfolg konfliktfrei mit den offenen parallelen Arbeiten integrieren und neuen Main abnehmen.
