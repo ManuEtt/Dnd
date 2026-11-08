@@ -92,14 +92,7 @@ jobs:
         run: flutter pub get
       - name: Dart-Formatierung prüfen
         working-directory: app
-        run: |
-          dart format --output=none --set-exit-if-changed lib test || {
-            echo '=== FORMAT-DIAGNOSTIK-BEGINN ==='
-            dart format lib test >/dev/null
-            git diff -- test/acid_splash_unicode_identity_test.dart
-            echo '=== FORMAT-DIAGNOSTIK-ENDE ==='
-            exit 1
-          }
+        run: dart format --output=none --set-exit-if-changed lib test
       - name: Flutter-Code analysieren
         working-directory: app
         run: flutter analyze
