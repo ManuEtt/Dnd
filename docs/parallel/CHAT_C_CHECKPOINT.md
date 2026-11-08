@@ -799,3 +799,18 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+
+---
+
+## 2026-11-08 – Zustandsquellen bei Live-Charakter- und Kampfwechsel sicher erneuern
+
+- **Ausgangs-main:** `0ce0ad86e9eddf8302e495561d12a889008de49a`. **Branch:** `feat/chat-c/condition-source-live-refresh-20261108`. Offene PR-Fachdateien aller parallelen Arbeitsbereiche geprüft, keine Überschneidung mit `condition_effect_dialog.dart` oder dem neuen Widgettest.
+- **PROBLEM:** Im bereits geöffneten Zustandsquellen-Dialog kann sich der zugrunde liegende Charakter-/Kampf-Snapshot aktualisieren. Die Auswahl einer inzwischen entfernten Quelle blieb im `DropdownButtonFormField` gespeichert; dasselbe galt für einen wirkungsgebundenen Zugendpunkt nach Wechsel des aktiven Zuges. Das konnte zu ungültigen Dropdown-Werten, verdeckten Fehlzuordnungen oder einer nicht neu bestätigten Auswahl führen.
+- **IMPLEMENTIERT:** `app/lib/ui/condition_effect_dialog.dart`: `didUpdateWidget` verwirft eine nicht mehr vorhandene Quell-ID und verlangt erneute bewusste Auswahl, setzt bei Charakterwechsel auch den Entwurfszustand zurück und fällt bei weggefallener letzter Quelle sicher in den Hinzufügen-Modus zurück. Geänderte Begegnung/Runde/aktive Zugfolge setzt zeitgebundene Endpunkte auf `untilRemoved`. Nach Quell-/Kampf-Snapshot variierende `KeyedSubtree`-Keys erzeugen die entsprechenden Flutter-Formfelder neu; öffentliche Finder-Keys bleiben unverändert. Die frühere Bestätigungslogik des Controllers bleibt verbindlich.
+- **TESTS IMPLEMENTIERT:** `app/test/condition_effect_live_snapshot_test.dart`: 320/360 dp, 200 % Text mit 220 dp IME: verschwundene gewählte Quelle sperrt Entfernung, erneute ausdrückliche Wahl funktioniert; bei wegfallender letzter Quelle kein stiller Entfernenmodus; anderer Held mit gleicher Effekt-ID übernimmt die alte Auswahl nicht; beim Wechsel zum Gegnerzug wird eine zuvor gewählte Zugenddauer vor positiver Bestätigung auf Dauerzustand zurückgesetzt. Ursprüngliche Charakterdaten bleiben unverändert.
+- **GETESTET:** GitHub-main, echte Dialog- und Domain-Quelldateien, bestehende UI- und IME-Regressionsfälle sowie alle offenen PR-Fachdateien geprüft. Code- und Testdateien auf eigenem GitHub-Branch gesichert. **Keine erfolgreiche CI** auf diesem neuen Head zum Zeitpunkt des Nachtrags behauptet.
+- **NICHT GETESTET:** Dart-Format/Flutter-Analyse/Flutter-Vollsuite, Backend/Python, native Android-Tests, Debug-/Release-APK und echtes Android-Gerät/TalkBack.
+- **KOMPATIBILITÄT:** Keine SRD-5.2.1-/Regeländerung, keine Spielstandsmigration, keine Änderung an SQLite/JSON/Controller/Backend, App-Version `0.8.52+102` unverändert. Nur nicht bestätigte UI-Entwürfe reagieren auf neue Snapshots.
+- **NÄCHSTER SCHRITT:** Eigenen Draft-PR eröffnen, vollständige GitHub-CI auswerten und jede Format-/Analyse-/Widgetabweichung auf diesem Branch korrigieren. Erst bei vollständig grüner CI Ready for Review, niemals ungeprüft in main mergen.
