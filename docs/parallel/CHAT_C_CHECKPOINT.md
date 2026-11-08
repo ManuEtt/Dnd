@@ -799,3 +799,43 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+
+---
+
+## 2026-11-07 – Hintergrundwechsel in der Magieinitiierten-Zauberwahl sicher zurücksetzen
+
+- **Ausgangs-main:** `bbe6ee0901f1873af67647bf54462e4a44821762` inklusive integrierter Grafik-ZIP-Importer-Sicherung aus PR #629.
+- **Branch:** `feat/chat-c/magic-initiate-background-swap-20261107`; keine Überschneidung der beiden Flutter-Fachdateien mit den geprüften offenen PRs. Eigenständiges Android-/Barrierefreiheits-UI-Inkrement.
+- **PROBLEM:** Der wiederverwendete `SrdMagicInitiateDialog` speicherte die ausgewählten Zaubertricks, den Grad-1-Zauber und das Attribut im State und die Dropdowns hielten ihre FormField-Werte intern fest. Wenn `background` in der gleichen Route wechselte, konnte die Auswahl aus dem anderen SRD-Hintergrund bestehen bleiben. Auch identische Zaubernamen beider Listen dürfen nicht als erneute ausdrückliche Zustimmung gelten.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_magic_initiate_dialog.dart` setzt bei `didUpdateWidget` und geändertem `background` alle vier noch unbestätigten Werte zurück; `KeyedSubtree` remountet die vier Dropdown-Felder bei geändertem Hintergrund unter Beibehaltung ihrer bisherigen Finder-Keys. Nicht unterstützte Hintergründe werden neutral als `nicht verfügbar` statt fälschlich als `Magier` angezeigt. Keine Freigabe für unbestätigte oder ungültige Entscheidungen.
+- **TESTS IMPLEMENTIERT:** `app/test/srd_magic_initiate_background_swap_test.dart` mit 360 dp/200 %/IME: vollständige Akolythenwahl, Wechsel zu Gelehrtenzaubern und erneute ausdrückliche Bestätigung. 320 dp/200 %/IME: gemeinsam vorkommende `Light`, `Mending`, `Detect Magic` nach Hintergrundwechsel vollständig zurückgesetzt; neutraler Abbruch. Unsupported `criminal`: keine positive Bestätigung und korrektes UI-Label.
+- **GETESTET:** Aktueller main, offener PR-Bestand, SRD-Auswahllisten und vorhandene Flutter-/IME-Tests in GitHub geprüft; Quell- und Testdateien eingecheckt. Automatische Dart-/Flutter-/Backend-/Python-/APK-CI für diesen HEAD **noch nicht abgeschlossen**.
+- **NICHT GETESTET:** Lokale Flutter-Formatierung/Analyse/Tests (SDK lokal nicht vorhanden), vollständig erfolgreiche GitHub-CI, echte Android-/TalkBack-/IME-Bedienung, Upgrade alter Spielstände.
+- **KOMPATIBILITÄT:** SRD-Regel- und Katalogeinträge, Domänenobjekte, Slots, SQLite-3/JSON-1-Speicherformat, App-Version `0.8.52+102` und bereits gespeicherte Entscheidungen bleiben unverändert. Nur noch unbestätigte UI-Auswahl wird beim Quellenwechsel verworfen.
+- **NÄCHSTER SCHRITT:** Draft-PR gegen aktuelles main, CI bis zu gezielten und vollständigen Flutter-Tests sowie allen APK-/Quell-Artefakten prüfen; Fehler isoliert auf diesem Branch beheben, nur vollständig grünen HEAD zur Review geben. Kein Main-Merge.
+
+
+
+---
+
+## 2026-11-08 – Bestätigte Schadens- und TP-Optionen beim Effektwechsel nicht mitnehmen
+
+- **Ausgangs-main:** `0ce0ad86e9eddf8302e495561d12a889008de49a`, eigener Branch `feat/chat-c/character-effect-kind-consent-reset-20261108`. Alle zum Beginn offenen PR-Fachdateien geprüft; keine Überschneidung mit der UI-Änderung oder neuer Testdatei.
+- **PROBLEM:** `CharacterEffectDialog` speicherte die vier Schadensmodifikatoren (Resistenz, Anfälligkeit, Immunität, kritisch) sowie die ausdrückliche Ersetzfreigabe temporärer Trefferpunkte in lokalen Bool-Feldern. Bei Wechsel des Effekttyps wurden Checkboxen ausgeblendet, behielten aber ihre Zustimmung, falls der vorherige Effekttyp erneut ausgewählt wurde.
+- **IMPLEMENTIERT:** In `app/lib/ui/character_effect_dialog.dart` räumt `_changeKind` bei tatsächlichem Typwechsel die verborgenen fünf Zustimmungen sowie die zuvor gewählte Schadensart auf. Vorhandene Texte, Anzeige- und Bestätigungsfelder sowie die spätere Regelentscheidung bleiben unverändert; kein automatischer Effekt.
+- **TESTS ERGÄNZT:** `app/test/character_effect_kind_consent_reset_test.dart` mit 320 dp, 200 % Schrift und simuliertem Android-IME: alle vier angekreuzten Schadensmodifikatoren und Feuer nach Schaden → Heilung → Schaden zurückgesetzt und ausdrücklich bestätigter Vorschlag ohne alte Kennzeichen; 360 dp: TP-Ersetzfreigabe nach Temp-TP → Heilung → Temp-TP zurückgesetzt; 320 dp: erneutes bewusstes Markieren von Immunität nach Typwechsel und neutraler Abbruch ohne Veränderung des übergebenen Helden.
+- **GETESTET:** Code-, Domain-Vertrags- und bestehende Widgettests geprüft und neue Code-/Testdateien im eigenen Branch eingecheckt. Keine automatisierte CI auf diesem HEAD zum Zeitpunkt des Nachtrags abgeschlossen.
+- **NICHT GETESTET:** Flutter/Dart lokal (SDK fehlt), GitHub-CI mit Format/Analyse/Flutter-/Python-/Backend-/Android-APK, echtes Gerät/TalkBack, Upgrades.
+- **KOMPATIBILITÄT:** App `0.8.52+102`, JSON/SQLite, SRD-Regeln, bestehende Spielstände und Domänenmodell unverändert. Ausschließlich nicht mehr zugehörige, **unbestätigte UI-Auswahl** wird verworfen.
+- **BLOCKIERT:** Bis zur vollständigen GitHub-CI-Abnahme Draft; keine eigenmächtige Integration.
+- **NÄCHSTER SCHRITT:** Eigenen PR gegen aktuelles main eröffnen, Gesamt-CI und APK-Matrix auswerten, Fehler auf eigenem Branch korrigieren; nur nach vollständigem Erfolg Review-Status.
+
+
+## 08.11.2026 – Integration der unabhängigen Dialogzustandskorrekturen
+
+- Beide ursprünglichen, individuellen Fortschrittsnachträge aus PR #634 und #642 sind oben in unveränderter Reihenfolge nach der gemeinsamen Basis angehängt. Fach- und Testdateien bleiben unverändert.
+- Integrationsbranch `integration/reviewed-ui-resets-20261108`, Basis `8bfaa22cded60e7731f5a3dc95684949bad49276`, Quell-Heads `eebaecf173ccb613ab9f10f68ab45245d2ad579f` und `322889b5ecbbc901c0732a03989bad2d912640db`.
+- Einzelne vollständige CI-Läufe auf beiden Quell-Heads bestanden (#42457887639, #42458556507). Kombinierte CI vor Main-Merge noch offen; keine Behauptung eines bereits erfolgreichen Integrations-Builds oder einer physischen Geräteabnahme.
+- SQLite/JSON, Spielstände, SRD-Fachregeln und App-Version bleiben unverändert.
