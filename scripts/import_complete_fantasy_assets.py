@@ -43,6 +43,32 @@ def read_bounded_zip_member(archive: zipfile.ZipFile, name: str, limit: int) -> 
 
 
 
+def parse_strict_manifest(data: bytes) -> dict:
+    """Reject ambiguous JSON before trusting declared asset digests or sizes.
+
+    Python's default JSON parser silently keeps the last duplicate key and
+    accepts non-standard NaN/Infinity values. Original artwork metadata must
+    have one unambiguous interpretation across tools.
+    """
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("Grafikmanifest enthaelt doppelte JSON-Schluessel")
+            result[key] = value
+        return result
+
+    def reject_constant(_value):
+        raise ValueError("Grafikmanifest enthaelt ungueltige JSON-Zahl")
+
+    manifest = json.loads(
+        data, object_pairs_hook=unique_object, parse_constant=reject_constant
+    )
+    if not isinstance(manifest, dict):
+        raise ValueError("Grafikmanifest muss ein Objekt sein")
+    return manifest
+
+
 def ensure_safe_destination(path: pathlib.Path, target_root: pathlib.Path) -> None:
     """Never follow symlinks inside the chosen artwork import destination."""
     try:
@@ -70,11 +96,9 @@ def imported_assets(zip_path: pathlib.Path, target_root: pathlib.Path):
         if len({entry.filename for entry in entries}) != len(entries):
             raise ValueError("Grafik-ZIP enthaelt doppelte Dateinamen")
 
-        manifest = json.loads(read_bounded_zip_member(
+        manifest = parse_strict_manifest(read_bounded_zip_member(
             archive, MANIFEST, MAX_MANIFEST_BYTES
         ))
-        if not isinstance(manifest, dict):
-            raise ValueError("Grafikmanifest muss ein Objekt sein")
         # Validate every requested asset's declared size before testzip() can
         # decompress untrusted contents, including unrelated extra files.
         for name in ASSETS:

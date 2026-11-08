@@ -2257,6 +2257,32 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **NÄCHSTER SCHRITT:** CI exakt auf dem abschließenden #631-HEAD kontrollieren; eventuelle Fehler nur im eigenen Branch korrigieren. Vor Merge Main-/PR-Dateiüberschneidung neu prüfen; nur bei vollständig erfolgreicher CI und Konfliktfreiheit integrieren.
 
 
+## 2026-11-07 – Windows-Gerätenamen mit Hochziffern in Quell-ZIP und Gradle-JAR sperren (PR #637)
+
+- **Basis und Parallelstand:** Eigener Branch `fix/chat-d/windows-device-superscript-20261107` ursprünglich von Main `bbe6ee0901f1873af67647bf54462e4a44821762`. Zwischenzeitlich PR #631 nach sechs grünen Jobs ([Actions #42410645141](https://github.com/ManuEtt/Dnd/actions/runs/42410645141)) regulär auf Main `6623e4d61b664a066352068500959cf2988133fb` integriert. Dessen README-/Checkpoint-Nachträge vor dem eigenen Nachtrag vollständig auf den Branch übernommen; spätere Integration gegen aktuellen Main erneut prüfen.
+- **Branch/PR:** `fix/chat-d/windows-device-superscript-20261107`, [#637](https://github.com/ManuEtt/Dnd/pull/637) (Draft). Codecommit `db7cb684ab0ff7af90dad28bf53a209559602ff0`, Regressionen `163c4ea0d05b40761775b543eeb875251e147aa3`, `f99e061d40e1e12e700888dfd1b6e73622271b45` und `b0b9c7dad58c6dc4ca9ddccabe300072ebe39f00`.
+- **IMPLEMENTIERT:** `scripts/package_project.py`: zentrale Menge `WINDOWS_RESERVED_STEMS` um die sechs von Windows reservierten Namen `COM¹/²/³` und `LPT¹/²/³` erweitert (Microsoft-Dokumentation). Erfasst bereits verwendete Portabilitätsgrenzen für Quellarchive und über `verify_project.py` das ZIP-basierte Gradle-Wrapper-JAR, ohne deren sonstiges Verhalten zu verändern.
+- **TESTS ERGÄNZT:** Zwei Methoden in `scripts/tests/test_package_project.py`: alle sechs Sondernamen als reine Pfadprüfung und reguläre Dateinamen unter POSIX, Erhalt eines bereits publizierten ZIP-/Hash-Paars und positiver nichtreservierter Name. Zwei Methoden in `scripts/tests/test_verify_project.py`: unzulässige JAR-Datei-/Ordnernamen vor `testzip()` abweisen und nichtreservierte ähnlich benannte Klasse erlauben.
+- **GETESTET:** Isolierte lokale Vergleichsprobe bestätigte das vorherige Fehlen und die neue Aufnahme aller sechs Namen; die vollständige GitHub-Python-Teststufe einer frühen PR-Fassung war erfolgreich. Endgültiger Dokumentations-HEAD verlangt erneute vollständige Actions-Abnahme; kein Ergebnis anderer PRs darauf übertragen.
+- **NICHT GETESTET:** Endgültige Python-/Backend-/Dart-/Flutter-/Android-Debug-/ABI-/Alpha-Release-CI nach allen Commits; tatsächliches Windows-Dateisystem, Realgerät und Upgrade.
+- **BLOCKIERT:** Vollständiger GitHub-Checkout im lokalen Container bleibt DNS-bedingt nicht möglich. Ein PR-Branch aus dem vorigen Main enthält jetzt die additive Dokumentations-Historie des integrierten #631; vor Merge GitHub-Mergefähigkeit und alle Parallel-PRs erneut prüfen, bei Konflikt koordinierte Branch-Neuerstellung auf neuem Main statt Überschreiben.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #637; keine Migration, Spielstand- oder Versionsänderung. Die Zeitstempel älterer Checkpoints sind unveränderte historische Momentaufnahmen.
+- **NÄCHSTER SCHRITT:** Finalen PR-CI-Lauf vollständig abnehmen und mögliche Fehler im Branch korrigieren. Dokumentationsmerge gegen neuesten Main und offene Arbeiten prüfen; bei sechs grünen Jobs konfliktfrei integrieren, danach neue Main-CI abnehmen.
+
+
+## 2026-11-07 – Doppelte JSON-Schlüssel in Originalgrafik-Manifesten ablehnen (PR #638)
+
+- **Main-Basis/Historie:** Vorherige Basis `6623e4d61b664a066352068500959cf2988133fb`; PR #637 wurde nach sechs grünen Jobs von [Actions #42412398499](https://github.com/ManuEtt/Dnd/actions/runs/42412398499) auf `main` `1efb5e219dc0b00965e3be2dfb4b2b52d621d362` regulär integriert. Alle dort hinzugefügten README-/Checkpoint-Nachträge sind unverändert erhalten und stehen vor diesem neuen Abschnitt.
+- **Branch/PR:** `fix/chat-d/fantasy-manifest-unique-json-20261107`, [PR #638](https://github.com/ManuEtt/Dnd/pull/638) (Draft); Code `42871dbea42d81fbc4d5abc81339f32e83762784`, Tests `9b025bbd6931f41840183b3aab52626110a33b94`.
+- **IMPLEMENTIERT:** `parse_strict_manifest` in `scripts/import_complete_fantasy_assets.py` nutzt `object_pairs_hook` gegen doppelte Schlüssel auf Top-Level und in geschachtelten Asset-Objekten, `parse_constant` gegen `NaN`, `Infinity`, `-Infinity`; unverändert eine verpflichtende JSON-Objektwurzel. Prüfung vor `ZipFile.testzip()` und vor allen Zieldateiänderungen. Zip-Limits, SHA256/WebP-Nachweis und atomare Einzelbildveröffentlichung beibehalten.
+- **TESTS ERGÄNZT:** Vier Python-Regressionen in `scripts/tests/test_import_complete_fantasy_assets.py`: zwei ZIP-Integrationstests für doppelte Schlüssel mit gesperrtem CRC-Lauf, ein Test gegen drei unzulässige Zahlenkonstanten, ein positiver Test für alle 13 Originalgrafiken.
+- **GETESTET:** Code und neue Tests auf GitHub gesichert; die GitHub-Python-Paket-/Strukturstufe der vorläufigen Testfassung war erfolgreich. Das ist **kein** Vollnachweis der endgültigen CI; Lauf [#42413732528](https://github.com/ManuEtt/Dnd/actions/runs/42413732528) gehört zum Stand vor Dokumentations-/Mergecommit.
+- **NICHT GETESTET:** Vollständige Python-/Backend-/Dart-/Flutter-/Android-Debug-/drei-ABI-/Alpha-Release-CI auf finalem dokumentierten PR-HEAD; Realgerät, Windows-Realtest, Updates/Produktivsignierung.
+- **BLOCKIERT:** GitHub-DNS verhindert weiterhin vollständigen lokalen Checkout. Finale Actions-Abnahme, freier Mergeability-Status und verlustfreie Synchronisierung parallel hinzugekommener Dokumentation vor Main-Merge ausstehend.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #638, keine neuen Spielregeln, Datenbankschemata oder Spielstandsformate, keine App-Versionsänderung.
+- **NÄCHSTER SCHRITT:** Finalen GitHub-CI-Lauf am echten zusammengeführten Commit vollständig auswerten, eventuelle Fehler im eigenen Branch korrigieren, frischen Main-/PR-Check durchführen und nur bei durchgehend grünen sechs Jobs integrieren.
+
+
 
 ---
 

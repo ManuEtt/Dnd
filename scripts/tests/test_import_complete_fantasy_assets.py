@@ -279,5 +279,73 @@ class FantasyImportTests(unittest.TestCase):
         )
         self.assertEqual(list(image_dir.glob(".*.partial")), [])
 
+
+    def _replace_manifest_text(self, manifest_text):
+        with zipfile.ZipFile(self.archive) as archive:
+            assets = [
+                (name, archive.read(name))
+                for name in archive.namelist() if name != MODULE.MANIFEST
+            ]
+        with zipfile.ZipFile(self.archive, "w") as archive:
+            for name, data in assets:
+                archive.writestr(name, data)
+            archive.writestr(MODULE.MANIFEST, manifest_text)
+
+    def test_duplicate_root_manifest_asset_key_is_rejected_before_crc(self):
+        self._make_archive()
+        with zipfile.ZipFile(self.archive) as archive:
+            manifest = json.loads(archive.read(MODULE.MANIFEST))
+        duplicated_name = MODULE.PREFIX + MODULE.ASSETS[0]
+        duplicate = (
+            json.dumps(manifest)[:-1] + ", "
+            + json.dumps(duplicated_name) + ": "
+            + json.dumps(manifest[duplicated_name]) + "}"
+        )
+        self._replace_manifest_text(duplicate)
+        with mock.patch.object(
+            zipfile.ZipFile, "testzip",
+            side_effect=AssertionError("CRC scan before JSON validation"),
+        ):
+            with self.assertRaisesRegex(ValueError, "doppelte JSON-Schluessel"):
+                MODULE.imported_assets(self.archive, self.root)
+        self.assertFalse((self.root / MODULE.PREFIX).exists())
+
+    def test_duplicate_nested_manifest_bytes_key_is_rejected_before_crc(self):
+        self._make_archive()
+        with zipfile.ZipFile(self.archive) as archive:
+            manifest = archive.read(MODULE.MANIFEST).decode("utf-8")
+        payload_size = len(b"RIFF" + bytes([4, 0, 0, 0]) + b"WEBP")
+        original = f'"bytes": {payload_size}'
+        self.assertIn(original, manifest)
+        self._replace_manifest_text(
+            manifest.replace(original, original + ", " + original, 1)
+        )
+        with mock.patch.object(
+            zipfile.ZipFile, "testzip",
+            side_effect=AssertionError("CRC scan before JSON validation"),
+        ):
+            with self.assertRaisesRegex(ValueError, "doppelte JSON-Schluessel"):
+                MODULE.imported_assets(self.archive, self.root)
+
+    def test_nonstandard_json_numbers_are_rejected(self):
+        for number in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(value=number):
+                with self.assertRaisesRegex(ValueError, "ungueltige JSON-Zahl"):
+                    MODULE.parse_strict_manifest(
+                        ('{"irrelevant": ' + number + "}").encode("utf-8")
+                    )
+
+    def test_valid_manifest_keeps_original_asset_verification(self):
+        payload = self._make_archive()
+        with zipfile.ZipFile(self.archive) as archive:
+            original = archive.read(MODULE.MANIFEST)
+        manifest = MODULE.parse_strict_manifest(original)
+        self.assertEqual(
+            manifest[MODULE.PREFIX + MODULE.ASSETS[0]]["sha256"],
+            hashlib.sha256(payload).hexdigest(),
+        )
+        self.assertEqual(len(MODULE.imported_assets(self.archive, self.root)), 13)
+
+
 if __name__ == "__main__":
     unittest.main()

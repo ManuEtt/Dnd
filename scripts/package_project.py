@@ -84,6 +84,10 @@ WINDOWS_RESERVED_STEMS = frozenset(
     ('CON', 'PRN', 'AUX', 'NUL')
     + tuple(f'COM{number}' for number in range(1, 10))
     + tuple(f'LPT{number}' for number in range(1, 10))
+    # Win32 also reserves the Latin-1 superscript digits in COM/LPT names.
+    # See Microsoft "Naming Files, Paths, and Namespaces".
+    + tuple(f'{device}{digit}' for device in ('COM', 'LPT')
+            for digit in ('¹', '²', '³'))
 )
 WINDOWS_INVALID_CHARACTERS = frozenset('<>:"\\|?*')
 
