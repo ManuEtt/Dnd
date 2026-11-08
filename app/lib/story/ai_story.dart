@@ -13,6 +13,7 @@ Map<String, dynamic> _obj(Object? value) {
 // and tabs used in ordinary multi-paragraph fantasy narration.
 // Legacy soft hyphens, combining grapheme joiners, Mongolian vowel
 // separators and deprecated bidi controls also hide inside provider text.
+// Invisible mathematical operators U+2061–U+2064 also disguise AI text.
 // Keep ordinary multiline narration and emoji variation selectors intact.
 final _unsafeStoryFormatting = RegExp(
   r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f'
