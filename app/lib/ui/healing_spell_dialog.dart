@@ -341,7 +341,9 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                     key: const ValueKey('healing-spell-class'),
                     initialValue: _castingClass,
                     isExpanded: true,
-                    decoration: const InputDecoration(labelText: 'Zauberklasse'),
+                    decoration: const InputDecoration(
+                      labelText: 'Zauberklasse',
+                    ),
                     items: [
                       for (final name in _castingClasses)
                         DropdownMenuItem(
