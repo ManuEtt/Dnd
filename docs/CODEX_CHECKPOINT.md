@@ -2334,3 +2334,29 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Kombinierte CI:** auf dem Integrations-HEAD noch nicht ausgeführt; erst nach grünem Ergebnis für Review und nach frischem Main-/PR-Abgleich für Merge freigeben.
 - **Kompatibilität:** Keine Änderung an Schema, Spielständen, App-Version, Regeln oder KI-Erzählung. Echte Android-/TalkBack-Gerätetests nicht durchgeführt.
 - **Nächster Schritt:** neuen Integrations-PR erstellen und vollständige Android-/Flutter-/Python-/Backend-CI auf finalem HEAD prüfen.
+
+## 2026-11-08 – Raw-URI-Literale in den Story-/Regelmodulgrenzen erkennen
+
+- **Ausgangs-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; nachgewiesene Main-CI [#42514079690](https://github.com/ManuEtt/Dnd/actions/runs/42514079690): erfolgreich auf genau dieser Basis.
+- **Branch/PR:** `fix/chat-d/raw-dart-uri-boundary-20261108`, [PR #649](https://github.com/ManuEtt/Dnd/pull/649) (Draft, nicht in `main`); Fachcommit `ed09317a6fadaa04ecc6f9e3fa2b917d733ab248`, Testcommit `ca860df1e97775fbae5155623ca05c0c77815944`.
+- **IMPLEMENTIERT:** Der Modulgrenzen-Prüfer akzeptiert optionalen Dart-Raw-String-Präfix bei direktem `import`, `export`, `part`, `part of` sowie bei bedingten URI-Zweigen. Verbotene Story-Provider/Regel-Abhängigkeiten werden dadurch auch für solche Direktiven erkannt; keine fachliche App-Änderung.
+- **TESTS ERGÄNZT:** `scripts/tests/test_domain_boundaries.py` hat drei neue Python-Testmethoden mit sieben unmittelbaren Negativfällen, drei konditionalen Negativfällen und zulässigen Positivfällen einschließlich kommentierter und mehrzeiliger Stringbeispiele.
+- **GETESTET:** GitHub-Zustand mit 56 zum Arbeitsstart offenen PRs samt Fachdateilisten auf Überschneidungen geprüft; Quellcode und Tests auf eigenem Branch gesichert. Die oben genannte Main-CI ist ausdrücklich kein Test der neuen Änderung.
+- **NICHT GETESTET:** vollständige neue Python-/Backend-/Flutter-/Android-/Release-CI auf finalem PR-HEAD; kein lokaler Checkout wegen GitHub-DNS-Ausfall, weder Dart- noch Flutter-SDK vorhanden; Realgerät und Altdatenupgrade nicht geprüft.
+- **BLOCKIERT:** Vollständiger finaler CI-Nachweis und frische Integrationskontrolle stehen aus.
+- **KOMPATIBILITÄT:** SQLite/JSON/Backup-Format, Spielstände, App-/Build-Version, Regel- und Storyzustand unverändert; keine Migration.
+- **NÄCHSTER SCHRITT:** Python-Regressionen und alle sechs GitHub-CI-Jobs für [PR #649](https://github.com/ManuEtt/Dnd/pull/649) am tatsächlichen finalen Commit prüfen, danach erst über reguläre Main-Integration entscheiden.
+
+
+## 2026-11-08 – Dateirechte beim Quell-ZIP-Export auf gewöhnliche rwx-Bits beschränken
+
+- **Basis-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; dort [Android-Main-CI 42514079690](https://github.com/ManuEtt/Dnd/actions/runs/42514079690) erfolgreich.
+- **Branch/PR:** `fix/chat-d/source-zip-safe-modes-20261108`, [#650](https://github.com/ManuEtt/Dnd/pull/650) als Draft; Code `4d7bb9a0a9c8ff208b3b799cafeb7f42af811470`, Test `3ea18bde7fd75794e7f6f15c8d797e3d211e56e6`, Testfixture `48342a3033990a0833351cddcc7bac5a4a7badf1`.
+- **IMPLEMENTIERT:** `scripts/package_project.py` verwendet für ZIP-External-Attributes statt aller `S_IMODE`-Bits nur `stat.S_IFREG | (stat.S_IMODE(before.st_mode) & 0o777)`. Dadurch werden Setuid/Setgid/Sticky nicht weitergereicht, normale Ausführbarkeit, unveränderte Inhalte und Archivintegrität bleiben erhalten.
+- **Regressionen:** `scripts/tests/test_package_project.py` enthält einen neuen POSIX-Unittest mit drei Fällen (4755, 2750, 1755) für Statusbits, rwx, Dateityp und Inhalt; bestehende positive Archive-/Checksum-Tests nicht entfernt.
+- **Konflikte:** Vor Beginn 57 offene PRs (einschließlich unabhängigem #649) und fachliche Dateilisten geprüft; kein fremder PR berührt Exporter oder zugehörigen Test. Gemeinsame Dokumentation ausschließlich angehängt, bei Merge verlustfrei konsolidieren.
+- **GETESTET:** GitHub-Fachcode und Tests committed; Ausgangs-Main-CI nachgewiesen. Dieser ältere Erfolg ist **keine** neue CI-Abnahme.
+- **NICHT GETESTET:** Python-Unittests, allgemeine Projektprüfungen, Backend/Flutter/Android-Debug/ABI-/Release-CI auf dem abschließenden PR-HEAD; echtes Geräteupgrade. GitHub-DNS verhindert lokalen vollständigen Repository-Checkout.
+- **BLOCKIERT:** Vollständige CI-Abnahme und danach frische Main-/PR-Konfliktprüfung; PR Draft, nicht gemerged.
+- **Kompatibilität:** keine Änderung an Spielstands-/Backupformat, SQLite 3, äußerem JSON 1, App-Version oder D&D-Spielmechanik; keine Migration.
+- **Nächster Schritt:** Finalen PR-#650-GitHub-Actions-Lauf einschließlich Python-/Backend-/Flutter-/Android-/Release-Gates auswerten und nur nach grünem, konfliktfreiem Nachweis integrieren.

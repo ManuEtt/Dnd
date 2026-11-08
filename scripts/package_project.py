@@ -273,8 +273,10 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
                     # while retaining the verified same-file read above.
                     info = zipfile.ZipInfo((prefix / path.relative_to(root)).as_posix())
                     info.create_system = 3
+                    # Preserve ordinary rwx bits, but never export setuid,
+                    # setgid or sticky flags from a local source file.
                     info.external_attr = (
-                        stat.S_IFREG | stat.S_IMODE(before.st_mode)
+                        stat.S_IFREG | (stat.S_IMODE(before.st_mode) & 0o777)
                     ) << 16
                     info.compress_type = zipfile.ZIP_DEFLATED
                     archive.writestr(info, data)
