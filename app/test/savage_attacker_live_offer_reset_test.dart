@@ -146,9 +146,7 @@ void main() {
       );
       expect(_canSubmit(tester), isFalse);
       final semantics = tester.widget<Semantics>(
-        find.byKey(
-          const ValueKey('savage-attacker-alternative-semantics'),
-        ),
+        find.byKey(const ValueKey('savage-attacker-alternative-semantics')),
       );
       expect(semantics.properties.selected, isFalse);
       await _select(tester, 'savage-attacker-original');
