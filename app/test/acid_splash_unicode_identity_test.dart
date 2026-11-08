@@ -125,22 +125,18 @@ void main() {
     ];
     for (final control in controls) {
       expect(
-        () => _cast(hero, random, target: _target(id: 'enemy' + control + '1')),
+        () => _cast(hero, random, target: _target(id: 'enemy${control}1')),
         throwsFormatException,
-        reason:
-            'Hidden target ID control ' +
-            control.runes.single.toRadixString(16),
+        reason: 'U+${control.runes.single.toRadixString(16)}',
       );
       expect(
         () => _cast(
           hero,
           random,
-          target: _target(name: 'Wächter' + control + 'A'),
+          target: _target(name: 'Wächter${control}A'),
         ),
         throwsFormatException,
-        reason:
-            'Hidden target name control ' +
-            control.runes.single.toRadixString(16),
+        reason: 'U+${control.runes.single.toRadixString(16)}',
       );
     }
     expect(random.calls, 0);
