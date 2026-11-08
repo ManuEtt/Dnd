@@ -2080,3 +2080,18 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Ausstehende finale GitHub-CI, vor Integration frische Konfliktprüfung und Main-Abgleich.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge, keine descriptorbasierte atomare Absicherung der gesamten Verzeichniskette. Keine SQLite-/JSON-Spielstand-/App-Version-/Domain-/UI-Änderungen.
 - **NÄCHSTER SCHRITT:** GitHub-CI auf finalem Branch-HEAD kontrollieren, dann mit aktualisiertem Main und laufenden PRs verlustfrei integrieren, nur wenn alle sechs Jobs erfolgreich sind.
+
+## 2026-11-08 – Raw-Dart-URI-Prüfung der Modulgrenzen geschlossen (PR #649)
+
+- **Ausgangs-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276` (Main-Android-CI `42514079690`: success).
+- **Branch:** `fix/chat-d/raw-dart-uri-boundary-20261108`; **PR:** [#649](https://github.com/ManuEtt/Dnd/pull/649) (Draft, nicht integriert). **Code-Commit:** `ed09317a6fadaa04ecc6f9e3fa2b917d733ab248`; **Test-Commit:** `ca860df1e97775fbae5155623ca05c0c77815944`.
+- **Ausgangsproblem:** Gültige Dart-URI-Literale mit Raw-Präfix `r` wurden in `scripts/check_domain_boundaries.py` nicht als Import-/Export-/Part-/bedingte URI erkannt. Dadurch war der Importgrenzen-Prüfer bei diesen Zeichenfolgen umgehbar.
+- **IMPLEMENTIERT:** Der Direktivenparser erkennt Raw-Präfixe im Primär- und Alternativ-URI. Bestehende Domänen-/Story-Whitelist, Pfadkanonisierung, Kommentar- und Stringmaskierung bleiben unverändert.
+- **Tests ergänzt:** drei Testmethoden mit insgesamt sieben verbotenen einfachen, drei verbotenen bedingten und vier zulässigen Beispielgruppen; erfasst `import`, `export`, `part`, `part of`, Kommentare, Multiline-Strings und Legacy-Fassade.
+- **Konfliktprüfung:** 56 zum Arbeitsbeginn offene PRs und sämtliche Fachdateipfade geprüft; kein fremder PR verändert `scripts/check_domain_boundaries.py` oder `scripts/tests/test_domain_boundaries.py`. README und zentrale Checkpoints sind gemeinsame Anhänge, daher kein automatischer Merge.
+- **GETESTET:** Prüfer-/Testcode auf eigenem GitHub-Branch gesichert und gegen die GitHub-Quelldateien kontrolliert; Main-CI auf Baseline erfolgreich (nicht als neuer Test ausgegeben).
+- **NICHT GETESTET:** neuer Python-`unittest`-Gesamtlauf, `verify_project`, `srd_coverage`, Backend-Typecheck/Tests, Flutter-Formatierung/Analyse/Tests, Android-APK/ABI-Release auf finalem PR-HEAD; lokaler Checkout scheitert an GitHub-DNS und Flutter/Dart-SDK fehlen.
+- **BLOCKIERT:** CI des finalen dokumentierten PR-HEADs sowie abschließender Main-/PR-Abgleich stehen aus. Draft verbleibt offen.
+- **NOCH NICHT IMPLEMENTIERT:** Kein vollständiger Dart-Parser und keine automatische Main-Integration. Keine Änderung an Spielständen, SQLite, JSON, Backups, App-Version, Story/UI/Regeln; keine Migration.
+- **Nächster Schritt:** vollständige GitHub-Actions-Abnahme für PR #649 auf finalem HEAD, etwaige echte Fehler korrigieren, danach erneute konfliktfreie Integrationsprüfung.
+
