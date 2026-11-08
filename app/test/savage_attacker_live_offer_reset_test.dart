@@ -238,7 +238,7 @@ void main() {
         alternative: _dice([4, 4]),
       ),
     );
-    expect(find.textContaining('Zweiter Wurf: 11'), findsOneWidget);
+    expect(find.textContaining('Zweiter Wurf: 8'), findsOneWidget);
     expect(_canSubmit(tester), isFalse);
     expect(campaign.toJson(), before);
     expect(tester.takeException(), isNull);
