@@ -2281,3 +2281,18 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** GitHub-DNS verhindert weiterhin vollständigen lokalen Checkout. Finale Actions-Abnahme, freier Mergeability-Status und verlustfreie Synchronisierung parallel hinzugekommener Dokumentation vor Main-Merge ausstehend.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #638, keine neuen Spielregeln, Datenbankschemata oder Spielstandsformate, keine App-Versionsänderung.
 - **NÄCHSTER SCHRITT:** Finalen GitHub-CI-Lauf am echten zusammengeführten Commit vollständig auswerten, eventuelle Fehler im eigenen Branch korrigieren, frischen Main-/PR-Check durchführen und nur bei durchgehend grünen sechs Jobs integrieren.
+
+
+
+---
+
+## 2026-11-08 – Zustandsquellen-Dialog bei geänderten Live-Snapshots aktualisieren
+
+- **Ausgangs-main:** `0ce0ad86e9eddf8302e495561d12a889008de49a`; **eigener Branch:** `feat/chat-c/condition-source-live-refresh-20261108` und getrennte UI-Dateien aller geprüften offenen PRs.
+- **IMPLEMENTIERT:** Flutter-Dialog `app/lib/ui/condition_effect_dialog.dart` setzt verschwundene Quellen-IDs ohne implizite Neuwahl zurück, remountet die alten Dropdown-Zustände nur bei relevanter Datenänderung, und verwirft zeitgebundene Zugendentscheidungen bei geänderter Begegnung oder aktivem Zug. Bei Charakterwechsel bleiben keine Quell- oder Entwurfswerte des alten Helden vorausgewählt.
+- **REGRESSIONSTESTS ERGÄNZT:** `app/test/condition_effect_live_snapshot_test.dart` prüft 320/360 dp bei 200 % Text/IME, ausgewählte verschwundene Quelle, erneute explizite Auswahl, letzte entfernte Quelle, identische Effekt-ID verschiedener Helden sowie Ende des eigenen Kampfzuges mit nicht übernommenen Endpunkten; positiver/negativer Dialogrückgabepfad und unveränderte Daten.
+- **GETESTET:** Code-/Domain-/Testbestand auf main und parallele PR-Fachdateien geprüft; eigene GitHub-Commits vorhanden. Automatische CI für diesen Inkrement-HEAD ausstehend, kein lokales Flutter-/Dart-SDK.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, Regressionen/Vollsuite, Python/Backend, native Android-Checks, Android-APKs, Gerät/TalkBack.
+- **BLOCKIERT:** GitHub-CI muss den Branch-HEAD inklusive dokumentierter Änderungen vollständig prüfen.
+- **KOMPATIBILITÄT:** Regeln, Spielstände, App `0.8.52+102`, SQLite-/JSON-Format und gesicherte Effekte unverändert; UI gibt weiterhin nur einen bestätigten Vorschlag an den Controller zurück.
+- **NÄCHSTER SCHRITT:** Draft-PR, CI bis Debug- und ABI-Alpha-APKs, konkrete Fehler im eigenen Branch korrigieren; nur nach vollständig grünem Lauf Review-Freigabe und kein automatischer Main-Merge.
