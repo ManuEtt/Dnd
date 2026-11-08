@@ -104,7 +104,7 @@ void main() {
 
     expect(
       tester.widget<DropdownButtonFormField<String>>(_control('slot')).initialValue,
-      'slot-1',
+      'slot-2',
     );
     expect(find.text('Grad 2 · 3 frei'), findsOneWidget);
     expect(tester.widget<CheckboxListTile>(_control('verbal')).value, isTrue);
