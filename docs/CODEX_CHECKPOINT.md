@@ -2294,3 +2294,43 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Lokaler vollständiger GitHub-Checkout in dieser Arbeitsumgebung nicht verfügbar; finale GitHub-CI, erneuter Mergeability-Check und ggf. Main-Dokumentationsnachträge vor Integration ausstehend.
 - **NOCH NICHT IMPLEMENTIERT:** Keine POSIX-Descriptor-basierte, durchgehende Race-Freiheit bei Verzeichnisänderungen während des Schreibens; kein Main-Merge von #640, keine Spielstands-/Datenbankschema-/Versionsänderung.
 - **NÄCHSTER SCHRITT:** Endgültige #640-CI auf tatsächlichem PR-Head in allen sechs Jobs erfolgreich abschließen, Main und offene PRs erneut prüfen und nur bei Konfliktfreiheit integrieren; danach neue Main-CI kontrollieren.
+
+
+
+---
+
+## 2026-11-07 – Magieinitiierten-Dialog: Quellenwechsel verliert keine Bestätigungsgrenze
+
+- **Ausgangs-main:** `bbe6ee0901f1873af67647bf54462e4a44821762`, **Branch:** `feat/chat-c/magic-initiate-background-swap-20261107`. Flutter-UI, keine konkurrierenden Fachdateien anderer offener PRs.
+- **IMPLEMENTIERT:** In `app/lib/ui/srd_magic_initiate_dialog.dart` leeren `didUpdateWidget` und nach Hintergrund gekeyte Dropdown-Subtrees bei einem laufenden Wechsel zwischen Akolyth/Weiser alle bisherigen, noch nicht bestätigten Zauber- und Attributsauswahlen. Nicht unterstützte Hintergründe werden nicht als Magierliste bezeichnet. Bestehende öffentliche Feld-Keys bleiben stabil.
+- **REGRESSIONEN:** `app/test/srd_magic_initiate_background_swap_test.dart`: 360 dp und 200 % Text mit IME, gültige Magierwahl nach Quellenwechsel; 320 dp und 200 % Text mit IME, geteilte Zauberwerte werden bei Wechsel nicht erneut anerkannt und Abbruch ändert nichts; nicht unterstützter Hintergrund bleibt deaktiviert.
+- **GETESTET:** Live-Repository/PR-Änderungslisten, Fachcode und bestehende SRD-UI-Tests geprüft; Dateien in GitHub committed. Keine vollständig ausgeführte CI für dieses Paket zum Dokumentationszeitpunkt.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse und Widgetsuite auf dem neuen Branch-HEAD, Python-/Backend-/Android-CI, Realgerät/TalkBack.
+- **BLOCKIERT:** Flutter-/Dart-SDK lokal nicht verfügbar; GitHub-Actions-Gesamtprüfung erforderlich.
+- **KOMPATIBILITÄT:** SRD-/Story-/Domain-/Persistenz-/SQLite-/JSON-Verträge und App-Version `0.8.52+102` unverändert. Kein automatisches Speichern oder Slotverbrauch.
+- **NÄCHSTER SCHRITT:** Eigenen Draft-PR erstellen, CI auf finalem Commit auswerten, Abweichungen korrigieren und bei vollständigem Erfolg zur Review freigeben, ohne nach main zu mergen.
+
+
+
+---
+
+## 2026-11-08 – Charaktereffekt-Auswahl nach Typwechsel erneut bestätigen
+
+- **Ausgangs-main:** `0ce0ad86e9eddf8302e495561d12a889008de49a`, **Branch:** `feat/chat-c/character-effect-kind-consent-reset-20261108` (Chat-C-UI, keine Überschneidung der Fachdateien mit anderen aktiven PRs).
+- **IMPLEMENTIERT:** `app/lib/ui/character_effect_dialog.dart` verwirft beim Wechsel zwischen Schaden/Heilung/temporären TP alle bisher als bestätigt markierten nur artbezogenen Checkboxen (Resistenz, Anfälligkeit, Immunität, kritisch und TP-Ersetzen) sowie die letzte Schadensart. Unverändertes Verhalten ohne Typwechsel.
+- **REGRESSIONSTESTS:** `app/test/character_effect_kind_consent_reset_test.dart` prüft Schadensfreigaben, Feuer → Energie, Rückkehr zum ursprünglichen Typ ohne alte Zustimmung, TP-Ersetzfreigabe und Abbruch ohne Heldenmutation auf 320/360 dp mit 200 % Text/IME.
+- **GETESTET:** Testkonventionen und Fachcode im GitHub-Main abgeglichen, Code-/Testcommits gespeichert. Ausführung aller Tests auf diesem Stand steht noch aus.
+- **NICHT GETESTET:** Flutter-Format/Analyse/Widgettests, Python/Backend/Gradle/Android-Pakete und Android-TalkBack-Gerät.
+- **KOMPATIBILITÄT:** Kein Eingriff in Regeln, Persistenz, SQLite-/JSON-Datenmodell oder App-Version `0.8.52+102`; bestätigte Spielstände unverändert.
+- **BLOCKIERT:** Vollständige GitHub-Actions-Abnahme auf endgültigem Commit; keine ungetestete Review-Freigabe.
+- **NÄCHSTER SCHRITT:** Draft-PR erstellen, CI inkl. positivem und negativem Weg prüfen und bei Bedarf denselben Branch reparieren; kein Main-Merge.
+
+
+## 2026-11-08 – Geprüfte UI-Dialogkorrekturen zusammenführen
+
+- **Arbeitszweig:** `integration/reviewed-ui-resets-20261108`, Basis `main` `8bfaa22cded60e7731f5a3dc95684949bad49276`.
+- **Quellen:** PR #634 `eebaecf173ccb613ab9f10f68ab45245d2ad579f` und PR #642 `322889b5ecbbc901c0732a03989bad2d912640db` als zusätzliche unveränderte Commit-Vorfahren. Getrennte UI-/Testdateien übernommen; gemeinsame README-/Checkpoint-Nachträge append-only zusammengeführt.
+- **Einzel-CI:** #42457887639 und #42458556507 `completed/success` auf den genannten Quell-Heads; `main`-CI #42514079690 `completed/success` auf Ausgangs-HEAD.
+- **Kombinierte CI:** auf dem Integrations-HEAD noch nicht ausgeführt; erst nach grünem Ergebnis für Review und nach frischem Main-/PR-Abgleich für Merge freigeben.
+- **Kompatibilität:** Keine Änderung an Schema, Spielständen, App-Version, Regeln oder KI-Erzählung. Echte Android-/TalkBack-Gerätetests nicht durchgeführt.
+- **Nächster Schritt:** neuen Integrations-PR erstellen und vollständige Android-/Flutter-/Python-/Backend-CI auf finalem HEAD prüfen.

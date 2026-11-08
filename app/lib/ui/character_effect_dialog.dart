@@ -75,6 +75,21 @@ class _CharacterEffectDialogState extends State<CharacterEffectDialog> {
     super.dispose();
   }
 
+  void _changeKind(CharacterEffectKind next) {
+    if (next == _kind) return;
+    setState(() {
+      _kind = next;
+      // These checkboxes authorize only the effect they were selected for.
+      // Returning to an earlier kind must require a fresh explicit choice.
+      _damageType = DamageType.force;
+      _resistant = false;
+      _vulnerable = false;
+      _immune = false;
+      _critical = false;
+      _replaceTemporary = false;
+    });
+  }
+
   void _confirm() {
     if (!_form.currentState!.validate()) return;
     final damage = _kind == CharacterEffectKind.damage;
@@ -170,7 +185,7 @@ class _CharacterEffectDialogState extends State<CharacterEffectDialog> {
                     ),
                   ],
                   onChanged: (next) {
-                    if (next != null) setState(() => _kind = next);
+                    if (next != null) _changeKind(next);
                   },
                 ),
                 const SizedBox(height: 16),
