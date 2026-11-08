@@ -3,10 +3,18 @@
 set -euo pipefail
 
 sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
-if [[ -z "$sdk_root" || "$sdk_root" == "/" || "$sdk_root" != /* ]]; then
+if [[ -z "$sdk_root" || "$sdk_root" != /* ]]; then
   echo "::error::ANDROID_SDK_ROOT or ANDROID_HOME must name an absolute SDK directory." >&2
   exit 2
 fi
+
+# Resolve symlinks and .. before the retry cleanup can remove SDK directories.
+# Absolute aliases such as /.. and symlinks to / must never become cleanup roots.
+if ! resolved_sdk_root="$(cd -P -- "$sdk_root" 2>/dev/null && pwd -P)" || [[ "$resolved_sdk_root" == "/" ]]; then
+  echo "::error::ANDROID_SDK_ROOT or ANDROID_HOME must name an absolute SDK directory (not /)." >&2
+  exit 2
+fi
+sdk_root="$resolved_sdk_root"
 
 attempts="${ANDROID_SDK_INSTALL_ATTEMPTS:-3}"
 retry_delay="${ANDROID_SDK_RETRY_DELAY_SECONDS:-5}"
@@ -42,11 +50,25 @@ for (( attempt = 1; attempt <= attempts; attempt++ )); do
   # A failure while installing a different package must not destroy a
   # previously installed NDK. Remove only an incomplete NDK directory;
   # source.properties is the package's installation metadata marker.
-  if [[ ! -f "$sdk_root/ndk/27.0.12077973/source.properties" ]]; then
+  # GNU rm follows symlinks in intermediate path components: an
+  # externally linked ndk/ parent could delete an unrelated NDK installation.
+  # A link at the final version path is safe to unlink; its parent is not.
+  if [[ -L "$sdk_root/ndk" ]]; then
+    echo "::warning::Skipping NDK cleanup: ndk parent is a symbolic link." >&2
+  elif [[ ! -f "$sdk_root/ndk/27.0.12077973/source.properties" ]]; then
     rm -rf -- "$sdk_root/ndk/27.0.12077973"
   fi
+  # This optional cache is outside the SDK root. Do not traverse a
+  # misplaced HOME or symlinked .android/cache and erase unrelated files.
   if [[ -n "${HOME:-}" ]]; then
-    rm -rf -- "$HOME/.android/cache"
+    if [[ "$HOME" != /* ]] ||
+       ! resolved_home="$(cd -P -- "$HOME" 2>/dev/null && pwd -P)" ||
+       [[ "$resolved_home" == "/" ]] ||
+       [[ -L "$resolved_home/.android" || -L "$resolved_home/.android/cache" ]]; then
+      echo "::warning::Skipping unsafe Android user cache cleanup." >&2
+    elif [[ -d "$resolved_home/.android/cache" ]]; then
+      rm -rf -- "$resolved_home/.android/cache"
+    fi
   fi
   sleep "$(( attempt * retry_delay ))"
 done

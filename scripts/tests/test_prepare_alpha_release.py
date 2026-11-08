@@ -1,6 +1,8 @@
 """Unit tests for a strictly gated, versioned Android ARM64 release bundle."""
 
+import contextlib
 import importlib.util
+import os
 import hashlib
 from pathlib import Path
 import tempfile
@@ -715,6 +717,249 @@ class AlphaReleaseTests(unittest.TestCase):
         release.prepare_release(self.root, self.out)
         with self.assertRaisesRegex(ValueError, 'bereits Release-Dateien'):
             release.prepare_release(self.root, self.out)
+
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_late_apk_symlink_does_not_overwrite_external_file(self):
+        # A competing writer inserts a target link after the version check.
+        outside = self.base / 'external-apk'
+        outside.write_bytes(b'untouched external APK')
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        actual_archive = release.create_archive
+
+        def create_then_insert_link(root, destination, *, layout):
+            result = actual_archive(root, destination, layout=layout)
+            target.symlink_to(outside)
+            return result
+
+        with mock.patch.object(release, 'create_archive',
+                               side_effect=create_then_insert_link):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(outside.read_bytes(), b'untouched external APK')
+        self.assertTrue(target.is_symlink())
+        self.assertEqual(set(self.out.iterdir()), {target})
+
+    def test_late_notes_regular_file_is_not_overwritten_or_deleted(self):
+        # Even a normal (non-symlink) collision must be left untouched.
+        notes = self.out / 'Wuerfelraunen_v0.5.4_24_ReleaseNotes.md'
+        actual_copy = release.copy_validated_apk
+
+        def copy_then_insert_file(source, target, expected):
+            identity = actual_copy(source, target, expected)
+            notes.write_bytes(b'other writer notes')
+            return identity
+
+        with mock.patch.object(release, 'copy_validated_apk',
+                               side_effect=copy_then_insert_file):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(notes.read_bytes(), b'other writer notes')
+        self.assertEqual(set(self.out.iterdir()), {notes})
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_late_checksum_symlink_cannot_modify_external_file(self):
+        sums = self.out / 'Wuerfelraunen_v0.5.4_24_SHA256.txt'
+        outside = self.base / 'external-hashes'
+        outside.write_bytes(b'untouched hashes')
+        # The checksum file is opened before SHA256 calculation. Inject the
+        # collision at the actual exclusive-open boundary, not during hashing.
+        actual_writer = release._new_release_file
+
+        def insert_before_open(path, *, binary=False):
+            if path == sums:
+                sums.symlink_to(outside)
+            return actual_writer(path, binary=binary)
+
+        with mock.patch.object(release, '_new_release_file',
+                               side_effect=insert_before_open):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(outside.read_bytes(), b'untouched hashes')
+        self.assertTrue(sums.is_symlink())
+        self.assertEqual(set(self.out.iterdir()), {sums})
+
+
+    def test_apk_replaced_after_copy_before_file_close_is_not_published(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        replacement = self.base / 'foreign-target.apk'
+        replacement.write_bytes(b'other writer APK')
+        actual_copy = release.shutil.copyfileobj
+
+        def copy_then_replace(source, output, *, length=None):
+            actual_copy(source, output, length=length)
+            os.replace(replacement, target)
+
+        with mock.patch.object(release.shutil, 'copyfileobj',
+                               side_effect=copy_then_replace):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei.*ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(target.read_bytes(), b'other writer APK')
+        self.assertEqual(set(self.out.iterdir()), {target})
+
+    def test_notes_replaced_after_open_are_not_deleted_on_failure(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_ReleaseNotes.md'
+        replacement = self.base / 'foreign-notes.md'
+        replacement.write_bytes(b'other writer notes')
+        original_writer = release._new_release_file
+
+        @contextlib.contextmanager
+        def swap_after_note_write(path, *, binary=False):
+            with original_writer(path, binary=binary) as stream:
+                yield stream
+                if path == target:
+                    os.replace(replacement, target)
+
+        with mock.patch.object(release, '_new_release_file',
+                               side_effect=swap_after_note_write):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei.*ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(target.read_bytes(), b'other writer notes')
+        self.assertEqual(set(self.out.iterdir()), {target})
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_checksum_replaced_by_symlink_after_open_keeps_target(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_SHA256.txt'
+        outside = self.base / 'external-checksums.txt'
+        outside.write_bytes(b'untouched external hashes')
+        original_writer = release._new_release_file
+
+        @contextlib.contextmanager
+        def link_after_checksum_write(path, *, binary=False):
+            with original_writer(path, binary=binary) as stream:
+                yield stream
+                if path == target:
+                    target.unlink()
+                    target.symlink_to(outside)
+
+        with mock.patch.object(release, '_new_release_file',
+                               side_effect=link_after_checksum_write):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei.*ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(outside.read_bytes(), b'untouched external hashes')
+        self.assertTrue(target.is_symlink())
+        self.assertEqual(set(self.out.iterdir()), {target})
+
+    def test_valid_apk_swapped_after_release_validation_is_not_published(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        replacement = self.base / 'foreign-validated.apk'
+        with zipfile.ZipFile(replacement, 'w') as archive:
+            for name in release.REQUIRED_ARM64:
+                archive.writestr(name, b'other valid APK bytes')
+        expected = replacement.read_bytes()
+        actual_validate = release.validate_arm64_apk
+
+        def validate_then_replace(path):
+            actual_validate(path)
+            if path == target:
+                os.replace(replacement, target)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=validate_then_replace):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei.*ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(target.read_bytes(), expected)
+        self.assertEqual(set(self.out.iterdir()), {target})
+
+
+    def test_final_hashes_match_source_apk_and_both_manifests(self):
+        published = release.prepare_release(self.root, self.out)
+        self.assertEqual(len(published), 5)
+        source, target_apk, notes, sums, sidecar = published
+        self.assertEqual(target_apk.read_bytes(), self.apk.read_bytes())
+        self.assertEqual(
+            sidecar.read_text(encoding='utf-8'),
+            f'{release.sha256(source)}  {source.name}\n',
+        )
+        self.assertEqual(
+            sums.read_text(encoding='utf-8'),
+            ''.join(f'{release.sha256(path)}  {path.name}\n'
+                    for path in (source, target_apk, notes)),
+        )
+
+    def test_same_inode_valid_apk_mutation_after_hash_is_rejected(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        actual_validate = release.validate_arm64_apk
+
+        def mutate_on_final_validation(path):
+            if path == target:
+                # Rewrite the same inode as another CRC-valid native APK.
+                with zipfile.ZipFile(target, 'w') as archive:
+                    for name in release.REQUIRED_ARM64:
+                        archive.writestr(name, b'new valid content')
+                    archive.writestr('assets/extra.txt', b'in-place tampering')
+            return actual_validate(path)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=mutate_on_final_validation):
+            with self.assertRaisesRegex(ValueError, 'nach der Prüfsumme'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    def test_same_inode_valid_source_zip_mutation_is_rejected(self):
+        source = self.out / 'Wuerfelraunen_v0.5.4_24_Source.zip'
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        actual_validate = release.validate_arm64_apk
+
+        def mutate_source_on_final_validation(path):
+            if path == target:
+                with zipfile.ZipFile(source, 'a') as archive:
+                    archive.writestr('docs/late-added.txt', b'changed source bundle')
+            return actual_validate(path)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=mutate_source_on_final_validation):
+            with self.assertRaisesRegex(ValueError, 'nach der Prüfsumme'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    def test_inplace_notes_mutation_after_hash_is_rejected(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        notes = self.out / 'Wuerfelraunen_v0.5.4_24_ReleaseNotes.md'
+        actual_validate = release.validate_arm64_apk
+
+        def mutate_notes_on_final_validation(path):
+            if path == target:
+                notes.write_text('unapproved notes', encoding='utf-8')
+            return actual_validate(path)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=mutate_notes_on_final_validation):
+            with self.assertRaisesRegex(ValueError, 'nach der Prüfsumme'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    def test_checksum_manifest_mutation_after_write_is_rejected(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        sums = self.out / 'Wuerfelraunen_v0.5.4_24_SHA256.txt'
+        actual_validate = release.validate_arm64_apk
+
+        def mutate_sums_on_final_validation(path):
+            if path == target:
+                sums.write_text('wrong SHA256 records', encoding='utf-8')
+            return actual_validate(path)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=mutate_sums_on_final_validation):
+            with self.assertRaisesRegex(ValueError, 'Prüfsummen wurden verändert'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(list(self.out.iterdir()), [])
+
+    def test_source_sidecar_mutation_after_write_is_rejected(self):
+        target = self.out / 'Wuerfelraunen_v0.5.4_24_arm64.apk'
+        sidecar = self.out / 'Wuerfelraunen_v0.5.4_24_Source.zip.sha256'
+        actual_validate = release.validate_arm64_apk
+
+        def mutate_sidecar_on_final_validation(path):
+            if path == target:
+                sidecar.write_text('wrong source checksum', encoding='utf-8')
+            return actual_validate(path)
+
+        with mock.patch.object(release, 'validate_arm64_apk',
+                               side_effect=mutate_sidecar_on_final_validation):
+            with self.assertRaisesRegex(ValueError, 'Prüfsummen wurden verändert'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(list(self.out.iterdir()), [])
 
 
 if __name__ == '__main__':

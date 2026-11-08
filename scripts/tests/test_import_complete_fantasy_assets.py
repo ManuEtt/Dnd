@@ -3,8 +3,11 @@ import hashlib
 import importlib.util
 import json
 import pathlib
+import sys
 import tempfile
 import unittest
+import warnings
+from unittest import mock
 import zipfile
 
 SCRIPT = pathlib.Path(__file__).resolve().parents[1] / "import_complete_fantasy_assets.py"
@@ -113,10 +116,284 @@ class FantasyImportTests(unittest.TestCase):
         )
         self.assertFalse((outside / MODULE.PREFIX).exists())
 
+    @unittest.skipIf(sys.platform == "win32", "POSIX symlinks required")
+    def test_symlinked_parent_of_target_root_is_rejected_before_any_write(self):
+        self._make_archive()
+        outside = self.root / "outside"
+        outside.mkdir()
+        alias = self.root / "alias"
+        alias.symlink_to(outside, target_is_directory=True)
+        # The target itself is not a symlink; only its parent is.
+        destination = alias / "nested" / "project"
+        self.assertFalse(destination.is_symlink())
+        with self.assertRaisesRegex(ValueError, "Symlink"):
+            MODULE.imported_assets(self.archive, destination)
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(destination)]), 1
+        )
+        self.assertEqual(
+            MODULE.main([
+                str(self.archive), "--target", str(destination), "--verify-only"
+            ]), 1
+        )
+        self.assertEqual(list(outside.iterdir()), [])
+
+    @unittest.skipIf(sys.platform == "win32", "POSIX symlinks required")
+    def test_ancestor_swapped_to_symlink_after_zip_preflight_is_rejected(self):
+        self._make_archive()
+        workspace = self.root / "workspace"
+        workspace.mkdir()
+        destination = workspace / "project"
+        archived_workspace = self.root / "moved-workspace"
+        outside = self.root / "outside"
+        outside.mkdir()
+        original_preflight = MODULE.imported_assets
+
+        def swap_parent_after_preflight(*args):
+            validated = original_preflight(*args)
+            workspace.rename(archived_workspace)
+            workspace.symlink_to(outside, target_is_directory=True)
+            return validated
+
+        with mock.patch.object(
+            MODULE, "imported_assets", side_effect=swap_parent_after_preflight
+        ):
+            self.assertEqual(
+                MODULE.main([str(self.archive), "--target", str(destination)]), 1
+            )
+        self.assertEqual(list(outside.iterdir()), [])
+        self.assertFalse((archived_workspace / "project").exists())
+
     def test_corrupt_zip_asset_is_rejected(self):
         self._make_archive(corrupt=MODULE.ASSETS[4])
         with self.assertRaises(ValueError):
             MODULE.imported_assets(self.archive, self.root)
+
+
+
+    def test_excess_zip_entries_are_rejected_before_crc_scan(self):
+        self._make_archive()
+        with zipfile.ZipFile(self.archive) as archive:
+            original_count = len(archive.infolist())
+        with zipfile.ZipFile(self.archive, "a") as archive:
+            archive.writestr("unrelated/extra.bin", b"new")
+        with (mock.patch.object(MODULE, "MAX_ZIP_ENTRIES", original_count),
+              mock.patch.object(zipfile.ZipFile, "testzip",
+                                side_effect=AssertionError("ZIP scan started"))):
+            with self.assertRaisesRegex(ValueError, "zu viele oder zu grosse"):
+                MODULE.imported_assets(self.archive, self.root)
+
+    def test_excess_total_expanded_size_is_rejected_before_crc_scan(self):
+        self._make_archive()
+        with zipfile.ZipFile(self.archive) as archive:
+            original_bytes = sum(entry.file_size for entry in archive.infolist())
+        with zipfile.ZipFile(self.archive, "a") as archive:
+            archive.writestr("unrelated/extra.bin", b"more")
+        with (mock.patch.object(
+                MODULE, "MAX_ZIP_UNCOMPRESSED_BYTES", original_bytes + 1
+              ),
+              mock.patch.object(zipfile.ZipFile, "testzip",
+                                side_effect=AssertionError("ZIP scan started"))):
+            with self.assertRaisesRegex(ValueError, "zu viele oder zu grosse"):
+                MODULE.imported_assets(self.archive, self.root)
+
+    def test_oversized_manifest_is_rejected_before_crc_scan(self):
+        self._make_archive()
+        with (mock.patch.object(MODULE, "MAX_MANIFEST_BYTES", 32),
+              mock.patch.object(zipfile.ZipFile, "testzip",
+                                side_effect=AssertionError("ZIP scan started"))):
+            with self.assertRaisesRegex(ValueError, "zu gross"):
+                MODULE.imported_assets(self.archive, self.root)
+
+    def test_oversized_artwork_declaration_is_rejected_before_crc_scan(self):
+        self._make_archive()
+        with (mock.patch.object(MODULE, "MAX_ASSET_BYTES", 8),
+              mock.patch.object(zipfile.ZipFile, "testzip",
+                                side_effect=AssertionError("ZIP scan started"))):
+            with self.assertRaisesRegex(ValueError, "ausserhalb des Limits"):
+                MODULE.imported_assets(self.archive, self.root)
+
+    def test_duplicate_zip_names_are_rejected_without_importing(self):
+        payload = self._make_archive()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UserWarning)
+            with zipfile.ZipFile(self.archive, "a") as archive:
+                archive.writestr(MODULE.PREFIX + MODULE.ASSETS[0], payload)
+        with (mock.patch.object(zipfile.ZipFile, "testzip",
+                                side_effect=AssertionError("ZIP scan started"))):
+            with self.assertRaisesRegex(ValueError, "doppelte Dateinamen"):
+                MODULE.imported_assets(self.archive, self.root)
+        self.assertFalse((self.root / MODULE.PREFIX).exists())
+
+    def test_non_object_manifest_is_rejected_without_importing(self):
+        with zipfile.ZipFile(self.archive, "w") as archive:
+            archive.writestr(MODULE.MANIFEST, '["not a manifest"]')
+        with self.assertRaisesRegex(ValueError, "muss ein Objekt sein"):
+            MODULE.imported_assets(self.archive, self.root)
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(self.root / "project")]),
+            1,
+        )
+        self.assertFalse((self.root / "project").exists())
+
+
+
+    def test_interrupted_disk_write_never_publishes_partial_image(self):
+        payload = self._make_archive()
+        target = self.root / "project"
+        image_dir = target / MODULE.PREFIX.rstrip("/")
+        with mock.patch.object(
+            MODULE.os, "fsync", side_effect=OSError("simulated full disk")
+        ):
+            self.assertEqual(
+                MODULE.main([str(self.archive), "--target", str(target)]), 1
+            )
+        self.assertFalse((image_dir / MODULE.ASSETS[0]).exists())
+        self.assertEqual(list(image_dir.glob("*.partial")), [])
+        self.assertEqual(list(image_dir.glob(".*.partial")), [])
+
+        # A failed attempt has not poisoned the next import.
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(target)]), 0
+        )
+        self.assertEqual((image_dir / MODULE.ASSETS[0]).read_bytes(), payload)
+
+    def test_late_competing_target_is_never_overwritten(self):
+        self._make_archive()
+        target = self.root / "project"
+        image_dir = target / MODULE.PREFIX.rstrip("/")
+        original_link = MODULE.os.link
+        rival = b"competing writer's original artwork"
+
+        def competing_link(source, destination):
+            pathlib.Path(destination).write_bytes(rival)
+            return original_link(source, destination)
+
+        with mock.patch.object(MODULE.os, "link", side_effect=competing_link):
+            self.assertEqual(
+                MODULE.main([str(self.archive), "--target", str(target)]), 1
+            )
+        self.assertEqual((image_dir / MODULE.ASSETS[0]).read_bytes(), rival)
+        self.assertEqual(list(image_dir.glob(".*.partial")), [])
+
+    def test_changed_existing_asset_after_preflight_is_rejected(self):
+        self._make_archive()
+        target = self.root / "project"
+        image = target / MODULE.PREFIX / MODULE.ASSETS[0]
+        original_preflight = MODULE.imported_assets
+
+        def create_rival_after_preflight(*args):
+            validated = original_preflight(*args)
+            image.parent.mkdir(parents=True, exist_ok=True)
+            image.write_bytes(b"modified after validation")
+            return validated
+
+        with mock.patch.object(
+            MODULE, "imported_assets", side_effect=create_rival_after_preflight
+        ):
+            self.assertEqual(
+                MODULE.main([str(self.archive), "--target", str(target)]), 1
+            )
+        self.assertEqual(image.read_bytes(), b"modified after validation")
+        self.assertEqual(list(image.parent.glob(".*.partial")), [])
+
+    def test_later_publication_failure_allows_idempotent_resume(self):
+        payload = self._make_archive()
+        target = self.root / "project"
+        image_dir = target / MODULE.PREFIX.rstrip("/")
+        original_link = MODULE.os.link
+        attempts = 0
+
+        def fail_second_link(source, destination):
+            nonlocal attempts
+            attempts += 1
+            if attempts == 2:
+                raise OSError("simulated link publication failure")
+            return original_link(source, destination)
+
+        with mock.patch.object(MODULE.os, "link", side_effect=fail_second_link):
+            self.assertEqual(
+                MODULE.main([str(self.archive), "--target", str(target)]), 1
+            )
+        self.assertEqual(attempts, 2)
+        self.assertEqual((image_dir / MODULE.ASSETS[0]).read_bytes(), payload)
+        self.assertFalse((image_dir / MODULE.ASSETS[1]).exists())
+        self.assertEqual(list(image_dir.glob(".*.partial")), [])
+
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(target)]), 0
+        )
+        self.assertEqual(
+            {file.name for file in image_dir.glob("*.webp")}, set(MODULE.ASSETS)
+        )
+        self.assertEqual(list(image_dir.glob(".*.partial")), [])
+
+
+    def _replace_manifest_text(self, manifest_text):
+        with zipfile.ZipFile(self.archive) as archive:
+            assets = [
+                (name, archive.read(name))
+                for name in archive.namelist() if name != MODULE.MANIFEST
+            ]
+        with zipfile.ZipFile(self.archive, "w") as archive:
+            for name, data in assets:
+                archive.writestr(name, data)
+            archive.writestr(MODULE.MANIFEST, manifest_text)
+
+    def test_duplicate_root_manifest_asset_key_is_rejected_before_crc(self):
+        self._make_archive()
+        with zipfile.ZipFile(self.archive) as archive:
+            manifest = json.loads(archive.read(MODULE.MANIFEST))
+        duplicated_name = MODULE.PREFIX + MODULE.ASSETS[0]
+        duplicate = (
+            json.dumps(manifest)[:-1] + ", "
+            + json.dumps(duplicated_name) + ": "
+            + json.dumps(manifest[duplicated_name]) + "}"
+        )
+        self._replace_manifest_text(duplicate)
+        with mock.patch.object(
+            zipfile.ZipFile, "testzip",
+            side_effect=AssertionError("CRC scan before JSON validation"),
+        ):
+            with self.assertRaisesRegex(ValueError, "doppelte JSON-Schluessel"):
+                MODULE.imported_assets(self.archive, self.root)
+        self.assertFalse((self.root / MODULE.PREFIX).exists())
+
+    def test_duplicate_nested_manifest_bytes_key_is_rejected_before_crc(self):
+        self._make_archive()
+        with zipfile.ZipFile(self.archive) as archive:
+            manifest = archive.read(MODULE.MANIFEST).decode("utf-8")
+        payload_size = len(b"RIFF" + bytes([4, 0, 0, 0]) + b"WEBP")
+        original = f'"bytes": {payload_size}'
+        self.assertIn(original, manifest)
+        self._replace_manifest_text(
+            manifest.replace(original, original + ", " + original, 1)
+        )
+        with mock.patch.object(
+            zipfile.ZipFile, "testzip",
+            side_effect=AssertionError("CRC scan before JSON validation"),
+        ):
+            with self.assertRaisesRegex(ValueError, "doppelte JSON-Schluessel"):
+                MODULE.imported_assets(self.archive, self.root)
+
+    def test_nonstandard_json_numbers_are_rejected(self):
+        for number in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(value=number):
+                with self.assertRaisesRegex(ValueError, "ungueltige JSON-Zahl"):
+                    MODULE.parse_strict_manifest(
+                        ('{"irrelevant": ' + number + "}").encode("utf-8")
+                    )
+
+    def test_valid_manifest_keeps_original_asset_verification(self):
+        payload = self._make_archive()
+        with zipfile.ZipFile(self.archive) as archive:
+            original = archive.read(MODULE.MANIFEST)
+        manifest = MODULE.parse_strict_manifest(original)
+        self.assertEqual(
+            manifest[MODULE.PREFIX + MODULE.ASSETS[0]]["sha256"],
+            hashlib.sha256(payload).hexdigest(),
+        )
+        self.assertEqual(len(MODULE.imported_assets(self.archive, self.root)), 13)
 
 
 if __name__ == "__main__":

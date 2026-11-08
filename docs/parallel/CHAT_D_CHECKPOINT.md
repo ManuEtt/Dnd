@@ -1,17 +1,59 @@
-## 06.11.2026 – Kollisionssichere Historie der Quellcode-Checkpoints
+### 06.11.2026 – CI-Negativfall zur abschließenden Zielidentität korrigiert
 
-- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745` nach Integration von PR #587 (vollständige finale PR-CI [#42162161178](https://github.com/ManuEtt/Dnd/actions/runs/42162161178): erfolgreich).
-- **Branch:** `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`.
-- **Fach-/Testcommit:** `c80950bc7ad5d7576d7717aea4c2535d9aa3f240`; **Pull Request:** [#592](https://github.com/ManuEtt/Dnd/pull/592), Draft bis vollständiger CI.
-- **Problem:** Bereits als Einzeldateien geprüfte historische ZIP-/Patch-/Manifestnamen konnten sich nach Unicode-NFC-/Casefold-Normalisierung überschneiden. Ein weiteres Checkpoint mit anders geschriebenem Label bei gleichem Zeitstempel oder eine alternative Schreibweise der stabilen Ausgabe-Aliase barg ein Kollisionsrisiko auf Windows/macOS.
-- **Implementiert:** `scripts/create_checkpoint.py` vergleicht historische Namen vor der Hashbildung mit normalisierten NFC-/Casefold-Schlüsseln. Unter Ausgabe-Lock wird geprüft, dass neue versionierte Namen mit keinem bestehenden Namen identisch werden und dass keine Zweitnamen von `Wuerfelraunen_LATEST_Vollprojekt.zip` und `SHA256SUMS.txt` vorkommen. Kein Force-Push, keine Sicherung umbenannt oder gelöscht.
-- **Regressionen:** Vier neue Methoden in `scripts/tests/test_create_checkpoint.py` für zwei Casefold-Zwillinge, zwei Unicode-NFC-Zwillinge, neu erzeugte identische Versions-/Zeitstempeleinträge mit abweichend geschriebenen Labels und beide Aliasnamen. Bestehende Sicherungen/Prüfsummen bleiben bytegenau erhalten, Lock wird bei Ablehnung freigegeben.
-- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
-- **Konfliktkontrolle:** Offene PRs aus A/B/C (inklusive #591) ändern keine der zwei Checkpoint-Fachdateien; gemeinsame README-/CODEX-Änderungen bleiben additiv, README-Nachtrag nur am absoluten Dateiende mit neutralem Titel ohne redaktionelle Chat-Zuordnung.
-- **GETESTET:** GitHub-Stand vor Branchstart und vor PR, Fachcode/Tests committed, isolierter PR angelegt. **NICHT GETESTET:** neue Python-/Backend-/Flutter-/Android-CI auf finalem PR-HEAD, lokaler kompletter Repo-Test, Android-Gerät und alte Gerätespielstände.
-- **BLOCKIERT:** CI-Abnahme auf finalem Commit und erneute Main-/PR-Datei-/Ancestry-Prüfung vor Merge.
-- **Migrationen:** keine. Alte Checkpoint- und Backupartefakte bleiben intakt; SQLite, JSON, Regel-/Storyzustand und Android-Version unverändert.
-- **Nächster Schritt:** endgültige Python-, Backend-, Flutter-, Android-Debug-, ABI- und Release-CI prüfen, bei Fehlern branchlokal beheben und erst nach konfliktfreier CI integrieren.
+- **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606); neuer Korrekturcommit `52280992156bbb5f92c351497d6ec9e49ccb8310` nach Code-/Testcommit `a61bd446072d16d143cdf301270da6ca6c22edf7`.
+- **CI-Befund:** Vollständiger [Workflow #42194379586](https://github.com/ManuEtt/Dnd/actions/runs/42194379586) auf altem Dokumentations-HEAD `06daa11473d21e34c85fc9b235edfa629066f749` scheiterte nach **364 Python-Tests mit einem fehlgeschlagenen vorhandenen Test**: Beim Austausch einer bereits validierten APK wurde wegen neuer SHA256-Prüfung eine Inhaltsdrift-Fehlermeldung ausgelöst, bevor die bisherige Zielaustausch-Fehlermeldung geprüft wurde. Alle neuen Negativ-/Positivtests waren im Lauf nicht als weitere Fehler ausgewiesen.
+- **Korrektur:** Nach finaler APK-/Quell-ZIP-Prüfung zunächst Inode-/Besitzprüfungen, anschließend SHA256-Inhalt und Textmanifeste. Ohne Austausch bleibt die neue In-Place-Erkennung aktiv. Keine Tests entfernt oder Erfolg behauptet.
+- **GETESTET:** GitHub-Fehlerlog und konkrete Python-Assertion ausgewertet, Korrekturcommits veröffentlicht. Die ältere grüne PR-#604-CI beweist nicht diese Änderung.
+- **NICHT GETESTET/BLOCKIERT:** Vollständiger neuer GitHub-CI-Lauf für den endgültigen Branch-HEAD, Android-APKs, Release, Realgerät und Upgrade. Kein Main-Merge dieses neuen PRs.
+- **NÄCHSTER SCHRITT:** Erneuten PR-#606-CI-Lauf auf dem **finalen Dokumentationscommit** vollständig abnehmen; erst bei grünem Python-/Backend-/Flutter-/Android-/Release-Ergebnis und erneuter Main-/PR-Konfliktprüfung integrieren.
+
+---
+
+## 06.11.2026 – In-Place-Veränderungen von Release-Artefakten vor Freigabe erkennen
+
+- **Ausgangs-main:** `2a4fab5a56127d866dd2a8933836fd1136d772b3` nach integriertem PR #604 mit vollständiger grüner PR-CI [#42189668111](https://github.com/ManuEtt/Dnd/actions/runs/42189668111); neuer Main-Workflow separat zu verifizieren.
+- **Branch:** `fix/chat-d/release-final-checksums-20261106`; **Code-/Testcommit:** `a61bd446072d16d143cdf301270da6ca6c22edf7`; **PR:** [#606](https://github.com/ManuEtt/Dnd/pull/606) (Draft bis vollständig grüner CI).
+- **Ausgangsproblem:** Dateibesitz via dev/inode und ZIP-CRC verhindern keine Inhaltsänderung innerhalb einer schon geöffneten und geschriebenen Datei. Release-APK, Quell-ZIP oder Notizen konnten nach Erstellen der SHA256-Liste erneut verändert werden; auch die Textinhalte der beiden Prüfsummen-Manifeste waren nicht nochmals geprüft.
+- **IMPLEMENTIERT:** SHA256 der validierten Quell-APK unter dem Versionslock festhalten; veröffentlichtes Ziel muss dazu passen. Quell-ZIP-Digest direkt vom bestehenden Paket-Exporter übernehmen. Manifest aus diesen festgehaltenen Werten und dem Notiz-Digest schreiben. Nach der abschließenden APK-/Quellarchiv-Validierung erneut alle drei Artefakt-Digests und den exakten Inhalt von `_SHA256.txt` und `_Source.zip.sha256` prüfen. Bestehende Inode-Besitzprüfungen und fremddatenschonender Rollback unverändert.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanztests:** Sechs neue Python-Fälle: verifizierbarer Positivfall inkl. beider Manifeste und identischer Quelle/Release-APK; negativ für im selben Inode veränderte, trotzdem ZIP-gültige APK und Quell-ZIP, Notizen, Release-Prüfsummenliste und Quellarchiv-Sidecar. Bei Abweichung keine erfolgreichen Artefakte, während fremde Dateien erhalten bleiben.
+- **GETESTET:** Vorheriges PR #604 vollständig grün auf dem finalen `0d44f8b9aa28802a4682f6103bef41ec33a7cfc8`; neuer Branch/PR und Code-/Test-Commits veröffentlicht, Main und offene fachfremde PR-Dateipfade geprüft. **Das ist noch kein Testnachweis für den neuen PR.**
+- **NICHT GETESTET:** Neue Python-Tests, vollständiger Backend-/Flutter-/Android-/ABI-APK-/Alpha-Release-Workflow auf dem abschließenden Dokumentations-HEAD, echtes Android-Gerät, Upgrade und Produktivsignierung. Im lokalen Container kein GitHub-Checkout wegen DNS-Auflösung.
+- **BLOCKIERT:** Finale GitHub-Actions-Abnahme und aktualisierte Main-/PR-Konfliktprüfung. Kein absoluter Race-free-Anspruch gegen nach dem letzten Hashvergleich in fremd beschreibbarem Ausgabeordner aktive Prozesse.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge dieses neuen PRs, keine Datenmigration. JSON-/SQLite-Format, lokale Spielstände, App-Version `0.8.52+102`, Android-, UI-, Story- und Regelmodule unverändert.
+- **NÄCHSTER SCHRITT:** CI von PR #606 auf exakt dem finalen HEAD vollständig prüfen; alle Python-, Backend-, Dart-/Flutter-, Debug-APK-, native Android-, drei ABI-APK- und Release-Jobs abnehmen, dann erneute konfliktfreie Main-Integration bewerten.
+
+---
+
+## 06.11.2026 – Besitznachweis für bereits geöffnete Alpha-Release-Ausgaben
+
+- **Basis-main:** `95c605898f1bcae26e0a23afa55c767ec5b20744` nach vollständig erfolgreicher PR-#599-CI [#42184798098](https://github.com/ManuEtt/Dnd/actions/runs/42184798098) und regulärem Merge. Die separate Main-CI [#42188688824](https://github.com/ManuEtt/Dnd/actions/runs/42188688824) war bei Start noch aktiv.
+- **Branch:** `fix/chat-d/release-target-identity-20261106`; **Code-/Testcommit:** `def20a5d406d5abc66a75543b8e097f60c4b07b1`; **PR:** [#604](https://github.com/ManuEtt/Dnd/pull/604) (Draft bis vollständige CI).
+- **Problem:** Nach erfolgreichem exklusivem Anlegen konnte ein geöffneter APK-/Notiz-/Checksum-Zielpfad während des Schreibens ersetzt werden. Die bisherige Rollback-Liste hielt lediglich Dateinamen und konnte fremde Ersatzdateien nach einem Fehler entfernen. Nachträglich ersetzte APKs konnten sonst in eine spätere Prüfphase gelangen.
+- **IMPLEMENTIERT:** `_published_file_identity`, `_still_owned_file` und `_require_owned_file` verifizieren offene/geschriebene Dateien per `st_dev/st_ino` und `lstat` ohne Symlink-Verfolgung. `_new_release_file` prüft nach Flush und nach Schließen und entfernt bei Fehlern nur eigene Teil-Dateien. `copy_validated_apk` liefert die Identität aus dem geöffneten Ziel-Deskriptor. `prepare_release` bewahrt Herkunft jeder erzeugten Datei im Rollback und verifiziert den Bestand vor/nach finaler ZIP-/APK-Prüfung.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** Vier neue Python-Fälle für spät ersetzte Ziel-APK nach Copy, normale ReleaseNotes nach Öffnung, verlinkte SHA256-Datei nach Öffnung und ersetzte gültige APK nach abgeschlossener ZIP-Validierung. Bestehende Positiv-/Negativ-/Rollback- und Lock-Tests bleiben aktiv; eine bestehende Testinjektion gibt jetzt die geöffnete APK-Identität zurück.
+- **GETESTET:** Ausgangs-PR #599 vollständige GitHub-CI auf SHA `109e949c9a768f3fe9bacb482cfe9ef5ceb23c6f` grün; dieser ältere Erfolg gilt ausdrücklich nicht für den neuen Branch. Aktuelles Main, 22 offene fachfremde PRs, Code und Testquellen abgeglichen; eigener Branch und PR veröffentlicht.
+- **NICHT GETESTET:** Neue Python-Tests sowie vollständiger Backend-/Flutter-/Android-/APK-/Release-CI-Lauf auf finalem Dokumentations-HEAD, echte Geräteinstallation, Upgrade und Signierung. Lokaler GitHub-Checkout wegen DNS-Auflösung nicht verfügbar.
+- **BLOCKIERT:** Abnahme der neuen PR-CI und abschließende Main-/PR-Konfliktprüfung. Bei nicht vertrauenswürdiger, fremd beschreibbarer Release-Ausgabe ist auch eine finale Inode-Prüfung keine vollständige Race-free-Garantie gegen einen aktiven Gegner nach dem letzten Check.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge des neuen PRs und keine Datenmigration. Kein weiterer Eingriff in Backup-/JSON-/SQLite-/Story-/Rules-/Flutter-Logik; App-Version weiterhin `0.8.52+102`.
+- **NÄCHSTER SCHRITT:** Finalen Android-Alpha-Workflow zu PR #604 mit Python, Backend, Dart/Flutter, Debug-APK, nativen Dateitests, drei ABI-APKs und vollständigem Release gegen exakten Commit abnehmen und bei Fehlern im selben Branch reparieren; erst anschließend Integration prüfen.
+
+---
+
+## 06.11.2026 – Atomare Alpha-Release-Zieldateien bei späten Kollisionen
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; 15 zum Start offene fachfremde PRs mit sämtlichen Dateilisten geprüft.
+- **Branch:** `fix/chat-d/alpha-release-exclusive-output-20261106`; **Code-/Teststand:** `e4a901a9ad5efb4c065ce7c9291bccd309d27497`; **PR:** [#599](https://github.com/ManuEtt/Dnd/pull/599) (Draft bis vollständiger CI).
+- **Ausgangsproblem:** Zwischen anfänglicher Versions-Kollisionsprüfung und tatsächlichem Schreiben der APK-/ReleaseNotes-/SHA256-Ausgaben konnten neue reguläre Dateien oder Symlinks auftreten. Die bisherigen schreibenden Opens konnten diese Dateien oder externe Linkziele überschreiben; der Fehlerpfad konnte auch unbeteiligte Dateinamen löschen.
+- **IMPLEMENTIERT:** `_new_release_file` nutzt exklusive Dateierstellung (`x`/`xb`) ohne Überschreiben von vorhandenen Dateien/Symlinks. Nach erfolgreichen Schritten erfasste eigene Dateien werden beim Abbruch rückwärts entfernt; partiell geschriebene APKs werden im exklusiven Writer aufgeräumt. Bestehende Quell-/APK-Validierung, Version-Lock, Dateinamen, SHA256-Format und erfolgreiche Veröffentlichung bleiben bestehen.
+- **Geänderte Fachdateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`. Projekt-Nachtrag ausschließlich am README-Dateiende sowie dieser und zentraler Checkpoint.
+- **GETESTET:** GitHub-Quellvergleich, Main-HEAD-Abgleich, offene PRs und deren veränderte Fachdateien geprüft; eigenständiger Branch, Code-/Testcommits und Draft-PR tatsächlich auf GitHub erstellt. **Noch kein neu bestandener Testlauf auf dem finalen PR-HEAD nachgewiesen.**
+- **NICHT GETESTET:** Python-Regressionen und vollständige Python-/Backend-/Flutter-/Android-/APK-/Release-Pipeline auf endgültigem Dokumentationscommit, reale Geräte-/Upgradeprüfung. Lokaler Repository-Checkout ist wegen fehlender DNS-Auflösung zu GitHub nicht ausführbar.
+- **BLOCKIERT:** Vollständige GitHub-Actions-Abnahme und abschließender kombinierter PR-/Main-Konfliktabgleich.
+- **NOCH NICHT IMPLEMENTIERT:** Kein automatischer Merge, keine produktive App-Signierung und keine reale Geräteabnahme. Es werden keine zusätzlichen Funktionen behauptet.
+- **Kompatibilität/Migration:** Keine Migration; SQLite-Schema 3, äußeres JSON-Format 1, Spielstanddaten und Backups unverändert. Keine Änderung der App-Version 0.8.52+102, von Story/Regeln/UI oder den Android-Build-Inputs.
+- **Nächster Schritt:** Vollständigen finalen GitHub-Actions-Lauf für PR #599 einschließlich Python/Backend/Flutter, Debug- und drei ABI-APKs, Release-Prüfung abnehmen; bei Fehlern denselben Branch korrigieren, vor eventuellem Merge Main/PRs erneut abgleichen.
 
 ---
 
@@ -1924,3 +1966,117 @@ Folgende Fach-PRs von Arbeitsbereich D sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+## 2026-11-06 – Physische Android-SDK-Wurzel vor Cachebereinigung (PR #613)
+
+- **Ausgangs-main-SHA:** `0a813df100aa649c2204018349b0db9af09fb83f`.
+- **Eigener Branch:** `fix/chat-d/android-sdk-root-canonical-20261106`; **Fach-/Testcommits:** `e363c7c04c71ccf497bfd124ae86fcb14ec4cdfc` und `3508f83cae8e7a5bfb2297ab980cfa467ab10ca2`; **Pull Request:** [#613](https://github.com/ManuEtt/Dnd/pull/613) (Draft). Dokumentationscommit folgt diesen Commits.
+- **Ausgangsproblem:** Absoluter Pfadstring `/..`, `/.` oder ein auf `/` zeigender Symlink war im CI-SDK-Installer zulässig, obwohl anschließend rekursiv Cache-/NDK-Pfade gelöscht werden.
+- **IMPLEMENTIERT:** `scripts/install_android_sdk_packages.sh` normalisiert den tatsächlichen SDK-Ordner vor dem ersten `sdkmanager`-Aufruf; lehnt Root-/nicht existente Pfade vor jedem Löschversuch ab; nutzt für reguläre Bereinigung den physischen Pfad.
+- **Tests ergänzt:** `scripts/tests/test_install_android_sdk_packages.py` lehnt Root-Aliasse und Symlink auf `/` vor Mock-`sdkmanager` ab, prüft nicht existente SDK-Verzeichnisse negativ und einen normalen Pfad mit `..` positiv.
+- **GETESTET:** `bash -n`, fünf isolierte lokale Mock-Fälle (vier negative, einer positiv) mit dem manuell rekonstruierten Installer; GitHub-Main/PR-Fachdateikonflikte kontrolliert. Es handelt sich nicht um einen kompletten Python-Projekt-Testnachweis.
+- **NICHT GETESTET:** neue Python-Unittests mit echtem Repo-Checkout, Projektverifikation, Backend, Flutter-/Dart-Analyse und Tests, APK-Build, finale Actions-Jobs, Android-Gerät, Upgrade.
+- **BLOCKIERT:** GitHub-DNS im lokalen Container und fehlendes Dart/Flutter-SDK; GitHub-Actions-Ergebnisse der finalen PR-Fassung müssen abgenommen werden. Gemeinsame README-/Checkpoint-Dateien werden auch in #592, #608 und anderen offenen PRs append-only bearbeitet und benötigen koordinierte Integration.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge, keine Migration oder Spielstandänderung. App-Version/Buildcode bleiben unverändert.
+- **NÄCHSTER SCHRITT:** CI auf dem finalen HEAD von PR #613 vollständig prüfen und Fehler beheben; danach aktuellen Main- und PR-Dateiabgleich vor einer ausdrücklich überprüften Integration wiederholen.
+
+
+## 2026-11-07 – Optionalen Android-HOME-Cache vor unkontrollierter Löschung schützen
+
+- **Basis-main:** `f580d4c40f6a29df0098f656094844bfca1ed573` (PR #613 regulär integriert); Main-CI `42361647524` war beim Start noch aktiv. Der vollständig erfolgreiche Vorgänger-PR-Lauf [#42287506256](https://github.com/ManuEtt/Dnd/actions/runs/42287506256) gehört zum Vorgänger-Code und ist kein Beleg für diese neuen Änderungen.
+- **Branch:** `fix/chat-d/android-home-cache-safe-20261107`; **Code-/Testcommits:** `205a8b8daa6152efda67eef5d5c8b29b5b48e72e`, `34757df4d025a757ea7c08b8c093e93075ce3cd6`; **PR:** [#624](https://github.com/ManuEtt/Dnd/pull/624) (Draft, nicht gemergt). Folgende Dokumentationscommits ergänzen diese Quelle.
+- **Ausgangsproblem:** Auf Fehler im CI-SDK-Download folgte unkontrollierte Bereinigung des optionalen `$HOME/.android/cache`; ein Root-Alias oder Symlink konnte dazu führen, dass ein fremdes Verzeichnis adressiert wird.
+- **IMPLEMENTIERT:** Absolutheit, physische kanonische HOME-Auflösung, Root-Ausschluss, Link-Abwehr bei `.android` und `cache`; nur ein reales Verzeichnis wird gelöscht, sonst Warnung und Fortsetzung des SDK-Retry ohne Eingriff in fremde Dateien.
+- **Geänderte Fachdateien:** `scripts/install_android_sdk_packages.sh`, `scripts/tests/test_install_android_sdk_packages.py`. Drei neue Python-Testmethoden prüfen vier HOME-Warnfälle via sicherem Mock-`rm`, zwei reale Sandbox-Symlinkfälle mit Sentinel und einen positiven HOME-Alias mit regulärer Cache-Bereinigung.
+- **GETESTET:** Isoliertes `bash -n` und sieben Shell-Mock-/Sentinel-Proben im lokalen Container bestanden. Zur Prüfung wurde das vollständige betroffene Skript anhand des GitHub-Quelltextes rekonstruiert; die neue Python-Suite als Bestandteil des Git-Repositories war lokal nicht ausführbar.
+- **NICHT GETESTET:** Finale vollständige Python-/Backend-/Flutter-/Android-Debug-/drei ABI-APK-/Release-Actions-CI, Realgerät, Systemwechsel/Upgrade und Produktivsignierung.
+- **BLOCKIERT:** Fehlende GitHub-DNS-Auflösung für lokalen Checkout; gemeinsame README-/CODEX-Checkpoint-Dateien sind Gegenstand anderer offener PRs und dürfen bei späterer Integration nicht überschrieben werden. Kein aktueller CI-Erfolg für #624 behauptet.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge dieses PRs, keine SQLite-/JSON-Migration, keine Änderung an App-Version oder gespeicherten Kampagnen.
+- **NÄCHSTER SCHRITT:** CI auf endgültigem #624-HEAD vollständig abnehmen und eventuelle Fehler im Branch beheben; vor Integration neuen Main- und PR-Stand auf Konflikte prüfen.
+
+
+## 2026-11-07 – NDK-Symlink als übergeordnete Pfadkomponente bei Retry-Bereinigung (PR #626)
+
+- **Ausgangs-main:** `1816115990cc7420ecfb2d1ba7c6babb557f76da` (PR #624 integriert). Letzte gesicherte vollständige Fach-CI des Vorgängers: [#42361998502](https://github.com/ManuEtt/Dnd/actions/runs/42361998502), Quell-HEAD `1e8be09c2ac8d96dd2970d1bf9bb51eb7f56597e`; das beweist den neuen Code ausdrücklich nicht.
+- **Eigener Branch/PR:** `fix/chat-d/ndk-parent-symlink-20261107`; [#626](https://github.com/ManuEtt/Dnd/pull/626) (Draft). Fach-SHA `20d4e4fc390853e036dc4b3ee0a641ea49e82581`, Test-SHA `b707e215754c761139106dbf5c12ea93fe63d307`; Dokumentationscommit folgt.
+- **Ausgangsproblem:** `rm -rf "$sdk_root/ndk/27.0.12077973"` traversiert einen symbolischen Link der Parent-Komponente `ndk` und kann dadurch Verzeichnisse außerhalb des SDK löschen. Isoliert in einem temporären Dateibaum reproduziert.
+- **IMPLEMENTIERT:** Explizites Symlinkverbot nur für den NDK-Elternpfad vor der Löschung, sonst Warnung und Fortsetzung regulärer Retries. Keine Änderung an Paketliste, Backoff, bereits installiertem NDK, sicherem HOME-Cache oder SDK-Root-Prüfung.
+- **Tests ergänzt:** Zwei neue Python-Regressionstestmethoden für transienten/persistenten Fehler mit äußerem Sentinel sowie den zulässigen Fall eines Symlinks als Endkomponente der zu entfernenden NDK-Version. Frühere positive reguläre NDK-Tests bleiben unverändert.
+- **Geänderte Dateien:** `scripts/install_android_sdk_packages.sh`, `scripts/tests/test_install_android_sdk_packages.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Reproduktion des ursprünglichen Löschverhaltens im isolierten Sandbox-Dateisystem; echte GitHub-PR-/Main-Daten und Fachdateikonflikte geprüft. Kein erfolgreicher neuer GitHub-CI- oder vollständiger Python-Suite-Lauf behauptet.
+- **NICHT GETESTET:** Neue Python-Unittests auf GitHub, vollständige Python-/Backend-/Flutter-/Android-/Release-Pipeline, Realgerät/Upgrade/Signatur.
+- **BLOCKIERT:** GitHub-DNS für lokalen Checkout; neu gestartete PR-CI muss anhand des finalen SHA geprüft werden. README/Checkpoint werden auch in vielen anderen offenen PRs additiv ergänzt; diese Einträge bei Integration erhalten.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #626. Keine Datenmigration; App-Version `0.8.52+102`, SQLite-/JSON-Daten, Spielstände und Domänenverträge unverändert.
+- **NÄCHSTER SCHRITT:** Vollständige Actions-Checks auf dem endgültigen PR-#626-HEAD abnehmen und danach aktuellen Main-/PR-Dateivergleich zur konfliktfreien Integration durchführen.
+
+
+## 2026-11-07 – ZIP-Importressourcen im Grafikarchiv begrenzen (PR #629)
+
+- **Ausgangs-main:** `5766d64880fee8e35d15ac39fc14dc7ef965ccba` nach grüner Integration von PR #626. Die Arbeit am NDK-Symlink-Risiko lag bereits in PR #626 und wurde daher nicht dupliziert; auf Grundlage aller sechs erfolgreichen CI-Jobs wurde dieser PR regulär integriert.
+- **Eigenständiger Branch:** `fix/chat-d/fantasy-import-zip-limits-20261107`; **Pull Request:** [#629](https://github.com/ManuEtt/Dnd/pull/629) (Draft). **Fachcommit:** `f13a72634099eadfa79a845c22c5d7290321d91b`, **Testcommit:** `3854288ad951132706c074ef50b038688c4dec1d`.
+- **Ausgangsproblem:** `import_complete_fantasy_assets.py` las ZIP-Manifest und Bilder sowie `ZipFile.testzip()` unbeschränkt; beliebig viele oder stark komprimierte fremde Einträge konnten vor der Grafikauswahl vollständig dekomprimiert werden.
+- **IMPLEMENTIERT:** Maximal 256 Archiv-Einträge, 64 MiB deklarierte unkomprimierte Daten insgesamt; Manifest bis 512 KiB, je WebP maximal 8 MiB, doppelte Namen blockieren, JSON-Manifest muss Objekt sein; Größenpflichten werden vor `testzip()` geprüft. Danach begrenzte `read(limit+1)`-Operationen; Identität und Nicht-Überschreiben bestehender Assets bleiben gesichert.
+- **Fachdateien:** `scripts/import_complete_fantasy_assets.py`, `scripts/tests/test_import_complete_fantasy_assets.py`; zusätzlich rein additive README- und Checkpoint-Nachträge.
+- **TESTS ERGÄNZT:** Sechs deterministische Python-Regressionen für Eintragsanzahl, Dekompressionssumme, Manifest-/Asset-Grenzen, doppelte Namen und falschen Manifest-JSON-Wurzeltyp; Vorab-Ablehnungen verbieten im Mock den CRC-Scan.
+- **GETESTET:** Live-Main-SHA, neueste offene PRs und CI des Vorgängerpakets geprüft. Für den neuen PR am Dokumentationszeitpunkt keine bestandene finale GitHub-Actions-Suite behauptet.
+- **NICHT GETESTET:** Vollständige Python-Suite, Backend, Dart-/Flutter-Analyse/Tests, Android-Debug/ABI/Alpha-Release, Realgerät und Upgrade am finalen neuen Code. Keine lokalen Gesamttests bei fehlendem Repository-Checkout.
+- **BLOCKIERT:** Ausstehende finale CI auf dem endgültigen Branch-HEAD, gemeinsame parallel ergänzte Dokumentationsdateien; kein Überschreiben fremder Beiträge.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge des neuen PR, keine Schemaänderung, keine Migration, keine Änderung an gespeichertem Nutzerzustand oder App-Version.
+- **NÄCHSTER SCHRITT:** CI am finalen HEAD abnehmen, eventuelle Fehler auf dem eigenen Branch beheben und nur nach erneutem Integrationsabgleich regulär mergen.
+
+
+## 2026-11-07 – Grafiken bei Schreibfehlern ohne Teil-Dateien veröffentlichen (PR #631)
+
+- **Basis:** Main `bbe6ee0901f1873af67647bf54462e4a44821762` nach regulärer Integration von PR #629 mit nachgewiesener erfolgreicher sechsfacher GitHub-CI [#42398305255](https://github.com/ManuEtt/Dnd/actions/runs/42398305255). Das neu bearbeitete Paket ist unabhängig von offenen Regel-, Story-, UI- und Release-PRs.
+- **Branch:** `fix/chat-d/fantasy-import-atomic-publication-20261107`; **PR:** [#631](https://github.com/ManuEtt/Dnd/pull/631) (Draft). **Code:** `bce63cd0c146d06b7f0045abae7961cb7a048622`, `e3b4c39b019c3733ccff2669a3c00eb06db0709f`; **Tests:** `aeeb26bad86c76554b6c03df4a599d906195f893`, `b7d36d4e0fbc1b4fb32213bf04ca452840404d4a`.
+- **Problem:** Direkter `open("xb")`-Import konnte bei Datenträger-/Schreibfehler eine defekte Originalgrafik mit finalem Namen hinterlassen; nachfolgender Import durfte sie nicht überschreiben und brach ebenfalls ab. Ein unmittelbar nach Preflight vorhandener Fremdinhalt konnte ohne erneuten Byte-Vergleich übersprungen werden.
+- **IMPLEMENTIERT:** Schreibe nur im Zielverzeichnis unter zufälligem temporärem Namen, abschließender `flush()/fsync()`, exklusive Veröffentlichung per `os.link()`; Staging-Datei nach Erfolg und Fehler löschen; vorhandene Assets beim Publizieren erneut gegen validierte Bytes prüfen.
+- **Tests ergänzt:** Vier Python-Regressionen mit Mock-Ausfall in `os.fsync` und `os.link`, simuliertem konkurrierendem Ziel sowie Änderung nach ZIP-Preflight. Fortsetzung nach teils erfolgreich veröffentlichten Dateien wird positiv geprüft.
+- **GETESTET:** Quellcode und bestehende Tests über GitHub gelesen, CI des unmittelbaren Vorgänger-PR #629 bestätigt. Die neue Suite von #631 ist vor der tatsächlichen GitHub-Abnahme noch nicht als erfolgreich bewertet.
+- **NICHT GETESTET:** Vollständige neue Python-/Backend-/Flutter-/APK-/Release-Pipeline auf finalem Branch-HEAD, Realgerät, Upgrade, produktive Signierung.
+- **BLOCKIERT:** GitHub-DNS für vollständigen lokalen Checkout; abschließende Actions-CI, frischer Main-/PR-Review und Schutz anderer append-only-Checkpoint-Nachträge stehen noch aus.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge, keine 13-Dateien-Transaktion (jedes Bild einzeln atomar und wiederholbar), keine SQLite-/JSON-/Spielstandmigration und keine Änderung der App-Version.
+- **NÄCHSTER SCHRITT:** Vollständige CI auf endgültigem #631-HEAD auswerten, Testfehler im Branch beheben, bei Erfolg mit frischem Konfliktcheck regulär in Main integrieren.
+
+
+## 2026-11-07 – COM/LPT-Hochziffern als Windows-Reserved-Namen blockieren (PR #637)
+
+- **Main-Herkunft:** Ausgangs-`bbe6ee0901f1873af67647bf54462e4a44821762` nach PR #629. PR #631 wurde zwischenzeitlich auf Main `6623e4d61b664a066352068500959cf2988133fb` integriert; alle sechs Jobs auf [Run #42410645141](https://github.com/ManuEtt/Dnd/actions/runs/42410645141) waren erfolgreich. Die neuen Main-Dokumentationsabschnitte aus #631 wurden vor diesem Nachtrag in allen drei gemeinsamen Dateien vollständig übernommen.
+- **Arbeitsbranch/PR:** `fix/chat-d/windows-device-superscript-20261107`, [#637](https://github.com/ManuEtt/Dnd/pull/637) (Draft, offen). Code `db7cb684ab0ff7af90dad28bf53a209559602ff0`; Tests `163c4ea0d05b40761775b543eeb875251e147aa3`, `f99e061d40e1e12e700888dfd1b6e73622271b45`, `b0b9c7dad58c6dc4ca9ddccabe300072ebe39f00`.
+- **Ausgangsproblem:** Quell-ZIP-Exporter und Wrapper-JAR-Validator erkennen Windows-Gerätenamen mit normalen Ziffern, jedoch nicht `COM¹/²/³` und `LPT¹/²/³`, obwohl diese unter Windows ebenfalls reserviert sind.
+- **IMPLEMENTIERT:** `WINDOWS_RESERVED_STEMS` um sechs genaue Namen ergänzt; keine separate zweite Prüfroutine. Archive und JAR-Uploads werden vor Freigabe portabilitätskonform geprüft.
+- **Tests:** Vier neue Python-Testmethoden, Datei-/Unterordnerfälle, Archivschutz bei gescheiterter Portabilitätsprüfung, JAR-Ablehnung vor CRC und erlaubte Vergleichsnamen. Frühere GitHub-Python-Stufe erfolgreich; finaler CI-Nachweis muss nach Dokumentationscommits neu eingeholt werden.
+- **GETESTET:** Isolierter lokaler Vergleich der Portabilitäts-Prädikate, auf GitHub die frühen Python-Regressionen bestanden. Unveränderte Fach-PRs auf Codepfad-Konflikte überprüft; Story/Regeln/UI/Release andere Fachpfade.
+- **NICHT GETESTET:** Finale vollständige GitHub-Actions-Matrix inklusive Android-/Alpha-Release, Windows-Dateisystem, Android-Gerät, Upgrade und Signierung.
+- **BLOCKIERT:** Kein lokaler vollständiger Checkout wegen DNS; mögliche aufeinanderfolgende README-/Checkpoint-Nachträge anderer PRs beim Merge müssen erhalten bleiben.
+- **NOCH NICHT IMPLEMENTIERT:** #637 nicht gemergt, keine Änderung an SQLite, JSON, Spielständen, App-Version oder Spielmechanik.
+- **NÄCHSTER SCHRITT:** Nach finaler CI alle sechs Jobs und exakten Head prüfen, Main-Stand mit Dokumentations-Historie vergleichen, gegebenenfalls konfliktfreies Neusetzen auf neuem Main; dann Review und reguläre Integration.
+
+
+## 2026-11-07 – Eindeutige Originalgrafik-Manifestdaten vor Import erzwingen (PR #638)
+
+- **Main-Abgleich:** Branch begann auf `6623e4d61b664a066352068500959cf2988133fb`; PR #637 wurde inzwischen regulär in Main `1efb5e219dc0b00965e3be2dfb4b2b52d621d362` übernommen. Dessen PR-README-/Checkpoint-Nachträge wurden bei der Zusammenführung ohne Kürzung übernommen. [CI #42412398499](https://github.com/ManuEtt/Dnd/actions/runs/42412398499) für #637 vollständig grün.
+- **Branch/PR:** `fix/chat-d/fantasy-manifest-unique-json-20261107`, [#638](https://github.com/ManuEtt/Dnd/pull/638) (Draft). Fachcommit `42871dbea42d81fbc4d5abc81339f32e83762784`, Testcommit `9b025bbd6931f41840183b3aab52626110a33b94`.
+- **Problem:** `json.loads` akzeptiert doppelte Objekt-Eigenschaften (letzter Wert gewinnt) und ungültige JSON-Zahlen. Diese Mehrdeutigkeit passt nicht zu einem SHA256-/Dateigrößen-Freigabemanifest für Originalgrafiken.
+- **IMPLEMENTIERT:** Strikter `object_pairs_hook` gegen doppelte JSON-Eigenschaften auf jeder Objektebene, `parse_constant` gegen `NaN`, `Infinity`, `-Infinity`. Kein Import oder CRC-Scan vor eindeutiger Manifestprüfung; alle 13 WebP-Hash-/Format-/Größenchecks sowie atomare Veröffentlichungen bleiben.
+- **Tests ergänzt:** Vier Regressionen zu doppeltem Assetpfad, doppelter geschachtelter `bytes`-Angabe (vor CRC), drei ungültigen Zahlkonstanten und gültigen Originaldaten. Die erste GitHub-Python-Stufe bestand auf dem vorläufigen Fach-HEAD; finaler dokumentierter HEAD benötigt vollständige CI.
+- **GETESTET:** Live-GitHub-Stand und offene PRs geprüft, Fachtests dem neuen Commit hinzugefügt; keine behauptete abgeschlossene finale Actions-Abnahme.
+- **NICHT GETESTET:** Vollständiger finaler GitHub-Pipeline-Durchlauf bis Android-Debug, drei ABI-APKs und Alpha-Release; Realgerät, Updates, Produktivsignierung.
+- **BLOCKIERT:** GitHub-DNS im lokalen Container; abschließende Actions-CI und frischer Merge-/Dokumentationscheck.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #638, keine Spielstands-/SQLite-/JSON-Migration, keine Story-/Regel-/UI-Änderung.
+- **NÄCHSTER SCHRITT:** Finalen CI-Commit abnehmen und nur bei konfliktfreiem Stand und sechs grünen Jobs regulär mergen.
+
+
+## 2026-11-08 – Eltern-Symlinks beim Originalgrafik-Import ablehnen (PR #640)
+
+- **Main-Basis:** `0ce0ad86e9eddf8302e495561d12a889008de49a` nach Merge von #638, dessen [CI #42414029366](https://github.com/ManuEtt/Dnd/actions/runs/42414029366) sechsfach erfolgreich war. Bereits bestehende Historie und Nachträge wurden nicht verändert.
+- **Branch/PR:** `fix/chat-d/fantasy-target-ancestor-symlink-20261108`, [#640](https://github.com/ManuEtt/Dnd/pull/640) (Draft). Codecommit `9a0f3bf5bed866371bdf380fadc0455995c6a8f2`, zwei Testfälle in Commit `45806225eb87563e70c7d907802618221f50da89`.
+- **Problem:** `ensure_safe_destination()` verwarf Symlinks in `--target` selbst und darunter, jedoch nicht in dessen Vorfahren. Dadurch konnte `--target=/basis/alias/projekt` über `alias` in einen anderen Verzeichnisbaum weisen.
+- **IMPLEMENTIERT:** Vor der relativen Assetpfad-Prüfung und in der Veröffentlichung jeden Zielordner-Vorfahren zusätzlich auf Symlinks prüfen, auch wenn `--target` selbst kein Symlink und noch nicht vorhanden ist.
+- **Tests:** Zwei neue POSIX-Regressionen für schon symlinkte Vorfahren (inkl. Verify-Only) und späten Austausch des Elternordners nach der ZIP-Vorabprüfung; außerhalb liegende Ordner bleiben unverändert. Frühere positive 13-Dateien-Import-/Reimport-Tests unverändert.
+- **GETESTET:** GitHub-Dateien, unabhängige Fachpfade und Branchzustand geprüft. Vollständig grüne CI gilt nur für #638, nicht für #640.
+- **NICHT GETESTET:** Komplette CI auf finalem #640-Commit sowie Realgerät, Windows-Reparse-Points und Thread-/Prozess-Race während des Schreibens.
+- **BLOCKIERT:** Ausstehende finale GitHub-CI, vor Integration frische Konfliktprüfung und Main-Abgleich.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge, keine descriptorbasierte atomare Absicherung der gesamten Verzeichniskette. Keine SQLite-/JSON-Spielstand-/App-Version-/Domain-/UI-Änderungen.
+- **NÄCHSTER SCHRITT:** GitHub-CI auf finalem Branch-HEAD kontrollieren, dann mit aktualisiertem Main und laufenden PRs verlustfrei integrieren, nur wenn alle sechs Jobs erfolgreich sind.
