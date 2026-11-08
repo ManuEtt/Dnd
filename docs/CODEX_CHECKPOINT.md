@@ -2281,3 +2281,16 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** GitHub-DNS verhindert weiterhin vollständigen lokalen Checkout. Finale Actions-Abnahme, freier Mergeability-Status und verlustfreie Synchronisierung parallel hinzugekommener Dokumentation vor Main-Merge ausstehend.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #638, keine neuen Spielregeln, Datenbankschemata oder Spielstandsformate, keine App-Versionsänderung.
 - **NÄCHSTER SCHRITT:** Finalen GitHub-CI-Lauf am echten zusammengeführten Commit vollständig auswerten, eventuelle Fehler im eigenen Branch korrigieren, frischen Main-/PR-Check durchführen und nur bei durchgehend grünen sechs Jobs integrieren.
+
+---
+
+## 2026-11-08 – Unsichtbare Operatoren in KI-generierten Abenteuern ablehnen (PR #643)
+
+- **Basis:** `main` `0ce0ad86e9eddf8302e495561d12a889008de49a`; Branch `feat/chat-b/ai-invisible-operators-20261108`; [Draft-PR #643](https://github.com/ManuEtt/Dnd/pull/643). Zugehörige Code-/Testcommits `89b87a524e8a358f22c1671c40cd2af51432b454`, `4ea6a7e0f9df6d748b10ec40b8cf4ce2b077707d`; erläuternde Ergänzung `3fae4ee48d32665b2067bdcf142b86beee004db7`.
+- **IMPLEMENTIERT:** In `app/lib/story/ai_story.dart` werden U+2061, U+2062, U+2063 und U+2064 in unbestätigter KI-Erzählung, generierten Kampagneninformationen, NPC-Beziehungen und optionalen Abenteuerangeboten nicht mehr akzeptiert. Textfilter U+2060–U+206F vollständig, normale Mehrzeiligkeit/Emoji weiterhin gültig.
+- **Regressionen hinzugefügt:** `app/test/ai_story_invisible_operator_test.dart` mit vier positiv/negativ angelegten Testgruppen über Plan-, Turn-, NPC-, Angebotsfelder und unveränderte JSON-Snapshots.
+- **GETESTET:** GitHub-Main-/PR-/Dateipfadabgleich, Code und neue Tests committed. Initiale [Actions #42458390622](https://github.com/ManuEtt/Dnd/actions/runs/42458390622) bei letzter Sichtung in Arbeit, **nicht erfolgreich abgenommen**. Erfolgreiche frühere Main-CI ist kein Testnachweis für dieses Paket.
+- **NICHT GETESTET:** Vollständige finale CI (Format/Flutter-/Backend-/Android-/APK-Jobs), reales Android-Gerät und echte KI-Verbindung; kein lokales Flutter/Dart, DNS-Checkout blockiert.
+- **BLOCKIERT:** CI und Review; parallele append-only README-/Checkpoint-Änderungen erst koordiniert integrieren. Keine fachliche Überschneidung mit den offenen Story-PRs bei Paketstart.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge nach main, keine Regeländerung, keine Schema-/JSON-Migration, keine neue Buildversion.
+- **NÄCHSTER SCHRITT:** Finalen PR-HEAD inklusive der vier Regressionstests durch alle GitHub-Jobs prüfen; bei Problemen im selben Branch korrigieren und erst danach zur Integration vorlegen.
