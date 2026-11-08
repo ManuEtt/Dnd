@@ -799,3 +799,19 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+
+---
+
+## 2026-11-08 – Bestätigte Schadens- und TP-Optionen beim Effektwechsel nicht mitnehmen
+
+- **Ausgangs-main:** `0ce0ad86e9eddf8302e495561d12a889008de49a`, eigener Branch `feat/chat-c/character-effect-kind-consent-reset-20261108`. Alle zum Beginn offenen PR-Fachdateien geprüft; keine Überschneidung mit der UI-Änderung oder neuer Testdatei.
+- **PROBLEM:** `CharacterEffectDialog` speicherte die vier Schadensmodifikatoren (Resistenz, Anfälligkeit, Immunität, kritisch) sowie die ausdrückliche Ersetzfreigabe temporärer Trefferpunkte in lokalen Bool-Feldern. Bei Wechsel des Effekttyps wurden Checkboxen ausgeblendet, behielten aber ihre Zustimmung, falls der vorherige Effekttyp erneut ausgewählt wurde.
+- **IMPLEMENTIERT:** In `app/lib/ui/character_effect_dialog.dart` räumt `_changeKind` bei tatsächlichem Typwechsel die verborgenen fünf Zustimmungen sowie die zuvor gewählte Schadensart auf. Vorhandene Texte, Anzeige- und Bestätigungsfelder sowie die spätere Regelentscheidung bleiben unverändert; kein automatischer Effekt.
+- **TESTS ERGÄNZT:** `app/test/character_effect_kind_consent_reset_test.dart` mit 320 dp, 200 % Schrift und simuliertem Android-IME: alle vier angekreuzten Schadensmodifikatoren und Feuer nach Schaden → Heilung → Schaden zurückgesetzt und ausdrücklich bestätigter Vorschlag ohne alte Kennzeichen; 360 dp: TP-Ersetzfreigabe nach Temp-TP → Heilung → Temp-TP zurückgesetzt; 320 dp: erneutes bewusstes Markieren von Immunität nach Typwechsel und neutraler Abbruch ohne Veränderung des übergebenen Helden.
+- **GETESTET:** Code-, Domain-Vertrags- und bestehende Widgettests geprüft und neue Code-/Testdateien im eigenen Branch eingecheckt. Keine automatisierte CI auf diesem HEAD zum Zeitpunkt des Nachtrags abgeschlossen.
+- **NICHT GETESTET:** Flutter/Dart lokal (SDK fehlt), GitHub-CI mit Format/Analyse/Flutter-/Python-/Backend-/Android-APK, echtes Gerät/TalkBack, Upgrades.
+- **KOMPATIBILITÄT:** App `0.8.52+102`, JSON/SQLite, SRD-Regeln, bestehende Spielstände und Domänenmodell unverändert. Ausschließlich nicht mehr zugehörige, **unbestätigte UI-Auswahl** wird verworfen.
+- **BLOCKIERT:** Bis zur vollständigen GitHub-CI-Abnahme Draft; keine eigenmächtige Integration.
+- **NÄCHSTER SCHRITT:** Eigenen PR gegen aktuelles main eröffnen, Gesamt-CI und APK-Matrix auswerten, Fehler auf eigenem Branch korrigieren; nur nach vollständigem Erfolg Review-Status.
