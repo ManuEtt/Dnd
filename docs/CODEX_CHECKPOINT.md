@@ -2281,3 +2281,16 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** GitHub-DNS verhindert weiterhin vollständigen lokalen Checkout. Finale Actions-Abnahme, freier Mergeability-Status und verlustfreie Synchronisierung parallel hinzugekommener Dokumentation vor Main-Merge ausstehend.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #638, keine neuen Spielregeln, Datenbankschemata oder Spielstandsformate, keine App-Versionsänderung.
 - **NÄCHSTER SCHRITT:** Finalen GitHub-CI-Lauf am echten zusammengeführten Commit vollständig auswerten, eventuelle Fehler im eigenen Branch korrigieren, frischen Main-/PR-Check durchführen und nur bei durchgehend grünen sechs Jobs integrieren.
+
+
+## 2026-11-08 – Symlink-Vorfahren des Grafikimportziels vor dem Schreiben sperren (PR #640)
+
+- **Ausgangsstand:** Main `0ce0ad86e9eddf8302e495561d12a889008de49a`; PR #638 mit strengem JSON-Grafikmanifest war zuvor nach sechs erfolgreichen GitHub-Actions-Jobs ([#42414029366](https://github.com/ManuEtt/Dnd/actions/runs/42414029366)) regulär integriert. Dokumentationshistorie davor unverändert beibehalten.
+- **Branch/PR:** `fix/chat-d/fantasy-target-ancestor-symlink-20261108`, [PR #640](https://github.com/ManuEtt/Dnd/pull/640) (Draft). **Code:** `9a0f3bf5bed866371bdf380fadc0455995c6a8f2`; **Tests:** `45806225eb87563e70c7d907802618221f50da89`.
+- **IMPLEMENTIERT:** `scripts/import_complete_fantasy_assets.py` ergänzt in `ensure_safe_destination()` die Symlinkprüfung für jeden Vorfahren von `--target`, zusätzlich zu `--target` selbst und den geschachtelten Asset-Pfaden. Ablehnung vor ZIP-Veröffentlichung und erneut vor Dateimutation.
+- **TESTS ERGÄNZT:** Zwei POSIX-Unittests in `scripts/tests/test_import_complete_fantasy_assets.py`: symlinkter Elternpfad für fehlenden Zielordner stoppt vor jedem externen Schreibzugriff, ebenso `--verify-only`; Austausch des Elternverzeichnisses in einen Symlink nach Preflight wird vor dem ersten Schreiben erkannt. Bestehende gültige Import-/Reimport- sowie Fehler-/ZIP-Limit-/SHA256-Regressionen bleiben.
+- **GETESTET:** GitHub-Quelltexte und offenen PR-Fachumfang auf Konflikte geprüft, Branch und eigene Fachänderungen gesichert; erfolgreiche sechsfach-CI des Vorgänger-PR #638 auf dessen finalem Head. Dieser Nachweis ist nicht als Test für #640 zu werten.
+- **NICHT GETESTET:** Vollständige neue Python-/Backend-/Dart-/Flutter-/Android-/Release-CI für finalen #640-Commit, Realgerät, Windows-Umgebung und parallele Verzeichnistausche auf OS-Ebene.
+- **BLOCKIERT:** Lokaler vollständiger GitHub-Checkout in dieser Arbeitsumgebung nicht verfügbar; finale GitHub-CI, erneuter Mergeability-Check und ggf. Main-Dokumentationsnachträge vor Integration ausstehend.
+- **NOCH NICHT IMPLEMENTIERT:** Keine POSIX-Descriptor-basierte, durchgehende Race-Freiheit bei Verzeichnisänderungen während des Schreibens; kein Main-Merge von #640, keine Spielstands-/Datenbankschema-/Versionsänderung.
+- **NÄCHSTER SCHRITT:** Endgültige #640-CI auf tatsächlichem PR-Head in allen sechs Jobs erfolgreich abschließen, Main und offene PRs erneut prüfen und nur bei Konfliktfreiheit integrieren; danach neue Main-CI kontrollieren.
