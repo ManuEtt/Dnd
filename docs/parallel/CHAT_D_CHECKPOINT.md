@@ -2052,3 +2052,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Kein lokaler vollständiger Checkout wegen DNS; mögliche aufeinanderfolgende README-/Checkpoint-Nachträge anderer PRs beim Merge müssen erhalten bleiben.
 - **NOCH NICHT IMPLEMENTIERT:** #637 nicht gemergt, keine Änderung an SQLite, JSON, Spielständen, App-Version oder Spielmechanik.
 - **NÄCHSTER SCHRITT:** Nach finaler CI alle sechs Jobs und exakten Head prüfen, Main-Stand mit Dokumentations-Historie vergleichen, gegebenenfalls konfliktfreies Neusetzen auf neuem Main; dann Review und reguläre Integration.
+
+
+## 2026-11-07 – Eindeutige Originalgrafik-Manifestdaten vor Import erzwingen (PR #638)
+
+- **Main-Abgleich:** Branch begann auf `6623e4d61b664a066352068500959cf2988133fb`; PR #637 wurde inzwischen regulär in Main `1efb5e219dc0b00965e3be2dfb4b2b52d621d362` übernommen. Dessen PR-README-/Checkpoint-Nachträge wurden bei der Zusammenführung ohne Kürzung übernommen. [CI #42412398499](https://github.com/ManuEtt/Dnd/actions/runs/42412398499) für #637 vollständig grün.
+- **Branch/PR:** `fix/chat-d/fantasy-manifest-unique-json-20261107`, [#638](https://github.com/ManuEtt/Dnd/pull/638) (Draft). Fachcommit `42871dbea42d81fbc4d5abc81339f32e83762784`, Testcommit `9b025bbd6931f41840183b3aab52626110a33b94`.
+- **Problem:** `json.loads` akzeptiert doppelte Objekt-Eigenschaften (letzter Wert gewinnt) und ungültige JSON-Zahlen. Diese Mehrdeutigkeit passt nicht zu einem SHA256-/Dateigrößen-Freigabemanifest für Originalgrafiken.
+- **IMPLEMENTIERT:** Strikter `object_pairs_hook` gegen doppelte JSON-Eigenschaften auf jeder Objektebene, `parse_constant` gegen `NaN`, `Infinity`, `-Infinity`. Kein Import oder CRC-Scan vor eindeutiger Manifestprüfung; alle 13 WebP-Hash-/Format-/Größenchecks sowie atomare Veröffentlichungen bleiben.
+- **Tests ergänzt:** Vier Regressionen zu doppeltem Assetpfad, doppelter geschachtelter `bytes`-Angabe (vor CRC), drei ungültigen Zahlkonstanten und gültigen Originaldaten. Die erste GitHub-Python-Stufe bestand auf dem vorläufigen Fach-HEAD; finaler dokumentierter HEAD benötigt vollständige CI.
+- **GETESTET:** Live-GitHub-Stand und offene PRs geprüft, Fachtests dem neuen Commit hinzugefügt; keine behauptete abgeschlossene finale Actions-Abnahme.
+- **NICHT GETESTET:** Vollständiger finaler GitHub-Pipeline-Durchlauf bis Android-Debug, drei ABI-APKs und Alpha-Release; Realgerät, Updates, Produktivsignierung.
+- **BLOCKIERT:** GitHub-DNS im lokalen Container; abschließende Actions-CI und frischer Merge-/Dokumentationscheck.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #638, keine Spielstands-/SQLite-/JSON-Migration, keine Story-/Regel-/UI-Änderung.
+- **NÄCHSTER SCHRITT:** Finalen CI-Commit abnehmen und nur bei konfliktfreiem Stand und sechs grünen Jobs regulär mergen.
