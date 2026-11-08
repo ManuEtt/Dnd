@@ -502,7 +502,7 @@ class ProjectArchiveTests(unittest.TestCase):
         }
         for name, mode in privileged_modes.items():
             path = self.root / 'app/assets' / name
-            path.write_text('#!/bin/sh\\necho safe\\n', encoding='utf-8')
+            path.write_bytes(b'archive fixture')
             path.chmod(mode)
         output = self.base / 'unprivileged.zip'
         packaging.create_archive(self.root, output, layout='root')
@@ -515,7 +515,7 @@ class ProjectArchiveTests(unittest.TestCase):
                     self.assertEqual(0, exported & 0o7000)
                     self.assertEqual(mode & 0o777, exported & 0o777)
                     self.assertEqual(
-                        b'#!/bin/sh\\necho safe\\n',
+                        b'archive fixture',
                         archive.read('app/assets/' + name),
                     )
 
