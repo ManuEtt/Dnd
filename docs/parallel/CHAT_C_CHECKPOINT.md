@@ -799,3 +799,18 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+## 08.11.2026 – Ausdrückliche Schadenswurf-Auswahl bei Live-Angriffswechsel
+
+- **Ausgangs-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276` (zuvor vollständige Main-CI auf `0ce0ad86e9eddf8302e495561d12a889008de49a` erfolgreich; neue Main-CI noch laufend).
+- **Eigener Branch:** `feat/chat-c/savage-attacker-live-offer-reset-20261108`; **Codecommit:** `03aca45a0bde1ba474fa7e24d0810972922c798b`; **Test-Fix-Commit:** `e2fbcc90c69891c4ab88f7b0e1b5f9df0c1fdfbe`. Branch-Endstand nach Dokumentation per GitHub prüfen.
+- **Pull Request:** [#647](https://github.com/ManuEtt/Dnd/pull/647) (Draft bis vollständiger CI-Abnahme).
+- **Problem:** Die bereits bestätigte Alternative in `SavageAttackerSelectionDialog` blieb über eine Änderung des Angriffs, der Kampagnenrevision oder der angezeigten Würfel ohne frische Spielerwahl aktiv.
+- **IMPLEMENTIERT:** `didUpdateWidget` verwirft alte Auswahl bei einem neuen Kampagnenobjekt, Angriff, Ziel, Schadensausdruck, Kritischstatus, Treffer-/Waffenbeleg oder Würfelnachweis. Identische Widgets behalten eine bestehende Auswahl. Controller und Regelengine entscheiden weiterhin über die tatsächliche Bestätigung.
+- **Fachdateien:** `app/lib/ui/savage_attacker_selection_dialog.dart`; neuer Widgettest `app/test/savage_attacker_live_offer_reset_test.dart`. Zusätzlich Checkpoints und neutraler append-only README-Nachtrag. Keine gemeinsam genutzten Domain- oder Speichermodelle geändert.
+- **Tests ergänzt:** Fünf positive/negative Widgetfälle (gleiches Rebuild, Angriffswechsel bei 320/360 dp mit 200 % Schrift und 220 dp simuliertem IME, Revision/verbrauchtes Talent, erneute gültige Wahl, ausgetauschte Würfel). Kampagnen-JSON bleibt identisch. Bestehende Fachtests unverändert.
+- **GETESTET:** Aktueller Main-HEAD, offene PRs und die betroffenen Dialog-/Testdateien vor Branchanlage geprüft; Änderungen auf eigenem Remote-Branch gesichert. Kein lokaler Flutter-Test durchgeführt.
+- **NICHT GETESTET:** `dart format`, `flutter analyze`, neue Widget-/Gesamttests, Android-Debug-/ABI-Builds und Backend-/Python-Gates am finalen Branch-HEAD (CI-Ergebnisse offen); physisches Android/TalkBack und echte Tastatur nicht abgenommen.
+- **BLOCKIERT:** Kein lokales Flutter-/Dart-SDK; `git ls-remote` scheitert an DNS. GitHub Actions muss die Codeprüfung übernehmen. Gemeinsame README-/Checkpoint-Updates bei Integration mit anderen PRs append-only koordinieren.
+- **Migration:** Keine. Unveränderte SQLite-/JSON-Schemata, bestätigte Regeln, Spielstände, IDs, Ressourcen, Assets und App-Version.
+- **NÄCHSTER SCHRITT:** Nach grüner CI den Dialog auf echtem Android-Gerät mit TalkBack bei 320 dp und 200 % Schrift überprüfen: bei neuem Angriff bleibt der Bestätigen-Button gesperrt bis zu einem erneuten Tap.
