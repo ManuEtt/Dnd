@@ -2294,3 +2294,16 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Lokaler vollständiger GitHub-Checkout in dieser Arbeitsumgebung nicht verfügbar; finale GitHub-CI, erneuter Mergeability-Check und ggf. Main-Dokumentationsnachträge vor Integration ausstehend.
 - **NOCH NICHT IMPLEMENTIERT:** Keine POSIX-Descriptor-basierte, durchgehende Race-Freiheit bei Verzeichnisänderungen während des Schreibens; kein Main-Merge von #640, keine Spielstands-/Datenbankschema-/Versionsänderung.
 - **NÄCHSTER SCHRITT:** Endgültige #640-CI auf tatsächlichem PR-Head in allen sechs Jobs erfolgreich abschließen, Main und offene PRs erneut prüfen und nur bei Konfliktfreiheit integrieren; danach neue Main-CI kontrollieren.
+
+## 2026-11-08 – Dateirechte beim Quell-ZIP-Export auf gewöhnliche rwx-Bits beschränken
+
+- **Basis-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; dort [Android-Main-CI 42514079690](https://github.com/ManuEtt/Dnd/actions/runs/42514079690) erfolgreich.
+- **Branch/PR:** `fix/chat-d/source-zip-safe-modes-20261108`, [#650](https://github.com/ManuEtt/Dnd/pull/650) als Draft; Code `4d7bb9a0a9c8ff208b3b799cafeb7f42af811470`, Test `3ea18bde7fd75794e7f6f15c8d797e3d211e56e6`, Testfixture `48342a3033990a0833351cddcc7bac5a4a7badf1`.
+- **IMPLEMENTIERT:** `scripts/package_project.py` verwendet für ZIP-External-Attributes statt aller `S_IMODE`-Bits nur `stat.S_IFREG | (stat.S_IMODE(before.st_mode) & 0o777)`. Dadurch werden Setuid/Setgid/Sticky nicht weitergereicht, normale Ausführbarkeit, unveränderte Inhalte und Archivintegrität bleiben erhalten.
+- **Regressionen:** `scripts/tests/test_package_project.py` enthält einen neuen POSIX-Unittest mit drei Fällen (4755, 2750, 1755) für Statusbits, rwx, Dateityp und Inhalt; bestehende positive Archive-/Checksum-Tests nicht entfernt.
+- **Konflikte:** Vor Beginn 57 offene PRs (einschließlich unabhängigem #649) und fachliche Dateilisten geprüft; kein fremder PR berührt Exporter oder zugehörigen Test. Gemeinsame Dokumentation ausschließlich angehängt, bei Merge verlustfrei konsolidieren.
+- **GETESTET:** GitHub-Fachcode und Tests committed; Ausgangs-Main-CI nachgewiesen. Dieser ältere Erfolg ist **keine** neue CI-Abnahme.
+- **NICHT GETESTET:** Python-Unittests, allgemeine Projektprüfungen, Backend/Flutter/Android-Debug/ABI-/Release-CI auf dem abschließenden PR-HEAD; echtes Geräteupgrade. GitHub-DNS verhindert lokalen vollständigen Repository-Checkout.
+- **BLOCKIERT:** Vollständige CI-Abnahme und danach frische Main-/PR-Konfliktprüfung; PR Draft, nicht gemerged.
+- **Kompatibilität:** keine Änderung an Spielstands-/Backupformat, SQLite 3, äußerem JSON 1, App-Version oder D&D-Spielmechanik; keine Migration.
+- **Nächster Schritt:** Finalen PR-#650-GitHub-Actions-Lauf einschließlich Python-/Backend-/Flutter-/Android-/Release-Gates auswerten und nur nach grünem, konfliktfreiem Nachweis integrieren.
