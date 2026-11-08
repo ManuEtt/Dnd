@@ -69,11 +69,7 @@ Future<void> _tap(WidgetTester tester, String field) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> _choose(
-  WidgetTester tester,
-  String field,
-  String option,
-) async {
+Future<void> _choose(WidgetTester tester, String field, String option) async {
   await _tap(tester, field);
   await tester.tap(find.text(option).last);
   await tester.pumpAndSettle();
@@ -103,7 +99,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      tester.widget<DropdownButtonFormField<String>>(_control('slot')).initialValue,
+      tester
+          .widget<DropdownButtonFormField<String>>(_control('slot'))
+          .initialValue,
       'slot-2',
     );
     expect(find.text('Grad 2 · 3 frei'), findsOneWidget);
@@ -117,52 +115,61 @@ void main() {
   });
 
   for (final width in [320.0, 360.0]) {
-    testWidgets('Live-Platzwechsel bei $width dp/200 %/IME setzt Zusagen zurück', (
-      tester,
-    ) async {
-      tester.view.physicalSize = Size(width, 840);
-      tester.view.devicePixelRatio = 1;
-      tester.view.viewInsets = const FakeViewPadding(bottom: 220);
-      tester.platformDispatcher.textScaleFactorTestValue = 2;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      addTearDown(tester.view.resetViewInsets);
-      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      final initial = _hero();
-      final initialJson = initial.toJson();
-      final heroes = ValueNotifier(initial);
-      final result = ValueNotifier<HealingSpellChoice?>(null);
-      addTearDown(heroes.dispose);
-      addTearDown(result.dispose);
-      await _open(tester, heroes, result);
-      await _choose(tester, 'slot', 'Grad 3 · 2 frei');
-      await _tap(tester, 'verbal');
-      await _tap(tester, 'somatic');
+    testWidgets(
+      'Live-Platzwechsel bei $width dp/200 %/IME setzt Zusagen zurück',
+      (tester) async {
+        tester.view.physicalSize = Size(width, 840);
+        tester.view.devicePixelRatio = 1;
+        tester.view.viewInsets = const FakeViewPadding(bottom: 220);
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.view.resetViewInsets);
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        final initial = _hero();
+        final initialJson = initial.toJson();
+        final heroes = ValueNotifier(initial);
+        final result = ValueNotifier<HealingSpellChoice?>(null);
+        addTearDown(heroes.dispose);
+        addTearDown(result.dispose);
+        await _open(tester, heroes, result);
+        await _choose(tester, 'slot', 'Grad 3 · 2 frei');
+        await _tap(tester, 'verbal');
+        await _tap(tester, 'somatic');
 
-      final changed = initial.copyWith(spentSpellSlots: {'3': 2});
-      final changedJson = changed.toJson();
-      heroes.value = changed;
-      await tester.pumpAndSettle();
+        final changed = initial.copyWith(spentSpellSlots: {'3': 2});
+        final changedJson = changed.toJson();
+        heroes.value = changed;
+        await tester.pumpAndSettle();
 
-      expect(find.text('Grad 3 · 2 frei'), findsNothing);
-      expect(find.text('Grad 1 · 4 frei'), findsOneWidget);
-      expect(tester.widget<CheckboxListTile>(_control('verbal')).value, isFalse);
-      expect(tester.widget<CheckboxListTile>(_control('somatic')).value, isFalse);
-      await _tap(tester, 'confirm');
-      expect(
-        find.text('Bitte bestätigen, dass die verbalen Komponenten möglich sind.'),
-        findsOneWidget,
-      );
-      expect(result.value, isNull);
-      await _tap(tester, 'verbal');
-      await _tap(tester, 'somatic');
-      await _tap(tester, 'confirm');
-      expect(result.value?.slotLevel, 1);
-      expect(result.value?.pactMagic, isFalse);
-      expect(initial.toJson(), initialJson);
-      expect(changed.toJson(), changedJson);
-      expect(tester.takeException(), isNull);
-    });
+        expect(find.text('Grad 3 · 2 frei'), findsNothing);
+        expect(find.text('Grad 1 · 4 frei'), findsOneWidget);
+        expect(
+          tester.widget<CheckboxListTile>(_control('verbal')).value,
+          isFalse,
+        );
+        expect(
+          tester.widget<CheckboxListTile>(_control('somatic')).value,
+          isFalse,
+        );
+        await _tap(tester, 'confirm');
+        expect(
+          find.text(
+            'Bitte bestätigen, dass die verbalen Komponenten möglich sind.',
+          ),
+          findsOneWidget,
+        );
+        expect(result.value, isNull);
+        await _tap(tester, 'verbal');
+        await _tap(tester, 'somatic');
+        await _tap(tester, 'confirm');
+        expect(result.value?.slotLevel, 1);
+        expect(result.value?.pactMagic, isFalse);
+        expect(initial.toJson(), initialJson);
+        expect(changed.toJson(), changedJson);
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
 
   testWidgets('Heldwechsel bei gleichem Dialog vererbt keine Zustimmung', (
@@ -194,7 +201,9 @@ void main() {
     expect(tester.widget<CheckboxListTile>(_control('verbal')).value, isFalse);
     await _tap(tester, 'confirm');
     expect(
-      find.text('Bitte bestätigen, dass die verbalen Komponenten möglich sind.'),
+      find.text(
+        'Bitte bestätigen, dass die verbalen Komponenten möglich sind.',
+      ),
       findsOneWidget,
     );
     await _tap(tester, 'verbal');
@@ -227,35 +236,48 @@ void main() {
     expect(_control('name'), findsOneWidget);
     expect(_control('slot'), findsNothing);
     expect(_canConfirm(tester), isFalse);
-    expect(find.textContaining('Kein ausreichender freier Zauberplatz'), findsOneWidget);
+    expect(
+      find.textContaining('Kein ausreichender freier Zauberplatz'),
+      findsOneWidget,
+    );
     await _tap(tester, 'cancel');
     expect(result.value, isNull);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('ungültiger Ressourcenstand heilt nicht und kann ersetzt werden', (
-    tester,
-  ) async {
-    final heroes = ValueNotifier(_hero());
-    final result = ValueNotifier<HealingSpellChoice?>(null);
-    addTearDown(heroes.dispose);
-    addTearDown(result.dispose);
-    await _open(tester, heroes, result);
+  testWidgets(
+    'ungültiger Ressourcenstand heilt nicht und kann ersetzt werden',
+    (tester) async {
+      final heroes = ValueNotifier(_hero());
+      final result = ValueNotifier<HealingSpellChoice?>(null);
+      addTearDown(heroes.dispose);
+      addTearDown(result.dispose);
+      await _open(tester, heroes, result);
 
-    heroes.value = _hero().copyWith(spentSpellSlots: {'1': 99});
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Bitte zuerst die Charakterdaten prüfen'), findsOneWidget);
-    expect(_canConfirm(tester), isFalse);
-    expect(_control('slot'), findsNothing);
+      heroes.value = _hero().copyWith(spentSpellSlots: {'1': 99});
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Bitte zuerst die Charakterdaten prüfen'),
+        findsOneWidget,
+      );
+      expect(_canConfirm(tester), isFalse);
+      expect(_control('slot'), findsNothing);
 
-    final recovered = _hero().copyWith(spentSpellSlots: {'1': 4});
-    heroes.value = recovered;
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Bitte zuerst die Charakterdaten prüfen'), findsNothing);
-    expect(_control('slot'), findsOneWidget);
-    expect(tester.widget<CheckboxListTile>(_control('verbal')).value, isFalse);
-    await _tap(tester, 'cancel');
-    expect(result.value, isNull);
-    expect(tester.takeException(), isNull);
-  });
+      final recovered = _hero().copyWith(spentSpellSlots: {'1': 4});
+      heroes.value = recovered;
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Bitte zuerst die Charakterdaten prüfen'),
+        findsNothing,
+      );
+      expect(_control('slot'), findsOneWidget);
+      expect(
+        tester.widget<CheckboxListTile>(_control('verbal')).value,
+        isFalse,
+      );
+      await _tap(tester, 'cancel');
+      expect(result.value, isNull);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
