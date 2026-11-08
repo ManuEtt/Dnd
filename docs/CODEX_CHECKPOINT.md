@@ -2281,3 +2281,18 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** GitHub-DNS verhindert weiterhin vollständigen lokalen Checkout. Finale Actions-Abnahme, freier Mergeability-Status und verlustfreie Synchronisierung parallel hinzugekommener Dokumentation vor Main-Merge ausstehend.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von #638, keine neuen Spielregeln, Datenbankschemata oder Spielstandsformate, keine App-Versionsänderung.
 - **NÄCHSTER SCHRITT:** Finalen GitHub-CI-Lauf am echten zusammengeführten Commit vollständig auswerten, eventuelle Fehler im eigenen Branch korrigieren, frischen Main-/PR-Check durchführen und nur bei durchgehend grünen sechs Jobs integrieren.
+
+
+
+---
+
+## 2026-11-08 – Charaktereffekt-Auswahl nach Typwechsel erneut bestätigen
+
+- **Ausgangs-main:** `0ce0ad86e9eddf8302e495561d12a889008de49a`, **Branch:** `feat/chat-c/character-effect-kind-consent-reset-20261108` (Chat-C-UI, keine Überschneidung der Fachdateien mit anderen aktiven PRs).
+- **IMPLEMENTIERT:** `app/lib/ui/character_effect_dialog.dart` verwirft beim Wechsel zwischen Schaden/Heilung/temporären TP alle bisher als bestätigt markierten nur artbezogenen Checkboxen (Resistenz, Anfälligkeit, Immunität, kritisch und TP-Ersetzen) sowie die letzte Schadensart. Unverändertes Verhalten ohne Typwechsel.
+- **REGRESSIONSTESTS:** `app/test/character_effect_kind_consent_reset_test.dart` prüft Schadensfreigaben, Feuer → Energie, Rückkehr zum ursprünglichen Typ ohne alte Zustimmung, TP-Ersetzfreigabe und Abbruch ohne Heldenmutation auf 320/360 dp mit 200 % Text/IME.
+- **GETESTET:** Testkonventionen und Fachcode im GitHub-Main abgeglichen, Code-/Testcommits gespeichert. Ausführung aller Tests auf diesem Stand steht noch aus.
+- **NICHT GETESTET:** Flutter-Format/Analyse/Widgettests, Python/Backend/Gradle/Android-Pakete und Android-TalkBack-Gerät.
+- **KOMPATIBILITÄT:** Kein Eingriff in Regeln, Persistenz, SQLite-/JSON-Datenmodell oder App-Version `0.8.52+102`; bestätigte Spielstände unverändert.
+- **BLOCKIERT:** Vollständige GitHub-Actions-Abnahme auf endgültigem Commit; keine ungetestete Review-Freigabe.
+- **NÄCHSTER SCHRITT:** Draft-PR erstellen, CI inkl. positivem und negativem Weg prüfen und bei Bedarf denselben Branch reparieren; kein Main-Merge.
