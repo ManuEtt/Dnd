@@ -20,8 +20,9 @@ class SrdSpellAttackRollRules {
   /// proficiency and any separately confirmed flat bonuses or penalties.
   /// The corresponding class-bound base calculation is a separate rule step.
   ///
-  /// A manually supplied natural d20 is permitted only for a normal roll.
-  /// Advantage/disadvantage require both actual dice to be resolved by [dice].
+  /// A manually supplied natural d20 is allowed when the net roll is normal,
+  /// including when confirmed Advantage and Disadvantage cancel each other.
+  /// An uncancelled Advantage/Disadvantage requires both dice from [dice].
   static SrdSpellAttackRollResolution resolve({
     required DiceEngine dice,
     required int confirmedAttackModifier,
@@ -59,7 +60,7 @@ class SrdSpellAttackRollRules {
         'confirmedTargetArmorClass',
       );
     }
-    if (confirmedNaturalRoll != null && (advantage || disadvantage)) {
+    if (confirmedNaturalRoll != null && (advantage != disadvantage)) {
       throw const FormatException(
         'Ein einzelner manueller W20 belegt keinen Vorteils- '
         'oder Nachteilswurf.',
