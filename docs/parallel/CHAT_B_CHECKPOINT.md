@@ -946,3 +946,17 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+---
+
+## 08.11.2026 – KI-Textvalidierung für unsichtbare Operatoren (PR #643)
+
+- **Ausgangs-main:** `0ce0ad86e9eddf8302e495561d12a889008de49a`; **eigener Branch:** `feat/chat-b/ai-invisible-operators-20261108`; **Draft-PR:** [#643](https://github.com/ManuEtt/Dnd/pull/643).
+- **Fachcommit:** `89b87a524e8a358f22c1671c40cd2af51432b454`; **Testcommit:** `4ea6a7e0f9df6d748b10ec40b8cf4ce2b077707d`; erläuternde Kommentarergänzung `3fae4ee48d32665b2067bdcf142b86beee004db7`. Dokumentationscommits folgen separat.
+- **Ausgangsproblem:** In `AiStoryPlan.fromJson` und `AiStoryStep.fromJson` gelangten die unsichtbaren Unicode-Operatoren U+2061–U+2064 trotz bisherigem Spoofing-Filter durch die Textprüfung und konnten KI-generierte Hinweise, NPC-Beziehungen oder Questangebote täuschend darstellen.
+- **IMPLEMENTIERT:** Der gemeinsame `_unsafeStoryFormatting`-Filter in `app/lib/story/ai_story.dart` sperrt nun den vollständigen Bereich U+2060–U+206F. Zulässiges mehrzeiliges Unicode, Umlaute und Emojis bleiben erhalten.
+- **TESTS ERGÄNZT:** `app/test/ai_story_invisible_operator_test.dart` mit vier Gruppen: Plantext einschließlich verschachtelter Threads/NPCs/Orte (negative Fälle), aktualisierte Handlungs-/NPC-Texte (negative Fälle), optionale Abenteuerangebote (negative Fälle), gültige Eingaben mit JSON-Roundtrip und unverändertem Kampagnenzustand (positiver Fall).
+- **GETESTET:** Aktuellen Main-HEAD und alle offenen PRs samt Story-Dateipfaden abgeglichen, Quell-/Testcode auf eigenem Branch gesichert, initialen Workflow [#42458390622](https://github.com/ManuEtt/Dnd/actions/runs/42458390622) als **in Arbeit** beobachtet. Weder dessen Ergebnis noch das neueste Branch-HEAD gelten damit als abgenommen.
+- **NICHT GETESTET:** Vollständige Dart-Formatierung, Flutter-Analyse/-Tests, Android-APK und alle sechs GitHub-Jobs auf dokumentiertem finalen HEAD; kein physisches Android-Gerät und kein produktiver KI-Anbieter. Lokales Dart/Flutter fehlt, DNS verhindert lokalen GitHub-Checkout.
+- **BLOCKIERT:** CI-/Review-Abnahme und koordinierte Integration der geteilten README-/Checkpoint-Anhänge. Die anderen offenen Story-PRs bearbeiten nicht `ai_story.dart` oder den neuen Test.
+- **MIGRATION:** Keine. Regeln, Helden, Inventar, Quests, SQLite, JSON-Schema, bestätigte Spielstände und App-Version bleiben unverändert. Nur neu eingehende unbestätigte KI-Texte werden strenger geprüft.
+- **NÄCHSTER SCHRITT:** Finale Actions einschließlich Formatcheck und der neuen Regressionen prüfen, ggf. auf diesem Branch korrigieren und anschließend Review durch die Integrationskoordination ohne Auto-Merge.
