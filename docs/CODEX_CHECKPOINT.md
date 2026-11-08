@@ -2294,3 +2294,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Lokaler vollständiger GitHub-Checkout in dieser Arbeitsumgebung nicht verfügbar; finale GitHub-CI, erneuter Mergeability-Check und ggf. Main-Dokumentationsnachträge vor Integration ausstehend.
 - **NOCH NICHT IMPLEMENTIERT:** Keine POSIX-Descriptor-basierte, durchgehende Race-Freiheit bei Verzeichnisänderungen während des Schreibens; kein Main-Merge von #640, keine Spielstands-/Datenbankschema-/Versionsänderung.
 - **NÄCHSTER SCHRITT:** Endgültige #640-CI auf tatsächlichem PR-Head in allen sechs Jobs erfolgreich abschließen, Main und offene PRs erneut prüfen und nur bei Konfliktfreiheit integrieren; danach neue Main-CI kontrollieren.
+
+## 08.11.2026 – Schadenswurf-Auswahl nach aktualisiertem Kampfangebot zurücksetzen (PR #647)
+
+- **Basis:** `main` `8bfaa22cded60e7731f5a3dc95684949bad49276`; **Branch:** `feat/chat-c/savage-attacker-live-offer-reset-20261108`; [PR #647](https://github.com/ManuEtt/Dnd/pull/647) (Draft). Fach-/Testcommit: `e2fbcc90c69891c4ab88f7b0e1b5f9df0c1fdfbe`; Branch-HEAD nach Doku ergänzen/aus GitHub lesen.
+- **IMPLEMENTIERT:** `SavageAttackerSelectionDialog.didUpdateWidget` verwirft die alte ausdrückliche Wahl eines Waffenwurfs bei Wechsel von Kampf-Snapshot, Angriff, Ziel, Würfel-/Kritischbeleg oder Trefferbestätigung. Bei unverändertem Angebot bleibt die Wahl bestehen. Nur der revidierte GameController darf Schaden und Talentverbrauch bestätigen.
+- **Dateien:** `app/lib/ui/savage_attacker_selection_dialog.dart`, `app/test/savage_attacker_live_offer_reset_test.dart`, additiv drei Dokumentationsdateien; keine Domain-/DB-/Regel-/Versionsänderung, keine Migration.
+- **TESTS ERGÄNZT:** fünf Flutter-Widgetfälle mit negativen/positiven Entscheidungen, identischem Parent-Rebuild, 320/360 dp, 200 % Schrift, 220 dp simuliertem IME, geänderter Revision/ungültigem Zug und gewechselten Würfeln; JSON vor/nach Dialog unverändert.
+- **GETESTET:** Remote-Basis, PR-Überschneidungen, Fachquellcode und Testbesteck geprüft, Branch-/PR-Schreibzugriff bestätigt. Letzte abgeschlossene Main-CI auf älterem Main-HEAD `0ce0ad86e9eddf8302e495561d12a889008de49a` erfolgreich [#42459031650](https://github.com/ManuEtt/Dnd/actions/runs/42459031650); dieser Beleg ist **kein Test für PR #647**.
+- **NICHT GETESTET:** Neue vollständige CI inklusive Python, Backend, Dart-Format, Flutter-Analyse/Tests und Android-Debug-/ABI-APKs auf dem finalen PR-HEAD; reales Gerät mit TalkBack/IME. Lokale Flutter/Dart-Tools fehlen, direkter Checkout wegen DNS nicht möglich.
+- **BLOCKIERT:** Technische CI-Abnahme/Review und verlustfreie Konsolidierung der parallel angehängten README-/Checkpoint-Nachträge stehen aus. Kein Main-Merge.
+- **NOCH NICHT IMPLEMENTIERT:** Android-Geräteabnahme und weitere allgemeine UI-Live-Zustandsprüfungen; keine neuen SRD- oder Storyfunktionen.
+- **NÄCHSTER SCHRITT:** Nach CI-Erfolg bei 320 dp auf Android/TalkBack den Live-Angriffswechsel samt frischer expliziter Wahl und nicht verändertem Spielstand durchspielen.
