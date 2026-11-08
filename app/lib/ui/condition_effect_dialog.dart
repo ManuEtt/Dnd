@@ -222,7 +222,7 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
                 key: ValueKey(
                   'condition-effect-turn-${widget.hero.id}-'
                   '${widget.encounter?.id}-${widget.encounter?.round}-'
-                  '${_activeOwnTurn}',
+                  '$_activeOwnTurn',
                 ),
                 child: DropdownButtonFormField<ConditionEffectDuration>(
                   key: const ValueKey('condition-effect-duration'),
