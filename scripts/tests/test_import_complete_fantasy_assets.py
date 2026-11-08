@@ -3,6 +3,7 @@ import hashlib
 import importlib.util
 import json
 import pathlib
+import sys
 import tempfile
 import unittest
 import warnings
@@ -114,6 +115,54 @@ class FantasyImportTests(unittest.TestCase):
             MODULE.main([str(self.archive), "--target", str(alias)]), 1
         )
         self.assertFalse((outside / MODULE.PREFIX).exists())
+
+    @unittest.skipIf(sys.platform == "win32", "POSIX symlinks required")
+    def test_symlinked_parent_of_target_root_is_rejected_before_any_write(self):
+        self._make_archive()
+        outside = self.root / "outside"
+        outside.mkdir()
+        alias = self.root / "alias"
+        alias.symlink_to(outside, target_is_directory=True)
+        # The target itself is not a symlink; only its parent is.
+        destination = alias / "nested" / "project"
+        self.assertFalse(destination.is_symlink())
+        with self.assertRaisesRegex(ValueError, "Symlink"):
+            MODULE.imported_assets(self.archive, destination)
+        self.assertEqual(
+            MODULE.main([str(self.archive), "--target", str(destination)]), 1
+        )
+        self.assertEqual(
+            MODULE.main([
+                str(self.archive), "--target", str(destination), "--verify-only"
+            ]), 1
+        )
+        self.assertEqual(list(outside.iterdir()), [])
+
+    @unittest.skipIf(sys.platform == "win32", "POSIX symlinks required")
+    def test_ancestor_swapped_to_symlink_after_zip_preflight_is_rejected(self):
+        self._make_archive()
+        workspace = self.root / "workspace"
+        workspace.mkdir()
+        destination = workspace / "project"
+        archived_workspace = self.root / "moved-workspace"
+        outside = self.root / "outside"
+        outside.mkdir()
+        original_preflight = MODULE.imported_assets
+
+        def swap_parent_after_preflight(*args):
+            validated = original_preflight(*args)
+            workspace.rename(archived_workspace)
+            workspace.symlink_to(outside, target_is_directory=True)
+            return validated
+
+        with mock.patch.object(
+            MODULE, "imported_assets", side_effect=swap_parent_after_preflight
+        ):
+            self.assertEqual(
+                MODULE.main([str(self.archive), "--target", str(destination)]), 1
+            )
+        self.assertEqual(list(outside.iterdir()), [])
+        self.assertFalse((archived_workspace / "project").exists())
 
     def test_corrupt_zip_asset_is_rejected(self):
         self._make_archive(corrupt=MODULE.ASSETS[4])
