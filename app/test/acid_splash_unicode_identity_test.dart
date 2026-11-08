@@ -130,11 +130,7 @@ void main() {
         reason: 'U+${control.runes.single.toRadixString(16)}',
       );
       expect(
-        () => _cast(
-          hero,
-          random,
-          target: _target(name: 'Wächter${control}A'),
-        ),
+        () => _cast(hero, random, target: _target(name: 'Wächter${control}A')),
         throwsFormatException,
         reason: 'U+${control.runes.single.toRadixString(16)}',
       );
