@@ -17,7 +17,7 @@ Map<String, dynamic> _obj(Object? value) {
 final _unsafeStoryFormatting = RegExp(
   r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f'
   r'\u00ad\u034f\u061c\u180e\u200b-\u200f\u2028-\u202e'
-  r'\u2060\u2066-\u206f\ufeff]',
+  r'\u2060-\u206f\ufeff]',
 );
 
 String _text(Object? value, int limit) {
