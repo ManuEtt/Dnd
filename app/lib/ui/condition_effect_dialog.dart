@@ -60,6 +60,42 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
   }
 
   @override
+  void didUpdateWidget(covariant ConditionEffectDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final effects = widget.hero.conditionEffects;
+    if (oldWidget.hero.id != widget.hero.id) {
+      // A choice from another character must never carry over, even if IDs
+      // happen to coincide.
+      _remove = false;
+      _selectedId = null;
+      _source.clear();
+      _condition = 'vergiftet';
+      _duration = ConditionEffectDuration.untilRemoved;
+      _validationError = null;
+    } else if (_selectedId != null &&
+        !effects.any((effect) => effect.id == _selectedId)) {
+      _selectedId = null;
+      if (effects.isEmpty && _remove) {
+        _remove = false;
+        _source.clear();
+      }
+      _validationError = _remove
+          ? 'Die gewählte Quelle ist nicht mehr vorhanden. Bitte neu wählen.'
+          : null;
+    }
+    final before = oldWidget.encounter;
+    final after = widget.encounter;
+    if (before?.id != after?.id ||
+        before?.round != after?.round ||
+        before?.activeParticipant != after?.activeParticipant ||
+        before?.isFinished != after?.isFinished) {
+      // A timed effect selected for an earlier turn cannot silently move to
+      // another turn or encounter.
+      _duration = ConditionEffectDuration.untilRemoved;
+    }
+  }
+
+  @override
   void dispose() {
     _source.dispose();
     super.dispose();
@@ -124,24 +160,36 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
                 }),
               ),
             if (_remove)
-              DropdownButtonFormField<String>(
-                key: const ValueKey('condition-effect-existing-source'),
-                isExpanded: true,
-                initialValue: _selectedId,
-                decoration: const InputDecoration(
-                  labelText: 'Zustand und Quelle',
+              KeyedSubtree(
+                // A FormField keeps its original value across parent updates.
+                // Remount on changed source IDs while preserving the public
+                // finder key and requiring an explicit new selection.
+                key: ValueKey(
+                  'condition-effect-sources-${widget.hero.id}-'
+                  '${effects.map((effect) => effect.id).join('|')}',
                 ),
-                items: [
-                  for (final effect in effects)
-                    DropdownMenuItem(
-                      value: effect.id,
-                      child: Text(
-                        '${effect.condition}: ${effect.source}',
-                        overflow: TextOverflow.ellipsis,
+                child: DropdownButtonFormField<String>(
+                  key: const ValueKey('condition-effect-existing-source'),
+                  isExpanded: true,
+                  initialValue: _selectedId,
+                  decoration: const InputDecoration(
+                    labelText: 'Zustand und Quelle',
+                  ),
+                  items: [
+                    for (final effect in effects)
+                      DropdownMenuItem(
+                        value: effect.id,
+                        child: Text(
+                          '${effect.condition}: ${effect.source}',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                ],
-                onChanged: (value) => setState(() => _selectedId = value),
+                  ],
+                  onChanged: (value) => setState(() {
+                    _selectedId = value;
+                    _validationError = null;
+                  }),
+                ),
               )
             else ...[
               DropdownButtonFormField<String>(
@@ -170,10 +218,15 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
                   hintText: 'z. B. Giftfalle',
                 ),
               ),
-              DropdownButtonFormField<ConditionEffectDuration>(
-                key: const ValueKey('condition-effect-duration'),
-                initialValue: _duration,
-                isExpanded: true,
+              KeyedSubtree(
+                key: ValueKey(
+                  'condition-effect-turn-${widget.encounter?.id}-'
+                  '${widget.encounter?.round}-${_activeOwnTurn}',
+                ),
+                child: DropdownButtonFormField<ConditionEffectDuration>(
+                  key: const ValueKey('condition-effect-duration'),
+                  initialValue: _duration,
+                  isExpanded: true,
                 decoration: const InputDecoration(labelText: 'Wirkungsende'),
                 items: [
                   const DropdownMenuItem(
@@ -221,9 +274,10 @@ class _ConditionEffectDialogState extends State<ConditionEffectDialog> {
                     ),
                   ],
                 ],
-                onChanged: (value) {
-                  if (value != null) setState(() => _duration = value);
-                },
+                  onChanged: (value) {
+                    if (value != null) setState(() => _duration = value);
+                  },
+                ),
               ),
               const SizedBox(height: 8),
               const Text(
