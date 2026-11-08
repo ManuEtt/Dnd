@@ -6,11 +6,8 @@ import 'package:lebendiger_spielleiter/ui/condition_effect_dialog.dart';
 
 Finder _field(String name) => find.byKey(ValueKey('condition-effect-$name'));
 
-ConditionEffect _effect(String id, String source) => ConditionEffect(
-  id: id,
-  condition: 'vergiftet',
-  source: source,
-);
+ConditionEffect _effect(String id, String source) =>
+    ConditionEffect(id: id, condition: 'vergiftet', source: source);
 
 Future<List<ConditionEffectChoice?>> _open(
   WidgetTester tester, {
@@ -191,10 +188,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(_field('existing-source'), findsNothing);
-    expect(
-      tester.widget<SwitchListTile>(_field('remove-mode')).value,
-      isFalse,
-    );
+    expect(tester.widget<SwitchListTile>(_field('remove-mode')).value, isFalse);
     await _tap(tester, _field('confirm'));
     expect(_field('error'), findsOneWidget);
     expect(results, isEmpty);
