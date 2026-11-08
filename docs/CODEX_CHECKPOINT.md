@@ -2294,3 +2294,16 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Lokaler vollständiger GitHub-Checkout in dieser Arbeitsumgebung nicht verfügbar; finale GitHub-CI, erneuter Mergeability-Check und ggf. Main-Dokumentationsnachträge vor Integration ausstehend.
 - **NOCH NICHT IMPLEMENTIERT:** Keine POSIX-Descriptor-basierte, durchgehende Race-Freiheit bei Verzeichnisänderungen während des Schreibens; kein Main-Merge von #640, keine Spielstands-/Datenbankschema-/Versionsänderung.
 - **NÄCHSTER SCHRITT:** Endgültige #640-CI auf tatsächlichem PR-Head in allen sechs Jobs erfolgreich abschließen, Main und offene PRs erneut prüfen und nur bei Konfliktfreiheit integrieren; danach neue Main-CI kontrollieren.
+
+## 2026-11-08 – Raw-URI-Literale in den Story-/Regelmodulgrenzen erkennen
+
+- **Ausgangs-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; nachgewiesene Main-CI [#42514079690](https://github.com/ManuEtt/Dnd/actions/runs/42514079690): erfolgreich auf genau dieser Basis.
+- **Branch/PR:** `fix/chat-d/raw-dart-uri-boundary-20261108`, [PR #649](https://github.com/ManuEtt/Dnd/pull/649) (Draft, nicht in `main`); Fachcommit `ed09317a6fadaa04ecc6f9e3fa2b917d733ab248`, Testcommit `ca860df1e97775fbae5155623ca05c0c77815944`.
+- **IMPLEMENTIERT:** Der Modulgrenzen-Prüfer akzeptiert optionalen Dart-Raw-String-Präfix bei direktem `import`, `export`, `part`, `part of` sowie bei bedingten URI-Zweigen. Verbotene Story-Provider/Regel-Abhängigkeiten werden dadurch auch für solche Direktiven erkannt; keine fachliche App-Änderung.
+- **TESTS ERGÄNZT:** `scripts/tests/test_domain_boundaries.py` hat drei neue Python-Testmethoden mit sieben unmittelbaren Negativfällen, drei konditionalen Negativfällen und zulässigen Positivfällen einschließlich kommentierter und mehrzeiliger Stringbeispiele.
+- **GETESTET:** GitHub-Zustand mit 56 zum Arbeitsstart offenen PRs samt Fachdateilisten auf Überschneidungen geprüft; Quellcode und Tests auf eigenem Branch gesichert. Die oben genannte Main-CI ist ausdrücklich kein Test der neuen Änderung.
+- **NICHT GETESTET:** vollständige neue Python-/Backend-/Flutter-/Android-/Release-CI auf finalem PR-HEAD; kein lokaler Checkout wegen GitHub-DNS-Ausfall, weder Dart- noch Flutter-SDK vorhanden; Realgerät und Altdatenupgrade nicht geprüft.
+- **BLOCKIERT:** Vollständiger finaler CI-Nachweis und frische Integrationskontrolle stehen aus.
+- **KOMPATIBILITÄT:** SQLite/JSON/Backup-Format, Spielstände, App-/Build-Version, Regel- und Storyzustand unverändert; keine Migration.
+- **NÄCHSTER SCHRITT:** Python-Regressionen und alle sechs GitHub-CI-Jobs für [PR #649](https://github.com/ManuEtt/Dnd/pull/649) am tatsächlichen finalen Commit prüfen, danach erst über reguläre Main-Integration entscheiden.
+
