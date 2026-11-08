@@ -2360,3 +2360,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach frische Main-/PR-Konfliktprüfung; PR Draft, nicht gemerged.
 - **Kompatibilität:** keine Änderung an Spielstands-/Backupformat, SQLite 3, äußerem JSON 1, App-Version oder D&D-Spielmechanik; keine Migration.
 - **Nächster Schritt:** Finalen PR-#650-GitHub-Actions-Lauf einschließlich Python-/Backend-/Flutter-/Android-/Release-Gates auswerten und nur nach grünem, konfliktfreiem Nachweis integrieren.
+
+## 2026-11-08 – Zwei einzeln geprüfte Qualitätskorrekturen verlustfrei in Integrations-PR #652 kombiniert
+
+- **Ausgangs-main:** `404e9a5fc9b7d1c231b7bdd52c61319d4eb57752`, [Main-CI #42518852945](https://github.com/ManuEtt/Dnd/actions/runs/42518852945) erfolgreich.
+- **Integrationsbranch:** `fix/chat-d/integrate-reviewed-quality-20261108`; **Draft-PR:** [#652](https://github.com/ManuEtt/Dnd/pull/652). Integrationscommit `c9cda978ea5cc5dc3d6526d436b909769dc593f1` mit Main und beiden geprüften Quell-HEADs als drei Git-Eltern.
+- **Herkunft:** [#649](https://github.com/ManuEtt/Dnd/pull/649) `5c8b670ef2f8af881b8a257895a943089af9af49` und [#650](https://github.com/ManuEtt/Dnd/pull/650) `e729ff0f570ca1a438a59bbb8ef0742e4aba5f63`, beide vollständig sechsfach grüne CI auf diesen Heads.
+- **IMPLEMENTIERT:** Vier Fachcode-/Testblobs unverändert aus den beiden Quell-PRs, gemeinsame README-/Checkpoint-Nachträge ausschließlich nach dem vollständigen aktuellen Main-Präfix angehängt; [Integrationsbericht](parallel/INTEGRATION_20261108_QUALITY.md) enthält Dateiabgleich. Acht betroffene Dateien vor diesem PR-Nachtrag.
+- **GETESTET:** Einzel-CIs je sechs Jobs erfolgreich, Hauptbranch-CI erfolgreich, drei Git-Eltern und historische Dokumentationspräfixe geprüft. Nicht als gemeinsame Integrations-CI ausgegeben.
+- **NICHT GETESTET/BLOCKIERT:** Vollständige kombinierte GitHub Actions (Python, Backend, Flutter, Android-Debug, drei ABI-APKs, Release) auf dem abschließenden Dokumentationscommit; kein Main-Merge ohne diese Abnahme.
+- **Kompatibilität:** keine Änderungen an SQLite/JSON, persönlichen Daten/Backups, App-/Build-Version oder regel-/storybezogenen Produktmodulen; keine Migration.
+- **NÄCHSTER SCHRITT:** Sechs CI-Jobs auf finalem Integrations-HEAD abnehmen, bei Fehlern denselben Branch korrigieren und erst nach erneutem Main-/PR-Vergleich regulär mergen.
+

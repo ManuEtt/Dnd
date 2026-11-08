@@ -28,3 +28,7 @@ Die vier Python-Fachdateien waren zwischen gemeinsamer ursprünglicher Basis und
 - **NICHT GETESTET:** Gemeinsame Integration auf dem endgültigen Integrationscommit, weitere Änderungen parallel zu diesem HEAD, echtes Android-Gerät oder Upgrade-Installation.
 - **BLOCKIERT:** Bis die gemeinsame Integrations-CI erfolgreich ist, bleibt der PR im Draft. Vor jedem Merge Main-HEAD, Quell-Heads, andere offene PRs und alle sechs CI-Jobs erneut prüfen.
 - **NÄCHSTER SCHRITT:** Auf finalem Integrations-HEAD alle CI-Jobs erfolgreich abnehmen, dann konfliktfrei regulär nach `main` übernehmen und die neue Main-CI kontrollieren.
+
+## Review- und PR-Nachtrag
+
+Der konfliktfreie, historienerhaltende Integrationsbranch ist unter [PR #652](https://github.com/ManuEtt/Dnd/pull/652) gegen `main` zur Prüfung veröffentlicht. Der Fach-Integrationscommit `c9cda978ea5cc5dc3d6526d436b909769dc593f1` besitzt die Main-Basis und beide originalen Quell-Heads als drei Eltern. PR bleibt als Draft geöffnet, bis **der abschließende dokumentierte Integrations-HEAD** vollständig sechsfach grüne GitHub-CI nachweist. Alte PRs und Branches werden nicht eigenmächtig geschlossen oder gelöscht.

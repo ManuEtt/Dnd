@@ -2111,3 +2111,16 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Finale neue CI und erneuter Main-/PR-Konfliktabgleich. PR verbleibt bis zur Abnahme als Draft.
 - **Migrationen:** Keine: SQLite/JSON, Spielstände, Backupformat, App-/Build-Version, Domain-, UI- und Storycode unverändert.
 - **NÄCHSTER SCHRITT:** Alle CI-Jobs auf finalem PR #650 Commit erfolgreich abnehmen; bei Fehlern in diesem Branch korrigieren und danach kontrollierte Integration prüfen.
+
+## 2026-11-08 – Qualitätspakete #649 und #650 in Integrations-PR #652 historienwahrend vereinigt
+
+- **Ausgangs-main:** `404e9a5fc9b7d1c231b7bdd52c61319d4eb57752` (Main-CI `42518852945`: vollständig erfolgreich).
+- **Branch/PR:** `fix/chat-d/integrate-reviewed-quality-20261108`, [#652](https://github.com/ManuEtt/Dnd/pull/652) (Draft). Fach-Integrationscommit `c9cda978ea5cc5dc3d6526d436b909769dc593f1`, drei Git-Eltern einschließlich beider ursprünglicher Quell-Heads.
+- **Implementiert:** unveränderte Python-Sicherheitsänderungen und Regressionstests aus PR #649 (Raw-Dart-URIs) und PR #650 (Quell-ZIP-Modusbits) auf aktuellem Main. Dokumentation auf vollständigem Main-Präfix ohne Löschungen nachgetragen, separater `docs/parallel/INTEGRATION_20261108_QUALITY.md`-Bericht.
+- **Geänderte Dateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_domain_boundaries.py`, `scripts/package_project.py`, `scripts/tests/test_package_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`, `docs/parallel/INTEGRATION_20261108_QUALITY.md`.
+- **GETESTET:** beide unveränderten Quell-Heads in GitHub Actions je mit sechs erfolgreichen Jobs; aktuelle Main-CI erfolgreich; Main-Pfad-SHAs, Git-Vorfahren und ausschließlich angehängte README-/Checkpoint-Dokumentation verifiziert.
+- **NICHT GETESTET:** neue kombinierte Integrations-CI auf endgültigem Dokumentationsstand, reales Android-Gerät, Altspielstandupgrade.
+- **BLOCKIERT:** bis sechs grüne integrierte Jobs vorliegen und erneute Main-/PR-Abgrenzung durchgeführt ist, weder auto-merge noch Branchlöschung.
+- **Migration:** Keine: SQLite-/JSON-Schemata, persönlicher Datenstand, Backups, App-/Build-Version unverändert.
+- **NÄCHSTER SCHRITT:** finalen GitHub-CI-Workflow von PR #652 vollständig prüfen, dann nur bei aktueller Konfliktfreiheit kontrolliert nach Main mergen und Main-CI abnehmen.
+
