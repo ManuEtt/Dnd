@@ -946,3 +946,16 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+## 2026-11-09 – Explizite gespeicherte Ortsauswahl jenseits der Viererübersicht (#658)
+
+- **Ausgangs-Main-SHA:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`.
+- **Arbeitsbranch:** `fix/chat-b/place-resume-full-id-match-20261109`, **PR:** [#658](https://github.com/ManuEtt/Dnd/pull/658) (Draft).
+- **Fachcommits:** `3dd0373dd25bfa359dd6bd6836291a15cb54bf0f` (volle ID-Prüfung), `8b444c2617b1a8c8d6edc81ed36534f9ce02953a` (explizite Ortswahl), `acdb87bcc6f80ecaf0bddb6ee90df6237867617b` (Vorab-Formatkorrektur). Test-/Zwischenstände `ea7a27d9cf924ba6f0fc647a088d25c49c718b76`, `ceee776a2c61061bb91ac8db43fe2c9d4e8ee9aa` und `eef21b57abbea8ad2328eaa70220486543041f42`. Dokumentations-HEAD über den PR-Branch ermittelbar.
+- **IMPLEMENTIERT:** `ConfirmedPlaceResumeSelector.readSelected` greift auf genau eine ausdrückliche gespeicherte Orts-ID auch jenseits der ersten vier zurück, verhindert falsches Zusammenfallen gleichnamiger Orte und prüft vollständige sichere ID, Eindeutigkeit, Revisions-/Sitzungskontext und den gesamten gespeicherten Orts-Quellstempel. Keine frei erfundene Besuchs-/Questbestätigung. Allgemeines `read` mit vollständigem Orts-ID-Treffervergleich.
+- **Dateien:** `app/lib/story/confirmed_place_resume_selection.dart`, neuer `app/test/confirmed_place_resume_terminal_id_test.dart` (fünf Tests), `README.md`, `docs/CODEX_CHECKPOINT.md` und dieser persönliche Checkpoint (die letzten drei append-only).
+- **GETESTET:** Reale GitHub-Quell-/PR-/Main-Prüfung: 53 offene PR-Dateilisten vor Beginn konfliktfrei hinsichtlich beider Fach-/Testpfade, zwischenzeitlichen Main-Merge #655 berücksichtigt und Branch von neuer SHA erstellt. Kein SDK für Flutter/Dart lokal.
+- **NICHT GETESTET:** Neues Flutter-/Dart-/Android-/Backend-/Release-CI noch ohne Ergebnis zum Dokumentationszeitpunkt; physisches Android-Gerät/TalkBack und produktive Signierung nicht geprüft.
+- **Blocker/Bekannte Grenzen:** Tests stehen bis zum vollständigen Actions-Lauf noch aus. Der neue reine Story-Selektor stellt eine API bereit; vollständige Endnutzer-UI-Verdrahtung ist nicht Teil dieses Pakets. Dokumentationskonflikte bei parallelen PRs müssen zentral additiv gelöst werden.
+- **Migration:** Keine. Spielstände, JSON-/SQLite-Schema, event sourcing, Hero, Quests, Regeln, Provider, Version unverändert.
+- **Nächster konkreter Schritt:** GitHub-CI auf der finalen PR-Head-SHA vollständig kontrollieren, Fehlermeldungen beheben und PR erst nach grünem Teststand koordinieren; anschließend eigenständige UI-Anbindung im zuständigen Oberflächen-Track prüfen.
