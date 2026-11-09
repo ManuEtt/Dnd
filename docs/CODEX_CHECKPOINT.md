@@ -2372,3 +2372,16 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Kompatibilität:** keine Änderungen an SQLite/JSON, persönlichen Daten/Backups, App-/Build-Version oder regel-/storybezogenen Produktmodulen; keine Migration.
 - **NÄCHSTER SCHRITT:** Sechs CI-Jobs auf finalem Integrations-HEAD abnehmen, bei Fehlern denselben Branch korrigieren und erst nach erneutem Main-/PR-Vergleich regulär mergen.
 
+
+## 2026-11-09 – Eindeutige NPC-Notizbelege in kompakter Wiederaufnahme (PR #654)
+
+- **Ausgangs-main:** `1cb332437624b9440cf21d338da45aa680578d53`. **Branch:** `fix/chat-b/npc-excerpt-unique-note-ids-20261109`. **PR:** [#654](https://github.com/ManuEtt/Dnd/pull/654) (Draft).
+- **Fachcommit:** `cecfb1f6cd5400aa06447767737f3e039833c45b`; **Testcommit:** `36efbc691636c3ba6f673334ea0a56ba7b88daa7`. Späterer Dokumentationskopf ist über den PR-Branch nachzuweisen.
+- **Ausgangsproblem:** Die bestätigte NPC-Kurzfassung übernahm auch NPC-Notizen mit mehrfach vorhandenen oder unsicheren IDs aus nicht validierten In-Memory-/Legacy-Snapshots als scheinbar bestätigte Erzählhistorie.
+- **IMPLEMENTIERT:** Globale Eindeutigkeitsprüfung von Notiz-IDs für den schreibgeschützten Rückblick, sichere 1–64-ASCII-ID, deterministische Zeit-/Speicherreihenfolge und Nachfüllen sichtbarer Notizen nach entfernten Leertexten. NPC-Identität wird weiterhin vom bewährten Lesemodul geprüft. Keine freie KI-Erzählung als Beleg.
+- **Tests neu:** Fünf positive/negative Regressionen in `app/test/confirmed_npc_continuity_excerpt_note_id_test.dart`: doppelte IDs innerhalb/über NPCs, unsichere Unicode-/Leerzeichen-IDs, leerer Text, gleicher Zeitstempel, keinerlei geeignete Notizen und gültiger JSON-/SQLite-Neustart samt unveränderten Heldendaten.
+- **GETESTET:** GitHub-Main-/PR-Bestandsaufnahme; 54 offene PRs einschließlich Fachdateilisten auf Konflikte überprüft; keine Überschneidung der Fachdateien. Code/Testdatei auf eigenem Branch versioniert.
+- **NICHT GETESTET:** Flutter/Dart lokal nicht verfügbar; GitHub Actions [#42560154778](https://github.com/ManuEtt/Dnd/actions/runs/42560154778) auf Fach-/Test-HEAD gestartet, noch ohne Abschlussnachweis bei diesem Nachtrag. Keine Geräte-/Provider-/Signierungsabnahme.
+- **Kompatibilität:** Nur Präsentationsprojektion, schreibfrei; SQLite/JSON, Hero, Regeln, Quests, Ereignisse und App-Version unverändert. Keine Migration.
+- **Koordination:** README und zentraler Checkpoint nur am Ende ergänzt; parallele andere PRs besitzen eigene Anhänge und müssen additiv durch Integration konsolidiert werden, kein automatischer Merge.
+- **Nächster Schritt:** Vollständige PR-CI des finalen Heads kontrollieren, bei Format-/Testfehlern im eigenen Branch korrigieren und erst danach Integrationsreview; als nächstes fachlich unabhängiges Paket weitere Kontext-Limit-/Identitätschecks bei gespeicherten Ortsrückblicken nach frischer PR-Prüfung.
