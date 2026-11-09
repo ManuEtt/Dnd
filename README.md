@@ -1611,3 +1611,9 @@ Drei unabhängig entwickelte Qualitätsverbesserungen werden im Integrationsbran
 
 Die geprüften Verbesserungen für kollisionssichere historische Checkpoints, exklusive Alpha-Quell-ZIP-/SHA256-Veröffentlichung und den Schutz von Grafikimport-Zieldateien sind im [Integrations-PR #655](https://github.com/ManuEtt/Dnd/pull/655) zusammengefasst. Die ursprünglichen Fach-PRs [#592](https://github.com/ManuEtt/Dnd/pull/592), [#608](https://github.com/ManuEtt/Dnd/pull/608) und [#645](https://github.com/ManuEtt/Dnd/pull/645) und ihre vollständigen Git-Historien bleiben erhalten. Alle Einzelprüfungen waren erfolgreich; die gemeinsame CI auf dem abschließenden Integrationscommit ist gesondert abzunehmen. Unveränderte Spielstände, Backups, SQLite-/JSON-Schemas, UI, Story, Regelwerk und App-Version; kein ungeprüfter Main-Merge.
 
+
+### 2026-11-09 – Heilzauber-Auswahl bei aktualisiertem Charakter erneuern
+
+Der geöffnete Selbstheilungsdialog lädt vorbereitete Heilzauber, Zauberklassen und freie Zauberplätze bei einem neuen Charakter-Snapshot erneut. Frühere Komponentenbestätigungen werden verworfen; Dropdown-Auswahlfelder werden gegen veraltete Formularwerte neu initialisiert. Zwei Widget-Regressionstests decken veränderte Zaubervorbereitung, Ressourcen und den Wegfall des Heilzauberangebots ab.
+
+Branch `feat/chat-c/healing-spell-live-hero-refresh-20261109`; UI-Commit `1e20a8f639ceecece9d39c513405e2f043bd1cde`, Testcommit `852f4fa329a7a092495072e930da7bd235ba6b78`. Vollständige GitHub-CI nach PR-Erstellung noch ausstehend; lokale Flutter-/Dart-Ausführung war nicht verfügbar. Keine Änderung an Spielregeln, Spielständen, SQLite/JSON oder App-Version.
