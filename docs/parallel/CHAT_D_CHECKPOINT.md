@@ -2227,3 +2227,6 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Finaler Code-HEAD:** `f25c9bdbc371974fb8c9f2ea6283204df4845080`.
 - **GitHub Actions:** nach Veröffentlichung gestartet; vollständige CI und Mergefähigkeit noch nicht bestätigt.
 - **README-Nachtrag:** PR-Link ergänzt; kein Merge behauptet.
+
+- **Finaler veröffentlichter Branch-HEAD:** `b90a900fdf0e2c1c09b89f89b08dee3fe7d66650` (reiner CI-Anstoß-Commit mit identischem Quellbaum wie der vorherige Dokumentations-HEAD).
+- **CI-Hinweis:** Die beiden vorherigen Actions-Läufe wurden durch nachfolgende Branch-Commits abgebrochen; die Quell-History-Erhaltung blieb erfolgreich, vollständige finale Abnahme steht aus. Der PR bleibt Draft.
