@@ -36,7 +36,7 @@ class ConfirmedNpcContinuityExcerpt {
     for (var index = 0; index < campaign.npcRelationshipNotes.length; index++) {
       final note = campaign.npcRelationshipNotes[index];
       if (note.npcId == npcId &&
-          _validId.hasMatch(note.id) &&
+          _validId.stringMatch(note.id) == note.id &&
           idCounts[note.id] == 1) {
         eligible.add((note: note, position: index));
       }
