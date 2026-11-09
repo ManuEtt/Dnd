@@ -1421,3 +1421,40 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 **Spielstände/Migration:** Keine Modell-, Event-, JSON-, SQLite-, Backend-, UI-, Story- oder Android-Version geändert; kein Migrationsbedarf.
 
 **Nächster konkreter Schritt:** Volle CI am finalen PR-HEAD auf Dart-Format, Flutter-Analyse, alle Flutter-Tests und Android-Builds prüfen; Abweichungen reparieren und PR erst bei vollständigem CI-Erfolg aus Draft freigeben.
+
+
+## 09.11.2026 – Magic-Missile-Zielverteilung an vollständige SRD-Katalogidentität binden
+
+**Ausgangs-main:** `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`  
+**Branch:** `feat/chat-a/magic-missile-catalog-identity-20261109`  
+**Fachcommit:** `0731f671d89cbbad603e83951a4e9f00b699f761`  
+**Testcommit:** `b2e5a923ae91aa470da907ea0f381df1c61ad08f`
+
+### Ausgangsproblem
+
+Die reine Zielverteilungsprüfung von `SrdMagicMissileMultiTargetRules.prepare` prüfte Name, Grad, Wirkzeit, Reichweite, Komponenten und Flags, aber nicht die vollständige Identität eines öffentlich konstruierbaren `SrdSpellDefinition`. Eine gefälschte Zauber-ID, Schule oder vertauschte Klassenreihenfolge konnte daher unter dem sichtbaren Namen *Magic Missile* als Katalogzauber akzeptiert werden.
+
+### IMPLEMENTIERT
+
+- `app/lib/domain/srd_magic_missile_multi_target_rules.dart`: Vollständige Bindung an die kanonische SRD-Identität `spell-magic-missile`, Name, Grad 1, Schule Evocation, geordnete Klassenliste Sorcerer/Wizard, Wirkzeit, Reichweite, Komponenten, Dauer und alle Flags.
+- `app/test/srd_magic_missile_multi_target_rules_test.dart`: neue positive/negative Regression für falsche IDs, fremde Schule, vertauschte oder doppelte Klassen; echte Katalogdefinition bleibt zulässig.
+- Bestehende Zielidentitäten, Sicht-/Reichweiten-/Deckungsbestätigung, Slotstufen und simultane Zuordnung unverändert.
+- README ausschließlich am absoluten Dateiende erweitert; zentrale und persönliche Checkpoints append-only.
+
+### GETESTET
+
+Quellcode, tatsächlichen Katalogdatensatz (`spell-magic-missile`, Evocation, Sorcerer/Wizard) und bestehende Teststruktur geprüft; Testfälle ergänzt. **Keine lokale Testausführung**: Dart-/Flutter-SDK und vollständiger Repository-Checkout stehen in dieser Sitzung nicht zur Verfügung.
+
+### NICHT GETESTET / BLOCKIERT
+
+Dart-Format, Flutter-Analyse, betroffene Tests, vollständige Flutter-Suite, Python-/Backend-Gates, Debug-/ABI-APK, native Android-Tests und GitHub-CI auf dem finalen PR-HEAD stehen aus. Kein Codeblocker bekannt.
+
+### KOMPATIBILITÄT / MIGRATION
+
+Read-only Vorprüfung; kein Zauberwurf, Schaden, Slotverbrauch, Event oder Kampagnenupdate. Keine Änderung an Modellen, JSON, SQLite, Events, UI, App-Version oder bestehenden Spielständen; keine Migration.
+
+**Quelle:** Wizards of the Coast LLC, SRD 5.2.1, *Magic Missile*, S. 146, CC BY 4.0. Keine vollständige SRD-Abdeckung oder vollständige Zauberwirkung behauptet.
+
+### NÄCHSTER SCHRITT
+
+PR erstellen und vollständige CI auf dem endgültigen PR-HEAD abnehmen; Fehlerursachen gegebenenfalls auf demselben Branch korrigieren.
