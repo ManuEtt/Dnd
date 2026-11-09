@@ -140,8 +140,10 @@ void main() {
     }
   });
 
-  test('allocation requires the exact canonical spell ID, school and class order', () {
-    SrdSpellDefinition altered({
+  test(
+    'allocation requires the exact canonical spell ID, school and class order',
+    () {
+      SrdSpellDefinition altered({
       String? id,
       String? school,
       List<String>? classes,
@@ -176,9 +178,10 @@ void main() {
       );
     }
 
-    // The unmodified catalog entry remains the accepted positive case.
-    expect(plan(spell: missile).dartCount, 3);
-  });
+      // The unmodified catalog entry remains the accepted positive case.
+      expect(plan(spell: missile).dartCount, 3);
+    },
+  );
 
   test('slot boundaries and other spells never authorize allocation', () {
     for (final slot in [-1, 0, 10]) {
