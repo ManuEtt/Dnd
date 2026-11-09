@@ -58,9 +58,35 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
     'Waldläufer': 'wisdom',
   };
 
+  int _offerVersion = 0;
+
   @override
   void initState() {
     super.initState();
+    _loadOffer();
+  }
+
+  @override
+  void didUpdateWidget(covariant HealingSpellDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.hero, widget.hero)) {
+      // A fresh hero snapshot invalidates both the resource offer and any
+      // earlier explicit component confirmations, even for the same hero ID.
+      _offerVersion++;
+      _loadOffer();
+    }
+  }
+
+  void _loadOffer() {
+    _spells = const [];
+    _slots = const [];
+    _spell = null;
+    _castingClass = null;
+    _slotKey = null;
+    _setupError = null;
+    _error = null;
+    _verbal = false;
+    _somatic = false;
     try {
       _spells = HealingSpellRules.availableSpells(widget.hero);
       if (_spells.isEmpty) return;
@@ -290,7 +316,7 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  key: const ValueKey('healing-spell-name'),
+                  key: const ValueKey('healing-spell-name-$_offerVersion'),
                   initialValue: _spell!.name,
                   isExpanded: true,
                   decoration: const InputDecoration(labelText: 'Heilzauber'),
@@ -308,7 +334,7 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  key: const ValueKey('healing-spell-class'),
+                  key: const ValueKey('healing-spell-class-$_offerVersion'),
                   initialValue: _castingClass,
                   isExpanded: true,
                   decoration: const InputDecoration(labelText: 'Zauberklasse'),
@@ -332,7 +358,7 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                   )
                 else
                   DropdownButtonFormField<String>(
-                    key: const ValueKey('healing-spell-slot'),
+                    key: const ValueKey('healing-spell-slot-$_offerVersion'),
                     initialValue: _slotKey,
                     isExpanded: true,
                     decoration: const InputDecoration(
