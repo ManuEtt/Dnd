@@ -2208,3 +2208,16 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Migration:** Keine (Spielstände, SQLite/JSON, Backups, App-Version, Story/UI/Regel-Engine unverändert).
 - **NÄCHSTER SCHRITT:** CI von PR #655 auf finalem SHA vollständig abnehmen und erst dann kontrolliert integrieren.
 
+
+
+## 2026-11-09 – Android-SAF-Backupziele vor unbeabsichtigtem Überschreiben schützen
+
+- **Ausgangs-main:** `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`.
+- **Branch:** `fix/chat-d/android-backup-existing-target-20261109`.
+- **Problem:** Android `ACTION_CREATE_DOCUMENT` kann laut API-Referenz ein bestehendes Dokument zurückgeben. Die native Bridge öffnete diesen URI mit truncierendem Modus und löschte ihn bei Schreibfehlern/Abbruch.
+- **Implementiert:** Vor dem Öffnen nur bestätigte 0-Byte-Ziele akzeptieren; fehlende, negative oder nichtleere Größen fail-closed ablehnen. Keine automatische Löschung eines zurückgegebenen URI nach Fehler/Abbruch. Fehlerhinweis nennt mögliche unvollständige Datei.
+- **Geänderte Dateien:** `app/android/app/src/main/kotlin/de/aetheria/lebendiger_spielleiter/JsonBackupBridge.kt`, `JsonBackupIo.kt`, `app/android/app/src/test/kotlin/de/aetheria/lebendiger_spielleiter/JsonBackupIoTest.kt`, README und Checkpoints sowie Integrationsbericht.
+- **Tests ergänzt:** Bestätigtes 0-Byte-Ziel akzeptiert; null, negative und nichtleere Größen abgelehnt. Vorhandene Stream-/Abbruchtests bleiben.
+- **Nicht getestet:** Finaler CI-Workflow, echte SAF-Provider-/Geräteprüfung, atomare Absicherung gegen parallele externe Änderungen nach Metadatenabfrage.
+- **Migration:** Keine. JSON, SQLite, Spielstände, Backups und App-Version bleiben unverändert.
+- **Nächster Schritt:** Vollständige CI auf finalem PR-HEAD prüfen; Geräte-/Providerabnahme separat.

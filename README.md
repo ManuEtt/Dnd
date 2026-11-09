@@ -1635,3 +1635,14 @@ Im spielbaren Epilog von Rabenwacht konnte bisher bereits die Erwähnung einer P
 ### 2026-11-09 – Drei geprüfte Verbesserungen zur gemeinsamen Integration vorbereitet
 
 Die voneinander unabhängig getesteten Korrekturen für SRD-Ritualidentitäten ([PR #622](https://github.com/ManuEtt/Dnd/pull/622)), ausdrücklich bestätigte NPC-Besuche im Epilog ([PR #628](https://github.com/ManuEtt/Dnd/pull/628)) und aktualisierte Heilzauberauswahl ([PR #651](https://github.com/ManuEtt/Dnd/pull/651)) wurden für einen koordinierten Integrationsbranch auf `main` `b2e1a021067cec39b7c85bdad11aa98477cac14e` vorbereitet. Die sechs Fach-/Testpfade sind im Ausgangsstand unverändert und bei den weiteren offenen PRs nicht überlappt; die vollständigen Quell-Commits sollen als Git-Vorfahren erhalten bleiben. Die historischen README- und Checkpoint-Nachträge werden ausschließlich angehängt. Alle drei einzelnen PR-Head-CIs waren vollständig erfolgreich (je sechs Jobs); die **gemeinsame** Python-/Backend-/Flutter-/Android-/Release-CI ist noch nicht ausgeführt beziehungsweise abgenommen. Es erfolgt hiermit weder ein ungeprüfter `main`-Merge noch eine Löschung. Spielstände, SQLite/JSON, Version und Backups bleiben unverändert.
+
+
+### 2026-11-09 – Android-Backupziele vor unbeabsichtigtem Überschreiben schützen
+
+- **Problem:** Der native SAF-Bridge-Code öffnete einen zurückgegebenen Dokument-URI ohne Größenprüfung mit truncierendem Modus und löschte ihn nach Schreibfehlern/Abbruch. Die Android-API-Referenz erlaubt als Ergebnis von `ACTION_CREATE_DOCUMENT` auch ein vorhandenes Dokument.
+- **Lösung:** Vor dem Schreiben nur ein bestätigtes 0-Byte-Ziel zulassen; fehlende/negative/nichtleere Größen fail-closed ablehnen. Bei Fehlern und Abbruch keine URI-Löschung mehr ausführen; mögliche partielle neue Datei bleibt erhalten und wird als Grenze kommuniziert.
+- **Betroffene Funktionen:** Android-JSON-Backup über Storage Access Framework; keine Änderung am JSON-Format, SQLite oder Spielstandmodell.
+- **Branch:** `fix/chat-d/android-backup-existing-target-20261109`.
+- **Tests:** Native Kotlin-Regressionen für leeres, unbekanntes, negatives und nichtleeres Ziel ergänzt. GitHub-Actions-Abnahme auf finalem PR-HEAD steht aus.
+- **Kompatibilität/Migration:** Keine Datenmigration, keine Änderung vorhandener Sicherungen oder App-Version.
+- **Grenzen:** Metadatenprüfung ist nicht atomar gegenüber externen parallelen Provider-Schreibvorgängen; reale Geräte-/Providerabnahme ausstehend.

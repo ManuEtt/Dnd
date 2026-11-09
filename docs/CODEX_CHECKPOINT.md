@@ -2498,3 +2498,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Koordination:** Separater Integrationsbranch mit drei Quell-Heads als Git-Eltern, append-only Historie von README, zentralem und individuellen Checkpoints, Integrationsreport. Keine Änderungen an Spielständen, SQLite/JSON, Versionsnummer oder Backups.
 - **Nicht getestet:** Kombinierter Commit noch nicht durch CI abgenommen; Android-Gerätetests nicht durchgeführt.
 - **Freigabegate:** Nur nach vollständig erfolgreicher Integrations-CI, unverändertem PR-Head, Prüfung des neuesten `main` und erfolgreicher Main-CI integrieren. Danach bereits enthaltene Original-PRs schließen und Archivierungs-/Cleanup-Actions nachweisen.
+
+
+## 2026-11-09 – Android-SAF-Backupziele gegen Überschreiben und Fehlerlöschung absichern
+
+- **Main-Basis:** `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`.
+- **Branch:** `fix/chat-d/android-backup-existing-target-20261109`.
+- **Problem:** `ACTION_CREATE_DOCUMENT` kann laut Android-API-Referenz auch ein bestehendes Dokument liefern. Die Bridge öffnete den URI truncierend und löschte ihn bei Schreibfehlern/Abbruch.
+- **Implementiert:** `OpenableColumns.SIZE` vor dem Öffnen prüfen; ausschließlich bestätigte 0-Byte-Ziele akzeptieren. Unbekannte/nichtleere Ziele fail-closed ablehnen. Fehler- und Abbruchpfade löschen den zurückgegebenen URI nicht mehr; mögliche unvollständige neue Datei wird transparent gemeldet.
+- **Regressionen:** Kotlin-Test für 0, null, negative und positive Größen. Bestehende Native-Backup-I/O-Tests unverändert.
+- **Nicht getestet:** Finaler GitHub-Actions-Lauf, tatsächliche SAF-Provider auf Geräten, racefreier Schutz vor externen Änderungen zwischen Metadatenabfrage und Öffnen.
+- **Migration:** Keine; JSON-Format, SQLite, Spielstände und App-Version unverändert.
+- **Nächster Schritt:** PR-CI vollständig abnehmen und Android-Provider-Verhalten auf echtem Gerät prüfen.
