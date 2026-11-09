@@ -1611,3 +1611,8 @@ Drei unabhängig entwickelte Qualitätsverbesserungen werden im Integrationsbran
 
 Die geprüften Verbesserungen für kollisionssichere historische Checkpoints, exklusive Alpha-Quell-ZIP-/SHA256-Veröffentlichung und den Schutz von Grafikimport-Zieldateien sind im [Integrations-PR #655](https://github.com/ManuEtt/Dnd/pull/655) zusammengefasst. Die ursprünglichen Fach-PRs [#592](https://github.com/ManuEtt/Dnd/pull/592), [#608](https://github.com/ManuEtt/Dnd/pull/608) und [#645](https://github.com/ManuEtt/Dnd/pull/645) und ihre vollständigen Git-Historien bleiben erhalten. Alle Einzelprüfungen waren erfolgreich; die gemeinsame CI auf dem abschließenden Integrationscommit ist gesondert abzunehmen. Unveränderte Spielstände, Backups, SQLite-/JSON-Schemas, UI, Story, Regelwerk und App-Version; kein ungeprüfter Main-Merge.
 
+
+
+### 2026-11-09 – Inkonsistente Klassenprofile vor Stufenaufstieg abweisen
+
+Der bestätigte Stufenaufstieg prüft jetzt vor jeder Berechnung die vollständige vorhandene Klassenkombination: bekannte und unterschiedliche SRD-Klassen, zulässige Zweitklassenstufe sowie das Fehlen verwaister Zweitklassenstufen. Ungültige historische Profile bleiben lesbar, dürfen aber nicht durch einen Stufenaufstieg stillschweigend repariert werden. Gültige Einzel- und Mehrklassenaufstiege behalten ihre bisherige Berechnung. Änderungen betreffen ausschließlich app/lib/domain/srd_class_level_up.dart und dessen Domain-Regressionstest. Branch: fix/chat-a/level-up-class-profile-validation-20261109b2e, Codecommit: 72f5fd93ddd87741a7282e069a7de7a7ab0e9133. Die CI-Abnahme des finalen PR-Heads ist noch offen. Keine Änderung an Spielständen, JSON-/SQLite-Schemas oder Migrationen.

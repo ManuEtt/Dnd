@@ -2451,3 +2451,13 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
 
+
+
+## 2026-11-09 – Klassenprofil vor Stufenaufstieg vollständig validieren
+
+- Branch: fix/chat-a/level-up-class-profile-validation-20261109b2e; Codecommit: 72f5fd93ddd87741a7282e069a7de7a7ab0e9133; Basis-main: b2e1a021067cec39b7c85bdad11aa98477cac14e.
+- Problem: Der Stufenaufstieg prüfte die ausgewählte Klasse, konnte aber inkonsistente vorhandene Zweitklassenprofile nicht durchgängig ablehnen.
+- Lösung: Vollständige SRD-Klassenidentität und Klassenstufenverteilung vor Ableitung der nächsten Klassenstufe prüfen. Unbekannte/identische Zweitklassen, verwaiste oder fehlende Zweitklassenstufen und unzulässige Stufensplits werden fail-closed abgewiesen.
+- Tests: Neue negative Regressionen für sechs ungültige Profilformen, jeweils mit Auswahl beider Klassen; bestehende positive Einzel-/Mehrklassen- und Capstone-Tests bleiben aktiv. CI auf dem abschließenden PR-Head steht noch aus.
+- Kompatibilität: Keine Modell-, JSON-, SQLite-, API- oder Spielstandänderung. Historische Daten bleiben lesbar; nur die ungültige Stufenaufstiegsaktion wird blockiert.
+- PR: folgt nach dem Dokumentationscommit.

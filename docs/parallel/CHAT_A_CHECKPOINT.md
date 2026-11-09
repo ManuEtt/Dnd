@@ -1399,3 +1399,33 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+
+## 2026-11-09 – Klassenprofil vor Stufenaufstieg vollständig validieren
+
+Basis-main: b2e1a021067cec39b7c85bdad11aa98477cac14e  
+Branch: fix/chat-a/level-up-class-profile-validation-20261109b2e  
+Codecommit: 72f5fd93ddd87741a7282e069a7de7a7ab0e9133  
+Pull Request: wird nach dem Dokumentationscommit erstellt.
+
+### Ausgangsproblem
+
+Der Stufenaufstieg validierte die gewählte Klasse, aber nicht die vollständige vorhandene Klassenkombination. Ein unbekannter oder identischer Zweitklassenname, eine Zweitklasse ohne Stufen oder verwaiste Zweitklassenstufen konnten in die Berechnung gelangen.
+
+### Implementiert
+
+SrdClassLevelUpRules.propose prüft vor jeder Klassenstufenberechnung die bekannte Hauptklasse, eine gegebenenfalls bekannte und unterschiedliche Zweitklasse sowie einen konsistenten Stufensplit. Profile mit ungültigen Werten werden abgewiesen, statt durch den Stufenaufstieg stillschweigend verändert zu werden.
+
+### Geänderte Dateien
+
+- app/lib/domain/srd_class_level_up.dart
+- app/test/srd_class_level_up_test.dart
+- README.md, docs/CODEX_CHECKPOINT.md, dieser Checkpoint
+
+### Tests und Grenzen
+
+Neue Regression deckt sechs ungültige Profilformen bei Auswahl der Haupt- und Zweitklasse ab. Vorhandene positive Einzel-/Mehrklassen- und Klassenkapstone-Tests bleiben unverändert. Lokale Dart-/Flutter-Ausführung ist in dieser Umgebung nicht verfügbar; finale GitHub-Actions-CI ist noch ausstehend. Kein Gerätetest und keine produktive Signierungsabnahme behauptet.
+
+Keine Änderung an Modellen, Spielständen, JSON-/SQLite-Schema, Story oder UI; keine Migration. Alte Profile bleiben lesbar, ungültige Stufenaufstiege werden blockiert.
+
+Nächster Schritt: finalen PR-Head und alle sechs GitHub-Actions-Jobs prüfen; bei Fehlern Ursache korrigieren und erneut testen.
