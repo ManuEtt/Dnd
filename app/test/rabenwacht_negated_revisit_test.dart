@@ -18,7 +18,9 @@ void main() {
     );
   }
 
-  test('verneinte Rückreise zu einem bekannten Ort bewegt den Helden nicht', () {
+  test(
+    'verneinte Rückreise zu einem bekannten Ort bewegt den Helden nicht',
+    () {
     final before = atChapel();
     final after =
         engine.act(before, 'Ich gehe nicht zurück zur Mühle.').campaign;
@@ -27,8 +29,9 @@ void main() {
     expect(after.facts['location'], 'Kapelle');
     expect(after.facts['visited:mill'], 'true');
     expect(after.scene, before.scene);
-    expect(after.hero.toJson(), before.hero.toJson());
-  });
+      expect(after.hero.toJson(), before.hero.toJson());
+    },
+  );
 
   test('positiv bestätigte Rückreise bleibt möglich', () {
     final after = engine.act(atChapel(), 'Ich gehe zurück zur Mühle.').campaign;
