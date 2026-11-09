@@ -839,3 +839,16 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - Integrationsbranch `integration/reviewed-ui-resets-20261108`, Basis `8bfaa22cded60e7731f5a3dc95684949bad49276`, Quell-Heads `eebaecf173ccb613ab9f10f68ab45245d2ad579f` und `322889b5ecbbc901c0732a03989bad2d912640db`.
 - Einzelne vollständige CI-Läufe auf beiden Quell-Heads bestanden (#42457887639, #42458556507). Kombinierte CI vor Main-Merge noch offen; keine Behauptung eines bereits erfolgreichen Integrations-Builds oder einer physischen Geräteabnahme.
 - SQLite/JSON, Spielstände, SRD-Fachregeln und App-Version bleiben unverändert.
+
+## 2026-11-09 – Heilzauber-Dialog bei Live-Charakterwechsel aktualisieren
+
+- **Ausgangsproblem:** `HealingSpellDialog` ermittelte vorbereitete Heilzauber, Zauberklassen und freie Zauber-/Paktplätze nur beim Öffnen. Ein aktualisierter Charakter-Snapshot konnte im geöffneten Dialog veraltete Auswahlwerte und bereits erteilte Komponentenbestätigungen stehen lassen. Dropdown-Formularfelder hielten zudem ihre alten `initialValue`-Werte.
+- **Lösung:** Bei einer neuen `HeroCharacter`-Instanz werden Zauberangebot, Zauberklasse, Platzangebot, Fehlermeldungen und verbale/gestische Bestätigungen vollständig zurückgesetzt. Versionsgebundene Dropdown-Schlüssel erzwingen das erneute Initialisieren der Formularfelder. Dieselbe Charakter-ID mit aktualisierten Daten wird ausdrücklich berücksichtigt.
+- **Dateien:** `app/lib/ui/healing_spell_dialog.dart`, `app/test/healing_spell_dialog_test.dart`.
+- **Regressionstests:** Live-Wechsel mit geänderter Zauberliste und Platzverbrauch prüft neue Grad-Auswahl und erneute verbale Bestätigung; Wechsel ohne vorbereiteten Heilzauber prüft Entfernung aller Auswahlfelder und deaktivierte Bestätigung.
+- **Branch:** `feat/chat-c/healing-spell-live-hero-refresh-20261109`; Basis-Main zum Branchstart: `b2e1a021067cec39b7c85bdad11aa98477cac14e`.
+- **Commitstände:** UI `1e20a8f639ceecece9d39c513405e2f043bd1cde`; Tests `852f4fa329a7a092495072e930da7bd235ba6b78`.
+- **Tests/CI:** In dieser Umgebung nicht lokal ausführbar (kein Flutter/Dart-SDK); vollständige GitHub-Actions-Prüfung nach PR-Erstellung ausstehend.
+- **Kompatibilität:** Keine Änderung an Regeln, Charaktermodell, Spielständen, SQLite/JSON, Ressourcenbuchung oder App-Version. Dialog bleibt reine Auswahl; tatsächliches Wirken und Ressourcenverbrauch verbleiben in der Engine.
+- **Grenzen:** Live-Änderungen werden anhand einer neuen `HeroCharacter`-Objektinstanz erkannt; In-place-Mutationen des unveränderlichen Charaktermodells sind nicht vorgesehen. Keine physische Android-/TalkBack-Abnahme.
+- **Nächster Schritt:** PR-CI vollständig abnehmen und bei Fehlern den finalen Branch korrigieren.
