@@ -960,3 +960,12 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Bekannte Fehler/Blocker:** Keine bestätigten Laufzeitfehler; SDK-/Git-DNS-Zugriff lokal nicht verfügbar. Bei CI-Fehlern auf diesem Branch korrigieren; Doc-Anhänge vor Integration verlustfrei konsolidieren.
 - **Migrationen:** Keine. Regeln, Kampagnenrevision, Heldendaten, Events, JSON- und SQLite-Schemata, App-Version unverändert.
 - **Nächster konkreter Schritt:** Finale PR-Checks und gegebenenfalls Formatter-Tests korrigieren; danach unabhängige Lücke im bestätigten Orts-Wiedereinstieg nach frischem Main-/PR-Abgleich untersuchen.
+
+## 2026-11-09 – Nachtrag zur unabhängigen NPC-Rückblicklücke und Formatkorrektur
+
+- **Paketabgrenzung:** [PR #615](https://github.com/ManuEtt/Dnd/pull/615) filtert unsichere/doppelte Notiz-IDs im allgemeinen NPC-Reader. Eigenständige Aufgabe von [PR #654](https://github.com/ManuEtt/Dnd/pull/654) ist, leere bereinigte Notiztexte **vor** dem kompakten Anzeigelimit auszusortieren und auch jenseits der bisherigen 20 Reader-Einträge nach belegbaren Notizen zu suchen.
+- **Sechster Regressionstest:** 24 jüngere, unsichtbare Notizen und ein älterer, sichtbarer Hinweis; die Kurzfassung muss genau den belegbaren Hinweis zeigen. Teständerung `645f0c3a507f97a76bcd1238e16cd1ecafd484fb`.
+- **CI-Fehler nachgewiesen:** [#42560261362](https://github.com/ManuEtt/Dnd/actions/runs/42560261362) scheiterte am Dart-Format beider neuen Dateien nach bereits bestandenen Struktur-/Python-/Backend-Schritten; keine Flutter-Tests/Android-Artefakte in diesem Lauf. Exakte Formatter-Korrekturen `3b856557661caac458fcda25e5e49b57f45ac102` und `d716d6a2ba934a04bdb6017fc1745d67858aaa2a`, Diagnoselauf [#42560601010](https://github.com/ManuEtt/Dnd/actions/runs/42560601010) erfolgreich. Temporärer Workflow mit `9bbefd9e9d9be754bbb65ad5a5770943af902399` gelöscht; nicht im finalen Diff.
+- **Status:** sechs Tests versioniert, nach vollständigem Format-Fix noch nicht als bestanden nachgewiesen; PR bleibt Draft. Eine neue vollständige CI des letzten Heads muss unabhängig geprüft werden.
+- **Migrationen:** Keine Änderungen an Spielstands-/JSON-/SQLite-Schemata, HP, Inventar, Regeln, Queststatus, Revision oder App-Version.
+- **Nächster Schritt:** Den finalen CI-Lauf prüfen; bei Fehlschlägen denselben Branch reparieren und Integrationsreview durch Koordination ermöglichen.
