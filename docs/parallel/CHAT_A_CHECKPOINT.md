@@ -1399,3 +1399,14 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-09 – Strikte Klassenbindung der älteren Zauber-SG-API
+
+- **Ausgangsbasis:** `main` `1cb332437624b9440cf21d338da45aa680578d53`; 54 offene PRs und geänderte Dateipfade geprüft. PR #639 (Feuerwand), #641 (Säurespritzer) und #646 (Zauberangriff) sind getrennte Arbeiten und wurden nicht überschrieben.
+- **Eigener Branch:** `feat/chat-a/spell-save-dc-class-identity-20261109`; **PR:** [#653](https://github.com/ManuEtt/Dnd/pull/653); **erster Fachcommit:** `803d3545e809660449713dbd362a2f0c0c0f454c`.
+- **IMPLEMENTIERT:** `spellSaveDc` akzeptiert keine beliebigen Attribute ohne Zuordnung zu einer eigenen SRD-Zauberklasse mehr. Bestehendes `statsForClass` prüft aliasnormalisierte Klassen, Gesamt-/Teilklassenstufen und Zauberattribut und berechnet weiterhin die regelgerechte Formel; die konkrete Zaubervorbereitung liegt weiterhin beim Aufrufer. Quellcode `app/lib/domain/srd_spell_saving_throw_rules.dart`.
+- **REGRESSIONSTESTS:** Neues `app/test/srd_spell_save_dc_class_identity_test.dart`: acht Klassen, bestätigte Aliasnamen, zwei verschiedene Mehrklassenattribute, falsche und fremde Attribute, ungültige/duplizierte Profile, falsche Attributwerte, fehlende Spielerbestätigung und keine Veränderung von JSON-/Ressourcenständen.
+- **TESTSTATUS:** GitHub Actions [#42560123322](https://github.com/ManuEtt/Dnd/actions/runs/42560123322) auf dem Fachcommit gestartet, zum Zeitpunkt des Nachtrags noch keine finale Abnahme. Kein lokales Dart-/Flutter-SDK. Eine nachfolgende CI auf dem dokumentierten End-HEAD ist erforderlich.
+- **MIGRATION:** Keine Änderung an SQLite, JSON, Zustands-/Kampfereignissen, Charaktermodel, Backend, UI, Version oder Android-Signierung. SRD-5.2.1-Quelle: Wizards of the Coast LLC, Spellcasting/Multiclassing, CC BY 4.0.
+- **OFFEN/NÄCHSTER SCHRITT:** CI-Logs auf konkreten Test-/Formatfehler prüfen und korrigieren; PR ohne grünen Gesamtbeleg nicht mergen; Regel-/Release-Integration durch koordinierenden Chat getrennt abnehmen.
+

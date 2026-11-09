@@ -2372,3 +2372,14 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Kompatibilität:** keine Änderungen an SQLite/JSON, persönlichen Daten/Backups, App-/Build-Version oder regel-/storybezogenen Produktmodulen; keine Migration.
 - **NÄCHSTER SCHRITT:** Sechs CI-Jobs auf finalem Integrations-HEAD abnehmen, bei Fehlern denselben Branch korrigieren und erst nach erneutem Main-/PR-Vergleich regulär mergen.
 
+## 2026-11-09 – SRD-Zauberrettungswurf-SG an bestehende Zauberklassen gebunden
+
+- **Basis-`main`:** `1cb332437624b9440cf21d338da45aa680578d53`. 54 offene PRs samt geänderten Fachdateien vor Beginn geprüft, keine Überschneidung.
+- **Branch:** `feat/chat-a/spell-save-dc-class-identity-20261109`, **PR:** [#653](https://github.com/ManuEtt/Dnd/pull/653), **Fachcommit:** `803d3545e809660449713dbd362a2f0c0c0f454c`.
+- **IMPLEMENTIERT:** Der ältere Fähigkeitseinstieg `SrdSpellSavingThrowRules.spellSaveDc` prüft nun, ob das übergebene Attribut zu einer eigenen bestätigten Zauberklasse gehört, und delegiert die Zahl an `statsForClass`. Die Klasse des konkreten Zaubers muss der Aufrufer selbst belegen. Kein weiterer Zauberspruch, kein neuer Klassenbonus und kein Würfelwurf.
+- **GEÄNDERTE FACHDATEIEN:** `app/lib/domain/srd_spell_saving_throw_rules.dart` und neu `app/test/srd_spell_save_dc_class_identity_test.dart` mit positiven/negativen Klassen-, Mehrklassen-, Attribut-, Bestätigungs- und Immutabilitätsfällen. Dazu nur diese Checkpoint-/README-Nachträge.
+- **GETESTET:** Quell-/PR-Dateiabgleich; zunächst keine lokal ausführbaren Dart-/Flutter-Tests. [CI #42560123322](https://github.com/ManuEtt/Dnd/actions/runs/42560123322) auf dem ersten Fachcommit gestartet, Ergebnis zum Zeitpunkt dieses Abschnitts offen.
+- **NICHT GETESTET/BLOCKIERT:** Finale CI auf dem letzten Dokumentationscommit, Flutter-Analyse/Tests und Android-APKs bis zum Beleg; physischer Android-Gerätetest und produktive Signierung bleiben aus.
+- **KOMPATIBILITÄT:** Bestehende Methodensignatur unverändert, strengere Ablehnung ungültiger Eingaben; keine Migration, keine JSON-/SQLite-/Version-/UI-/Storyänderung.
+- **NÄCHSTER SCHRITT:** Dart-Format/Analyzer und den gesamten sechsfachen CI-Workflow auf dem End-HEAD verifizieren, konkrete Fehler im eigenen Branch beheben und erst danach Main-/Integrationsreview durch zuständige Koordination.
+
