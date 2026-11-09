@@ -31,3 +31,10 @@ Alle sechs Pfade waren vom jeweiligen Quell-Basiscommit bis zum aktuellen `main`
 - **BLOCKIERT:** Vor Main-Merge müssen die vollständige finale CI (Python, Backend, Dart/Flutter, Debug-APK, alle drei ABI-APKs, Release), die jeweils neueste Main-CI und der aktuelle PR-Konfliktstatus grün/geprüft sein.
 - **Keine Migration:** Kein Eingriff in SQLite, JSON, Spielstände, Backups oder Persistenzschema; keine App-/Build-Versionserhöhung; keine Änderung an Regel-/Story-/UI-Produktion.
 - **NÄCHSTER SCHRITT:** Endgültigen Integrationsstand als Draft-PR veröffentlichen, vollständige kombinierte CI abnehmen, danach erneut Main und offene PRs vergleichen, bei Erfolg regulär mergen und neue Main-CI prüfen.
+
+## Veröffentlicht zur Review
+
+- [Integrations-Pull-Request #655](https://github.com/ManuEtt/Dnd/pull/655), Draft.
+- Fach-Integrationscommit `cede85fd9006b0869cd72187529c58fc13e14a7a` mit vier Git-Eltern und originalen Fachblobs.
+- Gegen Main laut GitHub-Vergleich genau zehn Pfade; README +35/−0, zentraler Checkpoint +68/−0, persönlicher Checkpoint +72/−0 vor diesem Abschlussnachtrag.
+- Die gemeinsame CI ist gesondert auf dem **letztgültigen Commit nach Dokumentationsnachträgen** abzunehmen; ein grüner Quell- oder Vor-Dokumentations-Commit genügt nicht.

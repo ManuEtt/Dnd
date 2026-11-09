@@ -2440,3 +2440,14 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** vor Merge vollständige finale GitHub-CI, frischer Main-Vergleich und Konfliktprüfung. Keine Migration an SQLite, JSON, Spielständen, Backups, App-Version, UI oder Story.
 - **NÄCHSTER SCHRITT:** gemeinsamen Workflow (Python, Backend, Flutter, Android-Debug, ABI-APKs und Release) vollständig erfolgreich abnehmen; nur dann regulär integrieren und Main-CI kontrollieren.
 
+
+## 2026-11-09 – Gemeinsamer Review-PR #655 für drei unabhängige Python-Schutzmaßnahmen
+
+- **PR/Branch:** [#655](https://github.com/ManuEtt/Dnd/pull/655), `fix/chat-d/integrate-storage-safety-20261109` (Draft).
+- **Code-Integrationscommit:** `cede85fd9006b0869cd72187529c58fc13e14a7a`; Eltern: Main `1cb332437624b9440cf21d338da45aa680578d53`, #608 `3f3f66948bd656156b636158997cb13622557a55`, #592 `5fae563fbc795adc84e9278c20ad4223d6b45654`, #645 `03169d4bcf229392d4b6e46de883253a4913b4a9`.
+- **IMPLEMENTIERT:** Sechs byteidentische Fachcode- und Testblobs der einzeln geprüften PRs; volle Main-README und beide Checkpoints als unveränderte Präfixe bewahrt, historische #608-Präambel ans Dateiende umgeordnet.
+- **GETESTET:** Je sechs erfolgreiche Jobs auf allen drei Quell-HEADs; GitHub-Vergleich: genau zehn erwartete Pfade, Dokumentation +35/+68/+72 bei jeweils **null Löschungen**.
+- **NICHT GETESTET/BLOCKIERT:** Vollständige kombinierte CI auf finalem Dokumentationscommit; neue Main-CI des bereits gemergten #652 war bei Veröffentlichung noch in Arbeit. Keine Freigabe ohne grüne CI und frischen Konfliktabgleich.
+- **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
+- **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
+

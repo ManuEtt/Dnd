@@ -2196,3 +2196,15 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Migration:** Keine Datenbank-/JSON-/Spielstands-/Backup-, App-Versions-, UI- oder Storymigration.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf auf dem letzten Dokumentations-HEAD überprüfen, alle sechs Jobs erfolgreich abnehmen, erst dann regulär nach Main mergen und Main-CI nachziehen.
 
+
+## 2026-11-09 – PR #655 zur Zusammenführung dreier getesteter Python-Qualitätspakete
+
+- **Main-Basis:** `1cb332437624b9440cf21d338da45aa680578d53`, neuer Main-CI #42559588669 bei Erstellung noch nicht abgeschlossen.
+- **Eigener Branch/PR:** `fix/chat-d/integrate-storage-safety-20261109`, [#655](https://github.com/ManuEtt/Dnd/pull/655) (Draft); Quell-Integrationscommit `cede85fd9006b0869cd72187529c58fc13e14a7a`.
+- **IMPLEMENTIERT:** Quell-PRs #608 (Release-ZIP-Sidecar), #592 (kollisionssichere Checkpoint-Historie) und #645 (reguläre Ziel-Dateien) bytegleich in sechs Python-Fach-/Testdateien integriert. Vier Git-Eltern; zehn erwartete Pfade; vollständige README-/Checkpoint-Historie erhalten. Der alte vorangestellte #608-Checkpoint wurde vollständig ans Ende verlegt.
+- **GETESTET:** Drei vollständige Quell-CIs erfolgreich auf den originalen Heads; 51 fremde offene PRs auf Überschneidung geprüft, keine Überschneidung mit den sechs Python-Dateien; Main-Stand bei PR-Erstellung unverändert und Mergefähigkeit `true`.
+- **NICHT GETESTET:** neue kombinierte CI auf letztem Dokumentations-HEAD, Android-Upgrade/echte Geräte, Produktionssignierung.
+- **BLOCKIERT:** kein Merge ohne sechs grüne Jobs und erfolgreiche Main-CI sowie erneute Kollisionsprüfung; PR Draft.
+- **Migration:** Keine (Spielstände, SQLite/JSON, Backups, App-Version, Story/UI/Regel-Engine unverändert).
+- **NÄCHSTER SCHRITT:** CI von PR #655 auf finalem SHA vollständig abnehmen und erst dann kontrolliert integrieren.
+

@@ -1606,3 +1606,8 @@ Der ältere [PR #592](https://github.com/ManuEtt/Dnd/pull/592) gegen Unicode-NFC
 
 Drei unabhängig entwickelte Qualitätsverbesserungen werden im Integrationsbranch `fix/chat-d/integrate-storage-safety-20261109` gemeinsam überprüft: kollisionssichere historische Checkpoint-Dateinamen ([PR #592](https://github.com/ManuEtt/Dnd/pull/592)), exklusive Veröffentlichung versionierter Alpha-Quellarchive und ihrer SHA256-Sidecars ([PR #608](https://github.com/ManuEtt/Dnd/pull/608)) sowie Schutz vor nicht regulären vorhandenen Grafik-Zieldateien ([PR #645](https://github.com/ManuEtt/Dnd/pull/645)). Jeder ursprüngliche PR-Commit hatte sechs erfolgreiche CI-Jobs; die gemeinsame Integrations-CI bleibt bis zum vollständigen Nachweis offen. Der bestehende README-Inhalt und alle vorherigen Nachträge bleiben unverändert; kein direkter Main-Commit, keine Spielstands-, SQLite-/JSON-, App- oder API-Migration.
 
+
+### 2026-11-09 – Drei Qualitätskorrekturen mit erhaltener Historie zur Integrationsprüfung eingereicht
+
+Die geprüften Verbesserungen für kollisionssichere historische Checkpoints, exklusive Alpha-Quell-ZIP-/SHA256-Veröffentlichung und den Schutz von Grafikimport-Zieldateien sind im [Integrations-PR #655](https://github.com/ManuEtt/Dnd/pull/655) zusammengefasst. Die ursprünglichen Fach-PRs [#592](https://github.com/ManuEtt/Dnd/pull/592), [#608](https://github.com/ManuEtt/Dnd/pull/608) und [#645](https://github.com/ManuEtt/Dnd/pull/645) und ihre vollständigen Git-Historien bleiben erhalten. Alle Einzelprüfungen waren erfolgreich; die gemeinsame CI auf dem abschließenden Integrationscommit ist gesondert abzunehmen. Unveränderte Spielstände, Backups, SQLite-/JSON-Schemas, UI, Story, Regelwerk und App-Version; kein ungeprüfter Main-Merge.
+
