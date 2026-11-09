@@ -409,9 +409,6 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                     _somatic,
                     (value) => _somatic = value,
                   ),
-                    ],
-                  ),
-                ),
               ],
               if (_error != null)
                 Padding(
