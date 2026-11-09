@@ -15,20 +15,22 @@ ROOT = Path(__file__).resolve().parents[1]
 # *every* selectable URI, including when harmless comments separate tokens.
 # Also guard part and URI-based part of: these directives share a Dart library
 # and therefore must not cross the Story/Rules ownership boundary.
+# Dart URI literals may have an adjacent raw-string prefix (r or R). Check
+# both regular and raw forms, including configurable URI alternatives.
 # Keep quoted URIs intact; only tolerate whitespace and Dart comments at the
 # grammar's token boundaries, never extract strings from arbitrary code.
 _TRIVIA = r"(?:\s|/\*[\s\S]*?\*/|//[^\n]*\n)*"
 IMPORT = re.compile(
     r"^[ \t]*(?P<kind>import|export|part(?:" + _TRIVIA + r"of)?)" + _TRIVIA
-    + r"['\"](?P<primary>[^'\"]+)['\"]"
+    + r"[rR]?['\"](?P<primary>[^'\"]+)['\"]"
     + r"(?P<conditional>(?:" + _TRIVIA
     + r"if" + _TRIVIA + r"\([^)]*\)" + _TRIVIA
-    + r"['\"][^'\"]+['\"]" + r")*)",
+    + r"[rR]?['\"][^'\"]+['\"]" + r")*)",
     re.M,
 )
 CONDITIONAL_URI = re.compile(
     r"\bif" + _TRIVIA + r"\([^)]*\)" + _TRIVIA
-    + r"['\"]([^'\"]+)['\"]"
+    + r"[rR]?['\"]([^'\"]+)['\"]"
 )
 
 STORY_ALLOWED = {

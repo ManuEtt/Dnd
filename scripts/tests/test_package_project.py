@@ -493,6 +493,32 @@ class ProjectArchiveTests(unittest.TestCase):
             self.assertEqual(runnable_mode & 0o777, 0o755)
             self.assertEqual(ordinary_mode & 0o777, 0o644)
 
+    @unittest.skipUnless(os.name == 'posix', 'POSIX permission bits required')
+    def test_source_zip_drops_privileged_bits_without_losing_executable_modes(self):
+        privileged_modes = {
+            'privileged.sh': 0o4755,
+            'group.sh': 0o2750,
+            'sticky.sh': 0o1755,
+        }
+        for name, mode in privileged_modes.items():
+            path = self.root / 'app/assets' / name
+            path.write_bytes(b'archive fixture')
+            path.chmod(mode)
+        output = self.base / 'unprivileged.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        with zipfile.ZipFile(output) as archive:
+            for name, mode in privileged_modes.items():
+                with self.subTest(name=name):
+                    info = archive.getinfo('app/assets/' + name)
+                    exported = info.external_attr >> 16
+                    self.assertTrue(stat.S_ISREG(exported))
+                    self.assertEqual(0, exported & 0o7000)
+                    self.assertEqual(mode & 0o777, exported & 0o777)
+                    self.assertEqual(
+                        b'archive fixture',
+                        archive.read('app/assets/' + name),
+                    )
+
     def test_failed_zip_write_does_not_damage_previous_zip_or_checksum(self):
         output = self.base / 'saved.zip'
         packaging.create_archive(self.root, output, layout='root')

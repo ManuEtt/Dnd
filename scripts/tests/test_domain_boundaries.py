@@ -406,5 +406,109 @@ class StoryRulesBoundaryTests(unittest.TestCase):
         )
         self.assertEqual([], check_imports("app/lib/story/chapter.dart", source))
 
+
+    def test_raw_dart_uri_directives_cannot_bypass_module_boundaries(self):
+        cases = (
+            (
+                "app/lib/story/scene.dart",
+                "import r'dart:io';",
+                "forbidden platform dependency dart:io",
+            ),
+            (
+                "app/lib/story/scene.dart",
+                'export R"package:flutter/material.dart";',
+                "forbidden provider/framework dependency package:flutter/material.dart",
+            ),
+            (
+                "app/lib/story/scene.dart",
+                "part r'../domain/models.dart';",
+                "story must not include ../domain/models.dart",
+            ),
+            (
+                "app/lib/story/scene.dart",
+                "part of r'../domain/ai_story.dart';",
+                "story must not include ../domain/ai_story.dart",
+            ),
+            (
+                "app/lib/domain/feature.dart",
+                "import r'../story/story_api.dart';",
+                "rule module imports story ../story/story_api.dart",
+            ),
+            (
+                "app/lib/domain/feature.dart",
+                'export R"package:lebendiger_spielleiter/story/story_api.dart";',
+                "rule module imports story package:lebendiger_spielleiter/story/story_api.dart",
+            ),
+            (
+                "app/lib/domain/game_engine.dart",
+                "part of r'../story/story_campaign_engine.dart';",
+                "rule module includes story ../story/story_campaign_engine.dart",
+            ),
+        )
+        for path, source, reason in cases:
+            with self.subTest(source=source):
+                self.assertEqual([f"{path}: {reason}"], check_imports(path, source))
+
+    def test_raw_conditional_import_and_export_alternatives_are_checked(self):
+        cases = (
+            (
+                "app/lib/domain/feature.dart",
+                "import r'models.dart' if (dart.library.io) "
+                "r'../story/story_memory_engine.dart';",
+                "rule module imports story ../story/story_memory_engine.dart",
+            ),
+            (
+                "app/lib/domain/feature.dart",
+                "export 'models.dart' if (dart.library.io == r'true') "
+                'R"package:lebendiger_spielleiter/story/story_api.dart";',
+                "rule module imports story package:lebendiger_spielleiter/story/story_api.dart",
+            ),
+            (
+                "app/lib/story/scene.dart",
+                "import r'scene_helper.dart' if (dart.library.io) r'dart:io';",
+                "forbidden platform dependency dart:io",
+            ),
+        )
+        for path, source, reason in cases:
+            with self.subTest(source=source):
+                self.assertEqual([f"{path}: {reason}"], check_imports(path, source))
+
+    def test_allowed_raw_uris_and_non_directive_strings_remain_valid(self):
+        self.assertEqual(
+            [],
+            check_imports(
+                "app/lib/story/scene.dart",
+                "import r'../domain/models.dart';\n"
+                "import R'scene_helper.dart';\n"
+                "part r'scene_part.dart';",
+            ),
+        )
+        self.assertEqual(
+            [],
+            check_imports(
+                "app/lib/domain/game_engine.dart",
+                "import r'../story/story_campaign_engine.dart';\n"
+                "import R'package:flutter/foundation.dart';",
+            ),
+        )
+        self.assertEqual(
+            [],
+            check_imports(
+                "app/lib/domain/feature.dart",
+                "import r'models.dart' if (dart.library.io) "
+                "R'package:lebendiger_spielleiter/domain/models.dart';",
+            ),
+        )
+        self.assertEqual(
+            [],
+            check_imports(
+                "app/lib/story/scene.dart",
+                "// import r'dart:io';\n"
+                "final example = r\"\"\"\n"
+                "import r'../domain/rules_engine.dart';\n"
+                "\"\"\";\n",
+            ),
+        )
+
 if __name__ == "__main__":
     unittest.main()
