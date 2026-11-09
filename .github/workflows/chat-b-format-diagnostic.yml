@@ -1,0 +1,27 @@
+name: Chat B Dart format diagnostic (temporary)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/chat-b-format-diagnostic.yml"
+      - "app/lib/story/confirmed_npc_continuity_excerpt.dart"
+      - "app/test/confirmed_npc_continuity_excerpt_note_id_test.dart"
+
+jobs:
+  format-diff:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.35.7'
+      - name: Show Dart formatter diff
+        shell: bash
+        run: |
+          cd app
+          dart format lib/story/confirmed_npc_continuity_excerpt.dart test/confirmed_npc_continuity_excerpt_note_id_test.dart
+          git diff -- lib/story/confirmed_npc_continuity_excerpt.dart test/confirmed_npc_continuity_excerpt_note_id_test.dart
