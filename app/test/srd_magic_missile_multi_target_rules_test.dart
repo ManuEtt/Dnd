@@ -144,39 +144,39 @@ void main() {
     'allocation requires the exact canonical spell ID, school and class order',
     () {
       SrdSpellDefinition altered({
-      String? id,
-      String? school,
-      List<String>? classes,
-    }) => SrdSpellDefinition(
-      id: id ?? missile.id,
-      name: missile.name,
-      level: missile.level,
-      school: school ?? missile.school,
-      classes: classes ?? missile.classes,
-      castingTime: missile.castingTime,
-      range: missile.range,
-      components: missile.components,
-      duration: missile.duration,
-      verbal: missile.verbal,
-      somatic: missile.somatic,
-      material: missile.material,
-      concentration: missile.concentration,
-      ritual: missile.ritual,
-    );
-
-    for (final forged in [
-      altered(id: 'spell-fireball'),
-      altered(id: 'spell-magic-missile-copy'),
-      altered(school: 'Abjuration'),
-      altered(classes: const ['Wizard', 'Sorcerer']),
-      altered(classes: const ['Sorcerer', 'Sorcerer']),
-    ]) {
-      expect(
-        () => plan(spell: forged),
-        throwsUnsupportedError,
-        reason: '${forged.id} / ${forged.school} / ${forged.classes}',
+        String? id,
+        String? school,
+        List<String>? classes,
+      }) => SrdSpellDefinition(
+        id: id ?? missile.id,
+        name: missile.name,
+        level: missile.level,
+        school: school ?? missile.school,
+        classes: classes ?? missile.classes,
+        castingTime: missile.castingTime,
+        range: missile.range,
+        components: missile.components,
+        duration: missile.duration,
+        verbal: missile.verbal,
+        somatic: missile.somatic,
+        material: missile.material,
+        concentration: missile.concentration,
+        ritual: missile.ritual,
       );
-    }
+
+      for (final forged in [
+        altered(id: 'spell-fireball'),
+        altered(id: 'spell-magic-missile-copy'),
+        altered(school: 'Abjuration'),
+        altered(classes: const ['Wizard', 'Sorcerer']),
+        altered(classes: const ['Sorcerer', 'Sorcerer']),
+      ]) {
+        expect(
+          () => plan(spell: forged),
+          throwsUnsupportedError,
+          reason: '${forged.id} / ${forged.school} / ${forged.classes}',
+        );
+      }
 
       // The unmodified catalog entry remains the accepted positive case.
       expect(plan(spell: missile).dartCount, 3);
