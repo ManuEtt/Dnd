@@ -839,3 +839,10 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - Integrationsbranch `integration/reviewed-ui-resets-20261108`, Basis `8bfaa22cded60e7731f5a3dc95684949bad49276`, Quell-Heads `eebaecf173ccb613ab9f10f68ab45245d2ad579f` und `322889b5ecbbc901c0732a03989bad2d912640db`.
 - Einzelne vollständige CI-Läufe auf beiden Quell-Heads bestanden (#42457887639, #42458556507). Kombinierte CI vor Main-Merge noch offen; keine Behauptung eines bereits erfolgreichen Integrations-Builds oder einer physischen Geräteabnahme.
 - SQLite/JSON, Spielstände, SRD-Fachregeln und App-Version bleiben unverändert.
+
+## 2026-11-09 – Heilzauberdialog bei Live-Charakterwechsel erneuern
+Der Dialog `HealingSpellDialog` berechnete Zauberliste, Klassenoptionen und freie Ressourcen bisher nur beim Öffnen. Wird sein `hero`-Snapshot im geöffneten Dialog ersetzt, initialisiert `didUpdateWidget` die Auswahl neu: Zauber/Plätze/Klasse, Komponentenfreigaben und Fehlermeldungen werden zurückgesetzt. Die Dropdown-Unterstruktur erhält einen `ObjectKey` des Heldensnapshots, damit Flutter keine alten Dropdown-Initialwerte weiterverwendet.
+
+Ein neuer Widget-Test simuliert den Snapshotwechsel bei bereits gesetzten verbalen/gestischen Bestätigungen und gewähltem höherem Zauberplatz. Der neue Charakter kennt nur noch „Heilendes Wort“ und hat alle Plätze verbraucht; der Test erwartet zurückgesetzte Bestätigungen, keine gestische Komponente und deaktivierte Wirken-Bestätigung.
+
+Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-v2`. GitHub-CI ist nach dem letzten Commit noch nicht gelaufen; lokale Dart-/Flutter-Werkzeuge stehen nicht zur Verfügung. Keine Aussage über Geräteabnahme oder Main-Merge.
