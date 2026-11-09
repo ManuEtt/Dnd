@@ -101,6 +101,110 @@ void main() {
     );
   });
 
+  test('an explicit saved ID can resume a place beyond the overview limit', () {
+    final places = [
+      for (var i = 0; i < 6; i++)
+        Place(
+          id: 'place-$i',
+          name: 'Alte Ruine',
+          description: 'Gespeicherte Beschreibung $i.',
+        ),
+    ];
+    final campaign = _campaign(places: places);
+    final before = jsonEncode(campaign.toJson());
+
+    final overview = ConfirmedPlaceResumeSelector.read(
+      campaign,
+      expectedRevision: 0,
+    );
+    expect(overview.entries, hasLength(4));
+    expect(overview.playerOverview, isNot(contains('ID: place-5')));
+
+    final chosen = ConfirmedPlaceResumeSelector.readSelected(
+      campaign,
+      expectedRevision: 0,
+      placeId: 'place-5',
+    );
+    expect(chosen.entries, hasLength(1));
+    expect(chosen.entries.single.placeId, 'place-5');
+    expect(chosen.entries.single.name, 'Alte Ruine');
+    expect(chosen.entries.single.description, 'Gespeicherte Beschreibung 5.');
+    expect(chosen.playerOverview, contains('kein Besuchsnachweis'));
+    expect(chosen.playerOverview, isNot(contains('Drachen bezwungen')));
+    expect(() => chosen.entries.clear(), throwsUnsupportedError);
+    chosen.requireCurrent(campaign);
+    expect(jsonEncode(campaign.toJson()), before);
+  });
+
+  test('explicit place choice rejects ambiguous, missing and unsafe IDs', () {
+    final sameNames = _campaign(
+      places: const [
+        Place(id: 'west', name: 'Ruine'),
+        Place(id: 'east', name: 'Ruine'),
+        Place(id: 'double', name: 'Tor'),
+        Place(id: 'double', name: 'Anderes Tor'),
+        Place(id: 'blank', name: '\u200b'),
+      ],
+    );
+    final before = jsonEncode(sameNames.toJson());
+    final chosen = ConfirmedPlaceResumeSelector.readSelected(
+      sameNames,
+      expectedRevision: 0,
+      placeId: 'east',
+    );
+    expect(chosen.entries.single.placeId, 'east');
+    expect(chosen.entries.single.name, 'Ruine');
+
+    for (final unsafe in [
+      '',
+      'missing',
+      'double',
+      'blank',
+      'west\n',
+      'bad id',
+      'ä',
+      List.filled(65, 'a').join(),
+    ]) {
+      expect(
+        () => ConfirmedPlaceResumeSelector.readSelected(
+          sameNames,
+          expectedRevision: 0,
+          placeId: unsafe,
+        ),
+        throwsFormatException,
+      );
+    }
+    expect(
+      () => ConfirmedPlaceResumeSelector.readSelected(
+        sameNames,
+        expectedRevision: 1,
+        placeId: 'east',
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => chosen.requireCurrent(
+        sameNames.copyWith(
+          places: const [
+            Place(id: 'west', name: 'Ruine'),
+            Place(id: 'east', name: 'Umbenannte Ruine'),
+            Place(id: 'double', name: 'Tor'),
+            Place(id: 'double', name: 'Anderes Tor'),
+            Place(id: 'blank', name: '\u200b'),
+          ],
+        ),
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => chosen.requireCurrent(
+        sameNames.copyWith(hero: sameNames.hero.copyWith(hitPoints: 1)),
+      ),
+      returnsNormally,
+    );
+    expect(jsonEncode(sameNames.toJson()), before);
+  });
+
   test('valid IDs survive JSON and SQLite restart', () async {
     final original = _campaign(
       places: const [
