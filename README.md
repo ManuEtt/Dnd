@@ -1611,3 +1611,7 @@ Drei unabhängig entwickelte Qualitätsverbesserungen werden im Integrationsbran
 
 Die geprüften Verbesserungen für kollisionssichere historische Checkpoints, exklusive Alpha-Quell-ZIP-/SHA256-Veröffentlichung und den Schutz von Grafikimport-Zieldateien sind im [Integrations-PR #655](https://github.com/ManuEtt/Dnd/pull/655) zusammengefasst. Die ursprünglichen Fach-PRs [#592](https://github.com/ManuEtt/Dnd/pull/592), [#608](https://github.com/ManuEtt/Dnd/pull/608) und [#645](https://github.com/ManuEtt/Dnd/pull/645) und ihre vollständigen Git-Historien bleiben erhalten. Alle Einzelprüfungen waren erfolgreich; die gemeinsame CI auf dem abschließenden Integrationscommit ist gesondert abzunehmen. Unveränderte Spielstände, Backups, SQLite-/JSON-Schemas, UI, Story, Regelwerk und App-Version; kein ungeprüfter Main-Merge.
 
+
+### 2026-11-09 – Mehrdeutige Verzeichnisnamen im Gradle-Wrapper-ZIP ablehnen
+
+Der Projektübertragungsprüfer weist nun auch ZIP-Verzeichniseinträge mit mehreren abschließenden Pfadtrennzeichen zurück. Solche Namen werden nicht mehr stillschweigend durch Normalisierung auf einen regulären Verzeichnispfad reduziert. Ein Regressionstest stellt sicher, dass die Ablehnung vor der CRC-Dekompression erfolgt. Betroffen sind ausschließlich `scripts/verify_project.py` und dessen Tests. Keine Änderung an App, Spielständen, Backups oder Persistenzformaten. Implementierung und CI-Abnahme: [PR folgt nach Veröffentlichung].

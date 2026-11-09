@@ -222,7 +222,7 @@ def verify_project(root: Path) -> list[str]:
                     name = member.filename
                     segments = name.rstrip('/').split('/')
                     mode = member.external_attr >> 16
-                    if (not name or name.startswith('/')
+                    if (not name or name.startswith('/') or name.endswith('//')
                             or any(char in WINDOWS_INVALID_CHARACTERS for char in name)
                             or re.match(r'^[A-Za-z]:', name)
                             or any(segment in ('', '.', '..') or segment.endswith((' ', '.'))

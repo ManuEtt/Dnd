@@ -2208,3 +2208,15 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Migration:** Keine (Spielstände, SQLite/JSON, Backups, App-Version, Story/UI/Regel-Engine unverändert).
 - **NÄCHSTER SCHRITT:** CI von PR #655 auf finalem SHA vollständig abnehmen und erst dann kontrolliert integrieren.
 
+
+## 2026-11-09 – Gradle-Wrapper-ZIP: mehrdeutige Verzeichnis-Endungen zurückweisen
+
+- **Main-Basis:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`.
+- **Branch:** `fix/chat-d/wrapper-directory-separators-20261109`.
+- **Problem:** Mehrere abschließende `/` wurden bei ZIP-Verzeichniseinträgen durch `rstrip('/')` stillschweigend normalisiert.
+- **Änderung:** Fail-closed-Ablehnung von `name.endswith('//')`; Regressionstest stellt sicher, dass `testzip()` nicht erreicht wird.
+- **Betroffene Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, dieser Checkpoint, zentraler Checkpoint, README.
+- **GETESTET:** Quelländerung und Testfall angelegt; keine lokale Repo-Testausführung (kein lokaler Checkout). CI-Nachweis ausstehend.
+- **NICHT GETESTET:** Vollständige Python-/Backend-/Flutter-/Android-/Release-CI.
+- **Migration:** Keine. Keine Änderung an App-/Backend-Produktcode, Persistenz, Spielständen oder Backupformaten.
+- **NÄCHSTER SCHRITT:** Finalen Branch veröffentlichen, sechs CI-Jobs vollständig abnehmen, Mergefähigkeit gegen dann aktuellen Main erneut prüfen.

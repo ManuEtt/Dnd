@@ -2451,3 +2451,13 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
 
+
+## 2026-11-09 – Mehrdeutige Gradle-Wrapper-ZIP-Verzeichnisse ablehnen
+
+- **Ausgangs-Main:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`.
+- **Branch:** `fix/chat-d/wrapper-directory-separators-20261109`.
+- **Problem:** `rstrip('/')` normalisierte mehrere abschließende ZIP-Verzeichnistrenner zu einem scheinbar regulären Pfad.
+- **Implementiert:** Wrapper-JAR-Prüfung weist Einträge mit doppeltem abschließendem Slash zurück; Regressionstest prüft Ablehnung vor `testzip()`.
+- **Tests:** Lokale Repo-Tests hier nicht ausführbar (kein Repository-Checkout/kein Flutter-SDK); GitHub Actions ausstehend.
+- **Kompatibilität:** Nur zusätzliche Validierung für Gradle-Wrapper-JAR-Upload; keine Spielstand-/Datenbank-/JSON-/Backupmigration.
+- **PR/CI:** Wird nach Branch-Veröffentlichung ergänzt; kein Merge bis vollständige CI grün.

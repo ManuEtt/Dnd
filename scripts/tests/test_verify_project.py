@@ -197,6 +197,18 @@ class VerifyProjectTests(unittest.TestCase):
                     'Gradle-Wrapper-JAR' in msg for msg in verify_project(self.root)
                 ))
 
+    def test_wrapper_rejects_repeated_trailing_directory_separators_before_crc(self):
+        jar = self.root / 'app/android/gradle/wrapper/gradle-wrapper.jar'
+        with zipfile.ZipFile(jar, 'w') as archive:
+            archive.writestr(WRAPPER_MAIN, b'\\xca\\xfe\\xba\\xbevalid')
+            archive.writestr('META-INF//', b'')
+        with mock.patch.object(
+            zipfile.ZipFile, 'testzip',
+            side_effect=AssertionError('CRC reached before path validation'),
+        ):
+            errors = verify_project(self.root)
+        self.assertTrue(any('Gradle-Wrapper-JAR' in error for error in errors))
+
     def test_wrapper_rejects_windows_device_names_before_crc(self):
         # A valid JAR may otherwise carry filenames resolving to special
         # Windows devices, including extension-bearing and directory names.
