@@ -2451,3 +2451,9 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
 
+
+### 09.11.2026 – Heilzauber-Dialog aktualisiert Charakter- und Ressourcenangebot live
+
+Der geöffnete `HealingSpellDialog` verwirft nun bei einem neuen Charakter-Snapshot seine bisherigen Zauber-/Klassen-/Platzangebote und sämtliche Komponentenbestätigungen. Versionsgebundene Schlüssel initialisieren auch die Dropdown-Formularfelder neu, deren `initialValue` sonst nach einem Widget-Update veraltet bliebe.
+
+Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressourcen sowie das vollständige Entfernen des Angebots bei fehlender Vorbereitung ab. Branch `feat/chat-c/healing-spell-live-hero-refresh-20261109`; UI-Commit `1e20a8f639ceecece9d39c513405e2f043bd1cde`, Testcommit `852f4fa329a7a092495072e930da7bd235ba6b78`. GitHub-CI nach PR-Erstellung ausstehend; lokale Flutter-/Dart-Ausführung in dieser Umgebung nicht verfügbar. Keine Regel-, Speicher-, JSON-/SQLite-, Spielstands- oder Versionsänderung; keine Geräteabnahme.
