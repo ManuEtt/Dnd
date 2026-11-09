@@ -856,7 +856,7 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **NÄCHSTER SCHRITT:** Das bestehende `HealingSpellDialog`-Auswahlformular auf echtem 320-dp-Android-Gerät bei 200 % Text mit TalkBack und geöffneter IME prüfen: aktualisierter Verbrauch darf keine alte Platz- und Komponentenfreigabe übernehmen.
 
 ## 2026-11-09 – Heilzauberdialog bei Live-Charakterwechsel erneuern
-Der Dialog `HealingSpellDialog` berechnete Zauberliste, Klassenoptionen und freie Ressourcen bisher nur beim Öffnen. Wird sein `hero`-Snapshot im geöffneten Dialog ersetzt, initialisiert `didUpdateWidget` die Auswahl neu: Zauber/Plätze/Klasse, Komponentenfreigaben und Fehlermeldungen werden zurückgesetzt. Die Dropdown-Unterstruktur erhält einen `ObjectKey` des Heldensnapshots, damit Flutter keine alten Dropdown-Initialwerte weiterverwendet.
+Der Dialog `HealingSpellDialog` berechnete Zauberliste, Klassenoptionen und freie Ressourcen bisher nur beim Öffnen. Wird sein `hero`-Snapshot im geöffneten Dialog ersetzt, initialisiert `didUpdateWidget` die Auswahl neu: Zauber/Plätze/Klasse, Komponentenfreigaben und Fehlermeldungen werden zurückgesetzt. Die parallel in `main` integrierte Angebotsversion (`_offerVersion`) wird in den Dropdown-Schlüsseln verwendet und verhindert, dass Flutter alte Initialwerte weiterverwendet.
 
 Ein neuer Widget-Test simuliert den Snapshotwechsel bei bereits gesetzten verbalen/gestischen Bestätigungen und gewähltem höherem Zauberplatz. Der neue Charakter kennt nur noch „Heilendes Wort“ und hat alle Plätze verbraucht; der Test erwartet zurückgesetzte Bestätigungen, keine gestische Komponente und deaktivierte Wirken-Bestätigung.
 
