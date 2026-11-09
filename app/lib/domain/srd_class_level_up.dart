@@ -253,8 +253,7 @@ class SrdClassLevelUpRules {
           (abilityIncreases['constitution'] ?? 0) +
           (automaticIncreases['constitution'] ?? 0),
     );
-    final fixedHpGain =
-        math.max(1, selected.hitDie ~/ 2 + 1 + oldConModifier);
+    final fixedHpGain = math.max(1, selected.hitDie ~/ 2 + 1 + oldConModifier);
     // A Constitution modifier change affects HP for every total level,
     // including the newly gained one (SRD 5.2.1 Ability Scores).
     final hpGain =
