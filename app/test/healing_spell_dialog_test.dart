@@ -17,7 +17,11 @@ HeroCharacter healer({String className = 'Kleriker', int level = 5}) =>
       spells: const ['Wunden heilen', 'Heilendes Wort'],
     );
 
-Finder control(String name) => find.byKey(ValueKey('healing-spell-$name'));
+Finder control(String name) => find.byWidgetPredicate(
+  (widget) =>
+      widget.key is ValueKey &&
+      (widget.key as ValueKey).value.toString().startsWith('healing-spell-$name'),
+);
 
 Future<void> open(
   WidgetTester tester,
@@ -366,4 +370,98 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets(
+    'Live-Charakterwechsel lädt Zauberplätze neu und verlangt Komponenten erneut',
+    (tester) async {
+      var current = healer();
+      final refreshed = healer().copyWith(
+        spells: ['Heilendes Wort'],
+        spentSpellSlots: {'1': 4, '2': 3},
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          home: StatefulBuilder(
+            builder: (context, refresh) => Scaffold(
+              body: Column(
+                children: [
+                  TextButton(
+                    key: const ValueKey('refresh-healing-hero'),
+                    onPressed: () => refresh(() => current = refreshed),
+                    child: const Text('Charakter aktualisieren'),
+                  ),
+                  Expanded(child: HealingSpellDialog(hero: current)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Wunden heilen'), findsOneWidget);
+      await tap(tester, 'verbal');
+      await tap(tester, 'somatic');
+      await choose(tester, 'slot', 'Grad 2 · 3 frei');
+      await tester.tap(find.byKey(const ValueKey('refresh-healing-hero')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Heilendes Wort'), findsOneWidget);
+      expect(find.text('Verbrauch: 1 Zauberplatz Grad 3.'), findsOneWidget);
+      expect(find.text('Verbrauch: 1 Zauberplatz Grad 2.'), findsNothing);
+      expect(control('somatic'), findsNothing);
+      expect(tester.widget<CheckboxListTile>(control('verbal')).value, isFalse);
+      await tap(tester, 'confirm');
+      expect(
+        find.text(
+          'Bitte bestätigen, dass die verbalen Komponenten möglich sind.',
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('Live-Charakterwechsel entfernt nicht mehr vorbereitete Zauber', (
+    tester,
+  ) async {
+    var current = healer();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildFantasyTheme(),
+        home: StatefulBuilder(
+          builder: (context, refresh) => Scaffold(
+            body: Column(
+              children: [
+                TextButton(
+                  key: const ValueKey('remove-healing-spells'),
+                  onPressed: () => refresh(
+                    () => current = healer().copyWith(spells: ['Segen']),
+                  ),
+                  child: const Text('Vorbereitung ändern'),
+                ),
+                Expanded(child: HealingSpellDialog(hero: current)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('remove-healing-spells')));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Kein unterstützter vorbereiteter Heilzauber'),
+      findsOneWidget,
+    );
+    expect(control('name'), findsNothing);
+    expect(control('verbal'), findsNothing);
+    expect(
+      tester.widget<FantasyTextButton>(control('confirm')).onPressed,
+      isNull,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+
 }
