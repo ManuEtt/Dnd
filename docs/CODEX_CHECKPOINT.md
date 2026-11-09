@@ -2385,3 +2385,10 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Kompatibilität:** Nur Präsentationsprojektion, schreibfrei; SQLite/JSON, Hero, Regeln, Quests, Ereignisse und App-Version unverändert. Keine Migration.
 - **Koordination:** README und zentraler Checkpoint nur am Ende ergänzt; parallele andere PRs besitzen eigene Anhänge und müssen additiv durch Integration konsolidiert werden, kein automatischer Merge.
 - **Nächster Schritt:** Vollständige PR-CI des finalen Heads kontrollieren, bei Format-/Testfehlern im eigenen Branch korrigieren und erst danach Integrationsreview; als nächstes fachlich unabhängiges Paket weitere Kontext-Limit-/Identitätschecks bei gespeicherten Ortsrückblicken nach frischer PR-Prüfung.
+
+## 2026-11-09 – Präzisierung zur NPC-Kurzfassung und CI von PR #654
+
+- Der Fachfehler betrifft zusätzlich die Reihenfolge **Text bereinigen vor Anzeigelimit**. Auch nach über 20 unsichtbaren/neuer als die gültige alte Notiz gespeicherten Einträgen muss die bestätigte Erinnerung erreichbar bleiben. Der sechste neue Test prüft 24 solche Einträge und unverändertes Kampagnen-JSON.
+- Offener PR #615 behandelt die allgemeine Reader-ID-Prüfung, nicht die neue Kurzfassungs-Lücke. Beide Fachdateien bleiben getrennt.
+- [PR-CI #42560261362](https://github.com/ManuEtt/Dnd/actions/runs/42560261362): Struktur/Python/Backend bestanden, Dart-Format beanstandete beide neuen Dateien, Flutter-/Android-Pfade darum nicht geprüft. Exakte Formatter-Ausgabe per temporärem Diagnose-Workflow [#42560601010](https://github.com/ManuEtt/Dnd/actions/runs/42560601010) ermittelt und in Commits `3b856557661caac458fcda25e5e49b57f45ac102` und `d716d6a2ba934a04bdb6017fc1745d67858aaa2a` übernommen. Diagnose-Workflow mit Commit `9bbefd9e9d9be754bbb65ad5a5770943af902399` wieder entfernt.
+- Alle sechs neuen Flutter-Fälle und die vollständige Android-/Release-CI müssen noch am abschließenden PR-Head überprüft werden. Keine Migration und kein Main-Merge.
