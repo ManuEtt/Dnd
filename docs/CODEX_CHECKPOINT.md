@@ -2507,3 +2507,12 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - Lösung: Vollständige SRD-Klassenidentität und Klassenstufenverteilung vor Ableitung der nächsten Klassenstufe prüfen. Unbekannte/identische Zweitklassen, verwaiste oder fehlende Zweitklassenstufen und unzulässige Stufensplits werden fail-closed abgewiesen.
 - Tests: Neue negative Regressionen für sechs ungültige Profilformen, jeweils mit Auswahl beider Klassen; bestehende positive Einzel-/Mehrklassen- und Capstone-Tests bleiben aktiv. Frühere CI-Läufe scheiterten an Dart-Formatierung; der formatterkorrigierte PR-Head benötigt noch einen vollständigen CI-Nachweis.
 - Kompatibilität: Keine Modell-, JSON-, SQLite-, API- oder Spielstandänderung. Historische Daten bleiben lesbar; nur die ungültige Stufenaufstiegsaktion wird blockiert.
+
+
+## 2026-11-09 – Dart-Formatkorrektur für Klassenprofilvalidierung
+
+- **Auslöser:** GitHub Actions [#42700994265](https://github.com/ManuEtt/Dnd/actions/runs/42700994265) bestand Struktur-/SRD-Prüfungen sowie Backend-Typprüfung, Build und Tests; Dart-Formatierung meldete ausschließlich `app/lib/domain/srd_class_level_up.dart` als verändert. Flutter-Analyse, Flutter-Tests und Android-Build wurden deshalb übersprungen.
+- **Korrektur:** Die verschachtelte ternäre Klassenprofilbedingung wurde durch explizite Guards für ungültige Hauptklasse/Gesamtstufe, ungültige Zweitklasse/Stufensplit und verwaiste Zweitklassenstufen ersetzt. Commit `46d702606c92cd39061460a786cc115ceb5a5e5e` auf Branch `fix/chat-a/level-up-class-profile-validation-20261109b2e`, PR [#661](https://github.com/ManuEtt/Dnd/pull/661).
+- **Nicht getestet:** Der neue Commit hat noch keinen vollständigen CI-Nachweis; lokale Dart-/Flutter-SDKs stehen nicht zur Verfügung. Der alte fehlgeschlagene Lauf ist kein Testnachweis für den neuen Commit.
+- **Kompatibilität:** Keine Modell-, JSON-, SQLite-, API-, UI-, Story- oder Spielstandänderung; keine Migration.
+- **Nächster Schritt:** CI auf dem finalen PR-Head abwarten und Formatter, Flutter-Analyse, Regressionstests sowie Android-Build vollständig verifizieren.
