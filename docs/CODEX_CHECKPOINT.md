@@ -2498,3 +2498,11 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Koordination:** Separater Integrationsbranch mit drei Quell-Heads als Git-Eltern, append-only Historie von README, zentralem und individuellen Checkpoints, Integrationsreport. Keine Änderungen an Spielständen, SQLite/JSON, Versionsnummer oder Backups.
 - **Nicht getestet:** Kombinierter Commit noch nicht durch CI abgenommen; Android-Gerätetests nicht durchgeführt.
 - **Freigabegate:** Nur nach vollständig erfolgreicher Integrations-CI, unverändertem PR-Head, Prüfung des neuesten `main` und erfolgreicher Main-CI integrieren. Danach bereits enthaltene Original-PRs schließen und Archivierungs-/Cleanup-Actions nachweisen.
+
+## 2026-11-09 – Live-Snapshot-Wechsel im Heilzauberdialog
+- **Ausgangslage:** `HealingSpellDialog` initialisierte vorbereitete Heilzauber, Klassen, Zauberplätze und Komponentenbestätigungen ausschließlich in `initState`. Bei einem neuen `HeroCharacter` im bereits geöffneten Dialog konnten Auswahlfelder und Bestätigungen zum vorherigen Charakter gehören.
+- **Änderung:** Gemeinsame Initialisierung in `_initializeForHero`; `didUpdateWidget` lädt bei Austausch der Hero-Instanz alle abhängigen Werte neu und löscht Bestätigungen/Fehler. Eine an `ObjectKey(widget.hero)` gebundene Auswahl-Unterstruktur erneuert auch die Dropdown-Initialwerte.
+- **Regressionstest:** Neuer Widget-Test wechselt mit offenem Dialog zu einem Charakter mit nur „Heilendes Wort“ und vollständig verbrauchten Plätzen; er prüft neue Zauberauswahl, zurückgesetzte Komponenten und deaktivierte Bestätigung.
+- **Branch:** `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. **CI/Build/PR:** zum Dokumentationszeitpunkt ausstehend; kein lokaler Flutter-/Dart-SDK-Nachweis. Kein Geräte-/TalkBack-Test.
+- **Grenzen:** Keine Änderung der Heilungsregeln, Ressourcenbuchung, persistierten Daten oder App-Version. Snapshot-Austausch wird anhand der Objektidentität erkannt; in-place Mutation eines unveränderlichen Modells ist nicht vorgesehen.
+- **Nächster Schritt:** Vollständige GitHub-Actions-CI am finalen PR-Head prüfen und eventuelle Format-/Testfehler korrigieren; danach Mergefähigkeit erneut kontrollieren.
