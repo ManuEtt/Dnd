@@ -2451,3 +2451,18 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
 
+
+
+### 2026-11-09 – Verneinte Rabenwacht-Rückreisen nicht als Reisebefehl behandeln
+
+- **Arbeitsbereich:** Story/Kampagnenlogik, eng begrenzte Korrektur an der schreibgeschützten Erkennung bereits besuchter Orte.
+- **Basis-main:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`. **Branch:** `fix/chat-b/rabenwacht-negated-travel-20261109`.
+- **Problem:** `RabenwachtStoryModule._revisit` suchte nach Reiseverben und Ortsnamen, ignorierte aber eine ausdrückliche Verneinung. So konnte „Ich gehe nicht zurück zur Mühle“ trotz gegenteiliger Absicht eine gespeicherte Ortsrückreise auslösen.
+- **Implementiert:** Sobald ein bekannter Zielort und eine Verneinung in derselben Eingabe erkannt werden, bleibt die Kampagne unverändert; der Spieler erhält eine Bitte um eindeutige Neuformulierung. Keine Ortswechsel- oder Questlogik außerhalb dieses Schutzes geändert.
+- **Regressionen:** drei neue Fälle für verneinte Rückreise, weiterhin erlaubte positive Rückreise und verneinte Ortsnennung ohne Reisebefehl. Zusätzlich werden Etappe, Ortsfakt und Heldenzustand geprüft.
+- **Geänderte Fach-/Testdateien:** `app/lib/story/rabenwacht_campaign.dart`, `app/test/rabenwacht_negated_revisit_test.dart`. README und beide Checkpoints ausschließlich am Ende ergänzt.
+- **Kompatibilität:** keine Migration; keine Änderung an SQLite/JSON, Version, Würfen, XP, HP, Ressourcen, Quests oder KI-/Backend-Vertrag.
+- **Parallelität:** aktuelle 53 offenen PRs und deren Fachpfade geprüft. Keine Überschneidung mit diesen beiden Fach-/Testpfaden. Insbesondere die aktuellen Story-PRs #654/#658 sowie die Rabenwacht-Fortsetzungs-PRs ändern andere Dateien. Gemeinsame Dokumentationspfade bleiben append-only.
+- **GETESTET:** Quell-/Teständerung versioniert; PR-CI wird nach Veröffentlichung abgenommen. **NICHT GETESTET:** lokale Flutter/Dart-Ausführung (SDK nicht verfügbar), Android-Gerät, vollständige CI auf finalem HEAD.
+- **BLOCKIERT:** Freigabe/Integration bis vollständige grüne GitHub-CI und Review. Kein Merge.
+- **Nächster Schritt:** CI auf dem endgültigen PR-HEAD auswerten; Format-/Testfehler auf demselben Branch beheben und anschließend Chat D zur Integration übergeben.
