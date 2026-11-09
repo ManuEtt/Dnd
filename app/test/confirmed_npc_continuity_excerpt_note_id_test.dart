@@ -127,6 +127,37 @@ void main() {
     expect(excerpt, isNot(contains('Ohne ID')));
   });
 
+  test('more than twenty invisible notes cannot hide older visible evidence', () {
+    final campaign = _campaign([
+      _note(
+        'confirmed',
+        'mira',
+        'Die alte Karte liegt sicher im Archiv.',
+        at: _time.subtract(const Duration(days: 1)),
+      ),
+      for (var i = 0; i < 24; i++)
+        _note(
+          'hidden-$i',
+          'mira',
+          '\u200b\u202e\n\t',
+          at: _time.add(Duration(minutes: i + 1)),
+        ),
+    ]);
+    final before = jsonEncode(campaign.toJson());
+
+    final excerpt = ConfirmedNpcContinuityExcerpt.read(
+      campaign,
+      npcId: 'mira',
+      maxNotes: 1,
+    );
+
+    expect(excerpt, contains('Die alte Karte liegt sicher im Archiv.'));
+    expect(RegExp('Bestätigte Notiz').allMatches(excerpt), hasLength(1));
+    expect(excerpt, isNot(contains('Keine bestätigten Beziehungsnotizen.')));
+    expect(excerpt, isNot(contains('\u202e')));
+    expect(jsonEncode(campaign.toJson()), before);
+  });
+
   test('unique confirmed notes survive legacy JSON and SQLite restart', () async {
     final original = _campaign([
       _note('first', 'mira', 'Die Archivarin bewahrt die Karte.'),
