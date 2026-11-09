@@ -2461,3 +2461,10 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Tests:** Lokale Repo-Tests hier nicht ausführbar (kein Repository-Checkout/kein Flutter-SDK); GitHub Actions ausstehend.
 - **Kompatibilität:** Nur zusätzliche Validierung für Gradle-Wrapper-JAR-Upload; keine Spielstand-/Datenbank-/JSON-/Backupmigration.
 - **PR/CI:** Wird nach Branch-Veröffentlichung ergänzt; kein Merge bis vollständige CI grün.
+
+## PR- und CI-Nachweis
+
+- **Pull Request:** [#662](https://github.com/ManuEtt/Dnd/pull/662) (Draft).
+- **Finaler Code-HEAD:** `f25c9bdbc371974fb8c9f2ea6283204df4845080`.
+- **GitHub Actions:** nach Veröffentlichung gestartet; vollständige CI und Mergefähigkeit noch nicht bestätigt.
+- **README-Nachtrag:** PR-Link ergänzt; kein Merge behauptet.

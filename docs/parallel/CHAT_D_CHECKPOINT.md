@@ -2220,3 +2220,10 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **NICHT GETESTET:** Vollständige Python-/Backend-/Flutter-/Android-/Release-CI.
 - **Migration:** Keine. Keine Änderung an App-/Backend-Produktcode, Persistenz, Spielständen oder Backupformaten.
 - **NÄCHSTER SCHRITT:** Finalen Branch veröffentlichen, sechs CI-Jobs vollständig abnehmen, Mergefähigkeit gegen dann aktuellen Main erneut prüfen.
+
+## PR- und CI-Nachweis
+
+- **Pull Request:** [#662](https://github.com/ManuEtt/Dnd/pull/662) (Draft).
+- **Finaler Code-HEAD:** `f25c9bdbc371974fb8c9f2ea6283204df4845080`.
+- **GitHub Actions:** nach Veröffentlichung gestartet; vollständige CI und Mergefähigkeit noch nicht bestätigt.
+- **README-Nachtrag:** PR-Link ergänzt; kein Merge behauptet.

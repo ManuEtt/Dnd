@@ -1615,3 +1615,10 @@ Die geprüften Verbesserungen für kollisionssichere historische Checkpoints, ex
 ### 2026-11-09 – Mehrdeutige Verzeichnisnamen im Gradle-Wrapper-ZIP ablehnen
 
 Der Projektübertragungsprüfer weist nun auch ZIP-Verzeichniseinträge mit mehreren abschließenden Pfadtrennzeichen zurück. Solche Namen werden nicht mehr stillschweigend durch Normalisierung auf einen regulären Verzeichnispfad reduziert. Ein Regressionstest stellt sicher, dass die Ablehnung vor der CRC-Dekompression erfolgt. Betroffen sind ausschließlich `scripts/verify_project.py` und dessen Tests. Keine Änderung an App, Spielständen, Backups oder Persistenzformaten. Implementierung und CI-Abnahme: [PR folgt nach Veröffentlichung].
+
+## PR- und CI-Nachweis
+
+- **Pull Request:** [#662](https://github.com/ManuEtt/Dnd/pull/662) (Draft).
+- **Finaler Code-HEAD:** `f25c9bdbc371974fb8c9f2ea6283204df4845080`.
+- **GitHub Actions:** nach Veröffentlichung gestartet; vollständige CI und Mergefähigkeit noch nicht bestätigt.
+- **README-Nachtrag:** PR-Link ergänzt; kein Merge behauptet.
