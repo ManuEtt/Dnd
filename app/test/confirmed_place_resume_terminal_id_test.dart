@@ -35,7 +35,11 @@ void main() {
         const Place(id: 'watch\u2028', name: 'Zeilentrenner'),
         const Place(id: 'hall\u2029', name: 'Absatztrenner'),
         const Place(id: 'bad\u200b', name: 'Unsichtbare ID'),
-        const Place(id: 'valid-1', name: 'Brunnen', description: 'Klares Wasser.'),
+        const Place(
+          id: 'valid-1',
+          name: 'Brunnen',
+          description: 'Klares Wasser.',
+        ),
         Place(id: longId, name: 'Alter Turm'),
       ],
     );
@@ -97,7 +101,9 @@ void main() {
     );
   });
 
-  test('valid place identities persist through JSON and SQLite restart', () async {
+  test(
+    'valid place identities persist through JSON and SQLite restart',
+    () async {
     final original = _campaign(
       places: const [
         Place(id: 'gate-west', name: 'Westtor'),
@@ -144,5 +150,6 @@ void main() {
       await repository.close();
       await folder.delete(recursive: true);
     }
-  });
+    },
+  );
 }
