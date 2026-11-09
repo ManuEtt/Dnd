@@ -946,3 +946,17 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+## 2026-11-09 – NPC-Kurzfassung und eindeutige Notiz-IDs (PR #654)
+
+- **Ausgangs-Main-SHA:** `1cb332437624b9440cf21d338da45aa680578d53`.
+- **Eigener Branch:** `fix/chat-b/npc-excerpt-unique-note-ids-20261109`; **Fachcommit:** `cecfb1f6cd5400aa06447767737f3e039833c45b`; **Testcommit:** `36efbc691636c3ba6f673334ea0a56ba7b88daa7`. Finaler Dokumentations-Commit via PR.
+- **Pull Request:** [#654](https://github.com/ManuEtt/Dnd/pull/654), Draft bis zur Abnahme.
+- **Problem:** Mehrdeutige oder unsichere IDs in einem unvalidierten NPC-Notizverlauf wurden im schreibgeschützten Rückblick als bestätigte Notizen gezeigt; ungültige neue Notizen konnten gültige ältere verdrängen.
+- **Implementiert:** `ConfirmedNpcContinuityExcerpt.read` selektiert nur sichere, kampagnenweit eindeutige IDs des explizit ausgewählten NPCs, sortiert nach Zeitstempel und gespeicherter Position und übergeht leere, bereinigte Notiztexte ohne das Limit aufzubrauchen.
+- **Geändert:** `app/lib/story/confirmed_npc_continuity_excerpt.dart`, neue `app/test/confirmed_npc_continuity_excerpt_note_id_test.dart` (fünf Tests), append-only `README.md`, `docs/CODEX_CHECKPOINT.md`, dieser Checkpoint.
+- **GETESTET:** Main- und offene PRs sowie alle 54 PR-Dateipfade auf Fachkonflikt geprüft; kein paralleler PR verändert die beiden Fach-/Testdateien.
+- **NICHT GETESTET:** Fünf Flutter-Regressionen mangels lokalem Flutter/Dart-SDK nicht ausgeführt; [Actions #42560154778](https://github.com/ManuEtt/Dnd/actions/runs/42560154778) zum Zeitpunkt dieses Eintrags im Gange. Kein vollständiger grüner Prüflauf behauptet; keine reale Android- oder produktive KI-Abnahme.
+- **Bekannte Fehler/Blocker:** Keine bestätigten Laufzeitfehler; SDK-/Git-DNS-Zugriff lokal nicht verfügbar. Bei CI-Fehlern auf diesem Branch korrigieren; Doc-Anhänge vor Integration verlustfrei konsolidieren.
+- **Migrationen:** Keine. Regeln, Kampagnenrevision, Heldendaten, Events, JSON- und SQLite-Schemata, App-Version unverändert.
+- **Nächster konkreter Schritt:** Finale PR-Checks und gegebenenfalls Formatter-Tests korrigieren; danach unabhängige Lücke im bestätigten Orts-Wiedereinstieg nach frischem Main-/PR-Abgleich untersuchen.
