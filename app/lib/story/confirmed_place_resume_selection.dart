@@ -141,7 +141,9 @@ class ConfirmedPlaceResumeSelector {
         expectedRevision > 2147483647 ||
         campaign.revision != expectedRevision ||
         _safeId.stringMatch(placeId) != placeId) {
-      throw const FormatException('Ungültige Ortsauswahl für die Wiederaufnahme.');
+      throw const FormatException(
+        'Ungültige Ortsauswahl für die Wiederaufnahme.',
+      );
     }
 
     Place? chosen;
