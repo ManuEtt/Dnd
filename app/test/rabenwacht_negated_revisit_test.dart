@@ -34,7 +34,8 @@ void main() {
   );
 
   test('positiv bestätigte Rückreise bleibt möglich', () {
-    final after = engine.act(atChapel(), 'Ich gehe zurück zur Mühle.').campaign;
+    final after =
+        engine.act(atChapel(), 'Ich gehe zurück zur Mühle.').campaign;
 
     expect(after.storyBible['stage'], 'mill');
     expect(after.facts['location'], 'Alte Mühle');
