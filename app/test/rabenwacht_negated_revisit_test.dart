@@ -18,33 +18,31 @@ void main() {
     );
   }
 
-  test(
-    'verneinte Rückreise zu einem bekannten Ort bewegt den Helden nicht',
-    () {
-      final before = atChapel();
-      final after =
-          engine.act(before, 'Ich gehe nicht zurück zur Mühle.').campaign;
+  Campaign act(Campaign campaign, String input) =>
+      engine.act(campaign, input).campaign;
 
-      expect(after.storyBible['stage'], 'chapel');
-      expect(after.facts['location'], 'Kapelle');
-      expect(after.facts['visited:mill'], 'true');
-      expect(after.scene, before.scene);
-      expect(after.hero.toJson(), before.hero.toJson());
-    },
-  );
+  test('negated revisit does not move', () {
+    final before = atChapel();
+    final after = act(before, 'Ich gehe nicht zurück zur Mühle.');
 
-  test('positiv bestätigte Rückreise bleibt möglich', () {
-    final after =
-        engine.act(atChapel(), 'Ich gehe zurück zur Mühle.').campaign;
+    expect(after.storyBible['stage'], 'chapel');
+    expect(after.facts['location'], 'Kapelle');
+    expect(after.facts['visited:mill'], 'true');
+    expect(after.scene, before.scene);
+    expect(after.hero.toJson(), before.hero.toJson());
+  });
+
+  test('positive revisit still moves', () {
+    final after = act(atChapel(), 'Ich gehe zurück zur Mühle.');
 
     expect(after.storyBible['stage'], 'mill');
     expect(after.facts['location'], 'Alte Mühle');
     expect(after.facts['visited:mill'], 'true');
   });
 
-  test('verneinte Ortsnennung ohne Reisebefehl löst keine Rückreise aus', () {
+  test('negated place mention does not revisit', () {
     final before = atChapel();
-    final after = engine.act(before, 'Ich möchte nicht zur Mühle.').campaign;
+    final after = act(before, 'Ich möchte nicht zur Mühle.');
 
     expect(after.storyBible['stage'], 'chapel');
     expect(after.facts['location'], 'Kapelle');
