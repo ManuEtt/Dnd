@@ -117,95 +117,100 @@ void main() {
       _note('', 'mira', 'Ohne ID.'),
     ]);
 
-    final excerpt = ConfirmedNpcContinuityExcerpt.read(
-      campaign,
-      npcId: 'mira',
-    );
+    final excerpt = ConfirmedNpcContinuityExcerpt.read(campaign, npcId: 'mira');
 
     expect(excerpt, contains('Keine bestätigten Beziehungsnotizen.'));
     expect(excerpt, isNot(contains('Behauptung')));
     expect(excerpt, isNot(contains('Ohne ID')));
   });
 
-  test('more than twenty invisible notes cannot hide older visible evidence', () {
-    final campaign = _campaign([
-      _note(
-        'confirmed',
-        'mira',
-        'Die alte Karte liegt sicher im Archiv.',
-        at: _time.subtract(const Duration(days: 1)),
-      ),
-      for (var i = 0; i < 24; i++)
+  test(
+    'more than twenty invisible notes cannot hide older visible evidence',
+    () {
+      final campaign = _campaign([
         _note(
-          'hidden-$i',
+          'confirmed',
           'mira',
-          '\u200b\u202e\n\t',
-          at: _time.add(Duration(minutes: i + 1)),
+          'Die alte Karte liegt sicher im Archiv.',
+          at: _time.subtract(const Duration(days: 1)),
         ),
-    ]);
-    final before = jsonEncode(campaign.toJson());
+        for (var i = 0; i < 24; i++)
+          _note(
+            'hidden-$i',
+            'mira',
+            '\u200b\u202e\n\t',
+            at: _time.add(Duration(minutes: i + 1)),
+          ),
+      ]);
+      final before = jsonEncode(campaign.toJson());
 
-    final excerpt = ConfirmedNpcContinuityExcerpt.read(
-      campaign,
-      npcId: 'mira',
-      maxNotes: 1,
-    );
+      final excerpt = ConfirmedNpcContinuityExcerpt.read(
+        campaign,
+        npcId: 'mira',
+        maxNotes: 1,
+      );
 
-    expect(excerpt, contains('Die alte Karte liegt sicher im Archiv.'));
-    expect(RegExp('Bestätigte Notiz').allMatches(excerpt), hasLength(1));
-    expect(excerpt, isNot(contains('Keine bestätigten Beziehungsnotizen.')));
-    expect(excerpt, isNot(contains('\u202e')));
-    expect(jsonEncode(campaign.toJson()), before);
-  });
+      expect(excerpt, contains('Die alte Karte liegt sicher im Archiv.'));
+      expect(RegExp('Bestätigte Notiz').allMatches(excerpt), hasLength(1));
+      expect(excerpt, isNot(contains('Keine bestätigten Beziehungsnotizen.')));
+      expect(excerpt, isNot(contains('\u202e')));
+      expect(jsonEncode(campaign.toJson()), before);
+    },
+  );
 
-  test('unique confirmed notes survive legacy JSON and SQLite restart', () async {
-    final original = _campaign([
-      _note('first', 'mira', 'Die Archivarin bewahrt die Karte.'),
-      _note(
-        'second',
-        'mira',
-        'Mira hat die Karte abgegeben.',
-        at: _time.subtract(const Duration(days: 1)),
-      ),
-    ]);
-    final encoded = jsonEncode(original.toJson());
-    final imported = Campaign.fromJson(
-      jsonDecode(encoded) as Map<String, dynamic>,
-    );
-    final folder = await Directory.systemTemp.createTemp('npc-note-identity-');
-    final path = paths.join(folder.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      await repository.saveCampaign(imported);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+  test(
+    'unique confirmed notes survive legacy JSON and SQLite restart',
+    () async {
+      final original = _campaign([
+        _note('first', 'mira', 'Die Archivarin bewahrt die Karte.'),
+        _note(
+          'second',
+          'mira',
+          'Mira hat die Karte abgegeben.',
+          at: _time.subtract(const Duration(days: 1)),
+        ),
+      ]);
+      final encoded = jsonEncode(original.toJson());
+      final imported = Campaign.fromJson(
+        jsonDecode(encoded) as Map<String, dynamic>,
+      );
+      final folder = await Directory.systemTemp.createTemp(
+        'npc-note-identity-',
+      );
+      final path = paths.join(folder.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      final restored = (await repository.getCampaign(imported.id))!;
-      final before = jsonEncode(restored.toJson());
-      final excerpt = ConfirmedNpcContinuityExcerpt.read(
-        restored,
-        npcId: 'mira',
-      );
+      try {
+        await repository.saveCampaign(imported);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final restored = (await repository.getCampaign(imported.id))!;
+        final before = jsonEncode(restored.toJson());
+        final excerpt = ConfirmedNpcContinuityExcerpt.read(
+          restored,
+          npcId: 'mira',
+        );
 
-      expect(excerpt, contains('Die Archivarin bewahrt die Karte.'));
-      expect(excerpt, contains('Mira hat die Karte abgegeben.'));
-      expect(RegExp('Bestätigte Notiz').allMatches(excerpt), hasLength(2));
-      expect(excerpt, isNot(contains('Schatz verteilt')));
-      expect(restored.hero.hitPoints, 17);
-      expect(restored.revision, 0);
-      expect(jsonEncode(restored.toJson()), before);
-      expect(
-        (await repository.reconstructCampaign(imported.id))!.toJson(),
-        restored.toJson(),
-      );
-    } finally {
-      await repository.close();
-      await folder.delete(recursive: true);
-    }
-  });
+        expect(excerpt, contains('Die Archivarin bewahrt die Karte.'));
+        expect(excerpt, contains('Mira hat die Karte abgegeben.'));
+        expect(RegExp('Bestätigte Notiz').allMatches(excerpt), hasLength(2));
+        expect(excerpt, isNot(contains('Schatz verteilt')));
+        expect(restored.hero.hitPoints, 17);
+        expect(restored.revision, 0);
+        expect(jsonEncode(restored.toJson()), before);
+        expect(
+          (await repository.reconstructCampaign(imported.id))!.toJson(),
+          restored.toJson(),
+        );
+      } finally {
+        await repository.close();
+        await folder.delete(recursive: true);
+      }
+    },
+  );
 }
