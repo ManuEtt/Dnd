@@ -2451,3 +2451,16 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
 
+
+## 2026-11-09 – Revisionssichere ausdrücklich ausgewählte Orts-Wiederaufnahme (#658)
+
+- **Ausgangs-main:** `b2e1a021067cec39b7c85bdad11aa98477cac14e` (Merge #655). **Branch:** `fix/chat-b/place-resume-full-id-match-20261109`; **PR:** [#658](https://github.com/ManuEtt/Dnd/pull/658) (Draft).
+- **Ausgangsproblem:** Der allgemeine bestätigte Ortsrückblick listet höchstens vier Orte. Eine konkrete, ältere Orts-ID außerhalb dieses Limits ließ sich über dieselbe revisionsgebundene, schreibfreie Projektion nicht unabhängig wieder aufnehmen. Gleichnamige Orte dürfen keine automatisch geratenen Identitäten erzeugen.
+- **IMPLEMENTIERT:** `ConfirmedPlaceResumeSelector.readSelected` übernimmt genau eine vom Spieler gewählte, eindeutig gespeicherte sichere 1–64-ASCII-Orts-ID. Namen/Beschreibungen einzeilig/limitiert; leerer Name, Dubletten, fremde und veraltete Ortsdaten werden abgewiesen. Bestehender vollständiger Quellenstempel prüft auch verdeckte gleichrevisionsgebundene Änderungen. Allgemeine `read`-Auswahl verwendet expliziten Vollmatch ihrer Orts-IDs.
+- **Betroffene Dateien:** `app/lib/story/confirmed_place_resume_selection.dart`, `app/test/confirmed_place_resume_terminal_id_test.dart` (neu: fünf positive/negative Regressionen) plus rein additive README-/Checkpoint-Nachträge.
+- **Akzeptanztests:** sichere/unzulässige IDs einschließlich abschließender Zeilentrenner, 64-Zeichen-Limit, Nachrücken bei begrenzter Übersicht, fünfter/sechster gleichnamiger Ort explizit auswählbar, fehlende/duplizierte/unanzeigbare Identität, Revision und gleichrevisionsgebundene Rohdatenänderung, unveränderte Heldenwerte sowie JSON-/SQLite-Neustart.
+- **GETESTET:** aktueller GitHub-Main-/Quellstand und alle offenen PR-Fachpfade vor Branch-Anlage geprüft; keine Überschneidung der beiden Fach-/Testdateien. Flutter-/Dart-SDK in ausführender Umgebung nicht installiert, keine bestandenen Fluttertests behauptet.
+- **NICHT GETESTET/BLOCKIERT:** GitHub-CI auf finalem Branch-HEAD, Backend-/Flutter-/APK- und Alpha-Release-Ergebnisse dieser Änderung, reales Android/TalkBack/Upgrade, produktiver KI-Dienst und Signierung. Bei CI-Fehlern eigenen Branch korrigieren.
+- **Kompatibilität:** Nur bestätigte schreibgeschützte Story-Projektion; keine Mutation von Hero, Kampf-/Regelzustand, Quest/Inventar, Speicher-Events, SQLite/JSON oder App-/Build-Version, keine Migration.
+- **Koordination:** Dokumentations-Nachträge anderer offener PRs vor Merge verlustfrei additiv vereinigen. Nicht automatisch mergen.
+- **Nächster Schritt:** Finalen Actions-Lauf für PR #658 auf identischer SHA prüfen und bei Bedarf Format-/Laufzeitfehler im eigenen Branch reparieren; danach geprüfte Story-Änderung zur koordinierten Integration bereitstellen.
