@@ -61,6 +61,27 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
   @override
   void initState() {
     super.initState();
+    _initializeForHero();
+  }
+
+  @override
+  void didUpdateWidget(covariant HealingSpellDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.hero, widget.hero)) {
+      _initializeForHero();
+    }
+  }
+
+  void _initializeForHero() {
+    _spells = const [];
+    _slots = const [];
+    _spell = null;
+    _castingClass = null;
+    _slotKey = null;
+    _setupError = null;
+    _error = null;
+    _verbal = false;
+    _somatic = false;
     try {
       _spells = HealingSpellRules.availableSpells(widget.hero);
       if (_spells.isEmpty) return;
@@ -288,6 +309,11 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                   'Wähle einen bestätigten vorbereiteten Heilzauber '
                   'und die Klasse, mit der du ihn wirkst.',
                 ),
+                KeyedSubtree(
+                  key: ObjectKey(widget.hero),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   key: const ValueKey('healing-spell-name'),
@@ -373,6 +399,9 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                     _somatic,
                     (value) => _somatic = value,
                   ),
+                    ],
+                  ),
+                ),
               ],
               if (_error != null)
                 Padding(
