@@ -366,4 +366,68 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets(
+    'Live-Charakterwechsel verwirft alte Zauber-, Platz- und Komponentenwahl',
+    (tester) async {
+      final hero = ValueNotifier<HeroCharacter>(healer());
+      addTearDown(hero.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () => showDialog<HealingSpellChoice>(
+                  context: context,
+                  builder: (_) => ValueListenableBuilder<HeroCharacter>(
+                    valueListenable: hero,
+                    builder: (_, current, __) =>
+                        HealingSpellDialog(hero: current),
+                  ),
+                ),
+                child: const Text('Heilzauber öffnen'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Heilzauber öffnen'));
+      await tester.pumpAndSettle();
+      await tap(tester, 'verbal');
+      await tap(tester, 'somatic');
+      await choose(tester, 'slot', 'Grad 2 · 3 frei');
+      expect(
+        tester.widget<CheckboxListTile>(control('verbal')).value,
+        isTrue,
+      );
+
+      hero.value = healer().copyWith(
+        spells: ['Heilendes Wort'],
+        spentSpellSlots: {'1': 4, '2': 3, '3': 2},
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        tester
+            .widget<DropdownButtonFormField<String>>(control('name'))
+            .initialValue,
+        'Heilendes Wort',
+      );
+      expect(control('somatic'), findsNothing);
+      expect(
+        tester.widget<CheckboxListTile>(control('verbal')).value,
+        isFalse,
+      );
+      expect(
+        find.textContaining('Kein ausreichender freier Zauberplatz'),
+        findsOneWidget,
+      );
+      expect(
+        tester.widget<FantasyTextButton>(control('confirm')).onPressed,
+        isNull,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
