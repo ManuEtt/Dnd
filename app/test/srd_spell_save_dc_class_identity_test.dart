@@ -32,15 +32,12 @@ HeroCharacter _caster({
   spells: const ['Säurespritzer'],
 );
 
-int _dc(
-  HeroCharacter hero,
-  String ability, {
-  bool confirmed = true,
-}) => SrdSpellSavingThrowRules.spellSaveDc(
-  hero,
-  spellcastingAbility: ability,
-  noUnmodelledDcModifiersConfirmed: confirmed,
-);
+int _dc(HeroCharacter hero, String ability, {bool confirmed = true}) =>
+    SrdSpellSavingThrowRules.spellSaveDc(
+      hero,
+      spellcastingAbility: ability,
+      noUnmodelledDcModifiersConfirmed: confirmed,
+    );
 
 void main() {
   test('eight canonical casters and class aliases retain their SRD DC', () {
@@ -118,8 +115,16 @@ void main() {
       _caster(secondaryClassName: 'Kleriker', secondaryClassLevel: -1),
       _caster(secondaryClassName: 'Kleriker', secondaryClassLevel: 5),
       _caster(secondaryClassName: 'Unbekannt', secondaryClassLevel: 1),
-      _caster(className: 'Wizard', secondaryClassName: 'Magier', secondaryClassLevel: 1),
-      _caster(className: 'Unbekannt', secondaryClassName: 'Wizard', secondaryClassLevel: 1),
+      _caster(
+        className: 'Wizard',
+        secondaryClassName: 'Magier',
+        secondaryClassLevel: 1,
+      ),
+      _caster(
+        className: 'Unbekannt',
+        secondaryClassName: 'Wizard',
+        secondaryClassLevel: 1,
+      ),
     ];
     for (final hero in profiles) {
       expect(
