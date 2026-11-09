@@ -320,9 +320,9 @@ void main() {
     },
   );
 
-  testWidgets('Abbruch verwirft Auswahl und Komponenten ohne Heldenänderung', (
-    tester,
-  ) async {
+  testWidgets(
+    'Abbruch verwirft Auswahl und Komponenten ohne Heldenänderung',
+    (tester) async {
     final hero = healer();
     final before = hero.toJson();
     var returned = false;
