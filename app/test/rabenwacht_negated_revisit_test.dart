@@ -21,14 +21,14 @@ void main() {
   test(
     'verneinte Rückreise zu einem bekannten Ort bewegt den Helden nicht',
     () {
-    final before = atChapel();
-    final after =
-        engine.act(before, 'Ich gehe nicht zurück zur Mühle.').campaign;
+      final before = atChapel();
+      final after =
+          engine.act(before, 'Ich gehe nicht zurück zur Mühle.').campaign;
 
-    expect(after.storyBible['stage'], 'chapel');
-    expect(after.facts['location'], 'Kapelle');
-    expect(after.facts['visited:mill'], 'true');
-    expect(after.scene, before.scene);
+      expect(after.storyBible['stage'], 'chapel');
+      expect(after.facts['location'], 'Kapelle');
+      expect(after.facts['visited:mill'], 'true');
+      expect(after.scene, before.scene);
       expect(after.hero.toJson(), before.hero.toJson());
     },
   );
