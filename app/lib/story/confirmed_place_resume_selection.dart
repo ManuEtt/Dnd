@@ -97,7 +97,11 @@ class ConfirmedPlaceResumeSelector {
 
     final entries = <ConfirmedPlaceResumeEntry>[];
     for (final place in campaign.places) {
-      // Dart/JS RegExp '
+      // The entire saved ID must match, not just a pattern occurrence.
+      if (_safeId.stringMatch(place.id) != place.id ||
+          idCounts[place.id] != 1) {
+        continue;
+      }
       final name = _oneLine(place.name, 72, name: true);
       if (name.isEmpty) continue;
       final description = _oneLine(place.description, 220);
@@ -176,64 +180,6 @@ class ConfirmedPlaceResumeSelector {
               : description,
         ),
       ],
-      sourceStamp: _sourceStamp(campaign),
-    );
-    if (selection.playerOverview.length > 1800) {
-      throw const FormatException('Ortsrückblick überschreitet sein Limit.');
-    }
-    return selection;
-  }
-
-  static String _sourceStamp(Campaign campaign) => jsonEncode({
-    'places': [for (final place in campaign.places) place.toJson()],
-  });
-
-  // Only the rendered excerpt is sanitized. Saved input is never modified.
-  // Rune-wise truncation does not split UTF-16 surrogate pairs (e.g. emoji).
-  static String _oneLine(String text, int limit, {bool name = false}) {
-    final cleaned = text
-        .replaceAll(_formatMarks, name ? '' : ' ')
-        .replaceAll(_controls, ' ')
-        .replaceAll(RegExp(r'\s+'), ' ')
-        .trim();
-    if (cleaned.length <= limit) return cleaned;
-    final buffer = StringBuffer();
-    var length = 0;
-    for (final rune in cleaned.runes) {
-      final units = rune > 0xffff ? 2 : 1;
-      if (length + units > limit - 1) break;
-      buffer.writeCharCode(rune);
-      length += units;
-    }
-    return '${buffer.toString().trimRight()}…';
-  }
-}
- can match immediately before a final newline.
-      // Compare the entire match so a stored ID cannot inject another line
-      // into the supposedly one-line confirmed place overview.
-      if (_safeId.stringMatch(place.id) != place.id ||
-          idCounts[place.id] != 1) {
-        continue;
-      }
-      final name = _oneLine(place.name, 72, name: true);
-      if (name.isEmpty) continue;
-      final description = _oneLine(place.description, 220);
-      entries.add(
-        ConfirmedPlaceResumeEntry._(
-          placeId: place.id,
-          name: name,
-          description: description.isEmpty
-              ? 'keine gespeicherte Beschreibung'
-              : description,
-        ),
-      );
-      if (entries.length == maxPlaces) break;
-    }
-    final selection = ConfirmedPlaceResumeSelection._(
-      campaignId: campaign.id,
-      sessionId: campaign.sessionId,
-      revision: campaign.revision,
-      entries: entries,
       sourceStamp: _sourceStamp(campaign),
     );
     if (selection.playerOverview.length > 1800) {
