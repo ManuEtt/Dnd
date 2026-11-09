@@ -101,9 +101,7 @@ void main() {
     );
   });
 
-  test(
-    'valid place identities persist through JSON and SQLite restart',
-    () async {
+  test('valid IDs survive JSON and SQLite restart', () async {
     final original = _campaign(
       places: const [
         Place(id: 'gate-west', name: 'Westtor'),
@@ -150,6 +148,5 @@ void main() {
       await repository.close();
       await folder.delete(recursive: true);
     }
-    },
-  );
+  });
 }
