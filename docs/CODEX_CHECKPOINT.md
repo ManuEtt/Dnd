@@ -2513,3 +2513,11 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Kompatibilität/Migration:** Reine Vorprüfung ohne Spell-Cast, Würfel, Schaden, Slotverbrauch oder Kampagnenänderung. JSON, SQLite, Events, UI, Version und bestehende Spielstände unverändert; keine Migration.
 - **Quelle/Coverage:** Wizards of the Coast LLC, SRD 5.2.1, *Magic Missile*, S. 146, CC BY 4.0. Keine globale SRD-Abdeckung oder vollständige Zauberwirkung behauptet.
 - **NÄCHSTER SCHRITT:** PR erstellen, finale CI auf exakt dem PR-HEAD abwarten und jeden Format-/Testfehler im selben Branch korrigieren.
+
+
+## 09.11.2026 – PR-Erstellung für Magic-Missile-Katalogidentität
+
+- **PR:** [#665](https://github.com/ManuEtt/Dnd/pull/665), Draft gegen `main`.
+- **Branch:** `feat/chat-a/magic-missile-catalog-identity-20261109`; **aktueller HEAD vor diesem Dokumentationsnachtrag:** `d3456a3a9cf5362531cba4d593a7b6272c694713`.
+- **Status:** PR ist erstellt. Die Actions-Prüfung des Code-/Teststands wurde angestoßen; die finale CI auf dem abschließenden Dokumentations-HEAD ist noch ausstehend. Frühere/laufende Läufe auf Vorgängercommits gelten nicht als Abnahme.
+- **Nächster Schritt:** Nach diesem append-only Nachtrag den neuen Workflow abwarten und ausschließlich den finalen PR-HEAD als getestet dokumentieren.
