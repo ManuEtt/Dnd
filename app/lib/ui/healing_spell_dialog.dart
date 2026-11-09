@@ -317,7 +317,7 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                 KeyedSubtree(
                   key: ValueKey('healing-spell-name-offer-$_offerVersion'),
                   child: DropdownButtonFormField<String>(
-                    key: const ValueKey('healing-spell-name'),
+                    key: const ValueKey('healing-spell-name-$_offerVersion'),
                     initialValue: _spell!.name,
                     isExpanded: true,
                     decoration: const InputDecoration(labelText: 'Heilzauber'),
@@ -338,7 +338,7 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                 KeyedSubtree(
                   key: ValueKey('healing-spell-class-offer-$_offerVersion'),
                   child: DropdownButtonFormField<String>(
-                    key: const ValueKey('healing-spell-class'),
+                    key: const ValueKey('healing-spell-class-$_offerVersion'),
                     initialValue: _castingClass,
                     isExpanded: true,
                     decoration: const InputDecoration(
@@ -367,7 +367,7 @@ class _HealingSpellDialogState extends State<HealingSpellDialog> {
                   KeyedSubtree(
                     key: ValueKey('healing-spell-slot-offer-$_offerVersion'),
                     child: DropdownButtonFormField<String>(
-                      key: const ValueKey('healing-spell-slot'),
+                      key: const ValueKey('healing-spell-slot-$_offerVersion'),
                       initialValue: _slotKey,
                       isExpanded: true,
                       decoration: const InputDecoration(
