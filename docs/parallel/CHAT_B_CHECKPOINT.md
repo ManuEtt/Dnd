@@ -946,3 +946,19 @@ Folgende Fach-PRs von Arbeitsbereich B sind im Branch `integration/open-prs-2026
 
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
+
+
+---
+
+## Chat B – verneinte Rückreisen in Rabenwacht respektieren (09.11.2026)
+
+- **Basis-main:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`.
+- **Branch:** `fix/chat-b/rabenwacht-negated-travel-20261109`; Draft-PR wird nach Code-/Dokumentationsprüfung angelegt.
+- **Ausgangsproblem:** `RabenwachtStoryModule._revisit` kombinierte Reiseverben und Ortsnamen, wertete die Negation aber nicht aus. Ein Satz wie „Ich gehe nicht zurück zur Mühle“ konnte den Helden trotzdem dorthin versetzen.
+- **Implementiert:** Bei erkanntem bekannten Ziel plus Negation wird die Bewegung abgelehnt und eine Klarstellung erbeten. Positiv formulierte Rückreisen bleiben erhalten.
+- **Tests:** drei neue Regressionen für negierte Rückreise, positive Rückreise und negierte Ortsnennung ohne Reisebefehl. Prüfen Etappe, Ort, Szene und Heldenwerte.
+- **Dateien:** `app/lib/story/rabenwacht_campaign.dart`, `app/test/rabenwacht_negated_revisit_test.dart`, README und zentrale/persönliche Checkpoints (jeweils nur Nachtrag am Ende).
+- **Kompatibilität:** keine Migration, keine Regel-/XP-/HP-/Quest-/Ressourcenänderung, kein Schema-/Versions-/Providerwechsel.
+- **Konfliktprüfung:** 53 offene PRs einschließlich ihrer geänderten Dateien geprüft; keine Überschneidung mit den beiden Fach-/Testdateien.
+- **GETESTET:** Änderungen auf eigenem Branch gesichert. **NICHT GETESTET:** lokaler Dart-/Flutter-Test mangels SDK, GitHub-CI auf finalem HEAD, Android-Gerät/produktive KI.
+- **Nächster Schritt:** finale vollständige PR-CI abnehmen, rote Schritte auf demselben Branch korrigieren, anschließend an Chat D zur koordinierten Integration übergeben.
