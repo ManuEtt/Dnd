@@ -22,11 +22,7 @@ class ConfirmedNpcContinuityExcerpt {
     if (!_validId.hasMatch(npcId) || maxNotes < 1 || maxNotes > 3) {
       throw const FormatException('Ungültige NPC-Kurzfassung.');
     }
-    final snapshot = NpcContinuityReader.read(
-      campaign,
-      npcId: npcId,
-      limit: 1,
-    );
+    final snapshot = NpcContinuityReader.read(campaign, npcId: npcId, limit: 1);
 
     // A note ID is evidence only when it uniquely identifies one saved
     // record across the campaign. Legacy in-memory states may bypass the
