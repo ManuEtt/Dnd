@@ -118,7 +118,6 @@ internal class JsonBackupBridge(
             return true
         }
         val resolver = activity.contentResolver
-        val context = activity.applicationContext
         try {
             workers.execute {
                 try {
