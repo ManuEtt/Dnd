@@ -68,6 +68,7 @@ void main() {
       _note('shared', 'mira', 'Falsche Zuordnung.'),
       _note('shared', 'tarek', 'Gleiche Notiz-ID.'),
       _note('bad id', 'mira', 'Leerzeichen in ID.'),
+      _note('linebreak\n', 'mira', 'Abschließender Zeilenumbruch in ID.'),
       _note('hidden\u200bmark', 'mira', 'Unsichtbare ID.'),
       _note('valid', 'mira', 'Mira kennt den Brunnenschlüssel.'),
     ]);
@@ -82,6 +83,7 @@ void main() {
     expect(excerpt, isNot(contains('Falsche Zuordnung')));
     expect(excerpt, isNot(contains('Gleiche Notiz-ID')));
     expect(excerpt, isNot(contains('Leerzeichen in ID')));
+    expect(excerpt, isNot(contains('Abschließender Zeilenumbruch in ID')));
     expect(excerpt, isNot(contains('Unsichtbare ID')));
     expect(RegExp('Bestätigte Notiz').allMatches(excerpt), hasLength(1));
   });
