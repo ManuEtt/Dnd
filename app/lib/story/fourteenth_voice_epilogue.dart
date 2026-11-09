@@ -30,6 +30,44 @@ class FourteenthVoiceEpilogue {
     r'\b(?:nicht|niemals|ohne|kein(?:e|en|em|er|es)?)\b',
   ).hasMatch(text);
 
+  // Merely mentioning an NPC, a letter or a place is not a confirmed visit.
+  // Only an explicit, whole player action can move the campaign and record
+  // that person's testimony. Do not infer one person from a list of names.
+  static bool _visits(String text, String npc, String place) {
+    final action = text.replaceAll(RegExp(r'[.!]+$'), '').trim();
+    return RegExp(
+      '^(?:'
+      '(?:ich|wir) (?:besuche|besuchen|suche|suchen|treffe|treffen) '
+      '(?:$npc|$place)|'
+      '(?:ich|wir) (?:spreche|sprechen|rede|reden) mit $npc|'
+      '(?:ich|wir) (?:gehe|gehen|laufe|laufen) '
+      '(?:zu|zum|zur|ins|in das) (?:$npc|$place)|'
+      '(?:ich|wir) (?:möchte|möchten|will|wollen) '
+      '(?:$npc|$place) besuchen|'
+      '(?:besuche|besuchen) (?:$npc|$place)|'
+      '$npc besuchen'
+      r')$',
+    ).hasMatch(action);
+  }
+
+  static bool _returnsToSquare(String text) {
+    final action = text.replaceAll(RegExp(r'[.!]+$'), '').trim();
+    return const {
+      'zurück',
+      'zurueck',
+      'zurück zum dorfplatz',
+      'zurueck zum dorfplatz',
+      'ich gehe zurück',
+      'ich gehe zum dorfplatz',
+      'ich gehe zurück zum dorfplatz',
+      'ich kehre zurück zum dorfplatz',
+      'ich kehre zum dorfplatz zurück',
+      'wir gehen zurück',
+      'wir gehen zum dorfplatz',
+      'zum dorfplatz gehen',
+    }.contains(action);
+  }
+
   static bool _hasRealEnding(Campaign c) =>
       const {
         'end-oath',
@@ -238,7 +276,7 @@ class FourteenthVoiceEpilogue {
           'Niemand wird ohne deinen Entschluss besucht.',
         );
       }
-      if (_said(text, 'elda|teller|zeichnung')) {
+      if (_visits(text, 'elda', 'eldas haus')) {
         return _move(
           c,
           'voice-epilogue-elda',
@@ -257,7 +295,7 @@ class FourteenthVoiceEpilogue {
           gained: {'voice:epilogue:elda': 'true'},
         );
       }
-      if (_said(text, 'tarek|gasthaus|brief')) {
+      if (_visits(text, 'tarek', 'gasthaus')) {
         return _move(
           c,
           'voice-epilogue-tarek',
@@ -275,7 +313,7 @@ class FourteenthVoiceEpilogue {
           gained: {'voice:epilogue:tarek': 'true'},
         );
       }
-      if (_said(text, 'liora|brunnen|fremde')) {
+      if (_visits(text, 'liora', 'brunnen')) {
         return _move(
           c,
           'voice-epilogue-liora',
@@ -325,7 +363,7 @@ class FourteenthVoiceEpilogue {
       'voice-epilogue-tarek',
       'voice-epilogue-liora',
     }.contains(stage)) {
-      if (_said(text, 'zurück|zurueck|dorfplatz|platz') && !_negated(text)) {
+      if (_returnsToSquare(text) && !_negated(text)) {
         return _move(
           c,
           'voice-epilogue-square',

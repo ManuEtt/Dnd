@@ -2451,3 +2451,50 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
 
+
+## 07.11.2026 – SRD-Ritualberechtigung gegen gefälschte Zaubermetadaten
+
+- **Bereich:** Regelwerk A. **Basis-main:** `0a813df100aa649c2204018349b0db9af09fb83f`. **Branch:** `feat/chat-a/ritual-catalog-identity-20261107`. **Fachcommit:** `8b98068173f4932d1349f29ca8464034bcfb71a5`. **PR:** [#622](https://github.com/ManuEtt/Dnd/pull/622) (Draft bis vollständiger CI).
+- **Problem:** `SrdRitualCastingRules.preflight` akzeptierte formell gültige, von außen gefälschte Ritualkennzeichen/Wirkzeiten und konnte einem Nicht-Ritualzauber wie `Magic Missile` einen **kostenlosen Ritualplan** ausstellen. Vorbereitung und Zauberklassenprüfung allein binden die Ritualberechtigung nicht an den konkreten SRD-Zauber.
+- **Implementiert:** 29 im aktuellen Arbeitsindex als Ritual markierte Zauber exakt an *Name, ID, Grad, Wirkzeit und geordnete vollständige Klassenliste* gebunden. Unbekannte bzw. gefälschte Ritualidentitäten werden `FormatException`; unbekannte Grammatik der Ritualwirkzeit bleibt `UnsupportedError`. Bestehende +10-Minuten-Logik, Klassen-/Vorbereitungs-/Komponentenprüfungen bleiben unangetastet. Es wird kein Effekt ausgeführt und kein Slot verbraucht.
+- **Geänderte Fachdateien:** `app/lib/domain/srd_ritual_casting_rules.dart`, neuer `app/test/srd_ritual_catalog_identity_test.dart`; nur datierte additive Nachträge in `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`.
+- **Neue Regressionen:** Alle 29 bestehenden Ritual-Metadatentupel gegen die gesamte 339er-Indexdatei statisch validiert; positive Lesetests aller 29, negative Nicht-Ritual-Fälschungen, falsche IDs/Namen/Level/Wirkzeiten/Klassenlisten, unveränderte Slot- und JSON-Zustände, stale plan. Vorhandener `srd_ritual_casting_rules_test.dart` bleibt aktiv. **Keine** vollständige SRD-Metadaten-Reconciliation behauptet.
+- **Fachregel:** Wizards of the Coast LLC, *SRD v5.2.1*, *Spells / Casting without Slots / Rituals; Longer Casting Times*, CC BY 4.0, https://www.dndbeyond.com/srd. Nicht alle Zaubereffekte/Ziele/Materialverbräuche/Zeituhr umgesetzt.
+- **Parallelität:** Alle zum Auswahlzeitpunkt 38 offenen PRs auf dieselben Fachdateien geprüft, keine Überschneidung. Gemeinsame README-/Checkpoint-Nachträge nur am Dateiende, Integrationsbereich D konsolidiert.
+- **Getestet:** 29/29 Katalogmetadaten geprüft, positive/negative Unitfälle implementiert. Kein Dart-/Flutter-SDK lokal; GitHub-CI finaler HEAD derzeit noch nicht erfolgreich nachgewiesen.
+- **Nicht getestet:** Finale Python-/Backend-/Dart-Format-/Flutter-Analyse/Flutter-Tests/Android-Debug-/native/ABI-APKs auf PR-HEAD; reales Android-Gerät, kombinierter Merge mit parallelen PRs.
+- **Kompatibilität/Migration:** Keine Änderungen an `models.dart`, `game_engine.dart`, JSON, SQLite, API, Story/UI/Backend, Android-Build-Version, keine Migration. Gültige bisherige Index-Rituale bleiben zulässig.
+- **Nächster Schritt:** GitHub-Actions-Lauf am letzten PR-HEAD auswerten, konkreten Format-/Testfehler falls nötig im selben Branch beheben und erst bei vollständigem CI-Erfolg zur Review freigeben.
+
+
+## 07.11.2026 – Explizite NPC-Besuche im Rabenwacht-Epilog (PR #628)
+
+- **Main-Basis:** `1816115990cc7420ecfb2d1ba7c6babb557f76da`; **Branch:** `fix/chat-b/epilogue-explicit-npc-visit-20261107`; **PR:** [#628](https://github.com/ManuEtt/Dnd/pull/628), initial Draft.
+- **IMPLEMENTIERT:** `FourteenthVoiceEpilogue.advance` legt NPC-Besuche nur bei expliziter Spielerhandlung fest, nicht mehr durch beliebige Teilwortnennungen von Elda/Tarek/Liora, Brief, Brunnen, Zeichnung oder Teller. Rückkehr zum Dorfplatz benötigt gleichfalls ein eindeutiges Kommando. Eine bloße Erörterung setzt keine `voice:epilogue:<npc>`-Fakten und zählt nicht zur Mindestzahl bestätigter Zeugen.
+- **Code/Tests:** `app/lib/story/fourteenth_voice_epilogue.dart` und neuer `app/test/rabenwacht_epilogue_explicit_visit_test.dart` (fünf positive/negative Gruppen: bloße Erwähnungen, acht reale Besuchsaktionen, explizite Rückkehr, JSON-Wiederaufnahme, SQLite-Reopen mit Journalrekonstruktion). Read-only Negativfälle, unveränderte ursprüngliche Spielstände, Helden-/Questdaten und Revision.
+- **Dokumentation:** `README.md` ausschließlich am absoluten Dateiende ergänzt, zentraler und Chat-B-Checkpoint additiv aktualisiert. Bereits bestehende Abschnitte erhalten.
+- **GETESTET:** Live-Masterprompt und Projektunterlagen gelesen, Main/CI überprüft, 42 offene PRs anhand Fachdateien auf Überschneidungen geprüft, eigener Branch erstellt, Code und Tests committed. Der vorige PR #623 hat grüne CI, das ist kein Nachweis für #628.
+- **NICHT GETESTET/BLOCKIERT:** Finaler CI-Lauf mit Dart-Format, Flutter-Analyse/-Gesamttests, Android-Debug/ABI-Builds und Alpha-Release bei Erstellung dieser Notiz noch offen. Keine Realgerät-, Produktiv-KI- oder Upgrade-Abnahme.
+- **Kompatibilität:** Keine Migration und keine Änderung an SQLite-/JSON-Schema, Regelengine, Heldenwerten, NPC-Speichermodell, Questlogik oder App-Version. Nur die bewusste Story-Navigation wird enger validiert.
+- **NÄCHSTER SCHRITT:** Final-HEAD-CI vollständig abnehmen; bei Problemen Code-/Testursachen auf eigenem Branch korrigieren; erst bei grünem Gesamtworkflow PR zur Review freigeben. Chat D integriert README-/Checkpoint-Konflikte verlustfrei, kein automatischer Merge.
+
+## 08.11.2026 – Heilzauber-Dialog aktualisiert Live-Helden-Snapshots (PR #651)
+
+- **Basis-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; während Entwicklung Hauptstand `404e9a5fc9b7d1c231b7bdd52c61319d4eb57752` aus geprüfter #648-Integration aufgenommen. **Arbeitsbranch:** `feat/chat-c/healing-spell-live-hero-refresh-20261108`; [PR #651](https://github.com/ManuEtt/Dnd/pull/651) (Draft); Fachcommit `3f21b9bf0d2d6dd994795faa22c07b73c376b0cd`, Test `a1bbd11dead44b819114da3e0f69d9aa6ff84bbc`, Main-Merge `ba16c4f36a684900d148f263a024ab5bafef52fa`. Endgültigen Branch-HEAD nach Doku über GitHub prüfen.
+- **IMPLEMENTIERT:** `app/lib/ui/healing_spell_dialog.dart` ermittelt die vorbereiteten Heilzauber, zulässige Klassen und freie reguläre/Pakt-Plätze erneut, sobald der geöffnete Dialog einen anderen Hero-Snapshot erhält. Alte Komponentenfreigaben, Wahl-/Fehlerzustände und interne Dropdown-Werte werden invalidiert; identischer Snapshot bei einfachem Rebuild bleibt erhalten. Bewusste Wahl bleibt Aufgabe des Benutzers, Regelausführung des Controllers.
+- **Fachtest:** `app/test/healing_spell_live_snapshot_test.dart` mit sechs positiven/negativen Widgettests, einschließlich 320/360 dp, 200 % Android-Schrift und 220 dp simulierter Tastatur; Live-Klassen-, Zauber-, Ressourcen- und Fehlersnapshot-Änderungen sowie Spielstands-JSON-Unverändertheit. Die bereits vorhandene Heilzauber-Dialogsuite bleibt unangetastet.
+- **GETESTET:** Quellcode, Masterprompt, erforderliche Projektdokumente, 58 offene PRs mit Fachdateipfaden und aktuellen Main-Merge geprüft; eigener Branch/PR erstellt. Erfolgreiche Vorgänger-Main-CI [#42515726252](https://github.com/ManuEtt/Dnd/actions/runs/42515726252) belegt nur #648-Integrationsstand, nicht dieses neue Arbeitspaket.
+- **NICHT GETESTET:** Neue Flutter-/Dart-/Python-/Backend-/Android-GitHub-CI auf finalem Branch-HEAD sowie physischer Android-/TalkBack-Test; lokale SDKs fehlen.
+- **BLOCKIERT:** Vor vollständiger CI-/Review-Abnahme und erneutem Main-/PR-Dateivergleich kein Merge. README sowie persönliche und zentrale Checkpoints auf diesem Branch ausschließlich append-only.
+- **NOCH NICHT IMPLEMENTIERT:** Reale Android-/TalkBack-/IME-Abnahme, keine Änderung an Regelengine, KI, Spielständen, Berechtigungen, `0.8.52+102` oder SQLite-/JSON-Formaten.
+- **NÄCHSTER SCHRITT:** Physische Android-Geräteprüfung der Live-Heilzauber-Auswahl mit TalkBack bei 320 dp/200 % Text und geöffneter Tastatur; Altbestätigungen nach Helden-/Ressourcenwechsel dürfen nicht mehr auswählbar sein.
+
+
+## 09.11.2026 – Fachlich unabhängige Integrationsvorbereitung (Ritual, Epilog, Heilzauber)
+
+- **Main-Basis:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`.
+- **Originale PR-HEADs:** #622 `62e05784e5d392e121dd349d34d90356525b8daf`, #628 `64c88176c74308c3ea3127aac14529563caba283`, #651 `59b8c5fd323785d885acc6224f6948db99293ee2`.
+- **Geprüft:** Alle drei Original-CIs auf den exakten jeweiligen PR-Heads vollständig erfolgreich, jeweils sechs Jobs. GitHub-Fachdateien und Tests unverändert gegenüber den Quell-PRs; die produktiven Fachdateien wurden seit ihren Merge-Bases in `main` nicht verändert. Kein anderer offener PR bearbeitet die sechs Ziel-Fach-/Testpfade.
+- **Koordination:** Separater Integrationsbranch mit drei Quell-Heads als Git-Eltern, append-only Historie von README, zentralem und individuellen Checkpoints, Integrationsreport. Keine Änderungen an Spielständen, SQLite/JSON, Versionsnummer oder Backups.
+- **Nicht getestet:** Kombinierter Commit noch nicht durch CI abgenommen; Android-Gerätetests nicht durchgeführt.
+- **Freigabegate:** Nur nach vollständig erfolgreicher Integrations-CI, unverändertem PR-Head, Prüfung des neuesten `main` und erfolgreicher Main-CI integrieren. Danach bereits enthaltene Original-PRs schließen und Archivierungs-/Cleanup-Actions nachweisen.
