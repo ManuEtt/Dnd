@@ -961,3 +961,19 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **NICHT GETESTET:** Vollständige Flutter-/Dart-/Android-Release-CI auf finalem Branch-HEAD bei Erstellung dieses Nachtrags offen, echtes Android-Gerät, produktive KI, Bestands-Upgrade. Alte grüne CI von PR #623 ist kein Nachweis für #628.
 - **Kompatibilität:** Keine Migration, keine Schema-/JSON-Änderung, keine Regeln-/Kampf-/Ressourcenbuchung, keine KI-Provider-Änderung. Bisher gespeicherte NPC-Notizen und Besuche bleiben unangetastet.
 - **NÄCHSTER SCHRITT:** CI auf finalem Commit vollständig prüfen, Fehler auf eigenem Branch korrigieren, danach Draft zur Review freigeben; Chat D übernimmt konfliktfreie Dokumentationsintegration und Merge.
+
+
+---
+
+## Chat B – Rabenwacht: verneinte Rückreisen (09.11.2026)
+
+- **Aktuelle Basis-main:** `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`.
+- **Branch:** `fix/chat-b/rabenwacht-negated-travel-main-sync-20261109`.
+- **Problem:** `RabenwachtStoryModule._revisit` konnte eine Reise zu einem bekannten Ort ausführen, obwohl die Eingabe die Bewegung verneinte.
+- **Änderung:** Negierte Bewegung zu einem bekannten Ziel wird abgelehnt; die Story bleibt am bisherigen Ort und bittet um eine eindeutige Formulierung. Positive Rückreisen bleiben möglich.
+- **Tests:** drei Regressionen (negierte Rückreise, positive Rückreise, negierte Ortsnennung ohne Reisebefehl).
+- **Dateien:** `app/lib/story/rabenwacht_campaign.dart`, `app/test/rabenwacht_negated_revisit_test.dart`, README und zentrale/persönliche Checkpoints (nur append-only).
+- **Kompatibilität:** keine Migration oder Änderungen an Regeln, Spielständen, HP/XP, Ressourcen, Quests oder Providervertrag.
+- **Integrationskorrektur:** Der frühere PR-Branch war gegenüber main um 27 Commits zurückgefallen. Da main nur die drei Dokumentationspfade verändert hatte, wurde der kleine Fachpatch samt Test auf aktuellem main neu aufgebaut und die Doku-Nachträge wurden dort neu angehängt.
+- **GETESTET:** Änderungen auf aktuellem main versioniert. **NICHT GETESTET:** lokaler Dart-/Flutter-Lauf, vollständige GitHub-CI, Android-Gerät/produktive KI.
+- **Nächster Schritt:** PR-CI vollständig abnehmen und erst danach zur koordinierten Integration übergeben.
