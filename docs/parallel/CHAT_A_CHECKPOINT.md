@@ -1448,3 +1448,16 @@ SrdClassLevelUpRules.propose prüft vor jeder Klassenstufenberechnung die bekann
 Neue Regression deckt sechs ungültige Profilformen bei Auswahl der Haupt- und Zweitklasse ab. Vorhandene positive Einzel-/Mehrklassen- und Klassenkapstone-Tests bleiben unverändert. Lokale Dart-/Flutter-Ausführung ist nicht verfügbar. Frühere CI-Läufe scheiterten an Formatierung; der formatierte finale Head ist noch nicht erfolgreich abgenommen. Kein Gerätetest und keine produktive Signierungsabnahme behauptet.
 
 Keine Änderung an Modellen, Spielständen, JSON-/SQLite-Schema, Story oder UI; keine Migration. Alte Profile bleiben lesbar, ungültige Stufenaufstiege werden blockiert.
+
+
+## 2026-11-09 – Dart-Formatkorrektur der Klassenprofilvalidierung
+
+**CI-Befund:** [Lauf #42700994265](https://github.com/ManuEtt/Dnd/actions/runs/42700994265) bestand Projektstruktur, Modulgrenzen, SRD-Register, Python-Paketprüfungen sowie Backend-Typprüfung, Build und Tests. Dart-Formatierung brach ausschließlich bei `app/lib/domain/srd_class_level_up.dart` ab; Flutter-Analyse, Flutter-Tests und Android-Build wurden übersprungen.
+
+**Korrektur:** Die problematische verschachtelte ternäre Bedingung wurde in explizite sequenzielle Guards umgebaut. Der Guard prüft die bekannte Hauptklasse und Gesamtstufe, bei Zweitklasse deren SRD-Identität, Verschiedenheit und Stufensplit sowie ohne Zweitklasse den Nullwert der Zweitklassenstufe. Commit: `46d702606c92cd39061460a786cc115ceb5a5e5e`; README-, zentraler und persönlicher Checkpoint wurden append-only ergänzt.
+
+**Nicht getestet / Blockiert:** Für Commit `46d702606c92cd39061460a786cc115ceb5a5e5e` liegt noch kein neuer CI-Lauf vor. Kein lokales Dart-/Flutter-SDK. Kein Formatter-, Flutter-, APK- oder Gerätetest auf dem neuen Stand behauptet.
+
+**Kompatibilität:** Keine Änderung an Datenmodell, Spielständen, JSON-/SQLite-Schema, Story, UI, API oder App-Version; keine Migration.
+
+**Nächster Schritt:** Vollständige Actions-Abnahme des dokumentierten finalen PR-Heads. Bei Formatter-Erfolg Flutter-Analyse, vollständige Tests und Android-/Alpha-Builds prüfen; PR bis dahin Draft lassen.
