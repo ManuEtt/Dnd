@@ -2498,3 +2498,18 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Koordination:** Separater Integrationsbranch mit drei Quell-Heads als Git-Eltern, append-only Historie von README, zentralem und individuellen Checkpoints, Integrationsreport. Keine Änderungen an Spielständen, SQLite/JSON, Versionsnummer oder Backups.
 - **Nicht getestet:** Kombinierter Commit noch nicht durch CI abgenommen; Android-Gerätetests nicht durchgeführt.
 - **Freigabegate:** Nur nach vollständig erfolgreicher Integrations-CI, unverändertem PR-Head, Prüfung des neuesten `main` und erfolgreicher Main-CI integrieren. Danach bereits enthaltene Original-PRs schließen und Archivierungs-/Cleanup-Actions nachweisen.
+
+
+## 09.11.2026 – Magic-Missile-Zielverteilung an vollständige Katalogidentität binden
+
+- **Bereich:** Regelwerk A. **Ausgangs-main:** `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`. **Branch:** `feat/chat-a/magic-missile-catalog-identity-20261109`.
+- **Ausgangsproblem:** `SrdMagicMissileMultiTargetRules.prepare` validierte Name, Grad, Wirkzeit, Reichweite, Komponenten, Flags und eine ungeordnete Klassenmenge. Der öffentliche Konstruktor von `SrdSpellDefinition` erlaubte jedoch eine gefälschte ID, Schule oder vertauschte Klassenreihenfolge, ohne dass die reine Zielverteilung dies erkannte.
+- **IMPLEMENTIERT:** Exakte Prüfung der vollständigen SRD-Identität: `spell-magic-missile`, `Magic Missile`, Grad 1, Schule Evocation, Klassen exakt `[Sorcerer, Wizard]` in Katalogreihenfolge, Action, 120 feet, V/S, Instantaneous und alle fünf Komponenten-/Wirkungsflags. Bestehende Ziel-, Sicht-, Reichweiten-, Deckungs- und gleichzeitige Geschosszuordnung bleiben bestehen.
+- **Geänderte Laufzeit-/Testdateien:** `app/lib/domain/srd_magic_missile_multi_target_rules.dart`, `app/test/srd_magic_missile_multi_target_rules_test.dart`. Neue Negativtests für falsche IDs, falsche Schule, vertauschte Klassen und doppelte Klassen; positiver Katalogfall.
+- **Dokumentation:** README-Nachtrag am absoluten Dateiende; dieser zentrale Checkpoint und `docs/parallel/CHAT_A_CHECKPOINT.md` additiv.
+- **Commits:** Fachcommit `0731f671d89cbbad603e83951a4e9f00b699f761`; Testcommit `b2e5a923ae91aa470da907ea0f381df1c61ad08f`; README-Commit `04aedc9a009b11e6382eb22c1563377b48ceb93f`. PR ist noch nicht erstellt.
+- **GETESTET:** Quellcode, Katalogeintrag und bestehende Teststruktur gelesen; Regressionen ergänzt. Keine lokalen Dart-/Flutter-Tests ausgeführt.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, betroffene Magic-Missile-Tests, vollständige Flutter-Suite, Python-/Backend-Gates, Debug-/ABI-APK, native Android-Tests und finale GitHub-CI auf dem endgültigen PR-HEAD.
+- **Kompatibilität/Migration:** Reine Vorprüfung ohne Spell-Cast, Würfel, Schaden, Slotverbrauch oder Kampagnenänderung. JSON, SQLite, Events, UI, Version und bestehende Spielstände unverändert; keine Migration.
+- **Quelle/Coverage:** Wizards of the Coast LLC, SRD 5.2.1, *Magic Missile*, S. 146, CC BY 4.0. Keine globale SRD-Abdeckung oder vollständige Zauberwirkung behauptet.
+- **NÄCHSTER SCHRITT:** PR erstellen, finale CI auf exakt dem PR-HEAD abwarten und jeden Format-/Testfehler im selben Branch korrigieren.
