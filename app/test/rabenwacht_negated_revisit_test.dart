@@ -45,13 +45,13 @@ void main() {
   test(
     'verneinte Ortsnennung ohne Reisebefehl löst keine Rückreise aus',
     () {
-    final before = atChapel();
-    final after =
-        engine.act(before, 'Ich möchte nicht zur Mühle.').campaign;
+      final before = atChapel();
+      final after =
+          engine.act(before, 'Ich möchte nicht zur Mühle.').campaign;
 
-    expect(after.storyBible['stage'], 'chapel');
-    expect(after.facts['location'], 'Kapelle');
-    expect(after.hero.toJson(), before.hero.toJson());
+      expect(after.storyBible['stage'], 'chapel');
+      expect(after.facts['location'], 'Kapelle');
+      expect(after.hero.toJson(), before.hero.toJson());
     },
   );
 }
