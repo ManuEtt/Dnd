@@ -2451,3 +2451,10 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
 
+## 2026-11-09 – Live-Snapshot-Wechsel im Heilzauberdialog
+- **Ausgangslage:** `HealingSpellDialog` initialisierte vorbereitete Heilzauber, Klassen, Zauberplätze und Komponentenbestätigungen ausschließlich in `initState`. Bei einem neuen `HeroCharacter` im bereits geöffneten Dialog konnten Auswahlfelder und Bestätigungen zum vorherigen Charakter gehören.
+- **Änderung:** Gemeinsame Initialisierung in `_initializeForHero`; `didUpdateWidget` lädt bei Austausch der Hero-Instanz alle abhängigen Werte neu und löscht Bestätigungen/Fehler. Eine an `ObjectKey(widget.hero)` gebundene Auswahl-Unterstruktur erneuert auch die Dropdown-Initialwerte.
+- **Regressionstest:** Neuer Widget-Test wechselt mit offenem Dialog von zwei Heilzaubern und aktiven Bestätigungen auf einen Charakter mit nur „Heilendes Wort“ und ohne freie Plätze. Erwartet werden die neue Zauberauswahl, zurückgesetzte Komponenten, keine veraltete Platzwahl und deaktivierte Bestätigung.
+- **Branch:** `feat/chat-c/healing-spell-live-hero-refresh-20261109-v2`. **CI/Build/PR:** zum Dokumentationszeitpunkt noch ausstehend; kein lokaler Flutter-/Dart-SDK-Nachweis. Kein Geräte-/TalkBack-Test.
+- **Grenzen:** Keine Änderung der Heilungsregeln, Ressourcenbuchung, persistierten Daten oder App-Version. Änderungen am Heldensnapshot werden anhand der Objektidentität erkannt; in-place Mutation eines unveränderlichen Modells ist nicht vorgesehen.
+- **Nächster Schritt:** Vollständige GitHub-Actions-CI am finalen PR-Head prüfen und eventuelle Format-/Testfehler korrigieren; danach Mergefähigkeit erneut kontrollieren.
