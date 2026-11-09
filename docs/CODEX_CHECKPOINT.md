@@ -2295,14 +2295,214 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **NOCH NICHT IMPLEMENTIERT:** Keine POSIX-Descriptor-basierte, durchgehende Race-Freiheit bei Verzeichnisänderungen während des Schreibens; kein Main-Merge von #640, keine Spielstands-/Datenbankschema-/Versionsänderung.
 - **NÄCHSTER SCHRITT:** Endgültige #640-CI auf tatsächlichem PR-Head in allen sechs Jobs erfolgreich abschließen, Main und offene PRs erneut prüfen und nur bei Konfliktfreiheit integrieren; danach neue Main-CI kontrollieren.
 
-## 08.11.2026 – Schadenswurf-Auswahl nach aktualisiertem Kampfangebot zurücksetzen (PR #647)
 
-- **Basis:** `main` `8bfaa22cded60e7731f5a3dc95684949bad49276`; **Branch:** `feat/chat-c/savage-attacker-live-offer-reset-20261108`; [PR #647](https://github.com/ManuEtt/Dnd/pull/647) (Draft). Fach-/Testcommit: `e2fbcc90c69891c4ab88f7b0e1b5f9df0c1fdfbe`; Branch-HEAD nach Doku ergänzen/aus GitHub lesen.
-- **IMPLEMENTIERT:** `SavageAttackerSelectionDialog.didUpdateWidget` verwirft die alte ausdrückliche Wahl eines Waffenwurfs bei Wechsel von Kampf-Snapshot, Angriff, Ziel, Würfel-/Kritischbeleg oder Trefferbestätigung. Bei unverändertem Angebot bleibt die Wahl bestehen. Nur der revidierte GameController darf Schaden und Talentverbrauch bestätigen.
-- **Dateien:** `app/lib/ui/savage_attacker_selection_dialog.dart`, `app/test/savage_attacker_live_offer_reset_test.dart`, additiv drei Dokumentationsdateien; keine Domain-/DB-/Regel-/Versionsänderung, keine Migration.
-- **TESTS ERGÄNZT:** fünf Flutter-Widgetfälle mit negativen/positiven Entscheidungen, identischem Parent-Rebuild, 320/360 dp, 200 % Schrift, 220 dp simuliertem IME, geänderter Revision/ungültigem Zug und gewechselten Würfeln; JSON vor/nach Dialog unverändert.
-- **GETESTET:** Remote-Basis, PR-Überschneidungen, Fachquellcode und Testbesteck geprüft, Branch-/PR-Schreibzugriff bestätigt. Letzte abgeschlossene Main-CI auf älterem Main-HEAD `0ce0ad86e9eddf8302e495561d12a889008de49a` erfolgreich [#42459031650](https://github.com/ManuEtt/Dnd/actions/runs/42459031650); dieser Beleg ist **kein Test für PR #647**.
-- **NICHT GETESTET:** Neue vollständige CI inklusive Python, Backend, Dart-Format, Flutter-Analyse/Tests und Android-Debug-/ABI-APKs auf dem finalen PR-HEAD; reales Gerät mit TalkBack/IME. Lokale Flutter/Dart-Tools fehlen, direkter Checkout wegen DNS nicht möglich.
-- **BLOCKIERT:** Technische CI-Abnahme/Review und verlustfreie Konsolidierung der parallel angehängten README-/Checkpoint-Nachträge stehen aus. Kein Main-Merge.
-- **NOCH NICHT IMPLEMENTIERT:** Android-Geräteabnahme und weitere allgemeine UI-Live-Zustandsprüfungen; keine neuen SRD- oder Storyfunktionen.
-- **NÄCHSTER SCHRITT:** Nach CI-Erfolg bei 320 dp auf Android/TalkBack den Live-Angriffswechsel samt frischer expliziter Wahl und nicht verändertem Spielstand durchspielen.
+
+---
+
+## 2026-11-07 – Magieinitiierten-Dialog: Quellenwechsel verliert keine Bestätigungsgrenze
+
+- **Ausgangs-main:** `bbe6ee0901f1873af67647bf54462e4a44821762`, **Branch:** `feat/chat-c/magic-initiate-background-swap-20261107`. Flutter-UI, keine konkurrierenden Fachdateien anderer offener PRs.
+- **IMPLEMENTIERT:** In `app/lib/ui/srd_magic_initiate_dialog.dart` leeren `didUpdateWidget` und nach Hintergrund gekeyte Dropdown-Subtrees bei einem laufenden Wechsel zwischen Akolyth/Weiser alle bisherigen, noch nicht bestätigten Zauber- und Attributsauswahlen. Nicht unterstützte Hintergründe werden nicht als Magierliste bezeichnet. Bestehende öffentliche Feld-Keys bleiben stabil.
+- **REGRESSIONEN:** `app/test/srd_magic_initiate_background_swap_test.dart`: 360 dp und 200 % Text mit IME, gültige Magierwahl nach Quellenwechsel; 320 dp und 200 % Text mit IME, geteilte Zauberwerte werden bei Wechsel nicht erneut anerkannt und Abbruch ändert nichts; nicht unterstützter Hintergrund bleibt deaktiviert.
+- **GETESTET:** Live-Repository/PR-Änderungslisten, Fachcode und bestehende SRD-UI-Tests geprüft; Dateien in GitHub committed. Keine vollständig ausgeführte CI für dieses Paket zum Dokumentationszeitpunkt.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse und Widgetsuite auf dem neuen Branch-HEAD, Python-/Backend-/Android-CI, Realgerät/TalkBack.
+- **BLOCKIERT:** Flutter-/Dart-SDK lokal nicht verfügbar; GitHub-Actions-Gesamtprüfung erforderlich.
+- **KOMPATIBILITÄT:** SRD-/Story-/Domain-/Persistenz-/SQLite-/JSON-Verträge und App-Version `0.8.52+102` unverändert. Kein automatisches Speichern oder Slotverbrauch.
+- **NÄCHSTER SCHRITT:** Eigenen Draft-PR erstellen, CI auf finalem Commit auswerten, Abweichungen korrigieren und bei vollständigem Erfolg zur Review freigeben, ohne nach main zu mergen.
+
+
+
+---
+
+## 2026-11-08 – Charaktereffekt-Auswahl nach Typwechsel erneut bestätigen
+
+- **Ausgangs-main:** `0ce0ad86e9eddf8302e495561d12a889008de49a`, **Branch:** `feat/chat-c/character-effect-kind-consent-reset-20261108` (Chat-C-UI, keine Überschneidung der Fachdateien mit anderen aktiven PRs).
+- **IMPLEMENTIERT:** `app/lib/ui/character_effect_dialog.dart` verwirft beim Wechsel zwischen Schaden/Heilung/temporären TP alle bisher als bestätigt markierten nur artbezogenen Checkboxen (Resistenz, Anfälligkeit, Immunität, kritisch und TP-Ersetzen) sowie die letzte Schadensart. Unverändertes Verhalten ohne Typwechsel.
+- **REGRESSIONSTESTS:** `app/test/character_effect_kind_consent_reset_test.dart` prüft Schadensfreigaben, Feuer → Energie, Rückkehr zum ursprünglichen Typ ohne alte Zustimmung, TP-Ersetzfreigabe und Abbruch ohne Heldenmutation auf 320/360 dp mit 200 % Text/IME.
+- **GETESTET:** Testkonventionen und Fachcode im GitHub-Main abgeglichen, Code-/Testcommits gespeichert. Ausführung aller Tests auf diesem Stand steht noch aus.
+- **NICHT GETESTET:** Flutter-Format/Analyse/Widgettests, Python/Backend/Gradle/Android-Pakete und Android-TalkBack-Gerät.
+- **KOMPATIBILITÄT:** Kein Eingriff in Regeln, Persistenz, SQLite-/JSON-Datenmodell oder App-Version `0.8.52+102`; bestätigte Spielstände unverändert.
+- **BLOCKIERT:** Vollständige GitHub-Actions-Abnahme auf endgültigem Commit; keine ungetestete Review-Freigabe.
+- **NÄCHSTER SCHRITT:** Draft-PR erstellen, CI inkl. positivem und negativem Weg prüfen und bei Bedarf denselben Branch reparieren; kein Main-Merge.
+
+
+## 2026-11-08 – Geprüfte UI-Dialogkorrekturen zusammenführen
+
+- **Arbeitszweig:** `integration/reviewed-ui-resets-20261108`, Basis `main` `8bfaa22cded60e7731f5a3dc95684949bad49276`.
+- **Quellen:** PR #634 `eebaecf173ccb613ab9f10f68ab45245d2ad579f` und PR #642 `322889b5ecbbc901c0732a03989bad2d912640db` als zusätzliche unveränderte Commit-Vorfahren. Getrennte UI-/Testdateien übernommen; gemeinsame README-/Checkpoint-Nachträge append-only zusammengeführt.
+- **Einzel-CI:** #42457887639 und #42458556507 `completed/success` auf den genannten Quell-Heads; `main`-CI #42514079690 `completed/success` auf Ausgangs-HEAD.
+- **Kombinierte CI:** auf dem Integrations-HEAD noch nicht ausgeführt; erst nach grünem Ergebnis für Review und nach frischem Main-/PR-Abgleich für Merge freigeben.
+- **Kompatibilität:** Keine Änderung an Schema, Spielständen, App-Version, Regeln oder KI-Erzählung. Echte Android-/TalkBack-Gerätetests nicht durchgeführt.
+- **Nächster Schritt:** neuen Integrations-PR erstellen und vollständige Android-/Flutter-/Python-/Backend-CI auf finalem HEAD prüfen.
+
+## 2026-11-08 – Raw-URI-Literale in den Story-/Regelmodulgrenzen erkennen
+
+- **Ausgangs-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; nachgewiesene Main-CI [#42514079690](https://github.com/ManuEtt/Dnd/actions/runs/42514079690): erfolgreich auf genau dieser Basis.
+- **Branch/PR:** `fix/chat-d/raw-dart-uri-boundary-20261108`, [PR #649](https://github.com/ManuEtt/Dnd/pull/649) (Draft, nicht in `main`); Fachcommit `ed09317a6fadaa04ecc6f9e3fa2b917d733ab248`, Testcommit `ca860df1e97775fbae5155623ca05c0c77815944`.
+- **IMPLEMENTIERT:** Der Modulgrenzen-Prüfer akzeptiert optionalen Dart-Raw-String-Präfix bei direktem `import`, `export`, `part`, `part of` sowie bei bedingten URI-Zweigen. Verbotene Story-Provider/Regel-Abhängigkeiten werden dadurch auch für solche Direktiven erkannt; keine fachliche App-Änderung.
+- **TESTS ERGÄNZT:** `scripts/tests/test_domain_boundaries.py` hat drei neue Python-Testmethoden mit sieben unmittelbaren Negativfällen, drei konditionalen Negativfällen und zulässigen Positivfällen einschließlich kommentierter und mehrzeiliger Stringbeispiele.
+- **GETESTET:** GitHub-Zustand mit 56 zum Arbeitsstart offenen PRs samt Fachdateilisten auf Überschneidungen geprüft; Quellcode und Tests auf eigenem Branch gesichert. Die oben genannte Main-CI ist ausdrücklich kein Test der neuen Änderung.
+- **NICHT GETESTET:** vollständige neue Python-/Backend-/Flutter-/Android-/Release-CI auf finalem PR-HEAD; kein lokaler Checkout wegen GitHub-DNS-Ausfall, weder Dart- noch Flutter-SDK vorhanden; Realgerät und Altdatenupgrade nicht geprüft.
+- **BLOCKIERT:** Vollständiger finaler CI-Nachweis und frische Integrationskontrolle stehen aus.
+- **KOMPATIBILITÄT:** SQLite/JSON/Backup-Format, Spielstände, App-/Build-Version, Regel- und Storyzustand unverändert; keine Migration.
+- **NÄCHSTER SCHRITT:** Python-Regressionen und alle sechs GitHub-CI-Jobs für [PR #649](https://github.com/ManuEtt/Dnd/pull/649) am tatsächlichen finalen Commit prüfen, danach erst über reguläre Main-Integration entscheiden.
+
+
+## 2026-11-08 – Dateirechte beim Quell-ZIP-Export auf gewöhnliche rwx-Bits beschränken
+
+- **Basis-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; dort [Android-Main-CI 42514079690](https://github.com/ManuEtt/Dnd/actions/runs/42514079690) erfolgreich.
+- **Branch/PR:** `fix/chat-d/source-zip-safe-modes-20261108`, [#650](https://github.com/ManuEtt/Dnd/pull/650) als Draft; Code `4d7bb9a0a9c8ff208b3b799cafeb7f42af811470`, Test `3ea18bde7fd75794e7f6f15c8d797e3d211e56e6`, Testfixture `48342a3033990a0833351cddcc7bac5a4a7badf1`.
+- **IMPLEMENTIERT:** `scripts/package_project.py` verwendet für ZIP-External-Attributes statt aller `S_IMODE`-Bits nur `stat.S_IFREG | (stat.S_IMODE(before.st_mode) & 0o777)`. Dadurch werden Setuid/Setgid/Sticky nicht weitergereicht, normale Ausführbarkeit, unveränderte Inhalte und Archivintegrität bleiben erhalten.
+- **Regressionen:** `scripts/tests/test_package_project.py` enthält einen neuen POSIX-Unittest mit drei Fällen (4755, 2750, 1755) für Statusbits, rwx, Dateityp und Inhalt; bestehende positive Archive-/Checksum-Tests nicht entfernt.
+- **Konflikte:** Vor Beginn 57 offene PRs (einschließlich unabhängigem #649) und fachliche Dateilisten geprüft; kein fremder PR berührt Exporter oder zugehörigen Test. Gemeinsame Dokumentation ausschließlich angehängt, bei Merge verlustfrei konsolidieren.
+- **GETESTET:** GitHub-Fachcode und Tests committed; Ausgangs-Main-CI nachgewiesen. Dieser ältere Erfolg ist **keine** neue CI-Abnahme.
+- **NICHT GETESTET:** Python-Unittests, allgemeine Projektprüfungen, Backend/Flutter/Android-Debug/ABI-/Release-CI auf dem abschließenden PR-HEAD; echtes Geräteupgrade. GitHub-DNS verhindert lokalen vollständigen Repository-Checkout.
+- **BLOCKIERT:** Vollständige CI-Abnahme und danach frische Main-/PR-Konfliktprüfung; PR Draft, nicht gemerged.
+- **Kompatibilität:** keine Änderung an Spielstands-/Backupformat, SQLite 3, äußerem JSON 1, App-Version oder D&D-Spielmechanik; keine Migration.
+- **Nächster Schritt:** Finalen PR-#650-GitHub-Actions-Lauf einschließlich Python-/Backend-/Flutter-/Android-/Release-Gates auswerten und nur nach grünem, konfliktfreiem Nachweis integrieren.
+
+## 2026-11-08 – Zwei einzeln geprüfte Qualitätskorrekturen verlustfrei in Integrations-PR #652 kombiniert
+
+- **Ausgangs-main:** `404e9a5fc9b7d1c231b7bdd52c61319d4eb57752`, [Main-CI #42518852945](https://github.com/ManuEtt/Dnd/actions/runs/42518852945) erfolgreich.
+- **Integrationsbranch:** `fix/chat-d/integrate-reviewed-quality-20261108`; **Draft-PR:** [#652](https://github.com/ManuEtt/Dnd/pull/652). Integrationscommit `c9cda978ea5cc5dc3d6526d436b909769dc593f1` mit Main und beiden geprüften Quell-HEADs als drei Git-Eltern.
+- **Herkunft:** [#649](https://github.com/ManuEtt/Dnd/pull/649) `5c8b670ef2f8af881b8a257895a943089af9af49` und [#650](https://github.com/ManuEtt/Dnd/pull/650) `e729ff0f570ca1a438a59bbb8ef0742e4aba5f63`, beide vollständig sechsfach grüne CI auf diesen Heads.
+- **IMPLEMENTIERT:** Vier Fachcode-/Testblobs unverändert aus den beiden Quell-PRs, gemeinsame README-/Checkpoint-Nachträge ausschließlich nach dem vollständigen aktuellen Main-Präfix angehängt; [Integrationsbericht](parallel/INTEGRATION_20261108_QUALITY.md) enthält Dateiabgleich. Acht betroffene Dateien vor diesem PR-Nachtrag.
+- **GETESTET:** Einzel-CIs je sechs Jobs erfolgreich, Hauptbranch-CI erfolgreich, drei Git-Eltern und historische Dokumentationspräfixe geprüft. Nicht als gemeinsame Integrations-CI ausgegeben.
+- **NICHT GETESTET/BLOCKIERT:** Vollständige kombinierte GitHub Actions (Python, Backend, Flutter, Android-Debug, drei ABI-APKs, Release) auf dem abschließenden Dokumentationscommit; kein Main-Merge ohne diese Abnahme.
+- **Kompatibilität:** keine Änderungen an SQLite/JSON, persönlichen Daten/Backups, App-/Build-Version oder regel-/storybezogenen Produktmodulen; keine Migration.
+- **NÄCHSTER SCHRITT:** Sechs CI-Jobs auf finalem Integrations-HEAD abnehmen, bei Fehlern denselben Branch korrigieren und erst nach erneutem Main-/PR-Vergleich regulär mergen.
+
+
+## 06.11.2026 – Versionsgebundene Quell-ZIP-Ausgabe exklusiv veröffentlichen
+
+- **Basis-main:** `0a813df100aa649c2204018349b0db9af09fb83f` nach erfolgreich integriertem PR #606; dessen vollständiger CI-Lauf [#42194724285](https://github.com/ManuEtt/Dnd/actions/runs/42194724285) war auf `693dee5540ac4d8b2024dda307e5e8ee2b7c7aaf` vollständig grün.
+- **Branch:** `fix/chat-d/release-source-exclusive-publish-20261106`; **Code-/Testcommit:** `4f74335d7126c83ec9cdfc888b97335cef1cda5c`; **PR:** [#608](https://github.com/ManuEtt/Dnd/pull/608) (Draft).
+- **Befund:** Während der allgemeine Projekt-Exporter `package_project.create_archive` Bestands-ZIPs absichtlich per `os.replace` ersetzen darf, musste die versionierte Alpha-Release-Veröffentlichung auch späte fremde Quell-ZIP-/Sidecar-Kollisionen ohne Überschreiben behandeln. Die vorab geprüften public Output-Pfade genügten nicht als Schutz.
+- **IMPLEMENTIERT:** Privates `TemporaryDirectory` unter dem Release-Ausgabeordner, Erstellung von ZIP und Sidecar in diesem Staging mit unverändertem Paket-Exporter, öffentliche Freigabe per exklusivem `os.link` (gleicher Datenträger, scheitert an jedem bestehenden Pfadeintrag), `FileExistsError` als klare Release-Zieldateikollision, Rollback auf Basis der gemessenen Inodes der privaten Staging-Dateien und abschließende Eigentums- und Hashprüfungen der veröffentlichten Artefakte.
+- **Geänderte Fachdateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`; dazu README am **absoluten Ende** und additive `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`. Paket-Exporter und sein allgemeines Overwrite-Verhalten unverändert.
+- **Akzeptanztests (neu, fünf):** Veröffentlichung exakt der fünf erwarteten Dateien ohne Stage-/Lock-Reste und korrektes Sidecar; spät aufgetauchte reguläre Source-ZIP; spät aufgetauchter Source-ZIP-Symlink und unverändertes externes Ziel; Sidecar erst nach Verlinkung der Source-ZIP durch Konkurrenzprozess belegt; Source-ZIP direkt nach Verlinkung durch fremde Datei ersetzt. Im Fehlerfall fremde Dateien/Links erhalten und eigene Dateien bereinigt.
+- **GETESTET:** Fachcode und Regressionen auf separatem Branch committed; aktuelles Main und offene PRs abgeglichen, kein fremder PR überschneidet sich mit den Fachdateien. Ausschließlich der vorherige PR #606 besitzt einen vollständig grünen CI-Nachweis.
+- **NICHT GETESTET:** Neuer Python-Testumfang und vollständiger GitHub-Actions-Workflow des aktuellen PRs, Backend-/Flutter-/Android-Debug-/drei ABI-/Release-Ergebnis, echte Android-Geräteinstallation, Upgrade und produktive Signierung. Kein lokaler Checkout wegen eingeschränkter GitHub-DNS-Auflösung.
+- **BLOCKIERT:** Vollständig grüne CI auf finalem Dokumentations-HEAD, aktuelle Main-/PR-Konfliktprüfung, danach Merge-Entscheidung. Keine Aussage über absolute Racefreiheit gegen Manipulation nach dem letzten Verifikationstakt.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge von PR #608, keine Änderung an Datenbank/JSON/Spielständen/Backups/UI/Story/Regeln/App-Version, keine Migration.
+- **NÄCHSTER SCHRITT:** Finalen PR-#608-CI-Commit vollständig abnehmen, alle Python-/Backend-/Flutter-/Android-/Release-Jobs verifizieren und eventuell auftretende Regressionen im selben Branch reparieren. Anschließend nur bei konfliktfreiem aktuellem Main kontrolliert integrieren.
+
+---
+
+
+## 06.11.2026 – Historische Checkpoint-Dateinamen kollisionsfrei archivieren
+
+- **Basis-main:** `9a0fa855374a67805e531ad8574e048d99b33745`; Merge von PR #587, finale PR-CI [#42162161178](https://github.com/ManuEtt/Dnd/actions/runs/42162161178) erfolgreich. Main-CI für den Merge separat prüfen.
+- **Branch:** `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`; **Code-/Testcommit:** `c80950bc7ad5d7576d7717aea4c2535d9aa3f240`; **PR:** [#592](https://github.com/ManuEtt/Dnd/pull/592), Draft bis finale CI.
+- **Problem:** Einzelne historische Checkpoint-Dateinamen waren bereits Windows-portabel, aber unterschiedliche gleichwertige Schreibweisen (`Case`/`case`, `Café`/`Cafe\u0301`) konnten gemeinsam im SHA256-Ledger erscheinen. Neue Checkpoints mit gleichem Timestamp/Label in anderer Großschreibung sowie Aliase der beiden stabilen Dateien konnten auf Windows/macOS Dateien überschreiben oder verwechseln.
+- **Implementiert:** In `scripts/create_checkpoint.py` werden historische Dateinamen mit normalisiertem NFC-/Casefold-Schlüssel verglichen; bei Konflikt bricht die Liste vor dem Hashen ab. Unter dem exklusiven Publikationslock werden neue versionierte Namen und alle anders geschriebenen `Wuerfelraunen_LATEST_Vollprojekt.zip`- und `SHA256SUMS.txt`-Aliase vor dem Staging zurückgewiesen.
+- **Regressionen:** Vier neue Tests in `scripts/tests/test_create_checkpoint.py`: historische Groß-/Kleinschreibungszwillinge, historisch Unicode-äquivalente Namen (Linux), gleich datierte Versionen mit unterschiedlich geschriebenem Label und Varianten beider Aliasnamen. Jede Ablehnung bewahrt die vorherigen ZIP-/SHA256SUMS-Bytes und löst den exklusiven Lock.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** Main-HEAD, offene PRs und deren Fachdateien abgeglichen; Code, Regressionen und PR committed. Volle PR-CI des Vorgängerpakets #587 erfolgreich. **Keine neue CI als erfolgreich ausgegeben.**
+- **NICHT GETESTET:** GitHub Actions auf finalem Dokumentations-HEAD, reale Android-Geräte, Upgrade eines Altspielstands, lokale vollständige Projekt-/Flutter-Suite (kein zuverlässiger Checkout).
+- **BLOCKIERT:** Vollständige CI des PR #592 und erneute Konfliktkontrolle vor Integration.
+- **Migrationen:** keine, ältere Sicherungen werden weder verändert noch gelöscht. SQLite 3, JSON 1, Backups, SRD-Regeln, App-/Buildversion unverändert.
+- **Nächster Schritt:** finale Actions-CI vollständig abnehmen (Python, Backend, Flutter, Android, alle ABI-APKs, Release), Fehler auf eigenem Branch korrigieren und erst nach grünem Lauf kontrolliert integrieren.
+
+
+
+## 2026-11-08 – Koordinierte Wiederaufnahme von PR #592 auf aktuellem Main
+
+- **Basis-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276` nach erfolgreichem PR #640. Der historische PR #592 wurde von der alten Commit-Linie `8600c9b65ce5f851c030b6a099e65e1b0f8ad579` mit dem aktuellen Main über einen zweiparentigen Merge-Commit `1f685bca92b7a55abeb857f5d88a52d5b11c683d` vereinigt; kein Force-Push, keine fremden Fachdateien überschrieben.
+- **IMPLEMENTIERT:** Der normalisierte Unicode-NFC-/Casefold-Dateinamenschlüssel schützt historische Quellcode-Checkpoints gegen mehrdeutige Dateien und prüft neue versionierte Dateinamen samt stabiler `LATEST`- und `SHA256SUMS.txt`-Aliase vor Veröffentlichung.
+- **Regressionen:** Vier vorhandene Python-Tests aus dem historischen PR bewahrt; der alte Fachpatch wurde bytegenau mit dem aktuellen Main verglichen und erwies sich als rein additiv.
+- **GETESTET:** Historischer Fachpatch/Tests gegen aktuellen Main abgeglichen, Ausgangsdateien und offenen PR-Umfang überprüft; neuer Merge-Branch gesichert. Finale Actions-CI auf Dokumentations-HEAD ist ausstehend, daher kein Integrationsnachweis.
+- **NICHT GETESTET:** Finale Python-/Backend-/Flutter-/Android- und Alpha-Matrix, reale Windows/macOS-Dateisysteme, Android-Realgerät und Bestandsmigrationen.
+- **BLOCKIERT:** Abschließende neue sechsfach grüne CI und frischer Main-/Konfliktcheck.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge dieses PRs in Main, keine Schema-, Spielstand- oder App-Versionsänderungen.
+- **NÄCHSTER SCHRITT:** CI auf dem finalen PR-HEAD prüfen; bei Erfolg konfliktfrei mit den offenen parallelen Arbeiten integrieren und neuen Main abnehmen.
+
+
+## 2026-11-08 – Grafikimport darf bestehende FIFOs und Sonderdateien nicht lesen (PR #645)
+
+- **Basis:** Main `8bfaa22cded60e7731f5a3dc95684949bad49276` nach Merge von PR #640 mit sechs erfolgreichen Jobs im finalen [Actions-Lauf #42457990745](https://github.com/ManuEtt/Dnd/actions/runs/42457990745). Dessen Main-CI ist separat zu betrachten. Frühere Dokumentationshistorie unverändert.
+- **Branch/PR:** `fix/chat-d/fantasy-import-nonregular-targets-20261108`, [PR #645](https://github.com/ManuEtt/Dnd/pull/645) (Draft, nicht integriert). Code `aeb143ea2a41474e6a871d94b4f90a375a0bc862`, Tests `9c3ae1b9ec54ace10579f1665428727e38486b6e`.
+- **IMPLEMENTIERT:** Zentraler Helfer `verify_existing_asset()` in `scripts/import_complete_fantasy_assets.py`: nicht existierendes Ziel zulässig, vorhandene reguläre Datei gegen verifizierten Byteinhalt prüfen, sonst `ValueError` vor möglichem FIFO-/Geräte-Lesezugriff. In `imported_assets()` und `publish_verified_asset()` identisch verwendet. Divergierende existierende Originalbilder bleiben mit `FileExistsError` geschützt; Gleichheit bleibt idempotent.
+- **TESTS ERGÄNZT:** Drei Methoden in `scripts/tests/test_import_complete_fantasy_assets.py`: vorhandenes Verzeichnis wird in Normal- und `--verify-only`-Modus abgelehnt, vorhandene POSIX-Named-Pipe wird vor `read_bytes` abgelehnt, nach dem ZIP-Preflight erzeugte FIFO wird auch in der Veröffentlichungsphase vor `read_bytes` abgelehnt, jeweils ohne unvollständige Zielgrafik oder `.partial`-Rest. Frühere positive Import-/Reimportfälle unverändert.
+- **GETESTET:** GitHub-Code, bestehende Regressionen, aktuelle offene PRs und veränderte Fachdateien geprüft. Commits auf eigenem Branch und Draft-PR gesichert. Vollständige sechsfach grüne CI des Vorgänger-PR #640 gilt **nicht** als Abnahme dieses PR.
+- **NICHT GETESTET:** Finale Python-, Backend-, Dart-/Flutter-, Android-Debug-, ABI- und Alpha-Release-CI auf dem endgültigen Dokumentations-HEAD. Tatsächliche FIFO-/Gerätesonderfälle unter Windows und Android, concurrent races im Dateisystem.
+- **BLOCKIERT:** Vollständiger lokaler GitHub-Checkout steht in dieser Laufzeitumgebung nicht zur Verfügung. Vor dem Main-Merge sind vollständige Actions-Prüfung am finalen HEAD und erneuter Konfliktcheck erforderlich.
+- **NOCH NICHT IMPLEMENTIERT:** Keine descriptorbasierte Garantie gegen gleichzeitigen Wechsel zu Symlink/Sonderdatei nach letzter Prüfung, kein Merge von PR #645, keine Änderung an gespeicherten Spielständen, Datenbankschema, App-Version oder Spielmechanik.
+- **NÄCHSTER SCHRITT:** Finalen CI-Lauf abnehmen, eventuelle Fehler im eigenen Branch korrigieren und bei sechs erfolgreichen Jobs plus frischem Main-/PR-Abgleich regulär integrieren; danach Main-CI prüfen.
+
+## 2026-11-09 – Kontrollierte Integration der geprüften Speicher-/Archiv-Qualitätskorrekturen
+
+- **Main-Basis:** `1cb332437624b9440cf21d338da45aa680578d53`; **Branch:** `fix/chat-d/integrate-storage-safety-20261109`.
+- **Quellpakete:** [#608](https://github.com/ManuEtt/Dnd/pull/608) `3f3f66948bd656156b636158997cb13622557a55` (exklusive Alpha-Quell-ZIP-/Sidecar-Veröffentlichung; sechs grüne CI-Jobs); [#592](https://github.com/ManuEtt/Dnd/pull/592) `5fae563fbc795adc84e9278c20ad4223d6b45654` (kollisionssichere Checkpoint-Historie; sechs grüne CI-Jobs); [#645](https://github.com/ManuEtt/Dnd/pull/645) `03169d4bcf229392d4b6e46de883253a4913b4a9` (Grafik-Zielregularität; sechs grüne CI-Jobs).
+- **IMPLEMENTIERT:** Sechs originale, unveränderte Python-Code- und Testblobs auf aktueller Main-Basis integriert. Alle sechs waren zwischen jeweiligem Quell-Basiscommit und aktuellem Main blobidentisch. Dokumentationsabschnitte der drei Quellen vollständig angefügt; der historisch vorangestellte Bericht aus #608 wurde *ans Dateiende* verlegt, um bestehende Dokumentation nicht zu überschreiben.
+- **GETESTET:** Original-Quell-CIs je sechs erfolgreich; aktueller Main-Kombinations-HEAD #652 gemerged; 51 weitere offene PRs ohne Überschneidung in diesen sechs Fachdateien; vollständiger Präfix der aktuellen README und Checkpoints erhalten.
+- **NICHT GETESTET:** vollständige kombinierte CI auf dem finalen Integrationscommit; reale Android-Geräte und Update-Installation.
+- **BLOCKIERT:** vor Merge vollständige finale GitHub-CI, frischer Main-Vergleich und Konfliktprüfung. Keine Migration an SQLite, JSON, Spielständen, Backups, App-Version, UI oder Story.
+- **NÄCHSTER SCHRITT:** gemeinsamen Workflow (Python, Backend, Flutter, Android-Debug, ABI-APKs und Release) vollständig erfolgreich abnehmen; nur dann regulär integrieren und Main-CI kontrollieren.
+
+
+## 2026-11-09 – Gemeinsamer Review-PR #655 für drei unabhängige Python-Schutzmaßnahmen
+
+- **PR/Branch:** [#655](https://github.com/ManuEtt/Dnd/pull/655), `fix/chat-d/integrate-storage-safety-20261109` (Draft).
+- **Code-Integrationscommit:** `cede85fd9006b0869cd72187529c58fc13e14a7a`; Eltern: Main `1cb332437624b9440cf21d338da45aa680578d53`, #608 `3f3f66948bd656156b636158997cb13622557a55`, #592 `5fae563fbc795adc84e9278c20ad4223d6b45654`, #645 `03169d4bcf229392d4b6e46de883253a4913b4a9`.
+- **IMPLEMENTIERT:** Sechs byteidentische Fachcode- und Testblobs der einzeln geprüften PRs; volle Main-README und beide Checkpoints als unveränderte Präfixe bewahrt, historische #608-Präambel ans Dateiende umgeordnet.
+- **GETESTET:** Je sechs erfolgreiche Jobs auf allen drei Quell-HEADs; GitHub-Vergleich: genau zehn erwartete Pfade, Dokumentation +35/+68/+72 bei jeweils **null Löschungen**.
+- **NICHT GETESTET/BLOCKIERT:** Vollständige kombinierte CI auf finalem Dokumentationscommit; neue Main-CI des bereits gemergten #652 war bei Veröffentlichung noch in Arbeit. Keine Freigabe ohne grüne CI und frischen Konfliktabgleich.
+- **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
+- **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
+
+
+## 07.11.2026 – SRD-Ritualberechtigung gegen gefälschte Zaubermetadaten
+
+- **Bereich:** Regelwerk A. **Basis-main:** `0a813df100aa649c2204018349b0db9af09fb83f`. **Branch:** `feat/chat-a/ritual-catalog-identity-20261107`. **Fachcommit:** `8b98068173f4932d1349f29ca8464034bcfb71a5`. **PR:** [#622](https://github.com/ManuEtt/Dnd/pull/622) (Draft bis vollständiger CI).
+- **Problem:** `SrdRitualCastingRules.preflight` akzeptierte formell gültige, von außen gefälschte Ritualkennzeichen/Wirkzeiten und konnte einem Nicht-Ritualzauber wie `Magic Missile` einen **kostenlosen Ritualplan** ausstellen. Vorbereitung und Zauberklassenprüfung allein binden die Ritualberechtigung nicht an den konkreten SRD-Zauber.
+- **Implementiert:** 29 im aktuellen Arbeitsindex als Ritual markierte Zauber exakt an *Name, ID, Grad, Wirkzeit und geordnete vollständige Klassenliste* gebunden. Unbekannte bzw. gefälschte Ritualidentitäten werden `FormatException`; unbekannte Grammatik der Ritualwirkzeit bleibt `UnsupportedError`. Bestehende +10-Minuten-Logik, Klassen-/Vorbereitungs-/Komponentenprüfungen bleiben unangetastet. Es wird kein Effekt ausgeführt und kein Slot verbraucht.
+- **Geänderte Fachdateien:** `app/lib/domain/srd_ritual_casting_rules.dart`, neuer `app/test/srd_ritual_catalog_identity_test.dart`; nur datierte additive Nachträge in `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_A_CHECKPOINT.md`.
+- **Neue Regressionen:** Alle 29 bestehenden Ritual-Metadatentupel gegen die gesamte 339er-Indexdatei statisch validiert; positive Lesetests aller 29, negative Nicht-Ritual-Fälschungen, falsche IDs/Namen/Level/Wirkzeiten/Klassenlisten, unveränderte Slot- und JSON-Zustände, stale plan. Vorhandener `srd_ritual_casting_rules_test.dart` bleibt aktiv. **Keine** vollständige SRD-Metadaten-Reconciliation behauptet.
+- **Fachregel:** Wizards of the Coast LLC, *SRD v5.2.1*, *Spells / Casting without Slots / Rituals; Longer Casting Times*, CC BY 4.0, https://www.dndbeyond.com/srd. Nicht alle Zaubereffekte/Ziele/Materialverbräuche/Zeituhr umgesetzt.
+- **Parallelität:** Alle zum Auswahlzeitpunkt 38 offenen PRs auf dieselben Fachdateien geprüft, keine Überschneidung. Gemeinsame README-/Checkpoint-Nachträge nur am Dateiende, Integrationsbereich D konsolidiert.
+- **Getestet:** 29/29 Katalogmetadaten geprüft, positive/negative Unitfälle implementiert. Kein Dart-/Flutter-SDK lokal; GitHub-CI finaler HEAD derzeit noch nicht erfolgreich nachgewiesen.
+- **Nicht getestet:** Finale Python-/Backend-/Dart-Format-/Flutter-Analyse/Flutter-Tests/Android-Debug-/native/ABI-APKs auf PR-HEAD; reales Android-Gerät, kombinierter Merge mit parallelen PRs.
+- **Kompatibilität/Migration:** Keine Änderungen an `models.dart`, `game_engine.dart`, JSON, SQLite, API, Story/UI/Backend, Android-Build-Version, keine Migration. Gültige bisherige Index-Rituale bleiben zulässig.
+- **Nächster Schritt:** GitHub-Actions-Lauf am letzten PR-HEAD auswerten, konkreten Format-/Testfehler falls nötig im selben Branch beheben und erst bei vollständigem CI-Erfolg zur Review freigeben.
+
+
+## 07.11.2026 – Explizite NPC-Besuche im Rabenwacht-Epilog (PR #628)
+
+- **Main-Basis:** `1816115990cc7420ecfb2d1ba7c6babb557f76da`; **Branch:** `fix/chat-b/epilogue-explicit-npc-visit-20261107`; **PR:** [#628](https://github.com/ManuEtt/Dnd/pull/628), initial Draft.
+- **IMPLEMENTIERT:** `FourteenthVoiceEpilogue.advance` legt NPC-Besuche nur bei expliziter Spielerhandlung fest, nicht mehr durch beliebige Teilwortnennungen von Elda/Tarek/Liora, Brief, Brunnen, Zeichnung oder Teller. Rückkehr zum Dorfplatz benötigt gleichfalls ein eindeutiges Kommando. Eine bloße Erörterung setzt keine `voice:epilogue:<npc>`-Fakten und zählt nicht zur Mindestzahl bestätigter Zeugen.
+- **Code/Tests:** `app/lib/story/fourteenth_voice_epilogue.dart` und neuer `app/test/rabenwacht_epilogue_explicit_visit_test.dart` (fünf positive/negative Gruppen: bloße Erwähnungen, acht reale Besuchsaktionen, explizite Rückkehr, JSON-Wiederaufnahme, SQLite-Reopen mit Journalrekonstruktion). Read-only Negativfälle, unveränderte ursprüngliche Spielstände, Helden-/Questdaten und Revision.
+- **Dokumentation:** `README.md` ausschließlich am absoluten Dateiende ergänzt, zentraler und Chat-B-Checkpoint additiv aktualisiert. Bereits bestehende Abschnitte erhalten.
+- **GETESTET:** Live-Masterprompt und Projektunterlagen gelesen, Main/CI überprüft, 42 offene PRs anhand Fachdateien auf Überschneidungen geprüft, eigener Branch erstellt, Code und Tests committed. Der vorige PR #623 hat grüne CI, das ist kein Nachweis für #628.
+- **NICHT GETESTET/BLOCKIERT:** Finaler CI-Lauf mit Dart-Format, Flutter-Analyse/-Gesamttests, Android-Debug/ABI-Builds und Alpha-Release bei Erstellung dieser Notiz noch offen. Keine Realgerät-, Produktiv-KI- oder Upgrade-Abnahme.
+- **Kompatibilität:** Keine Migration und keine Änderung an SQLite-/JSON-Schema, Regelengine, Heldenwerten, NPC-Speichermodell, Questlogik oder App-Version. Nur die bewusste Story-Navigation wird enger validiert.
+- **NÄCHSTER SCHRITT:** Final-HEAD-CI vollständig abnehmen; bei Problemen Code-/Testursachen auf eigenem Branch korrigieren; erst bei grünem Gesamtworkflow PR zur Review freigeben. Chat D integriert README-/Checkpoint-Konflikte verlustfrei, kein automatischer Merge.
+
+## 08.11.2026 – Heilzauber-Dialog aktualisiert Live-Helden-Snapshots (PR #651)
+
+- **Basis-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; während Entwicklung Hauptstand `404e9a5fc9b7d1c231b7bdd52c61319d4eb57752` aus geprüfter #648-Integration aufgenommen. **Arbeitsbranch:** `feat/chat-c/healing-spell-live-hero-refresh-20261108`; [PR #651](https://github.com/ManuEtt/Dnd/pull/651) (Draft); Fachcommit `3f21b9bf0d2d6dd994795faa22c07b73c376b0cd`, Test `a1bbd11dead44b819114da3e0f69d9aa6ff84bbc`, Main-Merge `ba16c4f36a684900d148f263a024ab5bafef52fa`. Endgültigen Branch-HEAD nach Doku über GitHub prüfen.
+- **IMPLEMENTIERT:** `app/lib/ui/healing_spell_dialog.dart` ermittelt die vorbereiteten Heilzauber, zulässige Klassen und freie reguläre/Pakt-Plätze erneut, sobald der geöffnete Dialog einen anderen Hero-Snapshot erhält. Alte Komponentenfreigaben, Wahl-/Fehlerzustände und interne Dropdown-Werte werden invalidiert; identischer Snapshot bei einfachem Rebuild bleibt erhalten. Bewusste Wahl bleibt Aufgabe des Benutzers, Regelausführung des Controllers.
+- **Fachtest:** `app/test/healing_spell_live_snapshot_test.dart` mit sechs positiven/negativen Widgettests, einschließlich 320/360 dp, 200 % Android-Schrift und 220 dp simulierter Tastatur; Live-Klassen-, Zauber-, Ressourcen- und Fehlersnapshot-Änderungen sowie Spielstands-JSON-Unverändertheit. Die bereits vorhandene Heilzauber-Dialogsuite bleibt unangetastet.
+- **GETESTET:** Quellcode, Masterprompt, erforderliche Projektdokumente, 58 offene PRs mit Fachdateipfaden und aktuellen Main-Merge geprüft; eigener Branch/PR erstellt. Erfolgreiche Vorgänger-Main-CI [#42515726252](https://github.com/ManuEtt/Dnd/actions/runs/42515726252) belegt nur #648-Integrationsstand, nicht dieses neue Arbeitspaket.
+- **NICHT GETESTET:** Neue Flutter-/Dart-/Python-/Backend-/Android-GitHub-CI auf finalem Branch-HEAD sowie physischer Android-/TalkBack-Test; lokale SDKs fehlen.
+- **BLOCKIERT:** Vor vollständiger CI-/Review-Abnahme und erneutem Main-/PR-Dateivergleich kein Merge. README sowie persönliche und zentrale Checkpoints auf diesem Branch ausschließlich append-only.
+- **NOCH NICHT IMPLEMENTIERT:** Reale Android-/TalkBack-/IME-Abnahme, keine Änderung an Regelengine, KI, Spielständen, Berechtigungen, `0.8.52+102` oder SQLite-/JSON-Formaten.
+- **NÄCHSTER SCHRITT:** Physische Android-Geräteprüfung der Live-Heilzauber-Auswahl mit TalkBack bei 320 dp/200 % Text und geöffneter Tastatur; Altbestätigungen nach Helden-/Ressourcenwechsel dürfen nicht mehr auswählbar sein.
+
+
+## 09.11.2026 – Fachlich unabhängige Integrationsvorbereitung (Ritual, Epilog, Heilzauber)
+
+- **Main-Basis:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`.
+- **Originale PR-HEADs:** #622 `62e05784e5d392e121dd349d34d90356525b8daf`, #628 `64c88176c74308c3ea3127aac14529563caba283`, #651 `59b8c5fd323785d885acc6224f6948db99293ee2`.
+- **Geprüft:** Alle drei Original-CIs auf den exakten jeweiligen PR-Heads vollständig erfolgreich, jeweils sechs Jobs. GitHub-Fachdateien und Tests unverändert gegenüber den Quell-PRs; die produktiven Fachdateien wurden seit ihren Merge-Bases in `main` nicht verändert. Kein anderer offener PR bearbeitet die sechs Ziel-Fach-/Testpfade.
+- **Koordination:** Separater Integrationsbranch mit drei Quell-Heads als Git-Eltern, append-only Historie von README, zentralem und individuellen Checkpoints, Integrationsreport. Keine Änderungen an Spielständen, SQLite/JSON, Versionsnummer oder Backups.
+- **Nicht getestet:** Kombinierter Commit noch nicht durch CI abgenommen; Android-Gerätetests nicht durchgeführt.
+- **Freigabegate:** Nur nach vollständig erfolgreicher Integrations-CI, unverändertem PR-Head, Prüfung des neuesten `main` und erfolgreicher Main-CI integrieren. Danach bereits enthaltene Original-PRs schließen und Archivierungs-/Cleanup-Actions nachweisen.
+
+
+## 2026-11-09 – Aktualisierung des Wilden-Angreifer-Dialogs auf aktuelle Main-Basis
+
+- PR [#647](https://github.com/ManuEtt/Dnd/pull/647), Branch `feat/chat-c/savage-attacker-live-offer-reset-20261108`; ursprünglicher UI-/Test-HEAD `69dd94292a1c2f4b0580fbf51378a0017446c449`.
+- Main-Basis beim Abgleich: `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`. Die beiden fachlichen Dateien des PRs wurden auf dem aktuellen Main-Baum erhalten; README und Checkpoints wurden aus dem aktuellen Main übernommen und append-only ergänzt.
+- Der ursprüngliche HEAD hatte sechs erfolgreiche CI-Jobs in [#42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537). Der neue Merge-HEAD ist noch nicht getestet; erneute vollständige GitHub-CI ist Freigabegate.
+- Keine Regel-, Controller-, Persistenz-, SQLite-/JSON-, Appversions- oder Spielstandänderung. Physisches Android-Gerät/TalkBack/IME nicht geprüft.

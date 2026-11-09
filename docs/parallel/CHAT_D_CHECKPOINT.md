@@ -2080,3 +2080,131 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Ausstehende finale GitHub-CI, vor Integration frische Konfliktprüfung und Main-Abgleich.
 - **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge, keine descriptorbasierte atomare Absicherung der gesamten Verzeichniskette. Keine SQLite-/JSON-Spielstand-/App-Version-/Domain-/UI-Änderungen.
 - **NÄCHSTER SCHRITT:** GitHub-CI auf finalem Branch-HEAD kontrollieren, dann mit aktualisiertem Main und laufenden PRs verlustfrei integrieren, nur wenn alle sechs Jobs erfolgreich sind.
+
+## 2026-11-08 – Raw-Dart-URI-Prüfung der Modulgrenzen geschlossen (PR #649)
+
+- **Ausgangs-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276` (Main-Android-CI `42514079690`: success).
+- **Branch:** `fix/chat-d/raw-dart-uri-boundary-20261108`; **PR:** [#649](https://github.com/ManuEtt/Dnd/pull/649) (Draft, nicht integriert). **Code-Commit:** `ed09317a6fadaa04ecc6f9e3fa2b917d733ab248`; **Test-Commit:** `ca860df1e97775fbae5155623ca05c0c77815944`.
+- **Ausgangsproblem:** Gültige Dart-URI-Literale mit Raw-Präfix `r` wurden in `scripts/check_domain_boundaries.py` nicht als Import-/Export-/Part-/bedingte URI erkannt. Dadurch war der Importgrenzen-Prüfer bei diesen Zeichenfolgen umgehbar.
+- **IMPLEMENTIERT:** Der Direktivenparser erkennt Raw-Präfixe im Primär- und Alternativ-URI. Bestehende Domänen-/Story-Whitelist, Pfadkanonisierung, Kommentar- und Stringmaskierung bleiben unverändert.
+- **Tests ergänzt:** drei Testmethoden mit insgesamt sieben verbotenen einfachen, drei verbotenen bedingten und vier zulässigen Beispielgruppen; erfasst `import`, `export`, `part`, `part of`, Kommentare, Multiline-Strings und Legacy-Fassade.
+- **Konfliktprüfung:** 56 zum Arbeitsbeginn offene PRs und sämtliche Fachdateipfade geprüft; kein fremder PR verändert `scripts/check_domain_boundaries.py` oder `scripts/tests/test_domain_boundaries.py`. README und zentrale Checkpoints sind gemeinsame Anhänge, daher kein automatischer Merge.
+- **GETESTET:** Prüfer-/Testcode auf eigenem GitHub-Branch gesichert und gegen die GitHub-Quelldateien kontrolliert; Main-CI auf Baseline erfolgreich (nicht als neuer Test ausgegeben).
+- **NICHT GETESTET:** neuer Python-`unittest`-Gesamtlauf, `verify_project`, `srd_coverage`, Backend-Typecheck/Tests, Flutter-Formatierung/Analyse/Tests, Android-APK/ABI-Release auf finalem PR-HEAD; lokaler Checkout scheitert an GitHub-DNS und Flutter/Dart-SDK fehlen.
+- **BLOCKIERT:** CI des finalen dokumentierten PR-HEADs sowie abschließender Main-/PR-Abgleich stehen aus. Draft verbleibt offen.
+- **NOCH NICHT IMPLEMENTIERT:** Kein vollständiger Dart-Parser und keine automatische Main-Integration. Keine Änderung an Spielständen, SQLite, JSON, Backups, App-Version, Story/UI/Regeln; keine Migration.
+- **Nächster Schritt:** vollständige GitHub-Actions-Abnahme für PR #649 auf finalem HEAD, etwaige echte Fehler korrigieren, danach erneute konfliktfreie Integrationsprüfung.
+
+
+## 2026-11-08 – Quell-ZIPs ohne privilegierte Unix-Dateirechte (PR #650)
+
+- **Ausgangs-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276`. Vorhandene Main-CI `42514079690` erfolgreich, kein Test der neuen Änderung.
+- **Branch:** `fix/chat-d/source-zip-safe-modes-20261108`; **PR:** [#650](https://github.com/ManuEtt/Dnd/pull/650) (Draft, nicht gemerged).
+- **Code-Commit:** `4d7bb9a0a9c8ff208b3b799cafeb7f42af811470`; **Test-Commit:** `3ea18bde7fd75794e7f6f15c8d797e3d211e56e6`; **Fixture-Korrektur:** `48342a3033990a0833351cddcc7bac5a4a7badf1`.
+- **Problem:** `scripts/package_project.py` übernahm in ZIP-External-Attributes mit `stat.S_IMODE` auch Setuid-/Setgid-/Sticky-Modusbits lokaler Quellfiles.
+- **IMPLEMENTIERT:** Nur reguläre rwx-Rechte (`0o777`) plus `S_IFREG` exportieren, keine speziellen Bits. Die reguläre Ausführbarkeit bleibt erhalten; keine Änderung an ZIP-Inhalt, Hashformat oder Pfaden.
+- **Geänderte Fachdateien:** `scripts/package_project.py`, `scripts/tests/test_package_project.py`.
+- **Regressionen:** Ein POSIX-Test mit drei unterschiedlichen Sonderbit-Kombinationen (4755, 2750, 1755) prüft je den regulären ZIP-Dateityp, entfernte Sonderbits, unveränderte normale rwx-Rechte und den unveränderten Dateiinhalt. Bestehende Quell-ZIP-Tests unverändert.
+- **Konfliktabgleich:** 57 bei Paketstart offene PRs einschließlich #649 mit Fachdateilisten abgeglichen; keiner bearbeitet die beiden Archiv-Fachdateien. Gemeinsame README-/Checkpoint-Änderungen ausschließlich append-only und nicht automatisch zusammenführen.
+- **GETESTET:** Code/Test und PR auf eigenem GitHub-Branch gesichert, finalen Code-/Test-Diff geprüft; bestehende grüne Main-CI beweist nur die Ausgangsbasis.
+- **NICHT GETESTET:** neuer Python-Unittest-/Projektsuite-Lauf und vollständige Backend-/Flutter-/Android-/ABI-/Release-CI auf finalem Dokumentations-HEAD; echtes Android-Gerät.
+- **BLOCKIERT:** Finale neue CI und erneuter Main-/PR-Konfliktabgleich. PR verbleibt bis zur Abnahme als Draft.
+- **Migrationen:** Keine: SQLite/JSON, Spielstände, Backupformat, App-/Build-Version, Domain-, UI- und Storycode unverändert.
+- **NÄCHSTER SCHRITT:** Alle CI-Jobs auf finalem PR #650 Commit erfolgreich abnehmen; bei Fehlern in diesem Branch korrigieren und danach kontrollierte Integration prüfen.
+
+## 2026-11-08 – Qualitätspakete #649 und #650 in Integrations-PR #652 historienwahrend vereinigt
+
+- **Ausgangs-main:** `404e9a5fc9b7d1c231b7bdd52c61319d4eb57752` (Main-CI `42518852945`: vollständig erfolgreich).
+- **Branch/PR:** `fix/chat-d/integrate-reviewed-quality-20261108`, [#652](https://github.com/ManuEtt/Dnd/pull/652) (Draft). Fach-Integrationscommit `c9cda978ea5cc5dc3d6526d436b909769dc593f1`, drei Git-Eltern einschließlich beider ursprünglicher Quell-Heads.
+- **Implementiert:** unveränderte Python-Sicherheitsänderungen und Regressionstests aus PR #649 (Raw-Dart-URIs) und PR #650 (Quell-ZIP-Modusbits) auf aktuellem Main. Dokumentation auf vollständigem Main-Präfix ohne Löschungen nachgetragen, separater `docs/parallel/INTEGRATION_20261108_QUALITY.md`-Bericht.
+- **Geänderte Dateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_domain_boundaries.py`, `scripts/package_project.py`, `scripts/tests/test_package_project.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`, `docs/parallel/INTEGRATION_20261108_QUALITY.md`.
+- **GETESTET:** beide unveränderten Quell-Heads in GitHub Actions je mit sechs erfolgreichen Jobs; aktuelle Main-CI erfolgreich; Main-Pfad-SHAs, Git-Vorfahren und ausschließlich angehängte README-/Checkpoint-Dokumentation verifiziert.
+- **NICHT GETESTET:** neue kombinierte Integrations-CI auf endgültigem Dokumentationsstand, reales Android-Gerät, Altspielstandupgrade.
+- **BLOCKIERT:** bis sechs grüne integrierte Jobs vorliegen und erneute Main-/PR-Abgrenzung durchgeführt ist, weder auto-merge noch Branchlöschung.
+- **Migration:** Keine: SQLite-/JSON-Schemata, persönlicher Datenstand, Backups, App-/Build-Version unverändert.
+- **NÄCHSTER SCHRITT:** finalen GitHub-CI-Workflow von PR #652 vollständig prüfen, dann nur bei aktueller Konfliktfreiheit kontrolliert nach Main mergen und Main-CI abnehmen.
+
+
+## 06.11.2026 – Versionsgebundene Quell-ZIP-Ausgabe exklusiv veröffentlichen
+
+- **Basis-main:** `0a813df100aa649c2204018349b0db9af09fb83f` nach erfolgreich integriertem PR #606; dessen vollständiger CI-Lauf [#42194724285](https://github.com/ManuEtt/Dnd/actions/runs/42194724285) war auf `693dee5540ac4d8b2024dda307e5e8ee2b7c7aaf` vollständig grün.
+- **Branch:** `fix/chat-d/release-source-exclusive-publish-20261106`; **Code-/Testcommit:** `4f74335d7126c83ec9cdfc888b97335cef1cda5c`; **PR:** [#608](https://github.com/ManuEtt/Dnd/pull/608) (Draft).
+- **Befund:** Während der allgemeine Projekt-Exporter `package_project.create_archive` Bestands-ZIPs absichtlich per `os.replace` ersetzen darf, musste die versionierte Alpha-Release-Veröffentlichung auch späte fremde Quell-ZIP-/Sidecar-Kollisionen ohne Überschreiben behandeln. Die vorab geprüften public Output-Pfade genügten nicht als Schutz.
+- **IMPLEMENTIERT:** Privates `TemporaryDirectory` unter dem Release-Ausgabeordner, Erstellung von ZIP und Sidecar in diesem Staging mit unverändertem Paket-Exporter, öffentliche Freigabe per exklusivem `os.link` (gleicher Datenträger, scheitert an jedem bestehenden Pfadeintrag), `FileExistsError` als klare Release-Zieldateikollision, Rollback auf Basis der gemessenen Inodes der privaten Staging-Dateien und abschließende Eigentums- und Hashprüfungen der veröffentlichten Artefakte.
+- **Geänderte Fachdateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`; dazu README am **absoluten Ende** und additive `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`. Paket-Exporter und sein allgemeines Overwrite-Verhalten unverändert.
+- **Akzeptanztests (neu, fünf):** Veröffentlichung exakt der fünf erwarteten Dateien ohne Stage-/Lock-Reste und korrektes Sidecar; spät aufgetauchte reguläre Source-ZIP; spät aufgetauchter Source-ZIP-Symlink und unverändertes externes Ziel; Sidecar erst nach Verlinkung der Source-ZIP durch Konkurrenzprozess belegt; Source-ZIP direkt nach Verlinkung durch fremde Datei ersetzt. Im Fehlerfall fremde Dateien/Links erhalten und eigene Dateien bereinigt.
+- **GETESTET:** Fachcode und Regressionen auf separatem Branch committed; aktuelles Main und offene PRs abgeglichen, kein fremder PR überschneidet sich mit den Fachdateien. Ausschließlich der vorherige PR #606 besitzt einen vollständig grünen CI-Nachweis.
+- **NICHT GETESTET:** Neuer Python-Testumfang und vollständiger GitHub-Actions-Workflow des aktuellen PRs, Backend-/Flutter-/Android-Debug-/drei ABI-/Release-Ergebnis, echte Android-Geräteinstallation, Upgrade und produktive Signierung. Kein lokaler Checkout wegen eingeschränkter GitHub-DNS-Auflösung.
+- **BLOCKIERT:** Vollständig grüne CI auf finalem Dokumentations-HEAD, aktuelle Main-/PR-Konfliktprüfung, danach Merge-Entscheidung. Keine Aussage über absolute Racefreiheit gegen Manipulation nach dem letzten Verifikationstakt.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge von PR #608, keine Änderung an Datenbank/JSON/Spielständen/Backups/UI/Story/Regeln/App-Version, keine Migration.
+- **NÄCHSTER SCHRITT:** Finalen PR-#608-CI-Commit vollständig abnehmen, alle Python-/Backend-/Flutter-/Android-/Release-Jobs verifizieren und eventuell auftretende Regressionen im selben Branch reparieren. Anschließend nur bei konfliktfreiem aktuellem Main kontrolliert integrieren.
+
+---
+
+
+## 06.11.2026 – Kollisionssichere Historie der Quellcode-Checkpoints
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745` nach Integration von PR #587 (vollständige finale PR-CI [#42162161178](https://github.com/ManuEtt/Dnd/actions/runs/42162161178): erfolgreich).
+- **Branch:** `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`.
+- **Fach-/Testcommit:** `c80950bc7ad5d7576d7717aea4c2535d9aa3f240`; **Pull Request:** [#592](https://github.com/ManuEtt/Dnd/pull/592), Draft bis vollständiger CI.
+- **Problem:** Bereits als Einzeldateien geprüfte historische ZIP-/Patch-/Manifestnamen konnten sich nach Unicode-NFC-/Casefold-Normalisierung überschneiden. Ein weiteres Checkpoint mit anders geschriebenem Label bei gleichem Zeitstempel oder eine alternative Schreibweise der stabilen Ausgabe-Aliase barg ein Kollisionsrisiko auf Windows/macOS.
+- **Implementiert:** `scripts/create_checkpoint.py` vergleicht historische Namen vor der Hashbildung mit normalisierten NFC-/Casefold-Schlüsseln. Unter Ausgabe-Lock wird geprüft, dass neue versionierte Namen mit keinem bestehenden Namen identisch werden und dass keine Zweitnamen von `Wuerfelraunen_LATEST_Vollprojekt.zip` und `SHA256SUMS.txt` vorkommen. Kein Force-Push, keine Sicherung umbenannt oder gelöscht.
+- **Regressionen:** Vier neue Methoden in `scripts/tests/test_create_checkpoint.py` für zwei Casefold-Zwillinge, zwei Unicode-NFC-Zwillinge, neu erzeugte identische Versions-/Zeitstempeleinträge mit abweichend geschriebenen Labels und beide Aliasnamen. Bestehende Sicherungen/Prüfsummen bleiben bytegenau erhalten, Lock wird bei Ablehnung freigegeben.
+- **Geänderte Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Konfliktkontrolle:** Offene PRs aus A/B/C (inklusive #591) ändern keine der zwei Checkpoint-Fachdateien; gemeinsame README-/CODEX-Änderungen bleiben additiv, README-Nachtrag nur am absoluten Dateiende mit neutralem Titel ohne redaktionelle Chat-Zuordnung.
+- **GETESTET:** GitHub-Stand vor Branchstart und vor PR, Fachcode/Tests committed, isolierter PR angelegt. **NICHT GETESTET:** neue Python-/Backend-/Flutter-/Android-CI auf finalem PR-HEAD, lokaler kompletter Repo-Test, Android-Gerät und alte Gerätespielstände.
+- **BLOCKIERT:** CI-Abnahme auf finalem Commit und erneute Main-/PR-Datei-/Ancestry-Prüfung vor Merge.
+- **Migrationen:** keine. Alte Checkpoint- und Backupartefakte bleiben intakt; SQLite, JSON, Regel-/Storyzustand und Android-Version unverändert.
+- **Nächster Schritt:** endgültige Python-, Backend-, Flutter-, Android-Debug-, ABI- und Release-CI prüfen, bei Fehlern branchlokal beheben und erst nach konfliktfreier CI integrieren.
+
+
+
+## 2026-11-08 – Historische Checkpoint-Dateinamen gegen NFC-/Casefold-Kollisionen schützen (PR #592 aktualisiert)
+
+- **Ausgangspunkt:** PR #592, ursprünglicher HEAD `8600c9b65ce5f851c030b6a099e65e1b0f8ad579`; nach erfolgreichem Merge von #640 aktueller Main `8bfaa22cded60e7731f5a3dc95684949bad49276`. Aktualisierung ohne Überschreiben anderer Änderungen über Merge-Commit `1f685bca92b7a55abeb857f5d88a52d5b11c683d` auf `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`.
+- **IMPLEMENTIERT:** Historische versionierte Checkpoints werden vor Hashbildung und Veröffentlichung gegen NFC-/Casefold-Zwillinge geprüft; neue Versionsnamen und falsche Schreibweisen der beiden stabilen Alias-Dateien werden unter dem exklusiven Checkpoint-Lock abgewiesen.
+- **TESTS:** Vier originale Python-Regressionen in `scripts/tests/test_create_checkpoint.py` bewahrt; Ausgangs-/Neustand der zwei Fachdateien differenziell verglichen und nur den alten, rein additiven Patch übernommen.
+- **GETESTET:** GitHub-Branch, Main-Commit, Open-PR-Umfang und Herkunftshistorie kontrolliert; finale CI auf neuer Dokumentationsfassung läuft erst nach Commit.
+- **NICHT GETESTET:** Alle sechs GitHub-Actions-Jobs auf endgültigem HEAD, reale Windows-/macOS-Dateinamen, Android-Realgerät.
+- **BLOCKIERT:** Abnahme der neuen CI und erneuter Integrationscheck.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge von PR #592, keine gespeicherten Daten oder Backup-Dateien umbenannt oder gelöscht.
+- **NÄCHSTER SCHRITT:** Vollständige GitHub-CI abwarten und nur nach sechs grünen Jobs und konfliktfreiem Main-Abgleich integrieren.
+
+
+## 2026-11-08 – Reguläre Grafik-Ziele vor dem Lesen erzwingen (PR #645)
+
+- **Main-Ausgangspunkt:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; PR #640 nach sechsfach grünem [Actions-Lauf #42457990745](https://github.com/ManuEtt/Dnd/actions/runs/42457990745) regulär integriert.
+- **Branch/PR:** `fix/chat-d/fantasy-import-nonregular-targets-20261108`, [#645](https://github.com/ManuEtt/Dnd/pull/645) (Draft). Fachcommit `aeb143ea2a41474e6a871d94b4f90a375a0bc862`, Testcommit `9c3ae1b9ec54ace10579f1665428727e38486b6e`.
+- **Problem:** `Path.read_bytes()` auf einer als Bildziel angelegten FIFO kann unendlich auf einen Schreiber blockieren; Verzeichnisse sind keine zulässigen Originalgrafikdateien. Die bestehende Vorab-/Spätprüfung erkannte nur abweichende Inhalte, keinen ungeeigneten Dateityp.
+- **IMPLEMENTIERT:** `verify_existing_asset(path, expected)` sperrt vorhandene nichtreguläre Dateitypen vor dem Lesen. Der gleiche Helfer wird während Import-Preflight und direkt vor atomarer Veröffentlichung eingesetzt. Passende reguläre Originaldateien bleiben idempotent, abweichende Dateien werden nie überschrieben.
+- **Tests:** Drei neue Python-Regressionen für Verzeichnisziele (auch Verify-Only), POSIX-FIFO vor der Vorprüfung und POSIX-FIFO nach erfolgreichem Preflight; Verbot eines blockierenden `read_bytes` ist in den Regressionen explizit geprüft. Vorhandene positive Tests bleiben.
+- **GETESTET:** Reale GitHub-Quelltexte und offene PRs geprüft; eigener Branch und PR erstellt. Vorläufiger CI-Lauf kann noch kein finaler Nachweis sein; frühere CI von #640 war vollständig grün.
+- **NICHT GETESTET:** Finale vollständige CI auf dem letzten Dokumentations-Commit; Windows-Reparse-Points, Realgerät und exakt zeitgleiche Dateiaustausche.
+- **BLOCKIERT:** Finale GitHub-CI/Release-Abnahme und frischer Konflikt-/Main-Abgleich.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Main-Merge, keine descriptorbasierte Vollabsicherung der Race-Condition, keine Migration oder Daten-/App-Versionsänderung.
+- **NÄCHSTER SCHRITT:** Endgültigen PR-HEAD mit allen sechs Jobs abnehmen und anschließend nur bei konfliktfreiem aktualisiertem Main integrieren.
+
+## 2026-11-09 – Historische Checkpoints, Alpha-Quell-ZIP und Grafik-Zieldateien integrationsreif
+
+- **Main:** `1cb332437624b9440cf21d338da45aa680578d53`; **Integrationsbranch:** `fix/chat-d/integrate-storage-safety-20261109`.
+- **Quell-PRs/Heads:** #608 `3f3f66948bd656156b636158997cb13622557a55`; #592 `5fae563fbc795adc84e9278c20ad4223d6b45654`; #645 `03169d4bcf229392d4b6e46de883253a4913b4a9`. Jeweils sechs vollständig erfolgreiche CI-Jobs auf den Original-Commits.
+- **Implementiert:** Originale sechs Python-Fach- und Regressionstestblobs zusammengeführt. Zusammengehörige Einzelberichte aus allen drei Quellbranches vollständig und append-only erhalten, den im alten #608-Branch vorangestellten Bericht ohne Kürzung ans Ende verlegt. README-Inhalt unverändert als vollständiges Präfix beibehalten. Integrationsbericht folgt im Branch.
+- **Konfliktprüfung:** bei aktuellem Main sechs Fachdateien gegenüber jeweiliger ursprünglicher Basis unverändert; übrige 51 offene PRs ohne Dateipfadüberschneidung mit den Fachmodulen. Keine Änderungen an fremden UI-, Story- oder Regeldateien.
+- **GETESTET:** drei unabhängige Quell-CIs je sechs grüne Jobs; GitHub-Merge #652 bereits erfolgreich. Noch kein kombinierter CI-Nachweis dieses Pakets.
+- **NICHT GETESTET:** finale kombinierte Python-/Backend-/Flutter-/Android-/Release-CI auf dem Integrations-HEAD, reale Android-Geräte- oder Upgrade-Tests.
+- **BLOCKIERT:** Kombination zunächst Draft, vor Main-Merge vollständige CI, aktuelle Konflikt- und Main-Prüfung. Weder fremde Branches verändert noch direkt auf Main committed.
+- **Migration:** Keine Datenbank-/JSON-/Spielstands-/Backup-, App-Versions-, UI- oder Storymigration.
+- **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf auf dem letzten Dokumentations-HEAD überprüfen, alle sechs Jobs erfolgreich abnehmen, erst dann regulär nach Main mergen und Main-CI nachziehen.
+
+
+## 2026-11-09 – PR #655 zur Zusammenführung dreier getesteter Python-Qualitätspakete
+
+- **Main-Basis:** `1cb332437624b9440cf21d338da45aa680578d53`, neuer Main-CI #42559588669 bei Erstellung noch nicht abgeschlossen.
+- **Eigener Branch/PR:** `fix/chat-d/integrate-storage-safety-20261109`, [#655](https://github.com/ManuEtt/Dnd/pull/655) (Draft); Quell-Integrationscommit `cede85fd9006b0869cd72187529c58fc13e14a7a`.
+- **IMPLEMENTIERT:** Quell-PRs #608 (Release-ZIP-Sidecar), #592 (kollisionssichere Checkpoint-Historie) und #645 (reguläre Ziel-Dateien) bytegleich in sechs Python-Fach-/Testdateien integriert. Vier Git-Eltern; zehn erwartete Pfade; vollständige README-/Checkpoint-Historie erhalten. Der alte vorangestellte #608-Checkpoint wurde vollständig ans Ende verlegt.
+- **GETESTET:** Drei vollständige Quell-CIs erfolgreich auf den originalen Heads; 51 fremde offene PRs auf Überschneidung geprüft, keine Überschneidung mit den sechs Python-Dateien; Main-Stand bei PR-Erstellung unverändert und Mergefähigkeit `true`.
+- **NICHT GETESTET:** neue kombinierte CI auf letztem Dokumentations-HEAD, Android-Upgrade/echte Geräte, Produktionssignierung.
+- **BLOCKIERT:** kein Merge ohne sechs grüne Jobs und erfolgreiche Main-CI sowie erneute Kollisionsprüfung; PR Draft.
+- **Migration:** Keine (Spielstände, SQLite/JSON, Backups, App-Version, Story/UI/Regel-Engine unverändert).
+- **NÄCHSTER SCHRITT:** CI von PR #655 auf finalem SHA vollständig abnehmen und erst dann kontrolliert integrieren.
+

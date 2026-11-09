@@ -800,17 +800,69 @@ Folgende Fach-PRs von Arbeitsbereich C sind im Branch `integration/open-prs-2026
 Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only README-Nachtrag sowie in `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md` nachvollziehbar dokumentiert. Die gemeinsame PR-CI, der endgültige Main-Merge und archivierte Branchlöschungen bleiben bis zu konkretem Nachweis offen.
 
 
-## 08.11.2026 – Ausdrückliche Schadenswurf-Auswahl bei Live-Angriffswechsel
 
-- **Ausgangs-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276` (zuvor vollständige Main-CI auf `0ce0ad86e9eddf8302e495561d12a889008de49a` erfolgreich; neue Main-CI noch laufend).
-- **Eigener Branch:** `feat/chat-c/savage-attacker-live-offer-reset-20261108`; **Codecommit:** `03aca45a0bde1ba474fa7e24d0810972922c798b`; **Test-Fix-Commit:** `e2fbcc90c69891c4ab88f7b0e1b5f9df0c1fdfbe`. Branch-Endstand nach Dokumentation per GitHub prüfen.
-- **Pull Request:** [#647](https://github.com/ManuEtt/Dnd/pull/647) (Draft bis vollständiger CI-Abnahme).
-- **Problem:** Die bereits bestätigte Alternative in `SavageAttackerSelectionDialog` blieb über eine Änderung des Angriffs, der Kampagnenrevision oder der angezeigten Würfel ohne frische Spielerwahl aktiv.
-- **IMPLEMENTIERT:** `didUpdateWidget` verwirft alte Auswahl bei einem neuen Kampagnenobjekt, Angriff, Ziel, Schadensausdruck, Kritischstatus, Treffer-/Waffenbeleg oder Würfelnachweis. Identische Widgets behalten eine bestehende Auswahl. Controller und Regelengine entscheiden weiterhin über die tatsächliche Bestätigung.
-- **Fachdateien:** `app/lib/ui/savage_attacker_selection_dialog.dart`; neuer Widgettest `app/test/savage_attacker_live_offer_reset_test.dart`. Zusätzlich Checkpoints und neutraler append-only README-Nachtrag. Keine gemeinsam genutzten Domain- oder Speichermodelle geändert.
-- **Tests ergänzt:** Fünf positive/negative Widgetfälle (gleiches Rebuild, Angriffswechsel bei 320/360 dp mit 200 % Schrift und 220 dp simuliertem IME, Revision/verbrauchtes Talent, erneute gültige Wahl, ausgetauschte Würfel). Kampagnen-JSON bleibt identisch. Bestehende Fachtests unverändert.
-- **GETESTET:** Aktueller Main-HEAD, offene PRs und die betroffenen Dialog-/Testdateien vor Branchanlage geprüft; Änderungen auf eigenem Remote-Branch gesichert. Kein lokaler Flutter-Test durchgeführt.
-- **NICHT GETESTET:** `dart format`, `flutter analyze`, neue Widget-/Gesamttests, Android-Debug-/ABI-Builds und Backend-/Python-Gates am finalen Branch-HEAD (CI-Ergebnisse offen); physisches Android/TalkBack und echte Tastatur nicht abgenommen.
-- **BLOCKIERT:** Kein lokales Flutter-/Dart-SDK; `git ls-remote` scheitert an DNS. GitHub Actions muss die Codeprüfung übernehmen. Gemeinsame README-/Checkpoint-Updates bei Integration mit anderen PRs append-only koordinieren.
-- **Migration:** Keine. Unveränderte SQLite-/JSON-Schemata, bestätigte Regeln, Spielstände, IDs, Ressourcen, Assets und App-Version.
-- **NÄCHSTER SCHRITT:** Nach grüner CI den Dialog auf echtem Android-Gerät mit TalkBack bei 320 dp und 200 % Schrift überprüfen: bei neuem Angriff bleibt der Bestätigen-Button gesperrt bis zu einem erneuten Tap.
+
+---
+
+## 2026-11-07 – Hintergrundwechsel in der Magieinitiierten-Zauberwahl sicher zurücksetzen
+
+- **Ausgangs-main:** `bbe6ee0901f1873af67647bf54462e4a44821762` inklusive integrierter Grafik-ZIP-Importer-Sicherung aus PR #629.
+- **Branch:** `feat/chat-c/magic-initiate-background-swap-20261107`; keine Überschneidung der beiden Flutter-Fachdateien mit den geprüften offenen PRs. Eigenständiges Android-/Barrierefreiheits-UI-Inkrement.
+- **PROBLEM:** Der wiederverwendete `SrdMagicInitiateDialog` speicherte die ausgewählten Zaubertricks, den Grad-1-Zauber und das Attribut im State und die Dropdowns hielten ihre FormField-Werte intern fest. Wenn `background` in der gleichen Route wechselte, konnte die Auswahl aus dem anderen SRD-Hintergrund bestehen bleiben. Auch identische Zaubernamen beider Listen dürfen nicht als erneute ausdrückliche Zustimmung gelten.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_magic_initiate_dialog.dart` setzt bei `didUpdateWidget` und geändertem `background` alle vier noch unbestätigten Werte zurück; `KeyedSubtree` remountet die vier Dropdown-Felder bei geändertem Hintergrund unter Beibehaltung ihrer bisherigen Finder-Keys. Nicht unterstützte Hintergründe werden neutral als `nicht verfügbar` statt fälschlich als `Magier` angezeigt. Keine Freigabe für unbestätigte oder ungültige Entscheidungen.
+- **TESTS IMPLEMENTIERT:** `app/test/srd_magic_initiate_background_swap_test.dart` mit 360 dp/200 %/IME: vollständige Akolythenwahl, Wechsel zu Gelehrtenzaubern und erneute ausdrückliche Bestätigung. 320 dp/200 %/IME: gemeinsam vorkommende `Light`, `Mending`, `Detect Magic` nach Hintergrundwechsel vollständig zurückgesetzt; neutraler Abbruch. Unsupported `criminal`: keine positive Bestätigung und korrektes UI-Label.
+- **GETESTET:** Aktueller main, offener PR-Bestand, SRD-Auswahllisten und vorhandene Flutter-/IME-Tests in GitHub geprüft; Quell- und Testdateien eingecheckt. Automatische Dart-/Flutter-/Backend-/Python-/APK-CI für diesen HEAD **noch nicht abgeschlossen**.
+- **NICHT GETESTET:** Lokale Flutter-Formatierung/Analyse/Tests (SDK lokal nicht vorhanden), vollständig erfolgreiche GitHub-CI, echte Android-/TalkBack-/IME-Bedienung, Upgrade alter Spielstände.
+- **KOMPATIBILITÄT:** SRD-Regel- und Katalogeinträge, Domänenobjekte, Slots, SQLite-3/JSON-1-Speicherformat, App-Version `0.8.52+102` und bereits gespeicherte Entscheidungen bleiben unverändert. Nur noch unbestätigte UI-Auswahl wird beim Quellenwechsel verworfen.
+- **NÄCHSTER SCHRITT:** Draft-PR gegen aktuelles main, CI bis zu gezielten und vollständigen Flutter-Tests sowie allen APK-/Quell-Artefakten prüfen; Fehler isoliert auf diesem Branch beheben, nur vollständig grünen HEAD zur Review geben. Kein Main-Merge.
+
+
+
+---
+
+## 2026-11-08 – Bestätigte Schadens- und TP-Optionen beim Effektwechsel nicht mitnehmen
+
+- **Ausgangs-main:** `0ce0ad86e9eddf8302e495561d12a889008de49a`, eigener Branch `feat/chat-c/character-effect-kind-consent-reset-20261108`. Alle zum Beginn offenen PR-Fachdateien geprüft; keine Überschneidung mit der UI-Änderung oder neuer Testdatei.
+- **PROBLEM:** `CharacterEffectDialog` speicherte die vier Schadensmodifikatoren (Resistenz, Anfälligkeit, Immunität, kritisch) sowie die ausdrückliche Ersetzfreigabe temporärer Trefferpunkte in lokalen Bool-Feldern. Bei Wechsel des Effekttyps wurden Checkboxen ausgeblendet, behielten aber ihre Zustimmung, falls der vorherige Effekttyp erneut ausgewählt wurde.
+- **IMPLEMENTIERT:** In `app/lib/ui/character_effect_dialog.dart` räumt `_changeKind` bei tatsächlichem Typwechsel die verborgenen fünf Zustimmungen sowie die zuvor gewählte Schadensart auf. Vorhandene Texte, Anzeige- und Bestätigungsfelder sowie die spätere Regelentscheidung bleiben unverändert; kein automatischer Effekt.
+- **TESTS ERGÄNZT:** `app/test/character_effect_kind_consent_reset_test.dart` mit 320 dp, 200 % Schrift und simuliertem Android-IME: alle vier angekreuzten Schadensmodifikatoren und Feuer nach Schaden → Heilung → Schaden zurückgesetzt und ausdrücklich bestätigter Vorschlag ohne alte Kennzeichen; 360 dp: TP-Ersetzfreigabe nach Temp-TP → Heilung → Temp-TP zurückgesetzt; 320 dp: erneutes bewusstes Markieren von Immunität nach Typwechsel und neutraler Abbruch ohne Veränderung des übergebenen Helden.
+- **GETESTET:** Code-, Domain-Vertrags- und bestehende Widgettests geprüft und neue Code-/Testdateien im eigenen Branch eingecheckt. Keine automatisierte CI auf diesem HEAD zum Zeitpunkt des Nachtrags abgeschlossen.
+- **NICHT GETESTET:** Flutter/Dart lokal (SDK fehlt), GitHub-CI mit Format/Analyse/Flutter-/Python-/Backend-/Android-APK, echtes Gerät/TalkBack, Upgrades.
+- **KOMPATIBILITÄT:** App `0.8.52+102`, JSON/SQLite, SRD-Regeln, bestehende Spielstände und Domänenmodell unverändert. Ausschließlich nicht mehr zugehörige, **unbestätigte UI-Auswahl** wird verworfen.
+- **BLOCKIERT:** Bis zur vollständigen GitHub-CI-Abnahme Draft; keine eigenmächtige Integration.
+- **NÄCHSTER SCHRITT:** Eigenen PR gegen aktuelles main eröffnen, Gesamt-CI und APK-Matrix auswerten, Fehler auf eigenem Branch korrigieren; nur nach vollständigem Erfolg Review-Status.
+
+
+## 08.11.2026 – Integration der unabhängigen Dialogzustandskorrekturen
+
+- Beide ursprünglichen, individuellen Fortschrittsnachträge aus PR #634 und #642 sind oben in unveränderter Reihenfolge nach der gemeinsamen Basis angehängt. Fach- und Testdateien bleiben unverändert.
+- Integrationsbranch `integration/reviewed-ui-resets-20261108`, Basis `8bfaa22cded60e7731f5a3dc95684949bad49276`, Quell-Heads `eebaecf173ccb613ab9f10f68ab45245d2ad579f` und `322889b5ecbbc901c0732a03989bad2d912640db`.
+- Einzelne vollständige CI-Läufe auf beiden Quell-Heads bestanden (#42457887639, #42458556507). Kombinierte CI vor Main-Merge noch offen; keine Behauptung eines bereits erfolgreichen Integrations-Builds oder einer physischen Geräteabnahme.
+- SQLite/JSON, Spielstände, SRD-Fachregeln und App-Version bleiben unverändert.
+
+## 08.11.2026 – Heilzauber-Angebote bei aktualisierten Heldendaten erneuern (PR #651)
+
+- **Ausgangs-main:** `8bfaa22cded60e7731f5a3dc95684949bad49276`; anschließend geprüfte UI-Integration #648 aus `main` `404e9a5fc9b7d1c231b7bdd52c61319d4eb57752` verlustfrei in den eigenen Branch aufgenommen.
+- **Branch:** `feat/chat-c/healing-spell-live-hero-refresh-20261108`; **Fachcommit:** `3f21b9bf0d2d6dd994795faa22c07b73c376b0cd`, **Testcommit nach Review:** `a1bbd11dead44b819114da3e0f69d9aa6ff84bbc`, **Main-Abgleich/Merge:** `ba16c4f36a684900d148f263a024ab5bafef52fa`. Weiteren Branch-HEAD nach Dokumentationscommits separat verifizieren.
+- **Pull Request:** [#651](https://github.com/ManuEtt/Dnd/pull/651), Draft bis vollständiger CI-/Review-Abnahme.
+- **Ausgangsproblem:** Der geöffnete `HealingSpellDialog` hielt vorbereitete Zauber, Klassen, freie reguläre/Pakt-Zauberplätze und angekreuzte Komponenten aus dem ersten `HeroCharacter`-Snapshot fest, obwohl ein neuer Hero-Snapshot an demselben Widget ankam. `DropdownButtonFormField.initialValue` allein setzt den internen Feldzustand nicht zuverlässig zurück.
+- **IMPLEMENTIERT:** `_loadOffer()` lädt die relevanten Optionen fehlerabgesichert neu. `didUpdateWidget` verwirft beim Wechsel der Hero-Snapshot-Instanz frühere Zauber-/Klassen-/Platzwahl, validierungsbezogene Fehlermeldungen sowie gesprochene/gestische Komponentenfreigaben. Drei versionierte `KeyedSubtree`-Formularhüllen erzwingen neue Dropdown-States ohne Änderung der bekannten Feld-Keys. Ein bloßes Parent-Rebuild desselben Hero-Snapshots behält bestätigte Auswahl bei.
+- **Fachdateien:** `app/lib/ui/healing_spell_dialog.dart`, `app/test/healing_spell_live_snapshot_test.dart`; zusätzlich README und beide Checkpoints append-only. Kein Eingriff in Domainregeln, GameController, Spielstände, Events oder Datenbank.
+- **Regressionen:** Sechs Widgettests: positiver unveränderter Rebuild, aktualisierter Platzverbrauch auf 320/360 dp bei 200 % Schrift und 220 dp simuliertem IME (zwei Varianten), Heldenwechsel mit anderer Zauberklasse/Zauberliste, entfallene Vorbereitung/Plätze sowie ungültige Ressourcen und Wiederherstellung. Unveränderte `toJson()`-Snapshots und bestätigter Wahlvorschlag.
+- **GETESTET:** Tatsächlichen `main`-HEAD, alle 58 zum Start offenen PRs einschließlich ihrer Fachdateien, Quellcode und bestehende Heilzauber-Tests geprüft; eigener GitHub-Branch, Code-/Testcommits, Main-Merge und Draft-PR veröffentlicht. **Keine neue Flutter-Ausführung dadurch behauptet.**
+- **NICHT GETESTET:** Finale GitHub Actions (Projekt/Python, Backend, Dart-Format, Flutter-Analyse, gezielte und gesamte Widgettests, Android-APKs/Artefakte), physisches Android/TalkBack/IME und echte Geräte-Sprachbedienung. Lokales Flutter/Dart-SDK nicht vorhanden; direkter Git-Checkout wegen DNS nicht möglich.
+- **BLOCKIERT:** Bis zur erfolgreichen CI und endgültigen Konfliktprüfung kein Merge. Gemeinsame Dokumentationsanhänge bei späteren parallelen PR-Integrationen strikt verlustfrei koordinieren.
+- **Kompatibilität:** App `0.8.52+102` unverändert, SQLite/JSON und sämtliche historischen Spielstände unverändert, keine Migration.
+- **NÄCHSTER SCHRITT:** Das bestehende `HealingSpellDialog`-Auswahlformular auf echtem 320-dp-Android-Gerät bei 200 % Text mit TalkBack und geöffneter IME prüfen: aktualisierter Verbrauch darf keine alte Platz- und Komponentenfreigabe übernehmen.
+
+
+## 2026-11-09 – Angriffsentscheidung bei geändertem Talentangebot zurücksetzen
+
+- **Main-Basis:** `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`; **Branch:** `feat/chat-c/savage-attacker-live-offer-reset-20261108`.
+- **PR:** [#647](https://github.com/ManuEtt/Dnd/pull/647). Der bisherige Quell-/Test-HEAD `69dd94292a1c2f4b0580fbf51378a0017446c449` wurde mit dem aktuellen Main-Baum verbunden; der neue Merge-HEAD ist nach dem Push zu verifizieren.
+- **Fachdateien:** `app/lib/ui/savage_attacker_selection_dialog.dart`, `app/test/savage_attacker_live_offer_reset_test.dart`. Fünf Regressionen für unverändertes Parent-Rebuild, neue Angriffsidentität, abgelaufenen Zug/neue Revision und geänderte Würfelnachweise; kleine Bildschirme, 200 % Text und simulierte IME werden einbezogen.
+- **Verhalten:** Alte Auswahl wird bei geändertem Angebot verworfen; identisches Angebot behält die explizite Wahl. Der Dialog bleibt vorschlags-/schreibfrei.
+- **Vorherige CI:** sechs Jobs auf altem HEAD in [#42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537) erfolgreich. **Neue CI auf dem Merge-HEAD ausstehend**, daher keine aktuelle Testfreigabe.
+- **Kompatibilität:** keine Änderung an Regelengine, Controller, Eventformat, SQLite/JSON, App-Version oder vorhandenen Spielständen.
+- **Nicht getestet:** lokales Flutter/Dart-SDK fehlt; kein physisches Android/TalkBack/IME; neuer Main-basierter vollständiger CI-Lauf ausstehend.
+- **Nächster Schritt:** CI auf dem neuen PR-HEAD vollständig auswerten und nur konkret fehlgeschlagene Gates korrigieren; kein Merge vor grüner Gesamt-CI.
