@@ -125,6 +125,63 @@ class ConfirmedPlaceResumeSelector {
     return selection;
   }
 
+  /// Read one explicitly selected saved place by its stable ID.
+  ///
+  /// Unlike the bounded overview, the player may choose an older saved place
+  /// beyond the first four entries. This proves only a stored description,
+  /// never that the hero visited the location or completed a quest.
+  static ConfirmedPlaceResumeSelection readSelected(
+    Campaign campaign, {
+    required int expectedRevision,
+    required String placeId,
+  }) {
+    if (campaign.id.trim().isEmpty ||
+        campaign.sessionId.trim().isEmpty ||
+        expectedRevision < 0 ||
+        expectedRevision > 2147483647 ||
+        campaign.revision != expectedRevision ||
+        _safeId.stringMatch(placeId) != placeId) {
+      throw const FormatException('Ungültige Ortsauswahl für die Wiederaufnahme.');
+    }
+
+    Place? chosen;
+    for (final place in campaign.places) {
+      if (place.id != placeId) continue;
+      if (chosen != null) {
+        throw const FormatException('Ausgewählte Orts-ID ist nicht eindeutig.');
+      }
+      chosen = place;
+    }
+    if (chosen == null) {
+      throw const FormatException('Ausgewählter Ort ist nicht gespeichert.');
+    }
+
+    final name = _oneLine(chosen.name, 72, name: true);
+    if (name.isEmpty) {
+      throw const FormatException('Ausgewählter Ort hat keinen Anzeigenamen.');
+    }
+    final description = _oneLine(chosen.description, 220);
+    final selection = ConfirmedPlaceResumeSelection._(
+      campaignId: campaign.id,
+      sessionId: campaign.sessionId,
+      revision: campaign.revision,
+      entries: [
+        ConfirmedPlaceResumeEntry._(
+          placeId: chosen.id,
+          name: name,
+          description: description.isEmpty
+              ? 'keine gespeicherte Beschreibung'
+              : description,
+        ),
+      ],
+      sourceStamp: _sourceStamp(campaign),
+    );
+    if (selection.playerOverview.length > 1800) {
+      throw const FormatException('Ortsrückblick überschreitet sein Limit.');
+    }
+    return selection;
+  }
+
   static String _sourceStamp(Campaign campaign) => jsonEncode({
     'places': [for (final place in campaign.places) place.toJson()],
   });
