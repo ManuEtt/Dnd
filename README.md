@@ -1635,3 +1635,8 @@ Im spielbaren Epilog von Rabenwacht konnte bisher bereits die Erwähnung einer P
 ### 2026-11-09 – Drei geprüfte Verbesserungen zur gemeinsamen Integration vorbereitet
 
 Die voneinander unabhängig getesteten Korrekturen für SRD-Ritualidentitäten ([PR #622](https://github.com/ManuEtt/Dnd/pull/622)), ausdrücklich bestätigte NPC-Besuche im Epilog ([PR #628](https://github.com/ManuEtt/Dnd/pull/628)) und aktualisierte Heilzauberauswahl ([PR #651](https://github.com/ManuEtt/Dnd/pull/651)) wurden für einen koordinierten Integrationsbranch auf `main` `b2e1a021067cec39b7c85bdad11aa98477cac14e` vorbereitet. Die sechs Fach-/Testpfade sind im Ausgangsstand unverändert und bei den weiteren offenen PRs nicht überlappt; die vollständigen Quell-Commits sollen als Git-Vorfahren erhalten bleiben. Die historischen README- und Checkpoint-Nachträge werden ausschließlich angehängt. Alle drei einzelnen PR-Head-CIs waren vollständig erfolgreich (je sechs Jobs); die **gemeinsame** Python-/Backend-/Flutter-/Android-/Release-CI ist noch nicht ausgeführt beziehungsweise abgenommen. Es erfolgt hiermit weder ein ungeprüfter `main`-Merge noch eine Löschung. Spielstände, SQLite/JSON, Version und Backups bleiben unverändert.
+
+
+### 2026-11-09 – Verneinte Ortsrückreisen in Rabenwacht respektieren
+
+Die Rabenwacht-Wiedererkennung führt eine ausdrücklich verneinte Bewegung zu einem bereits besuchten Ort nicht mehr aus. Bei mehrdeutigen Formulierungen bleibt der bestätigte Ort unverändert und die Spielleitung bittet um eine eindeutige Neuformulierung. Positiv bestätigte Rückreisen bleiben möglich. Drei Regressionstests sichern beide Fälle sowie eine verneinte Ortsnennung ohne Reisebefehl. Keine Änderungen an Regeln, Belohnungen, Quests, persistenten Daten oder Spielstandschema.
