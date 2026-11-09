@@ -1400,13 +1400,34 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
 
+## 07.11.2026 – 29 SRD-Rituale gegen gefälschte Identitäten sichern, PR #622
+
+**Main-Basis:** `0a813df100aa649c2204018349b0db9af09fb83f`. **Eigener Branch:** `feat/chat-a/ritual-catalog-identity-20261107`. **Fachcommit:** `8b98068173f4932d1349f29ca8464034bcfb71a5`. **PR:** https://github.com/ManuEtt/Dnd/pull/622, zunächst Draft.
+
+**Ausgangsfehler:** `SrdRitualCastingRules.preflight` bewertete ein vom Aufrufer kontrollierbares `ritual`-Flag mit `Action or Ritual`, ohne für diesen Zauber die tatsächliche Ritualberechtigung nachzuweisen. Ein öffentlich erzeugtes `SrdSpellDefinition` konnte etwa `Magic Missile` als slotfreies Ritual vorbereiten.
+
+**Fachlich implementiert:** `app/lib/domain/srd_ritual_casting_rules.dart` verlangt für jeden Ritualplan die genaue Kombination aus katalogisiertem englischen Namen, stabiler ID, Level 1–9, Ritualwirkzeit und vollständiger geordneter Klasse(n)-Liste. Nur die 29 im Arbeitskatalog als Ritual markierten Einträge werden anerkannt. Unbekannte Wirkzeitgrammatik liefert weiterhin `UnsupportedError`. Geänderte Level, Klassen, IDs oder Namen scheitern mit `FormatException`, bevor ein Plan entsteht. Die Vorprüfung bleibt read-only; sie verrechnet keine zehn Minuten realer Zeit und verbraucht keine Zauberplätze oder Materialien.
+
+**Neue Testdatei:** `app/test/srd_ritual_catalog_identity_test.dart` mit Positivfällen der 29 Ritualzauber, manipuliertem `Magic Missile`, sieben Metadatenfälschungen, unbekannter Ritualzeit, Helden-/Slot-Immutabilität und Snapshot-Veraltung. Vorhandene Ritualregressionen bleiben aktiviert.
+
+**Quellen/Coverage:** Wizards of the Coast LLC, SRD v5.2.1, *Casting without Slots / Rituals* und *Longer Casting Times* (CC BY 4.0), https://www.dndbeyond.com/srd. Arbeitskatalog 339, davon 29 Ritual-Einträge; keine offizielle Vollprüfung individueller Zaubereffekte behauptet.
+
+**Getestet:** 29/29 feste Tupel automatisiert aus GitHub-Main-Katalog abgeglichen. Vor Beginn alle 38 offenen PRs auf direkte Fachdateiüberschneidung geprüft, Ergebnis keine. Neue Positiv-/Negativtestfälle committed, aber lokales Dart/Flutter fehlt.
+
+**Nicht getestet:** Finale Github Actions nach Dokumentations-HEAD, reales Android, Kombination mit anderen offenen PRs. Kein vorweggenommener grüner APK-Erfolg.
+
+**Blocker:** Nur fehlendes lokales Dart-/Flutter-SDK. Dokumentationskollisionen der parallel offenen PRs durch Bereich D verlustfrei zu integrieren.
+
+**Spielstände/Migration:** Keine Modell-, Event-, JSON-, SQLite-, Backend-, UI-, Story- oder Android-Version geändert; kein Migrationsbedarf.
+
+**Nächster konkreter Schritt:** Volle CI am finalen PR-HEAD auf Dart-Format, Flutter-Analyse, alle Flutter-Tests und Android-Builds prüfen; Abweichungen reparieren und PR erst bei vollständigem CI-Erfolg aus Draft freigeben.
+
 
 ## 2026-11-09 – Klassenprofil vor Stufenaufstieg vollständig validieren
 
-Basis-main: b2e1a021067cec39b7c85bdad11aa98477cac14e  
+Basis-main: f848cedef7787e2e89df7b63d93d04dfb06ed8ed  
 Branch: fix/chat-a/level-up-class-profile-validation-20261109b2e  
-Codecommit: 72f5fd93ddd87741a7282e069a7de7a7ab0e9133  
-Pull Request: wird nach dem Dokumentationscommit erstellt.
+Pull Request: https://github.com/ManuEtt/Dnd/pull/661
 
 ### Ausgangsproblem
 
@@ -1424,8 +1445,6 @@ SrdClassLevelUpRules.propose prüft vor jeder Klassenstufenberechnung die bekann
 
 ### Tests und Grenzen
 
-Neue Regression deckt sechs ungültige Profilformen bei Auswahl der Haupt- und Zweitklasse ab. Vorhandene positive Einzel-/Mehrklassen- und Klassenkapstone-Tests bleiben unverändert. Lokale Dart-/Flutter-Ausführung ist in dieser Umgebung nicht verfügbar; finale GitHub-Actions-CI ist noch ausstehend. Kein Gerätetest und keine produktive Signierungsabnahme behauptet.
+Neue Regression deckt sechs ungültige Profilformen bei Auswahl der Haupt- und Zweitklasse ab. Vorhandene positive Einzel-/Mehrklassen- und Klassenkapstone-Tests bleiben unverändert. Lokale Dart-/Flutter-Ausführung ist nicht verfügbar. Frühere CI-Läufe scheiterten an Formatierung; der formatierte finale Head ist noch nicht erfolgreich abgenommen. Kein Gerätetest und keine produktive Signierungsabnahme behauptet.
 
 Keine Änderung an Modellen, Spielständen, JSON-/SQLite-Schema, Story oder UI; keine Migration. Alte Profile bleiben lesbar, ungültige Stufenaufstiege werden blockiert.
-
-Nächster Schritt: finalen PR-Head und alle sechs GitHub-Actions-Jobs prüfen; bei Fehlern Ursache korrigieren und erneut testen.
