@@ -510,5 +510,69 @@ class StoryRulesBoundaryTests(unittest.TestCase):
             ),
         )
 
+    def test_encoded_dependency_uris_cannot_bypass_domain_boundary(self):
+        path = "app/lib/domain/rules.dart"
+        uris = (
+            r"../st\u006fry/hidden.dart",
+            r"../st\x6fry/hidden.dart",
+            r"package:lebendiger_spielleiter/%73tory/hidden.dart",
+            r"package:lebendiger_spielleiter/st%6fry/hidden.dart",
+        )
+        for directive in ("import", "export", "part", "part of"):
+            for uri in uris:
+                with self.subTest(directive=directive, uri=uri):
+                    self.assertEqual(
+                        [f"{path}: unverifiable encoded dependency URI {uri}"],
+                        check_imports(path, f"{directive} '{uri}';"),
+                    )
+
+    def test_encoded_conditional_import_uris_are_checked_individually(self):
+        source = (
+            "import 'models.dart'\n"
+            r"  if (dart.library.io) '../st\u006fry/story_api.dart'"
+            "\n"
+            r"  if (dart.library.html) 'package:lebendiger_spielleiter/st%6fry/story_api.dart';"
+        )
+        self.assertEqual(
+            [
+                "app/lib/domain/rules.dart: unverifiable encoded dependency URI "
+                r"../st\u006fry/story_api.dart",
+                "app/lib/domain/rules.dart: unverifiable encoded dependency URI "
+                "package:lebendiger_spielleiter/st%6fry/story_api.dart",
+            ],
+            check_imports("app/lib/domain/rules.dart", source),
+        )
+
+    def test_encoded_story_uris_are_rejected_but_plain_uris_remain_valid(self):
+        path = "app/lib/story/chapter.dart"
+        for uri in (
+            r"dart:co\u006evert",
+            r"../domain/mo%64els.dart",
+            r"../story/scene\_one.dart",
+        ):
+            with self.subTest(uri=uri):
+                self.assertEqual(
+                    [f"{path}: unverifiable encoded dependency URI {uri}"],
+                    check_imports(path, f"import '{uri}';"),
+                )
+        self.assertEqual(
+            [],
+            check_imports(
+                path,
+                "import 'dart:convert';\n"
+                "import '../domain/models.dart';\n"
+                "part 'chapter_scene.dart';",
+            ),
+        )
+
+    def test_comments_and_non_directive_strings_with_escapes_remain_ignored(self):
+        source = (
+            r"// import '../st\u006fry/unsafe.dart';" "\n"
+            r'final instruction = "import ../st\u006fry/unsafe.dart";' "\n"
+            "import 'models.dart';"
+        )
+        self.assertEqual([], check_imports("app/lib/domain/rules.dart", source))
+
+
 if __name__ == "__main__":
     unittest.main()

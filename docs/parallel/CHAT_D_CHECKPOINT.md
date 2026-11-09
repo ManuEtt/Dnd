@@ -2208,3 +2208,41 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Migration:** Keine (Spielstände, SQLite/JSON, Backups, App-Version, Story/UI/Regel-Engine unverändert).
 - **NÄCHSTER SCHRITT:** CI von PR #655 auf finalem SHA vollständig abnehmen und erst dann kontrolliert integrieren.
 
+
+## 2026-11-09 – Kodierte Dart-Import-URIs müssen die Story-/Regelgrenzenprüfung bestehen
+
+- **Ausgangs-main:** `b2e1a021067cec39b7c85bdad11aa98477cac14e` (vollständig gemergte Qualitätsintegration #655); die neue Main-CI `42594333535` war zu Paketbeginn noch `in_progress`.
+- **Eigener Branch:** `fix/chat-d/encoded-dart-uri-boundary-20261109`. Code `2fbfd9e3034292f9fe8c35b8d5ceeacd7bd8cf71`; Tests `8ca581fc47d8b14d02010f3778e0919cb7883426`.
+- **Problem:** Dart-Direktiven können gewöhnliche String-Escapes und URI-Prozentkodierungen enthalten. Der vorhandene Scanner prüft Textpräfixe und normalisiert `../story/` oder `package:...` lexikalisch, aber nicht potenziell anders aufgelöste Zeichen. Beispielsweise kann ein `../st\\u006fry/`-Literal den Story-Pfad beim reinen Textvergleich verschleiern.
+- **IMPLEMENTIERT:** `scripts/check_domain_boundaries.py` verwirft im Story- wie im Domain-Bereich URI-Literale mit Backslash oder Prozentzeichen konservativ als `unverifiable encoded dependency URI` – auch in konfigurierbaren Alternativen sowie bei Imports, Exports, `part` und `part of`. Normale unveränderte URIs bleiben akzeptiert.
+- **Regressionstests:** `scripts/tests/test_domain_boundaries.py` ergänzt vier Testmethoden mit 16 Direktiven-/URI-Kombinationen (Unicode-/Hex-Escape sowie Prozentkodierung), zwei bedingten Alternativen, Story-URI-Fällen und positiven unkodierten sowie ignorierten Kommentaren/String-Literalen.
+- **Konflikte:** Alle 53 offenen PRs vor Paketstart auf die zwei Fachpfade geprüft; keine Überschneidung, keine Änderung an fremden UI-/Regel-/Story-Modulen.
+- **GETESTET:** Quellcode und Tests auf eigenem Branch committed, Syntax und konkrete Testfälle beim Review kontrolliert; ältere grüne Projekt-CIs sind kein Nachweis dieser Änderung.
+- **NICHT GETESTET:** Vollständiger Python-Unittest- und Projekt-Suite-Lauf, Backend-/Flutter-/Android-/ABI-/Release-CI auf dem endgültigen Dokumentations-HEAD; echtes Android-Gerät.
+- **BLOCKIERT:** neue finale GitHub-Actions-CI und erneuter Main-/PR-Konfliktvergleich; kein ungeprüfter Main-Merge.
+- **Migration:** Keine; Spielstand-, SQLite-/JSON- und Backupformate, Android-App-Version, UI, Regelmechanik und Story-Inhalte unverändert.
+- **NÄCHSTER SCHRITT:** CI vollständig auf dem finalen PR-HEAD abnehmen, bei Fehlern im selben Branch korrigieren, danach Konfliktfreiheit und geregelten Main-Merge prüfen.
+
+- **Zugehöriger PR:** [#657](https://github.com/ManuEtt/Dnd/pull/657), Draft. Finale CI auf diesem Dokumentationsstand steht noch aus.
+
+## 2026-11-09 – Gradle-Wrapper-ZIP: mehrdeutige Verzeichnis-Endungen zurückweisen
+
+- **Main-Basis:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`.
+- **Branch:** `fix/chat-d/wrapper-directory-separators-20261109`.
+- **Problem:** Mehrere abschließende `/` wurden bei ZIP-Verzeichniseinträgen durch `rstrip('/')` stillschweigend normalisiert.
+- **Änderung:** Fail-closed-Ablehnung von `name.endswith('//')`; Regressionstest stellt sicher, dass `testzip()` nicht erreicht wird.
+- **Betroffene Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, dieser Checkpoint, zentraler Checkpoint, README.
+- **GETESTET:** Quelländerung und Testfall angelegt; keine lokale Repo-Testausführung (kein lokaler Checkout). CI-Nachweis ausstehend.
+- **NICHT GETESTET:** Vollständige Python-/Backend-/Flutter-/Android-/Release-CI.
+- **Migration:** Keine. Keine Änderung an App-/Backend-Produktcode, Persistenz, Spielständen oder Backupformaten.
+- **NÄCHSTER SCHRITT:** Finalen Branch veröffentlichen, sechs CI-Jobs vollständig abnehmen, Mergefähigkeit gegen dann aktuellen Main erneut prüfen.
+
+## PR- und CI-Nachweis
+
+- **Pull Request:** [#662](https://github.com/ManuEtt/Dnd/pull/662) (Draft).
+- **Finaler Code-HEAD:** `f25c9bdbc371974fb8c9f2ea6283204df4845080`.
+- **GitHub Actions:** nach Veröffentlichung gestartet; vollständige CI und Mergefähigkeit noch nicht bestätigt.
+- **README-Nachtrag:** PR-Link ergänzt; kein Merge behauptet.
+
+- **Finaler veröffentlichter Branch-HEAD:** `b90a900fdf0e2c1c09b89f89b08dee3fe7d66650` (reiner CI-Anstoß-Commit mit identischem Quellbaum wie der vorherige Dokumentations-HEAD).
+- **CI-Hinweis:** Die beiden vorherigen Actions-Läufe wurden durch nachfolgende Branch-Commits abgebrochen; die Quell-History-Erhaltung blieb erfolgreich, vollständige finale Abnahme steht aus. Der PR bleibt Draft.

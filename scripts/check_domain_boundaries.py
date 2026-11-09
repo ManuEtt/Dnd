@@ -147,6 +147,14 @@ def check_imports(relative_path: str, content: str) -> list[str]:
         )
     if relative_path.startswith("app/lib/story/"):
         for kind, uri in sources:
+            # Dart resolves escapes in ordinary string literals, and URI paths
+            # may contain percent encoding. Do not allow a textual prefix check
+            # to mistake an encoded cross-module dependency for a safe path.
+            if "\\" in uri or "%" in uri:
+                violations.append(
+                    f"{relative_path}: unverifiable encoded dependency URI {uri}"
+                )
+                continue
             if uri.startswith("dart:"):
                 if uri not in STORY_ALLOWED:
                     violations.append(f"{relative_path}: forbidden platform dependency {uri}")
@@ -166,6 +174,11 @@ def check_imports(relative_path: str, content: str) -> list[str]:
         allowed = DOMAIN_STORY_IMPORT_ALLOWED.get(relative_path, set())
         for kind, uri in sources:
             verb = "includes" if kind.startswith("part") else "imports"
+            if "\\" in uri or "%" in uri:
+                violations.append(
+                    f"{relative_path}: unverifiable encoded dependency URI {uri}"
+                )
+                continue
             if uri.startswith("package:"):
                 target = _package_target(uri)
                 if target is not None and target.startswith("app/lib/story/"):

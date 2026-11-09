@@ -2498,3 +2498,36 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Koordination:** Separater Integrationsbranch mit drei Quell-Heads als Git-Eltern, append-only Historie von README, zentralem und individuellen Checkpoints, Integrationsreport. Keine Änderungen an Spielständen, SQLite/JSON, Versionsnummer oder Backups.
 - **Nicht getestet:** Kombinierter Commit noch nicht durch CI abgenommen; Android-Gerätetests nicht durchgeführt.
 - **Freigabegate:** Nur nach vollständig erfolgreicher Integrations-CI, unverändertem PR-Head, Prüfung des neuesten `main` und erfolgreicher Main-CI integrieren. Danach bereits enthaltene Original-PRs schließen und Archivierungs-/Cleanup-Actions nachweisen.
+
+## 2026-11-09 – Kodierte Dart-URI-Literale in technischen Modulgrenzen konservativ abweisen
+
+- **Ausgangs-main:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`, vorausgegangener Main-Merge #655; [neue Main-CI #42594333535](https://github.com/ManuEtt/Dnd/actions/runs/42594333535) zu Beginn noch nicht erfolgreich abgenommen.
+- **Branch:** `fix/chat-d/encoded-dart-uri-boundary-20261109`; **Code-Commit:** `2fbfd9e3034292f9fe8c35b8d5ceeacd7bd8cf71`; **Test-Commit:** `8ca581fc47d8b14d02010f3778e0919cb7883426`.
+- **Befund:** Die bisherige Python-Importprüfung erkennt direkte und Raw-Dart-URIs, prüft ihre Pfadkomponenten aber lexikalisch. Normale Dart-String-Escapes und Prozentkodierungen könnten bei einer tatsächlichen URI-Auflösung zu einem verbotenen Domain-/Story-Pfad führen, ohne dass der lexikalische Vergleich dies erkennt.
+- **IMPLEMENTIERT:** Unverifizierbare Dart-URI-Literale mit Backslash/Prozentkodierung in `app/lib/story/` und `app/lib/domain/` explizit als Verletzung melden. Die Prüfung greift für `import`, `export`, `part`, `part of` und jede erkannte bedingte Alternative; unveränderte URI-Literale und bestehende Positivregeln bleiben erhalten.
+- **Geänderte Fachdateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_domain_boundaries.py`. Vier Regressionstestmethoden prüfen maskierte Unicode- und Hex-Escapes, kodierte Package-URIs, bedingte Alternativen, Story-Blockierung sowie Kommentare und positive einfache Imports.
+- **Konflikte:** Alle 53 offenen PRs auf die zwei Python-Fachdateien geprüft; keine Überschneidung. Gemeinsame Dokumentation wird append-only fortgeschrieben.
+- **GETESTET:** Github-Quellcommit mit Code und Tests gesichert; manuelle Kontrolle der Parserzweige/Testquellen. Main-CI auf früherem Head ist kein Ersatz für die neue CI.
+- **NICHT GETESTET:** neue Python-Projekt-Testsuite, Flutter-/Backend-/Android-Debug-/dreifach-ABI-/Release-CI auf dem finalen PR-SHA, reales Android-Gerät.
+- **BLOCKIERT:** neuer finaler CI-Lauf und frische Main-Konfliktprüfung; keine direkten Main-Commits.
+- **Migration:** Keine SQLite-/JSON-/Spielstands-/Backupänderung; keine UI-, Story-, Regel-/Versionsänderung.
+- **Nächster Schritt:** Draft-PR öffnen, finale CI sechsmal grün abnehmen, danach erst kontrolliert integrieren.
+
+- **Pull Request:** [#657](https://github.com/ManuEtt/Dnd/pull/657) (Draft). Finale sechsfach grüne CI und Main-Konfliktabgleich stehen noch aus.
+
+## 2026-11-09 – Mehrdeutige Gradle-Wrapper-ZIP-Verzeichnisse ablehnen
+
+- **Ausgangs-Main:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`.
+- **Branch:** `fix/chat-d/wrapper-directory-separators-20261109`.
+- **Problem:** `rstrip('/')` normalisierte mehrere abschließende ZIP-Verzeichnistrenner zu einem scheinbar regulären Pfad.
+- **Implementiert:** Wrapper-JAR-Prüfung weist Einträge mit doppeltem abschließendem Slash zurück; Regressionstest prüft Ablehnung vor `testzip()`.
+- **Tests:** Lokale Repo-Tests hier nicht ausführbar (kein Repository-Checkout/kein Flutter-SDK); GitHub Actions ausstehend.
+- **Kompatibilität:** Nur zusätzliche Validierung für Gradle-Wrapper-JAR-Upload; keine Spielstand-/Datenbank-/JSON-/Backupmigration.
+- **PR/CI:** Wird nach Branch-Veröffentlichung ergänzt; kein Merge bis vollständige CI grün.
+
+## PR- und CI-Nachweis
+
+- **Pull Request:** [#662](https://github.com/ManuEtt/Dnd/pull/662) (Draft).
+- **Finaler Code-HEAD:** `f25c9bdbc371974fb8c9f2ea6283204df4845080`.
+- **GitHub Actions:** nach Veröffentlichung gestartet; vollständige CI und Mergefähigkeit noch nicht bestätigt.
+- **README-Nachtrag:** PR-Link ergänzt; kein Merge behauptet.
