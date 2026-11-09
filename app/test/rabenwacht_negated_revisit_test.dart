@@ -34,8 +34,7 @@ void main() {
   );
 
   test('positiv bestätigte Rückreise bleibt möglich', () {
-    final after =
-        engine.act(atChapel(), 'Ich gehe zurück zur Mühle.').campaign;
+    final after = engine.act(atChapel(), 'Ich gehe zurück zur Mühle.').campaign;
 
     expect(after.storyBible['stage'], 'mill');
     expect(after.facts['location'], 'Alte Mühle');
@@ -44,8 +43,7 @@ void main() {
 
   test('verneinte Ortsnennung ohne Reisebefehl löst keine Rückreise aus', () {
     final before = atChapel();
-    final after =
-        engine.act(before, 'Ich möchte nicht zur Mühle.').campaign;
+    final after = engine.act(before, 'Ich möchte nicht zur Mühle.').campaign;
 
     expect(after.storyBible['stage'], 'chapel');
     expect(after.facts['location'], 'Kapelle');
