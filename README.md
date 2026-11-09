@@ -1643,3 +1643,8 @@ Die reine Zielverteilungsprüfung für *Magic Missile* akzeptierte bisher eine �
 **Code/Test:** `app/lib/domain/srd_magic_missile_multi_target_rules.dart`, `app/test/srd_magic_missile_multi_target_rules_test.dart`. Neue Regressionen weisen gefälschte IDs, Schule und Klassenreihenfolge einschließlich doppelter Klasse ab; der echte Katalogeintrag bleibt zulässig. **Branch:** `feat/chat-a/magic-missile-catalog-identity-20261109`; **Fachcommit:** `0731f671d89cbbad603e83951a4e9f00b699f761`; **Testcommit:** `b2e5a923ae91aa470da907ea0f381df1c61ad08f`. PR und CI sind zum Zeitpunkt dieses Nachtrags noch nicht erstellt beziehungsweise ausgeführt.
 
 **Quelle:** Wizards of the Coast LLC, SRD 5.2.1, *Magic Missile*, S. 146, CC BY 4.0, https://www.dndbeyond.com/srd. **Kompatibilität:** Nur eine read-only Regelvorprüfung; keine Änderung an Zauberwirkung, Spielständen, JSON, SQLite, Ereignissen, UI, Version oder Migration. Keine vollständige SRD-Zauberabdeckung wird behauptet.
+
+
+### 2026-11-09 – PR-Nachtrag zur Magic-Missile-Katalogidentität
+
+Die zuvor dokumentierte offene PR-Erstellung ist inzwischen abgeschlossen: [PR #665](https://github.com/ManuEtt/Dnd/pull/665) wurde als Draft gegen `main` eröffnet. Nach dem Formatierungsnachtrag ist der aktuelle Branch-HEAD `d3456a3a9cf5362531cba4d593a7b6272c694713`; die vollständige GitHub-Actions-Abnahme dieses endgültigen Stands wird nach den abschließenden Dokumentationsnachträgen erneut geprüft. Bis zum tatsächlichen Abschluss gilt CI als ausstehend, nicht als bestanden.
