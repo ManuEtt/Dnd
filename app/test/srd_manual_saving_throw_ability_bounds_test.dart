@@ -31,12 +31,7 @@ HeroCharacter _hero({
 );
 
 void main() {
-  const autoConditions = [
-    'gelähmt',
-    'versteinert',
-    'betäubt',
-    'bewusstlos',
-  ];
+  const autoConditions = ['gelähmt', 'versteinert', 'betäubt', 'bewusstlos'];
   const autoAbilities = ['strength', 'dexterity'];
 
   for (final condition in autoConditions) {
