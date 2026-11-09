@@ -1611,3 +1611,8 @@ Drei unabhängig entwickelte Qualitätsverbesserungen werden im Integrationsbran
 
 Die geprüften Verbesserungen für kollisionssichere historische Checkpoints, exklusive Alpha-Quell-ZIP-/SHA256-Veröffentlichung und den Schutz von Grafikimport-Zieldateien sind im [Integrations-PR #655](https://github.com/ManuEtt/Dnd/pull/655) zusammengefasst. Die ursprünglichen Fach-PRs [#592](https://github.com/ManuEtt/Dnd/pull/592), [#608](https://github.com/ManuEtt/Dnd/pull/608) und [#645](https://github.com/ManuEtt/Dnd/pull/645) und ihre vollständigen Git-Historien bleiben erhalten. Alle Einzelprüfungen waren erfolgreich; die gemeinsame CI auf dem abschließenden Integrationscommit ist gesondert abzunehmen. Unveränderte Spielstände, Backups, SQLite-/JSON-Schemas, UI, Story, Regelwerk und App-Version; kein ungeprüfter Main-Merge.
 
+
+
+### 2026-11-09 – Verneinte Ortsrückreisen in Rabenwacht respektieren
+
+Die Rabenwacht-Wiedererkennung führt eine ausdrücklich verneinte Bewegung zu einem bereits besuchten Ort nicht mehr aus. Bei mehrdeutigen Formulierungen bleibt der bestätigte Ort unverändert und die Spielleitung bittet um eine eindeutige Neuformulierung. Positiv bestätigte Rückreisen bleiben möglich. Drei Regressionstests sichern beide Fälle sowie eine verneinte Ortsnennung ohne Reisebefehl. Keine Änderungen an Regeln, Belohnungen, Quests, persistenten Daten oder Spielstandschema; die vollständige GitHub-CI auf dem finalen PR-Commit steht noch aus.
