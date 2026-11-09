@@ -389,6 +389,60 @@ void main() {
     );
   });
 
+  test('Inkonsistente bestehende Klassenprofile sperren jeden Stufenaufstieg', () {
+    final invalidProfiles = <String, HeroCharacter>{
+      'unknown secondary': hero(
+        className: 'Kämpfer',
+        secondary: 'Unbekannte Klasse',
+        secondaryLevel: 1,
+        level: 5,
+      ),
+      'same class twice': hero(
+        className: 'Kämpfer',
+        secondary: 'Fighter',
+        secondaryLevel: 1,
+        level: 5,
+      ),
+      'named secondary without level': hero(
+        className: 'Kämpfer',
+        secondary: 'Magier',
+        secondaryLevel: 0,
+        level: 5,
+      ),
+      'unnamed secondary with level': hero(
+        className: 'Kämpfer',
+        secondaryLevel: 1,
+        level: 5,
+      ),
+      'secondary reaches total level': hero(
+        className: 'Kämpfer',
+        secondary: 'Magier',
+        secondaryLevel: 5,
+        level: 5,
+      ),
+      'negative secondary level': hero(
+        className: 'Kämpfer',
+        secondary: 'Magier',
+        secondaryLevel: -1,
+        level: 5,
+      ),
+    };
+
+    for (final entry in invalidProfiles.entries) {
+      for (final selectedClass in ['Kämpfer', 'Magier']) {
+        expect(
+          () => SrdClassLevelUpRules.propose(
+            hero: entry.value,
+            className: selectedClass,
+            method: LevelUpMethod.milestone,
+          ),
+          throwsFormatException,
+          reason: '${entry.key}: $selectedClass',
+        );
+      }
+    }
+  });
+
   test('Berechnete Angriffe folgen bestätigter Klassenstufe', () {
     final initial = hero(level: 4, xp: 6500);
     final result = SrdClassLevelUpRules.propose(
