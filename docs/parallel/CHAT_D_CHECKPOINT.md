@@ -2222,3 +2222,5 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** neue finale GitHub-Actions-CI und erneuter Main-/PR-Konfliktvergleich; kein ungeprüfter Main-Merge.
 - **Migration:** Keine; Spielstand-, SQLite-/JSON- und Backupformate, Android-App-Version, UI, Regelmechanik und Story-Inhalte unverändert.
 - **NÄCHSTER SCHRITT:** CI vollständig auf dem finalen PR-HEAD abnehmen, bei Fehlern im selben Branch korrigieren, danach Konfliktfreiheit und geregelten Main-Merge prüfen.
+
+- **Zugehöriger PR:** [#657](https://github.com/ManuEtt/Dnd/pull/657), Draft. Finale CI auf diesem Dokumentationsstand steht noch aus.

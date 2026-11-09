@@ -2465,3 +2465,5 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **BLOCKIERT:** neuer finaler CI-Lauf und frische Main-Konfliktprüfung; keine direkten Main-Commits.
 - **Migration:** Keine SQLite-/JSON-/Spielstands-/Backupänderung; keine UI-, Story-, Regel-/Versionsänderung.
 - **Nächster Schritt:** Draft-PR öffnen, finale CI sechsmal grün abnehmen, danach erst kontrolliert integrieren.
+
+- **Pull Request:** [#657](https://github.com/ManuEtt/Dnd/pull/657) (Draft). Finale sechsfach grüne CI und Main-Konfliktabgleich stehen noch aus.
