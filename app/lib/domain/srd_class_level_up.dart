@@ -122,9 +122,9 @@ class SrdClassLevelUpRules {
         hero.secondaryClassLevel < 0 ||
         (hasSecondary
             ? other == null ||
-              other.name == first.name ||
-              hero.secondaryClassLevel < 1 ||
-              hero.secondaryClassLevel >= hero.level
+                  other.name == first.name ||
+                  hero.secondaryClassLevel < 1 ||
+                  hero.secondaryClassLevel >= hero.level
             : hero.secondaryClassLevel != 0)) {
       throw const FormatException(
         'Die bestätigten Klassen und Stufen sind nicht konsistent.',
