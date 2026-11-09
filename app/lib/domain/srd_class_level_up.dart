@@ -131,7 +131,9 @@ class SrdClassLevelUpRules {
       );
     }
     if (selected == null) {
-      throw const FormatException('Klasse ist nicht im SRD 5.2.1 hinterlegt.');
+      throw const FormatException(
+        'Klasse ist nicht im SRD 5.2.1 hinterlegt.',
+      );
     }
     final isSecondary = other != null && selected.name == other.name;
     if (selected.name != first.name && !isSecondary) {
