@@ -1571,3 +1571,43 @@ Die voneinander unabhängigen UI-Korrekturen für den Magieinitiierten-Hintergru
 
 Die beiden unabhängig erprobten Python-Korrekturen zur Dart-Modulgrenzenprüfung und zu sicheren Quell-ZIP-Dateirechten werden im gemeinsamen [Integrations-PR #652](https://github.com/ManuEtt/Dnd/pull/652) auf neuer Main-Basis zusammengeführt. Die zwei zuvor auf dem Hauptzweig vorgenommenen UI-Fortschritte und sämtliche bisherigen README-Einträge bleiben verlustfrei erhalten. Beide Quell-Pull-Requests [#649](https://github.com/ManuEtt/Dnd/pull/649) und [#650](https://github.com/ManuEtt/Dnd/pull/650) hatten auf ihren unveränderten Heads jeweils sechs erfolgreiche CI-Jobs. Der Integrationscommit `c9cda978ea5cc5dc3d6526d436b909769dc593f1` enthält beide Quell-Heads als echte Git-Eltern; die kombinierte CI ist zum Zeitpunkt dieses Nachtrags noch nicht erfolgreich abgenommen. Kein Main-Merge behauptet. Keine SQLite-/JSON-Spielstands-, Backup-, App-Versions-, UI-, Story- oder Regelmigration.
 
+
+### 2026-11-06 – Quell-ZIP und Sidecar ohne Überschreiben veröffentlichen
+
+Das Alpha-Release erstellt sein Quellarchiv samt `.zip.sha256` nun zunächst in einem privaten, temporären Verzeichnis unter der Release-Ausgabe. Anschließend werden beide geprüften Dateien ohne Überschreiben unter ihren Versionsnamen veröffentlicht. Taucht zwischen ursprünglichem Kollisionscheck und Veröffentlichung eine reguläre Datei oder ein Symlink auf, bricht die Alpha-Erstellung ab und bewahrt den fremden Eintrag. Beim Fehler-Rollback wird weiterhin nur tatsächlich erzeugener, anhand der Dateikennung identifizierter Inhalt entfernt.
+
+Der allgemeine Quellarchiv-Exporter `scripts/package_project.py` behält seine bisherige Funktion zum absichtlichen Ersetzen existierender Archive. Die Korrektur betrifft ausschließlich `scripts/prepare_alpha_release.py`. In `scripts/tests/test_prepare_alpha_release.py` prüfen fünf neue Regressionen erfolgreiche Veröffentlichung, spät kollidierende ZIPs, externe Links, spät belegte Sidecars und den Austausch unmittelbar nach Veröffentlichung. Siehe [PR #608](https://github.com/ManuEtt/Dnd/pull/608), Branch `fix/chat-d/release-source-exclusive-publish-20261106` (Draft bis vollständige CI).
+
+**Kompatibilität/Abnahme:** Keine Änderung an Spielstandformaten, SQLite, JSON, Backups, Story, Regeln, Flutter, Android-Build-/Versionsnummern oder der Release-Dateibenennung. Keine Migration. Die vollständige CI auf finalem Dokumentationscommit sowie echte Android-Geräteabnahme stehen noch aus. Ein aktiv fremd manipulierbares Ausgabe-Verzeichnis bleibt außerhalb einer garantierten Race-free-Sicherheitsgrenze.
+
+### 2026-11-06 – Checkpoint-Historie gegen mehrdeutige Dateinamen absichern
+
+Frühere Quellcode-Checkpoints dürfen keine zwei Dateinamen besitzen, die unter Unicode-NFC-Normalisierung und ohne Unterscheidung von Groß-/Kleinschreibung denselben Namen ergeben. Die Checkpoint-Erstellung verweigert solche Paare vor der Prüfsummenberechnung und Veröffentlichung, zum Beispiel `Case`/`case` oder `Café`/`Café`. Zusätzlich werden neue, gleich datierte Checkpoints mit nur anders geschriebenem Label sowie abweichend geschriebene Varianten der festen `LATEST`- und `SHA256SUMS.txt`-Dateien sicher zurückgewiesen.
+
+**Umsetzung:** `scripts/create_checkpoint.py`; vier neue Regressionstests in `scripts/tests/test_create_checkpoint.py` prüfen Casefold-/Unicode-Kollisionen, Publikationssperren und den unveränderten Bestand zuvor veröffentlichter Archive und Prüfsummen.
+
+**GitHub:** Branch `fix/chat-d/checkpoint-history-normalized-name-collisions-20261106`, [PR #592](https://github.com/ManuEtt/Dnd/pull/592). Die vollständige GitHub-CI des finalen PR-Commits ist noch abzunehmen; keine lokalen Projekttests als bestanden behauptet.
+
+**Kompatibilität:** Keine Migration und keine Änderung an existierenden Backups, Spielständen, SQLite-/JSON-Daten, App-/Android-Versionen oder Spielregeln. Reale Geräteabnahme und produktive Signierung bleiben separat offen.
+
+
+### 2026-11-08 – Checkpoint-Dateinamensicherung auf aktuellen Hauptstand übertragen
+
+Der ältere [PR #592](https://github.com/ManuEtt/Dnd/pull/592) gegen Unicode-NFC-/Casefold-Kollisionen historischer Checkpoint-Artefakte ist auf den aktuellen Hauptstand zurückgeführt worden, ohne bestehende Code- oder Checkpoint-Historie zu überschreiben. Der gespeicherte Schutz erkennt mehrere historische Archive mit gleichwertigen Namen, ein gleich datiertes Checkpoint mit anders geschriebenem Label sowie alternative Schreibweisen der stabilen Ausgabedateien. Vier Regressionstests bleiben erhalten. Der aktualisierte PR bleibt bis zur vollständig erfolgreichen GitHub-CI am finalen Dokumentations-HEAD ein Draft; die Änderungen wurden noch nicht in `main` integriert. Keine Migration und keine Auswirkungen auf SQLite, JSON-Spielstände, App-Version, Regeln, Story oder UI.
+
+
+### 2026-11-08 – Originalgrafik-Import vor nicht regulären Ziel-Dateien schützen
+
+**Problem/Lösung:** Der optionale Import geprüfter Originalgrafiken las vorhandene Zieldateien bisher ohne Prüfung ihres Dateityps. Versteckte sich an einem Bildziel ein benanntes Pipe-/FIFO-Objekt, konnte das Lesen auf einen Schreiber warten und damit den Import blockieren. Nun verwenden sowohl die ZIP-Vorabprüfung als auch die finale Einzeldatei-Veröffentlichung dieselbe Funktion `verify_existing_asset()`: Vorhandene Ziele müssen reguläre Dateien sein, bevor ihre Inhalte gelesen und auf exakte Übereinstimmung geprüft werden. Verzeichnisse und FIFOs werden stattdessen abgelehnt. Übereinstimmende reguläre Dateien bleiben für sichere Wiederholungen unverändert, unterschiedliche Bilder werden weiterhin nicht überschrieben.
+
+**Nachweis:** Branch `fix/chat-d/fantasy-import-nonregular-targets-20261108`, [PR #645](https://github.com/ManuEtt/Dnd/pull/645) (Draft, noch nicht integriert). Fachcommit `aeb143ea2a41474e6a871d94b4f90a375a0bc862`, Testcommit `9c3ae1b9ec54ace10579f1665428727e38486b6e`. Drei neue Regressionstests behandeln Verzeichnisziele im Normal- und Verify-Only-Modus, eine existierende POSIX-FIFO und eine erst nach dem ZIP-Preflight auftauchende FIFO; die Tests verbieten dabei explizit den potenziell blockierenden Leseaufruf. Die vollständige GitHub-CI auf dem final dokumentierten PR-Head ist bei diesem Nachtrag noch ausstehend. Die zuvor geprüften Symlink-, ZIP-Limit-, JSON-Manifest-, SHA256-/WebP- und atomaren Schreibprüfungen bleiben unverändert. Es besteht weiterhin keine Garantie gegen einen exakt zeitgleich erfolgenden Dateiaustausch; dafür wäre ein descriptorbasierter Pfadschutz nötig. Keine Änderung an SQLite, JSON-Spielständen, App-Version, Story, Regelengine oder UI.
+
+### 2026-11-09 – Sichere Projekt-Checkpoints, Alpha-ZIP-Veröffentlichung und Grafikimport geprüft zusammenführen
+
+Drei unabhängig entwickelte Qualitätsverbesserungen werden im Integrationsbranch `fix/chat-d/integrate-storage-safety-20261109` gemeinsam überprüft: kollisionssichere historische Checkpoint-Dateinamen ([PR #592](https://github.com/ManuEtt/Dnd/pull/592)), exklusive Veröffentlichung versionierter Alpha-Quellarchive und ihrer SHA256-Sidecars ([PR #608](https://github.com/ManuEtt/Dnd/pull/608)) sowie Schutz vor nicht regulären vorhandenen Grafik-Zieldateien ([PR #645](https://github.com/ManuEtt/Dnd/pull/645)). Jeder ursprüngliche PR-Commit hatte sechs erfolgreiche CI-Jobs; die gemeinsame Integrations-CI bleibt bis zum vollständigen Nachweis offen. Der bestehende README-Inhalt und alle vorherigen Nachträge bleiben unverändert; kein direkter Main-Commit, keine Spielstands-, SQLite-/JSON-, App- oder API-Migration.
+
+
+### 2026-11-09 – Drei Qualitätskorrekturen mit erhaltener Historie zur Integrationsprüfung eingereicht
+
+Die geprüften Verbesserungen für kollisionssichere historische Checkpoints, exklusive Alpha-Quell-ZIP-/SHA256-Veröffentlichung und den Schutz von Grafikimport-Zieldateien sind im [Integrations-PR #655](https://github.com/ManuEtt/Dnd/pull/655) zusammengefasst. Die ursprünglichen Fach-PRs [#592](https://github.com/ManuEtt/Dnd/pull/592), [#608](https://github.com/ManuEtt/Dnd/pull/608) und [#645](https://github.com/ManuEtt/Dnd/pull/645) und ihre vollständigen Git-Historien bleiben erhalten. Alle Einzelprüfungen waren erfolgreich; die gemeinsame CI auf dem abschließenden Integrationscommit ist gesondert abzunehmen. Unveränderte Spielstände, Backups, SQLite-/JSON-Schemas, UI, Story, Regelwerk und App-Version; kein ungeprüfter Main-Merge.
+

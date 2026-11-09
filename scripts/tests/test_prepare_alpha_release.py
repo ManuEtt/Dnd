@@ -962,5 +962,89 @@ class AlphaReleaseTests(unittest.TestCase):
         self.assertEqual(list(self.out.iterdir()), [])
 
 
+    def test_source_archive_pair_published_without_staging_leftovers(self):
+        published = release.prepare_release(self.root, self.out)
+        self.assertEqual(set(self.out.iterdir()), set(published))
+        source = self.out / 'Wuerfelraunen_v0.5.4_24_Source.zip'
+        sidecar = source.with_suffix('.zip.sha256')
+        self.assertEqual(
+            sidecar.read_text(encoding='utf-8'),
+            f'{release.sha256(source)}  {source.name}\n',
+        )
+        with zipfile.ZipFile(source) as archive:
+            self.assertIsNone(archive.testzip())
+
+    def test_late_source_archive_regular_file_survives_staged_publication(self):
+        source = self.out / 'Wuerfelraunen_v0.5.4_24_Source.zip'
+        actual_archive = release.create_archive
+
+        def stage_then_insert_file(root, destination, *, layout):
+            result = actual_archive(root, destination, layout=layout)
+            source.write_bytes(b'foreign source archive')
+            return result
+
+        with mock.patch.object(release, 'create_archive',
+                               side_effect=stage_then_insert_file):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(source.read_bytes(), b'foreign source archive')
+        self.assertEqual(set(self.out.iterdir()), {source})
+
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_late_source_archive_symlink_keeps_external_file(self):
+        source = self.out / 'Wuerfelraunen_v0.5.4_24_Source.zip'
+        outside = self.base / 'outside-source.zip'
+        outside.write_bytes(b'keep external archive')
+        actual_archive = release.create_archive
+
+        def stage_then_insert_link(root, destination, *, layout):
+            result = actual_archive(root, destination, layout=layout)
+            source.symlink_to(outside)
+            return result
+
+        with mock.patch.object(release, 'create_archive',
+                               side_effect=stage_then_insert_link):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei'):
+                release.prepare_release(self.root, self.out)
+        self.assertTrue(source.is_symlink())
+        self.assertEqual(outside.read_bytes(), b'keep external archive')
+        self.assertEqual(set(self.out.iterdir()), {source})
+
+    def test_late_source_sidecar_collision_rolls_back_only_own_zip(self):
+        source = self.out / 'Wuerfelraunen_v0.5.4_24_Source.zip'
+        sidecar = source.with_suffix('.zip.sha256')
+        actual_link = release.os.link
+
+        def link_then_insert_foreign_sidecar(staged, published):
+            actual_link(staged, published)
+            if published == source:
+                sidecar.write_bytes(b'foreign SHA256 sidecar')
+
+        with mock.patch.object(release.os, 'link',
+                               side_effect=link_then_insert_foreign_sidecar):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(sidecar.read_bytes(), b'foreign SHA256 sidecar')
+        self.assertEqual(set(self.out.iterdir()), {sidecar})
+
+    def test_source_replaced_after_exclusive_link_keeps_foreign_replacement(self):
+        source = self.out / 'Wuerfelraunen_v0.5.4_24_Source.zip'
+        replacement = self.base / 'replacement-source.zip'
+        replacement.write_bytes(b'other writer after public link')
+        actual_link = release.os.link
+
+        def link_then_replace_source(staged, published):
+            actual_link(staged, published)
+            if published == source:
+                release.os.replace(replacement, source)
+
+        with mock.patch.object(release.os, 'link',
+                               side_effect=link_then_replace_source):
+            with self.assertRaisesRegex(ValueError, 'Release-Zieldatei.*ersetzt'):
+                release.prepare_release(self.root, self.out)
+        self.assertEqual(source.read_bytes(), b'other writer after public link')
+        self.assertEqual(set(self.out.iterdir()), {source})
+
+
 if __name__ == '__main__':
     unittest.main()
