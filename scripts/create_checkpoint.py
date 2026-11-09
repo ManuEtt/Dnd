@@ -68,6 +68,11 @@ def safe_name(name: str) -> bool:
                         or unicodedata.category(char) in {'Cc', 'Cf', 'Cs', 'Zl', 'Zp'}
                         for char in name))
 
+def _portable_file_key(name: str) -> str:
+    """Match filenames as Unicode-normalizing, case-insensitive hosts do."""
+    return unicodedata.normalize('NFC', name).casefold()
+
+
 def previous_checkpoint_files(output_dir: Path) -> dict[str, tuple[Path, os.stat_result]]:
     """Select only safe, regular historical artifacts for the checksum ledger.
 
@@ -76,6 +81,7 @@ def previous_checkpoint_files(output_dir: Path) -> dict[str, tuple[Path, os.stat
     SHA256SUMS.txt lines or silently trusting an unsafe old snapshot.
     """
     result = {}
+    normalized_names: dict[str, str] = {}
     for path in output_dir.iterdir():
         name = path.name
         if (not name.startswith('Wuerfelraunen_') or name == LATEST
@@ -85,6 +91,10 @@ def previous_checkpoint_files(output_dir: Path) -> dict[str, tuple[Path, os.stat
         details = path.lstat()
         if not safe_name(name) or not stat.S_ISREG(details.st_mode):
             raise ValueError('Unsafe previous checkpoint artifact in output directory.')
+        portable_name = _portable_file_key(name)
+        previous = normalized_names.setdefault(portable_name, name)
+        if previous != name:
+            raise ValueError('Colliding historical checkpoint filenames.')
         result[name] = (path, details)
     return result
 
@@ -296,6 +306,21 @@ def create_checkpoint(root: Path, output_dir: Path, *, base: str, label: str,
             raise ValueError(
                 'A checkpoint with this version, timestamp and label already exists.'
             )
+        # A versioned file may exist under a different spelling on Linux but
+        # alias the new name on case-insensitive or Unicode-normalizing hosts.
+        # Also protect both stable aliases against differently spelled twins.
+        planned_keys = {_portable_file_key(name) for name in names.values()}
+        stable_aliases = {
+            _portable_file_key(alias): alias
+            for alias in (LATEST, 'SHA256SUMS.txt')
+        }
+        for existing in output_dir.iterdir():
+            portable_name = _portable_file_key(existing.name)
+            if portable_name in planned_keys:
+                raise ValueError('Checkpoint filename collides across filesystems.')
+            alias = stable_aliases.get(portable_name)
+            if alias is not None and existing.name != alias:
+                raise ValueError('Checkpoint stable alias collides across filesystems.')
         with tempfile.TemporaryDirectory(prefix='.checkpoint-', dir=output_dir) as temp:
             staging = Path(temp)
             archive, patch, manifest, sums = (staging / names[key]

@@ -14,6 +14,7 @@ from pathlib import Path
 import re
 import shutil
 import stat
+import tempfile
 import unicodedata
 import zipfile
 
@@ -335,9 +336,36 @@ def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
         validated_apk_digest = sha256(source_apk)
         if _source_identity(source_apk.stat()) != _source_identity(checked_source):
             raise ValueError('Die ARM64-APK-Quelle wurde während der Prüfung verändert.')
-        _, source_digest = create_archive(root, source, layout='root')
-        for generated_path in (source, source_checksum):
-            created[generated_path] = _published_file_identity(generated_path.lstat())
+        # The generic source exporter intentionally replaces an existing ZIP.
+        # For a versioned alpha release, instead stage the whole ZIP/sidecar
+        # pair privately and publish each using hard links with EEXIST safety.
+        # Both locations are on the same filesystem, so linking does not
+        # expose a partial copy or overwrite a late foreign path/symlink.
+        with tempfile.TemporaryDirectory(
+            prefix=f'.{stem}_Source.', dir=output,
+        ) as staging_dir:
+            staged_source = Path(staging_dir) / source.name
+            _, source_digest = create_archive(root, staged_source, layout='root')
+            staged_checksum = staged_source.with_suffix(staged_source.suffix + '.sha256')
+            for staged_path, published_path in (
+                (staged_source, source),
+                (staged_checksum, source_checksum),
+            ):
+                staged_info = staged_path.lstat()
+                if not stat.S_ISREG(staged_info.st_mode):
+                    raise ValueError('Das Quellarchiv darf keine Dateilinks enthalten.')
+                identity = _published_file_identity(staged_info)
+                try:
+                    os.link(staged_path, published_path)
+                except FileExistsError as error:
+                    raise ValueError(
+                        'Eine Release-Zieldatei wurde während der Veröffentlichung neu belegt.'
+                    ) from error
+                # The identity comes from our private staged file, never from
+                # a possibly replaced public directory entry.
+                created[published_path] = identity
+        for published_path in (source, source_checksum):
+            _require_owned_file(published_path, created[published_path])
         # Recheck after potentially long source ZIP creation as well.
         if _has_symlink_component(source_apk):
             raise ValueError('Die ARM64-APK darf keine symbolischen Pfadlinks verwenden.')
