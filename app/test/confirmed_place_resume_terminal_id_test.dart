@@ -8,19 +8,17 @@ import 'package:lebendiger_spielleiter/story/confirmed_place_resume_selection.da
 import 'package:path/path.dart' as paths;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-Campaign _campaign({
-  List<Place> places = const [],
-  int revision = 0,
-}) => Campaign(
-  id: 'strict-place-resume',
-  name: 'Die alten Wege',
-  world: 'Valdorn',
-  sessionId: 'session-safe',
-  hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 13),
-  scene: 'Unbestätigt: Der Spieler hat einen Drachen bezwungen.',
-  revision: revision,
-  places: places,
-);
+Campaign _campaign({List<Place> places = const [], int revision = 0}) =>
+    Campaign(
+      id: 'strict-place-resume',
+      name: 'Die alten Wege',
+      world: 'Valdorn',
+      sessionId: 'session-safe',
+      hero: HeroCharacter(id: 'aria', name: 'Aria', hitPoints: 13),
+      scene: 'Unbestätigt: Der Spieler hat einen Drachen bezwungen.',
+      revision: revision,
+      places: places,
+    );
 
 void main() {
   sqfliteFfiInit();
