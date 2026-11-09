@@ -1458,3 +1458,11 @@ Read-only Vorprüfung; kein Zauberwurf, Schaden, Slotverbrauch, Event oder Kampa
 ### NÄCHSTER SCHRITT
 
 PR erstellen und vollständige CI auf dem endgültigen PR-HEAD abnehmen; Fehlerursachen gegebenenfalls auf demselben Branch korrigieren.
+
+
+### PR-Nachtrag – 09.11.2026
+
+- [PR #665](https://github.com/ManuEtt/Dnd/pull/665) wurde als Draft gegen `main` erstellt.
+- Der Code-/Teststand wurde nach einem kleinen Formatierungsnachtrag auf `d3456a3a9cf5362531cba4d593a7b6272c694713` aktualisiert. Der anschließende Dokumentationsnachtrag enthält den PR-Link.
+- **CI:** Ein Workflow für den PR wurde gestartet; der endgültige, dokumentierte Branch-HEAD benötigt nach den letzten Doku-Commits eine erneute vollständige Actions-Abnahme. Kein Erfolg vorweggenommen.
+- **Nächster Schritt:** Finalen CI-Lauf abwarten und bei einem konkreten Fehler im selben Branch beheben.
