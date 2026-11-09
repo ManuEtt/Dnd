@@ -2451,3 +2451,14 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
 
+## 2026-11-09 – Attributgrenzen vor automatischem Rettungswurffehlschlag validieren
+
+- **Main-Basis:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`, 53 offene PRs mit Dateiabgleich konfliktfrei geprüft.
+- **Fachbranch:** `feat/chat-a/automatic-save-ability-bounds-20261109`, **Fachcommit:** `7054a7704af1a0c6144d929980cca05a3cf285ed`, **PR:** [#656](https://github.com/ManuEtt/Dnd/pull/656).
+- **IMPLEMENTIERT:** `SrdManualSavingThrowRules.prepare` validiert vor dem zustandsbedingten `null`-Ergebnis nicht nur ein vorhandenes Attribut, sondern den SRD-konformen Wertbereich 1–30. Ungültige -1/0/31 => `FormatException`; fehlende Attributbestätigung und der vorhandene Klassen-Profilguard behalten ihre Semantik.
+- **GEÄNDERT:** `app/lib/domain/srd_manual_saving_throw_rules.dart`, neu `app/test/srd_manual_saving_throw_ability_bounds_test.dart`; außerdem nur diese drei append-only Checkpoint-/README-Nachträge. Vier Zustände × zwei automatische STR/DEX-Fehlschläge mit gültigen und ungültigen Zahlen, zusätzliche reguläre/Legacy-/Null-/Unveränderlichkeitstests.
+- **GETESTET:** PR-Dateipfade und Codebasis geprüft; [Actions #42594880639](https://github.com/ManuEtt/Dnd/actions/runs/42594880639) für ersten Fachcommit gestartet, finale Tests auf End-HEAD bei diesem Nachtrag ausstehend.
+- **NICHT GETESTET / BLOCKIERT:** Kein lokales Dart-/Flutter-SDK oder nutzbarer Checkout; vollständige Flutter-Suite, Android-Debug-/ABI-APKs und Release auf dem Endcommit müssen CI-Status noch belegen. Realgerät, Signatur und Integration gesondert offen.
+- **MIGRATION:** Keine neuen Speicherfelder, JSON-/SQLite-Änderungen oder Versionserhöhung. Bestehende Klassen- und Auto-Failure-Fachregeln sowie Datenhistorie bleiben erhalten.
+- **NÄCHSTER SCHRITT:** Strengen Formatcheck, Analyse und gesamte CI auf dem letzten Commit prüfen; erkannte Fehler im eigenen Branch korrigieren. Danach Integrationsreview ohne ungeprüften Merge.
+

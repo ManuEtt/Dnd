@@ -1399,3 +1399,14 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 ## 2026-11-05 – Unbezwingbare Stärke: Klassenprofil-Vorprüfung
 
 Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indomitable-might-class-preflight-20261105`. SRD 5.2.1 Barbarian 18 / Indomitable Might (CC BY 4.0). Eine reine Domänenänderung sperrt manipulierte Klassenkombinationen, Aliasdoppelungen, unbekannte Klassen und Stufen außerhalb 1–20 vor der Anwendung des Stärke-Mindestwerts. Gültige Einzel-/Mehrklassen erhalten den Effekt. Neuer Test `app/test/srd_indomitable_might_class_preflight_test.dart` mit Negativ-, Positiv-, Grenz- und Immutabilitätsfällen. Kein Datenmodell, JSON/SQLite, Story, UI oder GameEngine geändert. Lokal kein Dart/Flutter-SDK; CI-Status am PR-HEAD prüfen. Nächster Schritt: vollständige Actions-Abnahme und Integrationsreview durch Chat D.
+
+## 2026-11-09 – Automatische STR-/DEX-Rettungswurffehlschläge nur mit plausiblen Attributen
+
+- **Ausgangs-Main:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`, 53 konkurrierende PR-Dateilisten auf Fachpfadkonflikte geprüft, keine Überschneidung. PR #653 bleibt unabhängig, #175 ist gemergt.
+- **Branch:** `feat/chat-a/automatic-save-ability-bounds-20261109`; **PR:** [#656](https://github.com/ManuEtt/Dnd/pull/656); erster **Codecommit:** `7054a7704af1a0c6144d929980cca05a3cf285ed`.
+- **IMPLEMENTIERT:** `app/lib/domain/srd_manual_saving_throw_rules.dart` prüft nun vor dem automatischen `return null` den bestätigten Attributwert auf 1–30. Bei ungültigem Wert `FormatException`. Die vorherige Fehlerreaktion bei null bleibt. Ein gültiger automatischer Fehlschlag braucht weiterhin weder W20 noch vollständige historische Klassenbestätigung, und ein regulärer Wurf bleibt durch den bereits existierenden Profilvalidator geschützt.
+- **TESTDATEI:** `app/test/srd_manual_saving_throw_ability_bounds_test.dart` mit positiven/negativen Grenzwerten je automatischem SRD-Zustand und betroffenem Attribut; fehlende Werte, historische Klassen, normale Rettungswürfe und JSON-Immutabilität.
+- **CI-STATUS:** [Lauf #42594880639](https://github.com/ManuEtt/Dnd/actions/runs/42594880639) auf dem ersten Fachcommit gestartet, End-HEAD und vollständige Android-Artefakte beim Nachtrag noch nicht abgenommen. Lokal keine Dart-/Flutter-Werkzeuge. Keine erfundene Testabnahme.
+- **KOMPATIBILITÄT:** Keine Migration, Persistenz-/UI-/Backend-/Spielmodell-/Versionsänderung. SRD 5.2.1 Saving Throws/Conditions unter CC BY 4.0, bisherige Erzähl- und Zustandsmechanik unverändert.
+- **OFFEN:** Finalen CI-Lauf auf dem Dokumentations-/Korrekturcommit verfolgen, bei Format-/Analyzer-/Testfehlern Ursache beheben; kein automatischer Merge. Nächster unabhängiger Schritt nach der CI: weitere tatsächlich unvalidierte Rettungswurf-Eingänge prüfen, nach erneutem Konfliktabgleich.
+
