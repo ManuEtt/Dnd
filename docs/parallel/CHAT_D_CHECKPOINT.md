@@ -2208,3 +2208,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Migration:** Keine (Spielstände, SQLite/JSON, Backups, App-Version, Story/UI/Regel-Engine unverändert).
 - **NÄCHSTER SCHRITT:** CI von PR #655 auf finalem SHA vollständig abnehmen und erst dann kontrolliert integrieren.
 
+
+## 2026-11-09 – Kodierte Dart-Import-URIs müssen die Story-/Regelgrenzenprüfung bestehen
+
+- **Ausgangs-main:** `b2e1a021067cec39b7c85bdad11aa98477cac14e` (vollständig gemergte Qualitätsintegration #655); die neue Main-CI `42594333535` war zu Paketbeginn noch `in_progress`.
+- **Eigener Branch:** `fix/chat-d/encoded-dart-uri-boundary-20261109`. Code `2fbfd9e3034292f9fe8c35b8d5ceeacd7bd8cf71`; Tests `8ca581fc47d8b14d02010f3778e0919cb7883426`.
+- **Problem:** Dart-Direktiven können gewöhnliche String-Escapes und URI-Prozentkodierungen enthalten. Der vorhandene Scanner prüft Textpräfixe und normalisiert `../story/` oder `package:...` lexikalisch, aber nicht potenziell anders aufgelöste Zeichen. Beispielsweise kann ein `../st\\u006fry/`-Literal den Story-Pfad beim reinen Textvergleich verschleiern.
+- **IMPLEMENTIERT:** `scripts/check_domain_boundaries.py` verwirft im Story- wie im Domain-Bereich URI-Literale mit Backslash oder Prozentzeichen konservativ als `unverifiable encoded dependency URI` – auch in konfigurierbaren Alternativen sowie bei Imports, Exports, `part` und `part of`. Normale unveränderte URIs bleiben akzeptiert.
+- **Regressionstests:** `scripts/tests/test_domain_boundaries.py` ergänzt vier Testmethoden mit 16 Direktiven-/URI-Kombinationen (Unicode-/Hex-Escape sowie Prozentkodierung), zwei bedingten Alternativen, Story-URI-Fällen und positiven unkodierten sowie ignorierten Kommentaren/String-Literalen.
+- **Konflikte:** Alle 53 offenen PRs vor Paketstart auf die zwei Fachpfade geprüft; keine Überschneidung, keine Änderung an fremden UI-/Regel-/Story-Modulen.
+- **GETESTET:** Quellcode und Tests auf eigenem Branch committed, Syntax und konkrete Testfälle beim Review kontrolliert; ältere grüne Projekt-CIs sind kein Nachweis dieser Änderung.
+- **NICHT GETESTET:** Vollständiger Python-Unittest- und Projekt-Suite-Lauf, Backend-/Flutter-/Android-/ABI-/Release-CI auf dem endgültigen Dokumentations-HEAD; echtes Android-Gerät.
+- **BLOCKIERT:** neue finale GitHub-Actions-CI und erneuter Main-/PR-Konfliktvergleich; kein ungeprüfter Main-Merge.
+- **Migration:** Keine; Spielstand-, SQLite-/JSON- und Backupformate, Android-App-Version, UI, Regelmechanik und Story-Inhalte unverändert.
+- **NÄCHSTER SCHRITT:** CI vollständig auf dem finalen PR-HEAD abnehmen, bei Fehlern im selben Branch korrigieren, danach Konfliktfreiheit und geregelten Main-Merge prüfen.
