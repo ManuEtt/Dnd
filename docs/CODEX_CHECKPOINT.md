@@ -2451,3 +2451,17 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Migration:** Keine Änderung an Spielständen, SQLite/JSON, Backupformat, Produkt-App-/Backend-/Regel-/Storymodulen oder Versionen.
 - **NÄCHSTER SCHRITT:** Finale GitHub-Actions-CI nach letztem Append-only-Commit sechsmal erfolgreich abnehmen, danach Main-/Mergefähigkeit prüfen.
 
+
+## 2026-11-09 – Kodierte Dart-URI-Literale in technischen Modulgrenzen konservativ abweisen
+
+- **Ausgangs-main:** `b2e1a021067cec39b7c85bdad11aa98477cac14e`, vorausgegangener Main-Merge #655; [neue Main-CI #42594333535](https://github.com/ManuEtt/Dnd/actions/runs/42594333535) zu Beginn noch nicht erfolgreich abgenommen.
+- **Branch:** `fix/chat-d/encoded-dart-uri-boundary-20261109`; **Code-Commit:** `2fbfd9e3034292f9fe8c35b8d5ceeacd7bd8cf71`; **Test-Commit:** `8ca581fc47d8b14d02010f3778e0919cb7883426`.
+- **Befund:** Die bisherige Python-Importprüfung erkennt direkte und Raw-Dart-URIs, prüft ihre Pfadkomponenten aber lexikalisch. Normale Dart-String-Escapes und Prozentkodierungen könnten bei einer tatsächlichen URI-Auflösung zu einem verbotenen Domain-/Story-Pfad führen, ohne dass der lexikalische Vergleich dies erkennt.
+- **IMPLEMENTIERT:** Unverifizierbare Dart-URI-Literale mit Backslash/Prozentkodierung in `app/lib/story/` und `app/lib/domain/` explizit als Verletzung melden. Die Prüfung greift für `import`, `export`, `part`, `part of` und jede erkannte bedingte Alternative; unveränderte URI-Literale und bestehende Positivregeln bleiben erhalten.
+- **Geänderte Fachdateien:** `scripts/check_domain_boundaries.py`, `scripts/tests/test_domain_boundaries.py`. Vier Regressionstestmethoden prüfen maskierte Unicode- und Hex-Escapes, kodierte Package-URIs, bedingte Alternativen, Story-Blockierung sowie Kommentare und positive einfache Imports.
+- **Konflikte:** Alle 53 offenen PRs auf die zwei Python-Fachdateien geprüft; keine Überschneidung. Gemeinsame Dokumentation wird append-only fortgeschrieben.
+- **GETESTET:** Github-Quellcommit mit Code und Tests gesichert; manuelle Kontrolle der Parserzweige/Testquellen. Main-CI auf früherem Head ist kein Ersatz für die neue CI.
+- **NICHT GETESTET:** neue Python-Projekt-Testsuite, Flutter-/Backend-/Android-Debug-/dreifach-ABI-/Release-CI auf dem finalen PR-SHA, reales Android-Gerät.
+- **BLOCKIERT:** neuer finaler CI-Lauf und frische Main-Konfliktprüfung; keine direkten Main-Commits.
+- **Migration:** Keine SQLite-/JSON-/Spielstands-/Backupänderung; keine UI-, Story-, Regel-/Versionsänderung.
+- **Nächster Schritt:** Draft-PR öffnen, finale CI sechsmal grün abnehmen, danach erst kontrolliert integrieren.
