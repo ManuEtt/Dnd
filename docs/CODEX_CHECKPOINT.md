@@ -2498,3 +2498,17 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Koordination:** Separater Integrationsbranch mit drei Quell-Heads als Git-Eltern, append-only Historie von README, zentralem und individuellen Checkpoints, Integrationsreport. Keine Änderungen an Spielständen, SQLite/JSON, Versionsnummer oder Backups.
 - **Nicht getestet:** Kombinierter Commit noch nicht durch CI abgenommen; Android-Gerätetests nicht durchgeführt.
 - **Freigabegate:** Nur nach vollständig erfolgreicher Integrations-CI, unverändertem PR-Head, Prüfung des neuesten `main` und erfolgreicher Main-CI integrieren. Danach bereits enthaltene Original-PRs schließen und Archivierungs-/Cleanup-Actions nachweisen.
+
+
+### 2026-11-09 – Verneinte Rabenwacht-Rückreisen nicht als Reisebefehl behandeln
+
+- **Arbeitsbereich:** Story/Kampagnenlogik, eng begrenzte Korrektur an der Erkennung bereits besuchter Orte.
+- **Basis-main:** `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`. **Branch:** `fix/chat-b/rabenwacht-negated-travel-main-sync-20261109`.
+- **Problem:** `RabenwachtStoryModule._revisit` suchte nach Reiseverben und Ortsnamen, ignorierte aber eine ausdrückliche Verneinung. So konnte „Ich gehe nicht zurück zur Mühle“ trotz gegenteiliger Absicht eine gespeicherte Ortsrückreise auslösen.
+- **Implementiert:** Sobald ein bekanntes Ziel und eine Verneinung in derselben Eingabe erkannt werden, bleibt die Kampagne unverändert; der Spieler erhält eine Bitte um eindeutige Neuformulierung. Positiv formulierte Rückreisen bleiben erhalten.
+- **Regressionen:** drei neue Fälle für verneinte Rückreise, weiterhin erlaubte positive Rückreise und verneinte Ortsnennung ohne Reisebefehl. Etappe, Ortsfakt, Szene und Heldenzustand werden geprüft.
+- **Geänderte Fach-/Testdateien:** `app/lib/story/rabenwacht_campaign.dart`, `app/test/rabenwacht_negated_revisit_test.dart`. README und beide Checkpoints ausschließlich am Ende ergänzt.
+- **Kompatibilität:** keine Migration; keine Änderung an SQLite/JSON, Version, Würfen, XP, HP, Ressourcen, Quests oder KI-/Backend-Vertrag.
+- **Parallelität:** Der ursprüngliche Branch wurde wegen 27 zwischenzeitlicher main-Commits nicht weitergeführt. Die drei gemeinsamen Dokumentationsdateien wurden auf dem aktuellen main neu aufgebaut; der Fachpfad war in diesen main-Commits unverändert.
+- **GETESTET:** Änderungen auf aktuellem main neu angewendet und versioniert. **NICHT GETESTET:** lokaler Flutter/Dart-Lauf, vollständige GitHub-CI auf finalem HEAD, Android-Gerät.
+- **BLOCKIERT:** Freigabe bis vollständige grüne CI und Review. Kein Merge.
