@@ -249,6 +249,7 @@ class _SrdFireballGridPreviewDialogState
             DropdownButtonFormField<int>(
               key: const ValueKey('fireball-map-size'),
               initialValue: _size,
+              isExpanded: true,
               decoration: const InputDecoration(
                 labelText: 'Karte – je Feld 5 Fuß',
               ),
