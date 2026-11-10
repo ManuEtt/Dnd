@@ -123,7 +123,8 @@ class _SrdFireballGridPreviewDialogState
   }
 
   Widget _grid() {
-    const side = 26.0;
+    // Each cell remains a 48 dp touch target at large Android text sizes.
+    const side = 48.0;
     final scheme = Theme.of(context).colorScheme;
     final candidates = {
       for (final entry in _result?.candidates ?? <SrdSphereCellCandidate>[])
@@ -230,93 +231,98 @@ class _SrdFireballGridPreviewDialogState
             .length ??
         0;
     return AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       title: const Text('Feuerball: Flächenvorschau'),
       content: SizedBox(
         width: 520,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Nur Planung: Reichweite bis zum Ursprung 150 Fuß, '
-                'Kugelradius 20 Fuß. Kein automatischer Treffer, '
-                'Rettungswurf oder Schaden.',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Nur Planung: Reichweite bis zum Ursprung 150 Fuß, '
+              'Kugelradius 20 Fuß. Kein automatischer Treffer, '
+              'Rettungswurf oder Schaden.',
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<int>(
+              key: const ValueKey('fireball-map-size'),
+              initialValue: _size,
+              decoration: const InputDecoration(
+                labelText: 'Karte – je Feld 5 Fuß',
               ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<int>(
-                key: const ValueKey('fireball-map-size'),
-                initialValue: _size,
-                decoration: const InputDecoration(
-                  labelText: 'Karte – je Feld 5 Fuß',
-                ),
-                items: const [
-                  DropdownMenuItem(value: 12, child: Text('12 × 12 Felder')),
-                  DropdownMenuItem(value: 20, child: Text('20 × 20 Felder')),
-                  DropdownMenuItem(value: 32, child: Text('32 × 32 Felder')),
-                ],
-                onChanged: (size) {
-                  if (size != null) _resize(size);
-                },
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 6,
-                children: [
-                  for (final tool in _PreviewTool.values)
-                    ChoiceChip(
-                      key: ValueKey('fireball-tool-${tool.name}'),
-                      selected: _tool == tool,
-                      label: Text(switch (tool) {
-                        _PreviewTool.caster => 'S: Figur',
-                        _PreviewTool.origin => 'Z: Ursprung',
-                        _PreviewTool.wall => 'X: Vollhindernis',
-                      }),
-                      onSelected: (_) => setState(() => _tool = tool),
-                    ),
-                ],
-              ),
-              const Text(
-                'Werkzeug wählen und Feld antippen. Hindernisse durch '
-                'erneutes Tippen entfernen. Änderungen setzen die '
-                'Kartenbestätigung zurück.',
-              ),
-              const SizedBox(height: 10),
-              _grid(),
-              CheckboxListTile(
-                key: const ValueKey('fireball-map-surveyed'),
-                contentPadding: EdgeInsets.zero,
-                value: _surveyed,
-                onChanged: (value) => setState(() {
-                  _surveyed = value ?? false;
-                  _result = null;
-                  _error = null;
-                }),
-                title: const Text('Alle Vollhindernisse sind erfasst.'),
-                subtitle: const Text(
-                  'Nur nach echter Prüfung bestätigen. Höhe, Sicht, '
-                  'Teil-/Voll-Deckung und Kreaturen bleiben offen.',
-                ),
-              ),
-              if (_result != null) ...[
-                Text(
-                  '$count mögliche 2D-Bodenfelder, '
-                  '$uncertain mit ungeklärtem Mittelpunktstrahl.',
-                  key: const ValueKey('fireball-preview-summary'),
-                ),
-                const Text(
-                  '● Mittelpunkt im Radius · mögliches Randfeld '
-                  '? Deckung ungeklärt. Keine automatische Zielwirkung.',
-                ),
+              items: const [
+                DropdownMenuItem(value: 12, child: Text('12 × 12 Felder')),
+                DropdownMenuItem(value: 20, child: Text('20 × 20 Felder')),
+                DropdownMenuItem(value: 32, child: Text('32 × 32 Felder')),
               ],
-              if (_error != null)
-                Text(
+              onChanged: (size) {
+                if (size != null) _resize(size);
+              },
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 6,
+              children: [
+                for (final tool in _PreviewTool.values)
+                  ChoiceChip(
+                    key: ValueKey('fireball-tool-${tool.name}'),
+                    selected: _tool == tool,
+                    label: Text(switch (tool) {
+                      _PreviewTool.caster => 'S: Figur',
+                      _PreviewTool.origin => 'Z: Ursprung',
+                      _PreviewTool.wall => 'X: Vollhindernis',
+                    }),
+                    onSelected: (_) => setState(() => _tool = tool),
+                  ),
+              ],
+            ),
+            const Text(
+              'Werkzeug wählen und Feld antippen. Hindernisse durch '
+              'erneutes Tippen entfernen. Änderungen setzen die '
+              'Kartenbestätigung zurück.',
+            ),
+            const SizedBox(height: 10),
+            _grid(),
+            CheckboxListTile(
+              key: const ValueKey('fireball-map-surveyed'),
+              contentPadding: EdgeInsets.zero,
+              value: _surveyed,
+              onChanged: (value) => setState(() {
+                _surveyed = value ?? false;
+                _result = null;
+                _error = null;
+              }),
+              title: const Text('Alle Vollhindernisse sind erfasst.'),
+              subtitle: const Text(
+                'Nur nach echter Prüfung bestätigen. Höhe, Sicht, '
+                'Teil-/Voll-Deckung und Kreaturen bleiben offen.',
+              ),
+            ),
+            if (_result != null) ...[
+              Text(
+                '$count mögliche 2D-Bodenfelder, '
+                '$uncertain mit ungeklärtem Mittelpunktstrahl.',
+                key: const ValueKey('fireball-preview-summary'),
+              ),
+              const Text(
+                '● Mittelpunkt im Radius · mögliches Randfeld '
+                '? Deckung ungeklärt. Keine automatische Zielwirkung.',
+              ),
+            ],
+            if (_error != null)
+              Semantics(
+                liveRegion: true,
+                child: Text(
                   _error!,
                   key: const ValueKey('fireball-preview-error'),
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
       actions: [
