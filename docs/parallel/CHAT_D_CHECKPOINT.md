@@ -2254,3 +2254,10 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Branch:** `fix/chat-d/domain-boundary-ancestor-symlink-20261110`. **Tests:** Neue Python-Unittests ergänzt; GitHub-CI nach Veröffentlichung ausstehend. Keine Änderung an Spielständen, JSON, SQLite, Regeln oder Android-Laufzeit.
 
 - Ausgangs-Main: `73f377ece91cb14a5074ddba16fbbc57b153026e`; PR/Commit und CI nach Erstellung zu ergänzen. Nächster Schritt: vollständige CI-Abnahme und getrennte Wiederherstellungs-Regressionen.
+
+### 2026-11-10 – Wiederherstellungsversuche gegen Datenverlust absichern
+
+- Zwei SQLite-Regressionstests prüfen den wiederholten Import einer älteren Sicherung nach App-Neustart und mehrere fehlerhafte JSON-Formate. Erwartet werden Konflikt- bzw. Validierungsfehler ohne Überschreiben bestätigter Kampagnen, ohne angelegte Teilkampagnen und ohne zusätzliche Revisionsstände.
+- **Branch:** `test/chat-d/backup-import-retry-integrity-20261110`. Tests sind hinzugefügt, CI-Abnahme nach PR-Erstellung ausstehend. Keine Änderung an Datenbankschema, Importformat, App-Version oder produktivem Speicherverhalten.
+
+- Ausgangs-Main `73f377ece91cb14a5074ddba16fbbc57b153026e`; keine Migration. Nächster Schritt: CI auf neuem Branch prüfen und fehlschlagende Testannahmen korrigieren.

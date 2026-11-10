@@ -1672,3 +1672,8 @@ Die Änderung liegt auf Branch `feat/chat-c/savage-attacker-live-offer-reset-202
 ### Rabenwacht: Verneinte Rückreisen respektieren
 
 Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortswechsel auslösen. Die Story-Logik bleibt am aktuellen Schauplatz; eine positive Rückreise bleibt möglich. Regressionstests: `app/test/rabenwacht_negated_revisit_test.dart`. Die Integration wird in einem separaten Draft-PR vom aktuellen `main` geprüft; bestehende Spielstände und Regelzustände bleiben unverändert.
+
+### 2026-11-10 – Wiederherstellungsversuche gegen Datenverlust absichern
+
+- Zwei SQLite-Regressionstests prüfen den wiederholten Import einer älteren Sicherung nach App-Neustart und mehrere fehlerhafte JSON-Formate. Erwartet werden Konflikt- bzw. Validierungsfehler ohne Überschreiben bestätigter Kampagnen, ohne angelegte Teilkampagnen und ohne zusätzliche Revisionsstände.
+- **Branch:** `test/chat-d/backup-import-retry-integrity-20261110`. Tests sind hinzugefügt, CI-Abnahme nach PR-Erstellung ausstehend. Keine Änderung an Datenbankschema, Importformat, App-Version oder produktivem Speicherverhalten.
