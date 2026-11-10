@@ -2552,3 +2552,8 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - Ausgangspunkt: `main` `73f377ece91cb14a5074ddba16fbbc57b153026e`; vorheriger PR #666 bestand 6/6 CI-Jobs, war aber wegen divergierter gemeinsamer Dokumentation nicht mergebar.
 - Eigener neuer Branch `fix/chat-b/rabenwacht-negated-revisit-rebased-20261110` überträgt nur die Negationsprüfung und drei positive/negative Regressionstests auf den aktuellen `main`.
 - Keine Änderungen an Domänenmodellen, Speicherung, Regelwerk oder Spielstandformat. GitHub-CI des neuen Branches ist gesondert zu prüfen; alte grüne CI ist kein Freigabenachweis für neue Commits.
+
+### 2026-11-10 – Verlinkte Repositorywurzel beim Upload-Check zurückweisen
+
+- Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
+- **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.

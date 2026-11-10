@@ -29,6 +29,18 @@ class VerifyProjectTests(unittest.TestCase):
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, destination)
 
+    @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
+    def test_symlinked_repository_root_is_rejected_before_file_reads(self):
+        external = self.root.parent / 'external-project'
+        self.root.rename(external)
+        self.root.symlink_to(external, target_is_directory=True)
+        with mock.patch.object(Path, 'open',
+                               side_effect=AssertionError('unexpected file read')):
+            errors = verify_project(self.root)
+        self.assertEqual(len(errors), 1)
+        self.assertIn('Repositorywurzel ist ein symbolischer Link', errors[0])
+        self.assertNotIn(str(external), errors[0])
+
     def test_complete_source_and_additional_files_are_allowed(self):
         (self.root / 'other-existing-project.txt').write_text('retain me')
         self.assertEqual(verify_project(self.root), [])

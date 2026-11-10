@@ -2254,3 +2254,10 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Branch:** `fix/chat-d/domain-boundary-ancestor-symlink-20261110`. **Tests:** Neue Python-Unittests ergänzt; GitHub-CI nach Veröffentlichung ausstehend. Keine Änderung an Spielständen, JSON, SQLite, Regeln oder Android-Laufzeit.
 
 - Ausgangs-Main: `73f377ece91cb14a5074ddba16fbbc57b153026e`; PR/Commit und CI nach Erstellung zu ergänzen. Nächster Schritt: vollständige CI-Abnahme und getrennte Wiederherstellungs-Regressionen.
+
+### 2026-11-10 – Verlinkte Repositorywurzel beim Upload-Check zurückweisen
+
+- Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
+- **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
+
+- Ausgangs-Main `5fa4037450c955f9dd393472239e7b5de1aa7fc3`; nächster Schritt: CI-Ergebnis prüfen.
