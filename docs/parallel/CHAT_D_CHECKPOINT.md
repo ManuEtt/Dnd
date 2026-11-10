@@ -2246,3 +2246,10 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 
 - **Finaler veröffentlichter Branch-HEAD:** `b90a900fdf0e2c1c09b89f89b08dee3fe7d66650` (reiner CI-Anstoß-Commit mit identischem Quellbaum wie der vorherige Dokumentations-HEAD).
 - **CI-Hinweis:** Die beiden vorherigen Actions-Läufe wurden durch nachfolgende Branch-Commits abgebrochen; die Quell-History-Erhaltung blieb erfolgreich, vollständige finale Abnahme steht aus. Der PR bleibt Draft.
+
+### 2026-11-10 – Wiederherstellungsversuche gegen Datenverlust absichern
+
+- Zwei SQLite-Regressionstests prüfen den wiederholten Import einer älteren Sicherung nach App-Neustart und mehrere fehlerhafte JSON-Formate. Erwartet werden Konflikt- bzw. Validierungsfehler ohne Überschreiben bestätigter Kampagnen, ohne angelegte Teilkampagnen und ohne zusätzliche Revisionsstände.
+- **Branch:** `test/chat-d/backup-import-retry-integrity-20261110`. Tests sind hinzugefügt, CI-Abnahme nach PR-Erstellung ausstehend. Keine Änderung an Datenbankschema, Importformat, App-Version oder produktivem Speicherverhalten.
+
+- Ausgangs-Main `73f377ece91cb14a5074ddba16fbbc57b153026e`; keine Migration. Nächster Schritt: CI auf neuem Branch prüfen und fehlschlagende Testannahmen korrigieren.

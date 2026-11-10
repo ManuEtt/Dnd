@@ -2539,3 +2539,8 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - Main-Basis beim Abgleich: `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`. Die beiden fachlichen Dateien des PRs wurden auf dem aktuellen Main-Baum erhalten; README und Checkpoints wurden aus dem aktuellen Main übernommen und append-only ergänzt.
 - Der ursprüngliche HEAD hatte sechs erfolgreiche CI-Jobs in [#42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537). Der neue Merge-HEAD ist noch nicht getestet; erneute vollständige GitHub-CI ist Freigabegate.
 - Keine Regel-, Controller-, Persistenz-, SQLite-/JSON-, Appversions- oder Spielstandänderung. Physisches Android-Gerät/TalkBack/IME nicht geprüft.
+
+### 2026-11-10 – Wiederherstellungsversuche gegen Datenverlust absichern
+
+- Zwei SQLite-Regressionstests prüfen den wiederholten Import einer älteren Sicherung nach App-Neustart und mehrere fehlerhafte JSON-Formate. Erwartet werden Konflikt- bzw. Validierungsfehler ohne Überschreiben bestätigter Kampagnen, ohne angelegte Teilkampagnen und ohne zusätzliche Revisionsstände.
+- **Branch:** `test/chat-d/backup-import-retry-integrity-20261110`. Tests sind hinzugefügt, CI-Abnahme nach PR-Erstellung ausstehend. Keine Änderung an Datenbankschema, Importformat, App-Version oder produktivem Speicherverhalten.

@@ -337,6 +337,84 @@ void main() {
   );
 
   test(
+    'repeated backup import cannot replace confirmed campaign after restart',
+    () async {
+      final original = fixture(events: [reward('campaign-a')]);
+      await repository.saveCampaign(original);
+      final exported = await repository.exportCampaign(original.id);
+      final revised = original.copyWith(
+        revision: 1,
+        scene: 'Bestätigte neue Szene',
+      );
+      await repository.saveCampaign(revised);
+      await repository.close();
+      repository = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: databasePath,
+      );
+
+      for (var attempt = 0; attempt < 2; attempt++) {
+        await expectLater(
+          repository.importCampaign(exported),
+          throwsA(isA<CampaignConflictException>()),
+        );
+        expect(
+          (await repository.getCampaign(original.id))!.toJson(),
+          revised.toJson(),
+        );
+        expect(
+          (await repository.reconstructCampaign(original.id))!.toJson(),
+          revised.toJson(),
+        );
+        expect(await repository.loadCampaigns(), hasLength(1));
+      }
+    },
+  );
+
+  test(
+    'malformed backup variants cannot create partial campaigns or revisions',
+    () async {
+      final existing = fixture();
+      await repository.saveCampaign(existing);
+      final incoming = fixture(id: 'import-malformed');
+      final sources = [
+        '',
+        '[]',
+        'null',
+        '{"format":"living-gm-campaign","schemaVersion":1,"campaign":[]}',
+        jsonEncode({
+          'format': 'living-gm-campaign',
+          'schemaVersion': 1,
+          'campaign': {...incoming.toJson(), 'events': 'invalid'},
+        }),
+      ];
+      for (final source in sources) {
+        await expectLater(
+          repository.importCampaign(source),
+          throwsA(isA<InvalidSaveException>()),
+        );
+        expect(await repository.getCampaign(incoming.id), isNull);
+        expect(await repository.reconstructCampaign(incoming.id), isNull);
+        expect(
+          (await repository.getCampaign(existing.id))!.toJson(),
+          existing.toJson(),
+        );
+      }
+      await repository.close();
+      repository = await SqliteCampaignRepository.open(
+        factory: databaseFactoryFfi,
+        path: databasePath,
+      );
+      expect(await repository.loadCampaigns(), hasLength(1));
+      expect(await repository.getCampaign(incoming.id), isNull);
+      expect(
+        (await repository.getCampaign(existing.id))!.toJson(),
+        existing.toJson(),
+      );
+    },
+  );
+
+  test(
     'newer database schema is refused without destructive downgrade',
     () async {
       await repository.close();
