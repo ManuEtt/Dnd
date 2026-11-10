@@ -208,7 +208,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('invalid replacement inventory disables approval and can recover', (
+  testWidgets('invalid inventory snapshot blocks and later recovers', (
     tester,
   ) async {
     final valid = _hero(const [
