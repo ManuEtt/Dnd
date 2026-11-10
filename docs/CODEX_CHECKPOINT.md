@@ -2539,3 +2539,11 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - Main-Basis beim Abgleich: `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`. Die beiden fachlichen Dateien des PRs wurden auf dem aktuellen Main-Baum erhalten; README und Checkpoints wurden aus dem aktuellen Main übernommen und append-only ergänzt.
 - Der ursprüngliche HEAD hatte sechs erfolgreiche CI-Jobs in [#42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537). Der neue Merge-HEAD ist noch nicht getestet; erneute vollständige GitHub-CI ist Freigabegate.
 - Keine Regel-, Controller-, Persistenz-, SQLite-/JSON-, Appversions- oder Spielstandänderung. Physisches Android-Gerät/TalkBack/IME nicht geprüft.
+
+
+### 2026-11-10 – Rabenwacht: verneinte Rückreisen, erneuter main-Abgleich
+
+- Basis-main: `73f377ece91cb14a5074ddba16fbbc57b153026e`; Branch `fix/chat-b/rabenwacht-negated-revisit-main-20261110`.
+- Nach dem erfolgreichen vollständigen CI-Lauf #42701756432 (6/6 Jobs) auf dem älteren Branch von PR #666 war dieser aufgrund neuer main-Commits nicht mehr mergebar. Die Fachänderung und drei Regressionstests wurden deshalb auf einem neuen Branch vom aktuellen main konfliktarm neu erstellt.
+- Verneinte Rückreise verändert Etappe, Szene, Ort und Heldenzustand nicht; positive Rückreise bleibt möglich. Betroffen: `app/lib/story/rabenwacht_campaign.dart`, `app/test/rabenwacht_negated_revisit_test.dart` sowie append-only-Dokumentation.
+- CI des neuen Branches: noch ausstehend; ältere erfolgreiche CI gilt nicht als Abnahme des neuen HEAD. Keine SQLite-/JSON-/Regeländerung, keine Migration. Nächster Schritt: PR öffnen, CI auswerten, Chat D zur Integration informieren.
