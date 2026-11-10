@@ -162,10 +162,7 @@ void main() {
 
   test('reused roll objects cannot masquerade as independent throws', () {
     final roll = evidence('2d6+3', [2, 3], modifier: 3);
-    expect(
-      () => choose(first: roll, second: roll),
-      throwsFormatException,
-    );
+    expect(() => choose(first: roll, second: roll), throwsFormatException);
 
     final extra = evidence('2d6+3', [6, 1], modifier: 3);
     expect(
