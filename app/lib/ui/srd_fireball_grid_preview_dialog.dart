@@ -317,9 +317,7 @@ class _SrdFireballGridPreviewDialogState
                 child: Text(
                   _error!,
                   key: const ValueKey('fireball-preview-error'),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
           ],
