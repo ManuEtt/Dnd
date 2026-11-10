@@ -160,6 +160,48 @@ void main() {
     }
   });
 
+  test('reused roll objects cannot masquerade as independent throws', () {
+    final roll = evidence('2d6+3', [2, 3], modifier: 3);
+    expect(
+      () => choose(first: roll, second: roll),
+      throwsFormatException,
+    );
+
+    final extra = evidence('2d6+3', [6, 1], modifier: 3);
+    expect(
+      () => choose(
+        critical: true,
+        firstCrit: extra,
+        secondCrit: extra,
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => choose(
+        critical: true,
+        first: roll,
+        firstCrit: roll,
+        secondCrit: extra,
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => choose(
+        critical: true,
+        second: roll,
+        firstCrit: extra,
+        secondCrit: roll,
+      ),
+      throwsFormatException,
+    );
+
+    // Matching outcomes are legitimate when backed by separate roll objects.
+    final sameFaces = evidence('2d6+3', [2, 3], modifier: 3);
+    final accepted = choose(first: roll, second: sameFaces);
+    expect(accepted.originalWeaponDiceTotal, 5);
+    expect(accepted.alternativeWeaponDiceTotal, 5);
+  });
+
   test('noncanonical, unsupported or out-of-range weapon dice fail', () {
     for (final expression in [
       '0d6',
