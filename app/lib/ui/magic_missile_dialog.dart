@@ -58,14 +58,45 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
   bool _shieldReaction = false, _shieldComponents = false;
   int? _shieldSlots;
 
+  int _offerVersion = 0;
+
   @override
   void initState() {
     super.initState();
-    if (widget.encounter.enemyShieldActive) _unprotected = true;
-    _shieldSlots = widget.encounter.enemyShieldSlotsRemaining;
+    _loadOffer();
+  }
+
+  @override
+  void didUpdateWidget(covariant MagicMissileDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.hero, widget.hero) ||
+        !identical(oldWidget.encounter, widget.encounter)) {
+      // A fresh hero or encounter snapshot invalidates explicit approvals,
+      // resource options and previously confirmed target defenses.
+      _offerVersion++;
+      _loadOffer();
+    }
+  }
+
+  void _loadOffer() {
+    _classes = const [];
+    _slots = const [];
+    _className = null;
+    _slotKey = null;
+    _setupError = null;
+    _error = null;
+    _forceDefense = null;
     if (widget.encounter.enemyForceDefense != EnemyForceDefense.unknown) {
       _forceDefense = widget.encounter.enemyForceDefense;
     }
+    _visible = false;
+    _range = false;
+    _verbal = false;
+    _somatic = false;
+    _unprotected = widget.encounter.enemyShieldActive;
+    _shieldReaction = false;
+    _shieldComponents = false;
+    _shieldSlots = widget.encounter.enemyShieldSlotsRemaining;
     try {
       _classes = MagicMissileRules.castingClasses(widget.hero);
       _slots = MagicMissileRules.slots(widget.hero);
@@ -178,32 +209,38 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                   'oder ein verfügbarer Zauberplatz fehlt.',
                 )
               else ...[
-                DropdownButtonFormField<String>(
-                  key: const ValueKey('missile-class'),
-                  initialValue: _className,
-                  decoration: const InputDecoration(labelText: 'Zauberklasse'),
-                  items: [
-                    for (final name in _classes)
-                      DropdownMenuItem(value: name, child: Text(name)),
-                  ],
-                  onChanged: (v) => setState(() => _className = v),
+                KeyedSubtree(
+                  key: ValueKey('missile-class-offer-$_offerVersion'),
+                  child: DropdownButtonFormField<String>(
+                    key: const ValueKey('missile-class'),
+                    initialValue: _className,
+                    decoration: const InputDecoration(labelText: 'Zauberklasse'),
+                    items: [
+                      for (final name in _classes)
+                        DropdownMenuItem(value: name, child: Text(name)),
+                    ],
+                    onChanged: (v) => setState(() => _className = v),
+                  ),
                 ),
                 const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  key: const ValueKey('missile-slot'),
-                  initialValue: _slotKey,
-                  decoration: const InputDecoration(labelText: 'Zauberplatz'),
-                  items: [
-                    for (final choice in _slots)
-                      DropdownMenuItem(
-                        value: choice.key,
-                        child: Text(
-                          '${choice.pactMagic ? 'Pakt ' : ''}Grad '
-                          '${choice.level}: ${choice.remaining} frei',
+                KeyedSubtree(
+                  key: ValueKey('missile-slot-offer-$_offerVersion'),
+                  child: DropdownButtonFormField<String>(
+                    key: const ValueKey('missile-slot'),
+                    initialValue: _slotKey,
+                    decoration: const InputDecoration(labelText: 'Zauberplatz'),
+                    items: [
+                      for (final choice in _slots)
+                        DropdownMenuItem(
+                          value: choice.key,
+                          child: Text(
+                            '${choice.pactMagic ? 'Pakt ' : ''}Grad '
+                            '${choice.level}: ${choice.remaining} frei',
+                          ),
                         ),
-                      ),
-                  ],
-                  onChanged: (v) => setState(() => _slotKey = v),
+                    ],
+                    onChanged: (v) => setState(() => _slotKey = v),
+                  ),
                 ),
                 if (slot != null) ...[
                   const SizedBox(height: 12),
@@ -238,28 +275,31 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                   _somatic,
                   (v) => _somatic = v,
                 ),
-                DropdownButtonFormField<EnemyForceDefense>(
-                  key: const ValueKey('missile-force-defense'),
-                  initialValue: _forceDefense,
-                  decoration: const InputDecoration(
-                    labelText: 'Bestätigte Energieschaden-Abwehr',
-                    helperText:
-                        'Aus dem Gegnerprofil oder einer bestätigten '
-                        'Spielentscheidung; niemals erraten.',
+                KeyedSubtree(
+                  key: ValueKey('missile-defense-offer-$_offerVersion'),
+                  child: DropdownButtonFormField<EnemyForceDefense>(
+                    key: const ValueKey('missile-force-defense'),
+                    initialValue: _forceDefense,
+                    decoration: const InputDecoration(
+                      labelText: 'Bestätigte Energieschaden-Abwehr',
+                      helperText:
+                          'Aus dem Gegnerprofil oder einer bestätigten '
+                          'Spielentscheidung; niemals erraten.',
+                    ),
+                    isExpanded: true,
+                    items: [
+                      for (final defense in EnemyForceDefense.values)
+                        if (defense != EnemyForceDefense.unknown)
+                          DropdownMenuItem(
+                            value: defense,
+                            child: Text(EnemyForceDefenseRules.label(defense)),
+                          ),
+                    ],
+                    onChanged: (value) => setState(() {
+                      _forceDefense = value;
+                      _error = null;
+                    }),
                   ),
-                  isExpanded: true,
-                  items: [
-                    for (final defense in EnemyForceDefense.values)
-                      if (defense != EnemyForceDefense.unknown)
-                        DropdownMenuItem(
-                          value: defense,
-                          child: Text(EnemyForceDefenseRules.label(defense)),
-                        ),
-                  ],
-                  onChanged: (value) => setState(() {
-                    _forceDefense = value;
-                    _error = null;
-                  }),
                 ),
                 if (widget.encounter.enemyShieldActive)
                   const Text(
@@ -303,24 +343,27 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                       (v) => _shieldComponents = v,
                     ),
                     if (widget.encounter.enemyShieldSlotsRemaining == null)
-                      DropdownButtonFormField<int>(
-                        key: const ValueKey('missile-shield-slots'),
-                        initialValue: _shieldSlots,
-                        decoration: const InputDecoration(
-                          labelText:
-                              'Bestätigte verbleibende Gegner-Zauberplätze',
-                        ),
-                        items: [
-                          for (var count = 1; count <= 20; count++)
-                            DropdownMenuItem(
-                              value: count,
-                              child: Text('$count freie Plätze (Grad 1+)'),
-                            ),
-                        ],
-                        onChanged: (v) => setState(() {
-                          _shieldSlots = v;
-                          _error = null;
-                        }),
+                      KeyedSubtree(
+                        key: ValueKey('missile-shield-slots-offer-$_offerVersion'),
+                        child: DropdownButtonFormField<int>(
+                          key: const ValueKey('missile-shield-slots'),
+                          initialValue: _shieldSlots,
+                          decoration: const InputDecoration(
+                            labelText:
+                                'Bestätigte verbleibende Gegner-Zauberplätze',
+                          ),
+                          items: [
+                            for (var count = 1; count <= 20; count++)
+                              DropdownMenuItem(
+                                value: count,
+                                child: Text('$count freie Plätze (Grad 1+)'),
+                              ),
+                          ],
+                          onChanged: (v) => setState(() {
+                            _shieldSlots = v;
+                            _error = null;
+                          }),
+                        )
                       )
                     else
                       Text(
