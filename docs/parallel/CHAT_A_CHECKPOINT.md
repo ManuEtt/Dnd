@@ -1461,3 +1461,12 @@ Keine Änderung an Modellen, Spielständen, JSON-/SQLite-Schema, Story oder UI; 
 **Kompatibilität:** Keine Änderung an Datenmodell, Spielständen, JSON-/SQLite-Schema, Story, UI, API oder App-Version; keine Migration.
 
 **Nächster Schritt:** Vollständige Actions-Abnahme des dokumentierten finalen PR-Heads. Bei Formatter-Erfolg Flutter-Analyse, vollständige Tests und Android-/Alpha-Builds prüfen; PR bis dahin Draft lassen.
+
+
+## 2026-11-10 – Offizielle Dart-Formatkorrektur
+
+- **CI-Befund:** [#42702739265](https://github.com/ManuEtt/Dnd/actions/runs/42702739265) brach auf `e68652bca23dfcfdac5adae365daabbb85346d8e` ausschließlich bei `dart format --output=none --set-exit-if-changed lib test` ab. Das offizielle SDK meldete nur `lib/domain/srd_class_level_up.dart` als verändert.
+- **Korrektur:** Flutter/Dart 3.35.7 hat genau diese Datei formatiert; [temporärer Formatlauf #42780777239](https://github.com/ManuEtt/Dnd/actions/runs/42780777239) erfolgreich. Commit `db3e2213a39d723761ca1e9d869ff75a836ecd99`; die temporäre Workflowdatei wurde aus dem Branch-Tree entfernt.
+- **Zwischen-CI:** [#42780784186](https://github.com/ManuEtt/Dnd/actions/runs/42780784186) lief noch mit der temporären Workflowdatei und scheiterte ausschließlich an der Projekt-Allowlist für aktive Workflows. Der aktuelle PR-Diff enthält weiterhin nur README, Klassenaufstiegsmodul, dessen Tests und die beiden Checkpoints.
+- **Offen:** Vollständige CI auf dem finalen Dokumentations-Head nach diesem Nachtrag; erst nach sechs erfolgreichen Jobs zur Integration freigeben.
+- **Kompatibilität:** Keine Änderung an Spielstandformaten, JSON/SQLite, UI, API, Story oder App-Version; keine Migration.
