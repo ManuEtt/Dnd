@@ -222,13 +222,22 @@ void main() {
     );
     await _tap(tester, 'visible');
     await _tap(tester, 'range');
-    await _tap(tester, 'protection');
+    await _tap(tester, 'shield-reaction');
+    expect(
+      tester.widget<SwitchListTile>(_field('shield-reaction')).value,
+      isTrue,
+    );
+    expect(_field('protection'), findsNothing);
 
     snapshots.value = (hero: hero, encounter: updated);
     await tester.pumpAndSettle();
     expect(find.textContaining('Ziel: Schatten.'), findsOneWidget);
     expect(_checked(tester, 'visible'), isFalse);
     expect(_checked(tester, 'range'), isFalse);
+    expect(
+      tester.widget<SwitchListTile>(_field('shield-reaction')).value,
+      isFalse,
+    );
     expect(_checked(tester, 'protection'), isFalse);
     expect(
       tester
