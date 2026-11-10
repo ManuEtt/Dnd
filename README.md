@@ -1654,3 +1654,18 @@ Der Projektübertragungsprüfer weist nun auch ZIP-Verzeichniseinträge mit mehr
 - **Finaler Code-HEAD:** `f25c9bdbc371974fb8c9f2ea6283204df4845080`.
 - **GitHub Actions:** nach Veröffentlichung gestartet; vollständige CI und Mergefähigkeit noch nicht bestätigt.
 - **README-Nachtrag:** PR-Link ergänzt; kein Merge behauptet.
+
+
+### 2026-11-09 – Inkonsistente Klassenprofile vor Stufenaufstieg abweisen
+
+Der bestätigte Stufenaufstieg prüft vor jeder Berechnung die vollständige vorhandene Klassenkombination: bekannte und unterschiedliche SRD-Klassen, zulässige Zweitklassenstufe sowie das Fehlen verwaister Zweitklassenstufen. Ungültige historische Profile bleiben lesbar, dürfen aber nicht durch einen Stufenaufstieg stillschweigend repariert werden. Gültige Einzel- und Mehrklassenaufstiege behalten ihre bisherige Berechnung. Änderungen betreffen ausschließlich app/lib/domain/srd_class_level_up.dart und dessen Domain-Regressionstest. [Pull Request #661](https://github.com/ManuEtt/Dnd/pull/661). Finale CI-Abnahme steht noch aus. Keine Änderung an Spielständen, JSON-/SQLite-Schemas oder Migrationen.
+
+
+### 2026-11-09 – Klassenprofilprüfung für Dart-Formatter vereinfacht
+
+Der CI-Lauf [#42700994265](https://github.com/ManuEtt/Dnd/actions/runs/42700994265) bestätigte die Struktur-/SRD-Prüfungen und sämtliche Backend-Prüfungen, brach jedoch bei der Dart-Formatprüfung ausschließlich in `app/lib/domain/srd_class_level_up.dart` ab. Die verschachtelte bedingte Validierung wurde durch explizite, sequenzielle Guards ersetzt; die Regeln bleiben gleich: Hauptklasse muss bekannt sein, eine vorhandene Zweitklasse muss bekannt und verschieden sein und einen zulässigen Stufensplit besitzen, ohne Zweitklasse müssen Zweitklassenstufen null sein. Änderung in [PR #661](https://github.com/ManuEtt/Dnd/pull/661), Commit `46d702606c92cd39061460a786cc115ceb5a5e5e`. Die Formatkorrektur und vollständige CI auf diesem neuen Commit sind noch nicht abgenommen; frühere erfolgreiche Backend-/Strukturprüfungen gelten nicht als Nachweis für den neuen Head. Keine Änderung an Spielständen, Datenformaten, SQLite, App-Version oder Migrationen.
+
+
+### 2026-11-10 – Offizielle Dart-Formatierung der Klassenaufstiegsprüfung korrigiert
+
+Der finale Formatcheck auf dem vorherigen PR-Stand hatte ausschließlich `app/lib/domain/srd_class_level_up.dart` als nicht kanonisch formatiert gemeldet. Der offizielle Flutter-/Dart-Formatter 3.35.7 hat genau diese Datei angepasst. Die einmalige Formatierhilfe lief auf dem PR-Branch erfolgreich in [Workflow #42780777239](https://github.com/ManuEtt/Dnd/actions/runs/42780777239) und entfernte ihre temporäre Workflowdatei im selben Formatcommit. **Formatcommit:** `db3e2213a39d723761ca1e9d869ff75a836ecd99`. Der zwischenzeitliche Android-Lauf [#42780784186](https://github.com/ManuEtt/Dnd/actions/runs/42780784186) gehörte noch zum Commit mit der temporären Workflowdatei und scheiterte an der absichtlichen Projektprüfung der exakt zugelassenen Workflowdateien; die temporäre Datei ist im aktuellen Branch-Tree nicht mehr vorhanden. Eine vollständige CI-Abnahme des nachfolgenden finalen PR-Heads steht noch aus. Keine Änderung an Spielständen, Datenformaten, SQLite, App-Version oder Migrationen.

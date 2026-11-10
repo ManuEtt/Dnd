@@ -1421,3 +1421,52 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 **Spielstände/Migration:** Keine Modell-, Event-, JSON-, SQLite-, Backend-, UI-, Story- oder Android-Version geändert; kein Migrationsbedarf.
 
 **Nächster konkreter Schritt:** Volle CI am finalen PR-HEAD auf Dart-Format, Flutter-Analyse, alle Flutter-Tests und Android-Builds prüfen; Abweichungen reparieren und PR erst bei vollständigem CI-Erfolg aus Draft freigeben.
+
+
+## 2026-11-09 – Klassenprofil vor Stufenaufstieg vollständig validieren
+
+Basis-main: f848cedef7787e2e89df7b63d93d04dfb06ed8ed  
+Branch: fix/chat-a/level-up-class-profile-validation-20261109b2e  
+Pull Request: https://github.com/ManuEtt/Dnd/pull/661
+
+### Ausgangsproblem
+
+Der Stufenaufstieg validierte die gewählte Klasse, aber nicht die vollständige vorhandene Klassenkombination. Ein unbekannter oder identischer Zweitklassenname, eine Zweitklasse ohne Stufen oder verwaiste Zweitklassenstufen konnten in die Berechnung gelangen.
+
+### Implementiert
+
+SrdClassLevelUpRules.propose prüft vor jeder Klassenstufenberechnung die bekannte Hauptklasse, eine gegebenenfalls bekannte und unterschiedliche Zweitklasse sowie einen konsistenten Stufensplit. Profile mit ungültigen Werten werden abgewiesen, statt durch den Stufenaufstieg stillschweigend verändert zu werden.
+
+### Geänderte Dateien
+
+- app/lib/domain/srd_class_level_up.dart
+- app/test/srd_class_level_up_test.dart
+- README.md, docs/CODEX_CHECKPOINT.md, dieser Checkpoint
+
+### Tests und Grenzen
+
+Neue Regression deckt sechs ungültige Profilformen bei Auswahl der Haupt- und Zweitklasse ab. Vorhandene positive Einzel-/Mehrklassen- und Klassenkapstone-Tests bleiben unverändert. Lokale Dart-/Flutter-Ausführung ist nicht verfügbar. Frühere CI-Läufe scheiterten an Formatierung; der formatierte finale Head ist noch nicht erfolgreich abgenommen. Kein Gerätetest und keine produktive Signierungsabnahme behauptet.
+
+Keine Änderung an Modellen, Spielständen, JSON-/SQLite-Schema, Story oder UI; keine Migration. Alte Profile bleiben lesbar, ungültige Stufenaufstiege werden blockiert.
+
+
+## 2026-11-09 – Dart-Formatkorrektur der Klassenprofilvalidierung
+
+**CI-Befund:** [Lauf #42700994265](https://github.com/ManuEtt/Dnd/actions/runs/42700994265) bestand Projektstruktur, Modulgrenzen, SRD-Register, Python-Paketprüfungen sowie Backend-Typprüfung, Build und Tests. Dart-Formatierung brach ausschließlich bei `app/lib/domain/srd_class_level_up.dart` ab; Flutter-Analyse, Flutter-Tests und Android-Build wurden übersprungen.
+
+**Korrektur:** Die problematische verschachtelte ternäre Bedingung wurde in explizite sequenzielle Guards umgebaut. Der Guard prüft die bekannte Hauptklasse und Gesamtstufe, bei Zweitklasse deren SRD-Identität, Verschiedenheit und Stufensplit sowie ohne Zweitklasse den Nullwert der Zweitklassenstufe. Commit: `46d702606c92cd39061460a786cc115ceb5a5e5e`; README-, zentraler und persönlicher Checkpoint wurden append-only ergänzt.
+
+**Nicht getestet / Blockiert:** Für Commit `46d702606c92cd39061460a786cc115ceb5a5e5e` liegt noch kein neuer CI-Lauf vor. Kein lokales Dart-/Flutter-SDK. Kein Formatter-, Flutter-, APK- oder Gerätetest auf dem neuen Stand behauptet.
+
+**Kompatibilität:** Keine Änderung an Datenmodell, Spielständen, JSON-/SQLite-Schema, Story, UI, API oder App-Version; keine Migration.
+
+**Nächster Schritt:** Vollständige Actions-Abnahme des dokumentierten finalen PR-Heads. Bei Formatter-Erfolg Flutter-Analyse, vollständige Tests und Android-/Alpha-Builds prüfen; PR bis dahin Draft lassen.
+
+
+## 2026-11-10 – Offizielle Dart-Formatkorrektur
+
+- **CI-Befund:** [#42702739265](https://github.com/ManuEtt/Dnd/actions/runs/42702739265) brach auf `e68652bca23dfcfdac5adae365daabbb85346d8e` ausschließlich bei `dart format --output=none --set-exit-if-changed lib test` ab. Das offizielle SDK meldete nur `lib/domain/srd_class_level_up.dart` als verändert.
+- **Korrektur:** Flutter/Dart 3.35.7 hat genau diese Datei formatiert; [temporärer Formatlauf #42780777239](https://github.com/ManuEtt/Dnd/actions/runs/42780777239) erfolgreich. Commit `db3e2213a39d723761ca1e9d869ff75a836ecd99`; die temporäre Workflowdatei wurde aus dem Branch-Tree entfernt.
+- **Zwischen-CI:** [#42780784186](https://github.com/ManuEtt/Dnd/actions/runs/42780784186) lief noch mit der temporären Workflowdatei und scheiterte ausschließlich an der Projekt-Allowlist für aktive Workflows. Der aktuelle PR-Diff enthält weiterhin nur README, Klassenaufstiegsmodul, dessen Tests und die beiden Checkpoints.
+- **Offen:** Vollständige CI auf dem finalen Dokumentations-Head nach diesem Nachtrag; erst nach sechs erfolgreichen Jobs zur Integration freigeben.
+- **Kompatibilität:** Keine Änderung an Spielstandformaten, JSON/SQLite, UI, API, Story oder App-Version; keine Migration.
