@@ -2516,3 +2516,12 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Nicht getestet:** Der neue Commit hat noch keinen vollständigen CI-Nachweis; lokale Dart-/Flutter-SDKs stehen nicht zur Verfügung. Der alte fehlgeschlagene Lauf ist kein Testnachweis für den neuen Commit.
 - **Kompatibilität:** Keine Modell-, JSON-, SQLite-, API-, UI-, Story- oder Spielstandänderung; keine Migration.
 - **Nächster Schritt:** CI auf dem finalen PR-Head abwarten und Formatter, Flutter-Analyse, Regressionstests sowie Android-Build vollständig verifizieren.
+
+
+## 2026-11-10 – Offizielle Dart-Formatkorrektur der Klassenaufstiegsprüfung
+
+- **Auslöser:** Auf PR-Head `e68652bca23dfcfdac5adae365daabbb85346d8e` meldete [CI #42702739265](https://github.com/ManuEtt/Dnd/actions/runs/42702739265) ausschließlich `app/lib/domain/srd_class_level_up.dart` als nicht formatterkonform; 667 Dartdateien geprüft, eine Datei verändert. Flutter-Analyse, Tests und Android-Build wurden dadurch übersprungen.
+- **Korrektur:** Der offizielle Flutter-/Dart-Formatter 3.35.7 formatierte genau diese Datei. Die einmalige Formatter-Ausführung war in [Workflow #42780777239](https://github.com/ManuEtt/Dnd/actions/runs/42780777239) erfolgreich. Formatcommit `db3e2213a39d723761ca1e9d869ff75a836ecd99`; die temporäre Formatter-Workflowdatei wurde im selben Commit wieder entfernt.
+- **Zwischenlauf:** [CI #42780784186](https://github.com/ManuEtt/Dnd/actions/runs/42780784186) lief auf dem kurzlebigen Commit mit temporärer Workflowdatei und scheiterte in `test_every_active_workflow_uses_supported_runtime_majors`, weil der Test nur die explizit freigegebenen Workflowdateien zulässt. Dieser temporäre Pfad ist nicht im aktuellen Tree enthalten und kein Produktcodefehler.
+- **Finaler Stand:** Nachtrag in README und Checkpoints; vollständige CI muss auf dem danach entstandenen finalen PR-Head neu abgenommen werden. Kein erfolgreicher Flutter-/APK-Nachweis vorweggenommen.
+- **Kompatibilität:** Keine Modell-, JSON-, SQLite-, API-, UI-, Story-, Spielstand- oder Versionsänderung; keine Migration.
