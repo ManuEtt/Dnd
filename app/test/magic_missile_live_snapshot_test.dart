@@ -130,7 +130,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.widget<DropdownButtonFormField<String>>(_field('slot')).initialValue,
-      'regular-1',
+      'regular-3',
     );
     expect(find.text('Grad 3: 2 frei'), findsOneWidget);
     expect(_checked(tester, 'visible'), isTrue);
