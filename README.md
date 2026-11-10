@@ -1635,3 +1635,22 @@ Im spielbaren Epilog von Rabenwacht konnte bisher bereits die Erwähnung einer P
 ### 2026-11-09 – Drei geprüfte Verbesserungen zur gemeinsamen Integration vorbereitet
 
 Die voneinander unabhängig getesteten Korrekturen für SRD-Ritualidentitäten ([PR #622](https://github.com/ManuEtt/Dnd/pull/622)), ausdrücklich bestätigte NPC-Besuche im Epilog ([PR #628](https://github.com/ManuEtt/Dnd/pull/628)) und aktualisierte Heilzauberauswahl ([PR #651](https://github.com/ManuEtt/Dnd/pull/651)) wurden für einen koordinierten Integrationsbranch auf `main` `b2e1a021067cec39b7c85bdad11aa98477cac14e` vorbereitet. Die sechs Fach-/Testpfade sind im Ausgangsstand unverändert und bei den weiteren offenen PRs nicht überlappt; die vollständigen Quell-Commits sollen als Git-Vorfahren erhalten bleiben. Die historischen README- und Checkpoint-Nachträge werden ausschließlich angehängt. Alle drei einzelnen PR-Head-CIs waren vollständig erfolgreich (je sechs Jobs); die **gemeinsame** Python-/Backend-/Flutter-/Android-/Release-CI ist noch nicht ausgeführt beziehungsweise abgenommen. Es erfolgt hiermit weder ein ungeprüfter `main`-Merge noch eine Löschung. Spielstände, SQLite/JSON, Version und Backups bleiben unverändert.
+
+### 2026-11-09 – Kodierte Dart-URIs bei der Modulgrenzenprüfung abweisen
+
+**Problem/Lösung:** Der technische Importgrenzen-Scanner für Story- und Regelmodule konnte bislang URI-Pfade mit Dart-Escape-Sequenzen oder Prozentkodierung nicht sicher als kanonische Modulziele bestimmen. Solche Literale werden nun bei Import, Export, `part`, `part of` und bedingten Import-/Exportalternativen konservativ abgewiesen. Normale unveränderte Imports und die bestehenden gültigen Modulgrenzen bleiben erlaubt.
+
+**Tests/Nachweis:** Vier zusätzliche Regressionstestmethoden in `scripts/tests/test_domain_boundaries.py` prüfen Unicode-/Hex-Escapes, prozentkodierte Pfade und Package-URIs, mehrfache bedingte Varianten sowie unkodierte Positivfälle und die Ignorierung von Kommentaren und gewöhnlichen String-Literalen. Fach-Commits `2fbfd9e3034292f9fe8c35b8d5ceeacd7bd8cf71` und `8ca581fc47d8b14d02010f3778e0919cb7883426` im Branch `fix/chat-d/encoded-dart-uri-boundary-20261109`. Die vollständige GitHub-CI auf dem finalen Dokumentationsstand ist zum Zeitpunkt dieses Eintrags noch ausstehend; dieser Eintrag behauptet keinen Main-Merge. Keine Änderung an App-/Build-Version, Spielständen, SQLite/JSON, Backups, UI, Regelmechanik oder Story und keine Migration.
+
+**GitHub-Review:** [Pull Request #657](https://github.com/ManuEtt/Dnd/pull/657) ist zur vollständigen CI-Prüfung eingereicht; bis zur Abnahme verbleibt er im Draft.
+
+### 2026-11-09 – Mehrdeutige Verzeichnisnamen im Gradle-Wrapper-ZIP ablehnen
+
+Der Projektübertragungsprüfer weist nun auch ZIP-Verzeichniseinträge mit mehreren abschließenden Pfadtrennzeichen zurück. Solche Namen werden nicht mehr stillschweigend durch Normalisierung auf einen regulären Verzeichnispfad reduziert. Ein Regressionstest stellt sicher, dass die Ablehnung vor der CRC-Dekompression erfolgt. Betroffen sind ausschließlich `scripts/verify_project.py` und dessen Tests. Keine Änderung an App, Spielständen, Backups oder Persistenzformaten. Implementierung und CI-Abnahme: [PR folgt nach Veröffentlichung].
+
+## PR- und CI-Nachweis
+
+- **Pull Request:** [#662](https://github.com/ManuEtt/Dnd/pull/662) (Draft).
+- **Finaler Code-HEAD:** `f25c9bdbc371974fb8c9f2ea6283204df4845080`.
+- **GitHub Actions:** nach Veröffentlichung gestartet; vollständige CI und Mergefähigkeit noch nicht bestätigt.
+- **README-Nachtrag:** PR-Link ergänzt; kein Merge behauptet.
