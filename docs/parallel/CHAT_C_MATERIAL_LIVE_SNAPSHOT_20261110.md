@@ -41,3 +41,12 @@ Die Materialanforderungen, Duplikatprüfung und Materialbestätigungen wurden im
 ## Nächster Schritt
 
 Nach CI-Abnahme ein separates UI-Paket für die explizite Zieleingabe bei `Astral Projection` auf 320/360 dp, 200 % Schrift und geöffneter Bildschirmtastatur prüfen; Akzeptanz: Eingabe und Abbruch bleiben erreichbar, alte Zielanzahlen werden nach einem Snapshotwechsel weder angezeigt noch bestätigt. Vor Beginn erneut offene PRs und betroffene Dateien prüfen.
+
+## CI-Korrekturen (2026-11-10)
+
+- Run [42847005811](https://github.com/ManuEtt/Dnd/actions/runs/42847005811): Projekt- und Backend-Schritte bis Dart-Format erfolgreich; Formatabweichung in neuem Widgettest, Flutter-Analyse und -Tests übersprungen.
+- Run [42847629495](https://github.com/ManuEtt/Dnd/actions/runs/42847629495): trotz gekürzter Testbezeichnung weiterhin Formatabweichung.
+- Run [42848183030](https://github.com/ManuEtt/Dnd/actions/runs/42848183030): zur Diagnose ausschließlich vorübergehend den exakt formatierten Testtext im Actions-Protokoll ausgegeben; Formatprüfung blieb erwartungsgemäß rot.
+- Commit `480b7aeed28bf867846bfe3fdd14d98850c968ca`: exakte Ausgabe des Dart-3.9-Formatters in den Test übernommen.
+- Commit `17c6b72f2375e3c22a29ae419b1263f1e2d92a0a`: temporäre Änderung an `.github/workflows/android-build.yml` vollständig auf den Stand von `main` zurückgesetzt. Der Workflow ist nicht Bestandteil des fachlichen PR-Diffs.
+- Endgültige erfolgreiche CI auf dem neu formatierten PR-HEAD **noch nicht nachgewiesen**; keine Android-Geräteabnahme.
