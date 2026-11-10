@@ -114,6 +114,7 @@ class SrdClassLevelUpRules {
     // A level-up is a rule action, not a repair path for malformed legacy
     // class profiles. Validate the complete existing split before deriving
     // the next class level or allowing HeroCharacter.copyWith to normalize it.
+    // Keep these guards explicit so invalid legacy profiles fail closed.
     if (first == null || hero.level < 1 || hero.level > 20) {
       throw const FormatException(
         'Die bestätigten Klassen und Stufen sind nicht konsistent.',
