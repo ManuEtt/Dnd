@@ -24,7 +24,9 @@ Future<Uint8List> _pngImage(int width, int height) async {
 }
 
 void main() {
-  testWidgets('Bildmaße werden vor dem vollständigen Dekodieren geprüft', (tester) async {
+  testWidgets(
+    'Bildmaße werden vor dem vollständigen Dekodieren geprüft',
+    (tester) async {
     final valid = await _pngImage(256, 256);
     final tooLarge = await _pngImage(257, 1);
 
