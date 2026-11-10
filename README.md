@@ -1661,3 +1661,9 @@ Der Projektübertragungsprüfer weist nun auch ZIP-Verzeichniseinträge mit mehr
 Der Dialog für den Talentvorschlag „Wilder Angreifer“ verwirft eine bereits gewählte Wurfalternative, wenn sich Angriffsidentität, Kampf-/Kampagnensnapshot, Schadensausdruck, Würfelnachweise, kritischer Status oder Treffer-/Waffenbestätigung ändern. Ein unveränderter Vorschlag behält die ausdrückliche Auswahl bei einem reinen Parent-Rebuild. Fünf positive und negative Widget-Regressionen decken identische Rebuilds, neue Angriffe, abgelaufene Züge und geänderte Würfel ab; Spielstands-JSON bleibt unverändert.
 
 Die Änderung liegt auf Branch `feat/chat-c/savage-attacker-live-offer-reset-20261108` und [PR #647](https://github.com/ManuEtt/Dnd/pull/647). Der ursprüngliche Branch-HEAD `69dd94292a1c2f4b0580fbf51378a0017446c449` hatte sechs erfolgreiche CI-Jobs ([Actions #42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537)). Nach dem Abgleich mit dem inzwischen weiterentwickelten `main` ist eine erneute vollständige CI auf dem neuen Merge-HEAD erforderlich; sie wird nicht vorweggenommen. Keine Änderung an Regeln, Controller, SQLite/JSON, App-Version oder Spielstandmigration.
+
+### 2026-11-10 – Importgrenzen gegen verlinkte Quellwurzel absichern
+
+- **Problem:** Der Story/Rules-Scanner wies verlinkte Modulverzeichnisse zurück, aber ein symbolischer Link auf `app/` oder `app/lib/` konnte beide Module unbemerkt außerhalb des Checkouts verlagern.
+- **Lösung:** `scripts/check_domain_boundaries.py` verweigert die Prüfung vor dem Lesen bei verlinkten übergeordneten Quellverzeichnissen; zwei neue Negativtests sichern beide Varianten ab. Unverlinkte Modulverzeichnisse bleiben unverändert erlaubt.
+- **Branch:** `fix/chat-d/domain-boundary-ancestor-symlink-20261110`. **Tests:** Neue Python-Unittests ergänzt; GitHub-CI nach Veröffentlichung ausstehend. Keine Änderung an Spielständen, JSON, SQLite, Regeln oder Android-Laufzeit.

@@ -2539,3 +2539,9 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - Main-Basis beim Abgleich: `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`. Die beiden fachlichen Dateien des PRs wurden auf dem aktuellen Main-Baum erhalten; README und Checkpoints wurden aus dem aktuellen Main übernommen und append-only ergänzt.
 - Der ursprüngliche HEAD hatte sechs erfolgreiche CI-Jobs in [#42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537). Der neue Merge-HEAD ist noch nicht getestet; erneute vollständige GitHub-CI ist Freigabegate.
 - Keine Regel-, Controller-, Persistenz-, SQLite-/JSON-, Appversions- oder Spielstandänderung. Physisches Android-Gerät/TalkBack/IME nicht geprüft.
+
+### 2026-11-10 – Importgrenzen gegen verlinkte Quellwurzel absichern
+
+- **Problem:** Der Story/Rules-Scanner wies verlinkte Modulverzeichnisse zurück, aber ein symbolischer Link auf `app/` oder `app/lib/` konnte beide Module unbemerkt außerhalb des Checkouts verlagern.
+- **Lösung:** `scripts/check_domain_boundaries.py` verweigert die Prüfung vor dem Lesen bei verlinkten übergeordneten Quellverzeichnissen; zwei neue Negativtests sichern beide Varianten ab. Unverlinkte Modulverzeichnisse bleiben unverändert erlaubt.
+- **Branch:** `fix/chat-d/domain-boundary-ancestor-symlink-20261110`. **Tests:** Neue Python-Unittests ergänzt; GitHub-CI nach Veröffentlichung ausstehend. Keine Änderung an Spielständen, JSON, SQLite, Regeln oder Android-Laufzeit.
