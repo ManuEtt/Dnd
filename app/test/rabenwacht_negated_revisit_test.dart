@@ -48,4 +48,29 @@ void main() {
     expect(after.facts['location'], 'Kapelle');
     expect(after.hero.toJson(), before.hero.toJson());
   });
+  test('travel-like nouns do not trigger a location change', () {
+    final before = atChapel();
+    for (final input in [
+      'Ich untersuche das Vorgehen an der Mühle.',
+      'Ich lese den Reisebericht über die Mühle.',
+      'Ich betrachte den Besuchereintrag der Mühle.',
+    ]) {
+      final after = act(before, input);
+      expect(after.storyBible['stage'], 'chapel', reason: input);
+      expect(after.facts['location'], 'Kapelle', reason: input);
+    }
+  });
+
+  test('explicit travel verbs still allow a known revisit', () {
+    for (final input in [
+      'Ich reise zur Mühle.',
+      'Ich kehre zur Mühle zurück.',
+      'Ich besuche die Mühle.',
+    ]) {
+      final after = act(atChapel(), input);
+      expect(after.storyBible['stage'], 'mill', reason: input);
+      expect(after.facts['location'], 'Alte Mühle', reason: input);
+    }
+  });
+
 }
