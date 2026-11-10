@@ -197,9 +197,11 @@ void main() {
     expect(_field('setup-error'), findsNothing);
     expect(_field('validation-error'), findsNothing);
     expect(
-      tester.widget<DropdownButtonFormField<String>>(
-        _field('stack-secret-large-chest'),
-      ).initialValue,
+      tester
+          .widget<DropdownButtonFormField<String>>(
+            _field('stack-secret-large-chest'),
+          )
+          .initialValue,
       isNull,
     );
     await _tap(tester, find.text('Abbrechen'));
