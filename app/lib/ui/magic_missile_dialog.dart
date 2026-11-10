@@ -363,7 +363,7 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                             _shieldSlots = v;
                             _error = null;
                           }),
-                        )
+                        ),
                       )
                     else
                       Text(
