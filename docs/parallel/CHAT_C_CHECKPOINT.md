@@ -866,3 +866,20 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität:** keine Änderung an Regelengine, Controller, Eventformat, SQLite/JSON, App-Version oder vorhandenen Spielständen.
 - **Nicht getestet:** lokales Flutter/Dart-SDK fehlt; kein physisches Android/TalkBack/IME; neuer Main-basierter vollständiger CI-Lauf ausstehend.
 - **Nächster Schritt:** CI auf dem neuen PR-HEAD vollständig auswerten und nur konkret fehlgeschlagene Gates korrigieren; kein Merge vor grüner Gesamt-CI.
+
+## 2026-11-10 – Feuerball-Karte bei großer Schrift und Android-Tastatur bedienen (PR #673)
+
+- **Ausgangs-main:** `73f377ece91cb14a5074ddba16fbbc57b153026e`.
+- **Branch:** `feat/chat-c/fireball-grid-accessibility-20261110`.
+- **Fachcommit:** `c9b56edd103f47bdec39feb3174c2dac3f4dff39`; **Testcommit:** `52158f792b4265bcbeb55a76817e709c122fcb65`. Finaler HEAD nach Dokumentationscommits im PR separat prüfen.
+- **Pull Request:** [#673](https://github.com/ManuEtt/Dnd/pull/673) (Draft bis vollständiger CI).
+- **Ausgangsproblem:** Feuerball-Flächenvorschau mit 26-dp-Kartenfeldern und innerem vertikalem Scrollbereich war bei 320/360 dp, 200 % Schrift und simuliertem 220-dp-IME schwer bedienbar.
+- **IMPLEMENTIERT:** Karte mit 48-dp-Touchzielen, `AlertDialog(scrollable: true)` und kompakten Rändern; nur horizontales Karten-Scrollen bleibt separat. Fehlermeldung als Semantics-Live-Region. Die Vorschau bleibt rein lesend und bestätigt weder Ziele noch Schaden.
+- **Geänderte Fachdateien:** `app/lib/ui/srd_fireball_grid_preview_dialog.dart` und neue `app/test/srd_fireball_grid_small_screen_test.dart`. Dokumentation append-only in README, zentralem und persönlichem Checkpoint.
+- **Neue positive/negative Tests:** Vier Widgettests für 320/360 dp bei 200 % Schrift und simulierter IME; Reachability von Aktionen und Fehlermeldung, 48-dp-Felder, fehlende Bestätigung, ausdrückliche Prüfung, Rücksetzung nach Kartenbearbeitung und 32×32-Karte.
+- **GETESTET:** GitHub-main und alle 58 zu Planungsbeginn offenen PRs einschließlich ihrer Dateipfade geprüft. Kein offener PR berührte die beiden Fach-/Testdateien. Branch, Fach- und Testcommit sowie Draft-PR im GitHub-Repository vorhanden. Letzte main-Gesamt-CI #42788659259 auf Main-SHA erfolgreich; **kein Testnachweis für diesen neuen Branch**.
+- **NICHT GETESTET:** Lokales Dart-/Flutter-Format, Analyse, Flutter-/Widgettests, Python-/Backend-/Android-/APK-Läufe (kein SDK und kein GitHub-Netzwerkcheckout); neue GitHub-CI auf finalem Branch-HEAD ausstehend; echtes Android/TalkBack/IME nicht geprüft.
+- **BLOCKIERT:** Finale vollständige GitHub-Actions-CI und technische Geräteabnahme. Zentral gemeinsame Dokumentationsnachträge anderer offener PRs bei Integration mit Chat D verlustfrei konsolidieren.
+- **Kompatibilität/Migration:** Keine Änderung an Regeln, Würfen, Controller, API, JSON-/SQLite-Spielständen, Schemas, Backups, App-Version oder Berechtigungen; keine Migration.
+- **NÄCHSTER SCHRITT:** Finale CI auf dem PR-Head auswerten und bei Fehlern ausschließlich die neue UI-/Widgettest-Änderung korrigieren; danach reales Gerät 320 dp/200 %/IME/TalkBack testen. Keine Integration vor grünem Gesamt-HEAD.
+
