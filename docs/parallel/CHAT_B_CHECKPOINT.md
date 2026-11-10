@@ -969,3 +969,5 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - Verneinte Rückreise wird abgefangen, ohne Bühne, Ort, Held oder Besuchsmerker zu ändern; positive Rückreise bleibt erhalten.
 - Regression: `app/test/rabenwacht_negated_revisit_test.dart`, drei Fälle. Ursprünglicher Draft-PR #666 mit 6/6 grünen Jobs bleibt unangetastet, da sein Branch wegen inzwischen divergiertem `main` nicht mergebar ist.
 - Neue CI und Review durch Chat D erforderlich; kein automatischer Merge.
+
+- 2026-11-10: Rabenwacht-Reiseabsicht gegen Wortteil-Treffer (Vorgehen/Reisebericht/Besuchereintrag) abgesichert; zwei Regressionstests ergänzt. Branch `fix/chat-b/rabenwacht-travel-verb-boundaries-20261110`; CI ausstehend.
