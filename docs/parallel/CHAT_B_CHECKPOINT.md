@@ -961,3 +961,14 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **NICHT GETESTET:** Vollständige Flutter-/Dart-/Android-Release-CI auf finalem Branch-HEAD bei Erstellung dieses Nachtrags offen, echtes Android-Gerät, produktive KI, Bestands-Upgrade. Alte grüne CI von PR #623 ist kein Nachweis für #628.
 - **Kompatibilität:** Keine Migration, keine Schema-/JSON-Änderung, keine Regeln-/Kampf-/Ressourcenbuchung, keine KI-Provider-Änderung. Bisher gespeicherte NPC-Notizen und Besuche bleiben unangetastet.
 - **NÄCHSTER SCHRITT:** CI auf finalem Commit vollständig prüfen, Fehler auf eigenem Branch korrigieren, danach Draft zur Review freigeben; Chat D übernimmt konfliktfreie Dokumentationsintegration und Merge.
+
+
+### 2026-11-10 – Negierte Rabenwacht-Rückreisen auf aktuellem main
+
+- **Main-Basis:** `73f377ece91cb14a5074ddba16fbbc57b153026e`.
+- **Branch:** `fix/chat-b/rabenwacht-negated-revisit-main-20261110`; vorheriger Draft-PR #666 auf älterer Basis `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`.
+- **Änderungen:** `app/lib/story/rabenwacht_campaign.dart`, neuer Regressionstest `app/test/rabenwacht_negated_revisit_test.dart`; README und Checkpoints ausschließlich am Ende ergänzt.
+- **Verhalten:** Negierte Ortsrückreise wird nicht ausgeführt; affirmative Rückreise funktioniert. Drei Regressionstests.
+- **Tests:** CI #42701756432 auf altem Branch 6/6 erfolgreich; neue Basis noch nicht getestet. Keine lokale Flutter-/Android-Abnahme.
+- **Kompatibilität:** Keine Schema-, JSON-, SQLite-, Spielregel-, Kampf- oder Ressourcenänderung; keine Migration.
+- **Nächster Schritt:** PR für neuen Branch und vollständige CI; alten Draft-PR #666 nicht versehentlich parallel integrieren; Chat D koordiniert Merge.
