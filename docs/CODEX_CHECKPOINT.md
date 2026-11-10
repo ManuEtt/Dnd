@@ -2546,6 +2546,13 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Lösung:** `scripts/check_domain_boundaries.py` verweigert die Prüfung vor dem Lesen bei verlinkten übergeordneten Quellverzeichnissen; zwei neue Negativtests sichern beide Varianten ab. Unverlinkte Modulverzeichnisse bleiben unverändert erlaubt.
 - **Branch:** `fix/chat-d/domain-boundary-ancestor-symlink-20261110`. **Tests:** Neue Python-Unittests ergänzt; GitHub-CI nach Veröffentlichung ausstehend. Keine Änderung an Spielständen, JSON, SQLite, Regeln oder Android-Laufzeit.
 
+
+### 2026-11-10 – Chat B: Rabenwacht-Rückreise, konfliktfreier Neuansatz
+
+- Ausgangspunkt: `main` `73f377ece91cb14a5074ddba16fbbc57b153026e`; vorheriger PR #666 bestand 6/6 CI-Jobs, war aber wegen divergierter gemeinsamer Dokumentation nicht mergebar.
+- Eigener neuer Branch `fix/chat-b/rabenwacht-negated-revisit-rebased-20261110` überträgt nur die Negationsprüfung und drei positive/negative Regressionstests auf den aktuellen `main`.
+- Keine Änderungen an Domänenmodellen, Speicherung, Regelwerk oder Spielstandformat. GitHub-CI des neuen Branches ist gesondert zu prüfen; alte grüne CI ist kein Freigabenachweis für neue Commits.
+
 ### 2026-11-10 – Wiederherstellungsversuche gegen Datenverlust absichern
 
 - Zwei SQLite-Regressionstests prüfen den wiederholten Import einer älteren Sicherung nach App-Neustart und mehrere fehlerhafte JSON-Formate. Erwartet werden Konflikt- bzw. Validierungsfehler ohne Überschreiben bestätigter Kampagnen, ohne angelegte Teilkampagnen und ohne zusätzliche Revisionsstände.

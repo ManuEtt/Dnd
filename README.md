@@ -1668,6 +1668,11 @@ Die Änderung liegt auf Branch `feat/chat-c/savage-attacker-live-offer-reset-202
 - **Lösung:** `scripts/check_domain_boundaries.py` verweigert die Prüfung vor dem Lesen bei verlinkten übergeordneten Quellverzeichnissen; zwei neue Negativtests sichern beide Varianten ab. Unverlinkte Modulverzeichnisse bleiben unverändert erlaubt.
 - **Branch:** `fix/chat-d/domain-boundary-ancestor-symlink-20261110`. **Tests:** Neue Python-Unittests ergänzt; GitHub-CI nach Veröffentlichung ausstehend. Keine Änderung an Spielständen, JSON, SQLite, Regeln oder Android-Laufzeit.
 
+
+### Rabenwacht: Verneinte Rückreisen respektieren
+
+Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortswechsel auslösen. Die Story-Logik bleibt am aktuellen Schauplatz; eine positive Rückreise bleibt möglich. Regressionstests: `app/test/rabenwacht_negated_revisit_test.dart`. Die Integration wird in einem separaten Draft-PR vom aktuellen `main` geprüft; bestehende Spielstände und Regelzustände bleiben unverändert.
+
 ### 2026-11-10 – Wiederherstellungsversuche gegen Datenverlust absichern
 
 - Zwei SQLite-Regressionstests prüfen den wiederholten Import einer älteren Sicherung nach App-Neustart und mehrere fehlerhafte JSON-Formate. Erwartet werden Konflikt- bzw. Validierungsfehler ohne Überschreiben bestätigter Kampagnen, ohne angelegte Teilkampagnen und ohne zusätzliche Revisionsstände.
