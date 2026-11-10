@@ -2539,3 +2539,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - Main-Basis beim Abgleich: `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`. Die beiden fachlichen Dateien des PRs wurden auf dem aktuellen Main-Baum erhalten; README und Checkpoints wurden aus dem aktuellen Main übernommen und append-only ergänzt.
 - Der ursprüngliche HEAD hatte sechs erfolgreiche CI-Jobs in [#42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537). Der neue Merge-HEAD ist noch nicht getestet; erneute vollständige GitHub-CI ist Freigabegate.
 - Keine Regel-, Controller-, Persistenz-, SQLite-/JSON-, Appversions- oder Spielstandänderung. Physisches Android-Gerät/TalkBack/IME nicht geprüft.
+
+## 2026-11-10 – Feuerball-Flächenvorschau mit 48-dp-Feldern und gemeinsamem Dialog-Scrollen
+
+- **Quelle:** [Draft-PR #673](https://github.com/ManuEtt/Dnd/pull/673), Branch `feat/chat-c/fireball-grid-accessibility-20261110`, Basis-main `73f377ece91cb14a5074ddba16fbbc57b153026e`.
+- **Ausgangsproblem:** 26-dp-Touchziele im Kartenraster und verschachteltes vertikales Scrollen erschweren den Dialog bei 320/360 dp, 200 % Schrift und 220 dp simuliertem Android-IME.
+- **Änderung:** Nur `app/lib/ui/srd_fireball_grid_preview_dialog.dart`: 48-dp-Kartenzellen, `AlertDialog(scrollable: true)` mit 12-/16-dp-Einzug statt innerem vertikalem Scrollbereich; horizontale Karte bleibt scrollbar; Validation-Error in Live-Region.
+- **Regression:** `app/test/srd_fireball_grid_small_screen_test.dart` mit vier positiven/negativen Widgettests für schmale Bildschirme, Zugänglichkeit von Bestätigung/Fehler/Aktionen, 32×32-Karte, ausdrückliche Kartenprüfung und Rücksetzen von Bestätigung und Vorschau.
+- **Fach-/Testcommits:** `c9b56edd103f47bdec39feb3174c2dac3f4dff39`, `52158f792b4265bcbeb55a76817e709c122fcb65`; nach Dokumentationscommit finalen PR-HEAD prüfen.
+- **Prüfung:** Code- und Testdateien auf GitHub veröffentlicht; bisher keine lokale Flutter-/Dart-/Android-Ausführung mangels SDK und GitHub-DNS. Letzte **main**-CI #42788659259 erfolgreich, **keine** bestätigte PR-CI auf dem neuen HEAD zum Zeitpunkt dieses Eintrags. Keine physische Android-/TalkBack-/IME-Abnahme.
+- **Konfliktkoordination:** 58 offene PRs und ihre Dateipfade bei der Planung geprüft, keine Fachdateiüberschneidung. README und zentrale Checkpoint-Datei append-only; parallele Nachträge bei Integration verlustfrei koordinieren und vor Merge neu vergleichen.
+- **Kompatibilität:** Keine Änderungen an Regeln, Kampagnen, Persistenz, SQLite/JSON, APIs, Backups, Versionsnummer oder Berechtigungen. Kein Migrationsbedarf. Draft bis finale CI erfolgreich ist.
+
