@@ -214,7 +214,9 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                   child: DropdownButtonFormField<String>(
                     key: const ValueKey('missile-class'),
                     initialValue: _className,
-                    decoration: const InputDecoration(labelText: 'Zauberklasse'),
+                    decoration: const InputDecoration(
+                      labelText: 'Zauberklasse',
+                    ),
                     items: [
                       for (final name in _classes)
                         DropdownMenuItem(value: name, child: Text(name)),
@@ -344,7 +346,9 @@ class _MagicMissileDialogState extends State<MagicMissileDialog> {
                     ),
                     if (widget.encounter.enemyShieldSlotsRemaining == null)
                       KeyedSubtree(
-                        key: ValueKey('missile-shield-slots-offer-$_offerVersion'),
+                        key: ValueKey(
+                          'missile-shield-slots-offer-$_offerVersion',
+                        ),
                         child: DropdownButtonFormField<int>(
                           key: const ValueKey('missile-shield-slots'),
                           initialValue: _shieldSlots,
