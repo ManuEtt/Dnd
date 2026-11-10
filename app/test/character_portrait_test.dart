@@ -46,7 +46,8 @@ void main() {
       await validatePortraitImageBytes(Uint8List(0)),
       PortraitImageValidationResult.invalid,
     );
-  });
+    },
+  );
 
   test('Die Bildvorlage überlebt JSON-Export und -Import unverändert', () {
     final hero = HeroCharacter(id: 'hero', name: 'Liora', portraitPreset: 7);
