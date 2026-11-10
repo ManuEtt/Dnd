@@ -1672,3 +1672,8 @@ Die Änderung liegt auf Branch `feat/chat-c/savage-attacker-live-offer-reset-202
 ### Rabenwacht: Verneinte Rückreisen respektieren
 
 Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortswechsel auslösen. Die Story-Logik bleibt am aktuellen Schauplatz; eine positive Rückreise bleibt möglich. Regressionstests: `app/test/rabenwacht_negated_revisit_test.dart`. Die Integration wird in einem separaten Draft-PR vom aktuellen `main` geprüft; bestehende Spielstände und Regelzustände bleiben unverändert.
+
+
+### Regressionstest: Erzählung und bestätigter Spielzustand
+
+`app/test/story_rule_boundary_regression_test.dart` prüft die bestehende StoryRuleBoundary mit vier Fällen: erlaubte Szenen-/StoryBible-Änderung, unzulässige Änderung bestätigter Fakten, unzulässige Änderung der Kampagnenidentität und unveränderte Kampagne. Nur Tests; keine Regel-, Speicher- oder Schnittstellenänderung.
