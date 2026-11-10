@@ -2247,6 +2247,14 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Finaler veröffentlichter Branch-HEAD:** `b90a900fdf0e2c1c09b89f89b08dee3fe7d66650` (reiner CI-Anstoß-Commit mit identischem Quellbaum wie der vorherige Dokumentations-HEAD).
 - **CI-Hinweis:** Die beiden vorherigen Actions-Läufe wurden durch nachfolgende Branch-Commits abgebrochen; die Quell-History-Erhaltung blieb erfolgreich, vollständige finale Abnahme steht aus. Der PR bleibt Draft.
 
+### 2026-11-10 – Importgrenzen gegen verlinkte Quellwurzel absichern
+
+- **Problem:** Der Story/Rules-Scanner wies verlinkte Modulverzeichnisse zurück, aber ein symbolischer Link auf `app/` oder `app/lib/` konnte beide Module unbemerkt außerhalb des Checkouts verlagern.
+- **Lösung:** `scripts/check_domain_boundaries.py` verweigert die Prüfung vor dem Lesen bei verlinkten übergeordneten Quellverzeichnissen; zwei neue Negativtests sichern beide Varianten ab. Unverlinkte Modulverzeichnisse bleiben unverändert erlaubt.
+- **Branch:** `fix/chat-d/domain-boundary-ancestor-symlink-20261110`. **Tests:** Neue Python-Unittests ergänzt; GitHub-CI nach Veröffentlichung ausstehend. Keine Änderung an Spielständen, JSON, SQLite, Regeln oder Android-Laufzeit.
+
+- Ausgangs-Main: `73f377ece91cb14a5074ddba16fbbc57b153026e`; PR/Commit und CI nach Erstellung zu ergänzen. Nächster Schritt: vollständige CI-Abnahme und getrennte Wiederherstellungs-Regressionen.
+
 ### 2026-11-10 – Wiederherstellungsversuche gegen Datenverlust absichern
 
 - Zwei SQLite-Regressionstests prüfen den wiederholten Import einer älteren Sicherung nach App-Neustart und mehrere fehlerhafte JSON-Formate. Erwartet werden Konflikt- bzw. Validierungsfehler ohne Überschreiben bestätigter Kampagnen, ohne angelegte Teilkampagnen und ohne zusätzliche Revisionsstände.
