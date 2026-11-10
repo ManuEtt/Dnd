@@ -373,7 +373,16 @@ class RabenwachtStoryModule {
         }
       }
     }
-    if (target == null || target == stage) return null;
+    if (target == null) return null;
+    // Negating a destination mention must not trigger an actual revisit.
+    if (_hasNegation(input)) {
+      return RabenwachtTurn(
+        c,
+        'Du hast die Bewegung verneint. Ich bleibe an deinem aktuellen Ort. '
+        'Wenn du reisen möchtest, formuliere das Ziel bitte ohne Verneinung.',
+      );
+    }
+    if (target == stage) return null;
     final alreadyKnown = c.facts['visited:$target'] == 'true';
     final maraRoute =
         c.facts['maraLetter'] == 'true' &&

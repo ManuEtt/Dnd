@@ -1667,3 +1667,8 @@ Die Änderung liegt auf Branch `feat/chat-c/savage-attacker-live-offer-reset-202
 - **Problem:** Der Story/Rules-Scanner wies verlinkte Modulverzeichnisse zurück, aber ein symbolischer Link auf `app/` oder `app/lib/` konnte beide Module unbemerkt außerhalb des Checkouts verlagern.
 - **Lösung:** `scripts/check_domain_boundaries.py` verweigert die Prüfung vor dem Lesen bei verlinkten übergeordneten Quellverzeichnissen; zwei neue Negativtests sichern beide Varianten ab. Unverlinkte Modulverzeichnisse bleiben unverändert erlaubt.
 - **Branch:** `fix/chat-d/domain-boundary-ancestor-symlink-20261110`. **Tests:** Neue Python-Unittests ergänzt; GitHub-CI nach Veröffentlichung ausstehend. Keine Änderung an Spielständen, JSON, SQLite, Regeln oder Android-Laufzeit.
+
+
+### Rabenwacht: Verneinte Rückreisen respektieren
+
+Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortswechsel auslösen. Die Story-Logik bleibt am aktuellen Schauplatz; eine positive Rückreise bleibt möglich. Regressionstests: `app/test/rabenwacht_negated_revisit_test.dart`. Die Integration wird in einem separaten Draft-PR vom aktuellen `main` geprüft; bestehende Spielstände und Regelzustände bleiben unverändert.

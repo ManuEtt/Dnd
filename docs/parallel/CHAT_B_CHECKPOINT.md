@@ -961,3 +961,11 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **NICHT GETESTET:** Vollständige Flutter-/Dart-/Android-Release-CI auf finalem Branch-HEAD bei Erstellung dieses Nachtrags offen, echtes Android-Gerät, produktive KI, Bestands-Upgrade. Alte grüne CI von PR #623 ist kein Nachweis für #628.
 - **Kompatibilität:** Keine Migration, keine Schema-/JSON-Änderung, keine Regeln-/Kampf-/Ressourcenbuchung, keine KI-Provider-Änderung. Bisher gespeicherte NPC-Notizen und Besuche bleiben unangetastet.
 - **NÄCHSTER SCHRITT:** CI auf finalem Commit vollständig prüfen, Fehler auf eigenem Branch korrigieren, danach Draft zur Review freigeben; Chat D übernimmt konfliktfreie Dokumentationsintegration und Merge.
+
+
+### 2026-11-10 – Konfliktfreie Neuauflage der verneinten Rabenwacht-Rückreise
+
+- Basis: `main` `73f377ece91cb14a5074ddba16fbbc57b153026e`; Branch: `fix/chat-b/rabenwacht-negated-revisit-rebased-20261110`.
+- Verneinte Rückreise wird abgefangen, ohne Bühne, Ort, Held oder Besuchsmerker zu ändern; positive Rückreise bleibt erhalten.
+- Regression: `app/test/rabenwacht_negated_revisit_test.dart`, drei Fälle. Ursprünglicher Draft-PR #666 mit 6/6 grünen Jobs bleibt unangetastet, da sein Branch wegen inzwischen divergiertem `main` nicht mergebar ist.
+- Neue CI und Review durch Chat D erforderlich; kein automatischer Merge.
