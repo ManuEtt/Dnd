@@ -166,11 +166,7 @@ void main() {
 
     final extra = evidence('2d6+3', [6, 1], modifier: 3);
     expect(
-      () => choose(
-        critical: true,
-        firstCrit: extra,
-        secondCrit: extra,
-      ),
+      () => choose(critical: true, firstCrit: extra, secondCrit: extra),
       throwsFormatException,
     );
     expect(
