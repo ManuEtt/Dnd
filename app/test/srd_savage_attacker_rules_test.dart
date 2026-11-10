@@ -170,11 +170,21 @@ void main() {
       throwsFormatException,
     );
     expect(
-      () => choose(critical: true, first: roll, firstCrit: roll, secondCrit: extra),
+      () => choose(
+        critical: true,
+        first: roll,
+        firstCrit: roll,
+        secondCrit: extra,
+      ),
       throwsFormatException,
     );
     expect(
-      () => choose(critical: true, second: roll, firstCrit: extra, secondCrit: roll),
+      () => choose(
+        critical: true,
+        second: roll,
+        firstCrit: extra,
+        secondCrit: roll,
+      ),
       throwsFormatException,
     );
 
