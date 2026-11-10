@@ -113,9 +113,7 @@ void main() {
     await _tap(tester, 'fireball-cell-0-0');
     expect(_key('fireball-preview-summary'), findsNothing);
     expect(
-      tester
-          .widget<CheckboxListTile>(_key('fireball-map-surveyed'))
-          .value,
+      tester.widget<CheckboxListTile>(_key('fireball-map-surveyed')).value,
       isFalse,
     );
     await _tap(tester, 'fireball-preview-calculate');
@@ -143,9 +141,7 @@ void main() {
     await _tap(tester, 'fireball-preview-reset');
     expect(_key('fireball-preview-summary'), findsNothing);
     expect(
-      tester
-          .widget<CheckboxListTile>(_key('fireball-map-surveyed'))
-          .value,
+      tester.widget<CheckboxListTile>(_key('fireball-map-surveyed')).value,
       isFalse,
     );
     expect(tester.takeException(), isNull);
