@@ -969,3 +969,10 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - Verneinte Rückreise wird abgefangen, ohne Bühne, Ort, Held oder Besuchsmerker zu ändern; positive Rückreise bleibt erhalten.
 - Regression: `app/test/rabenwacht_negated_revisit_test.dart`, drei Fälle. Ursprünglicher Draft-PR #666 mit 6/6 grünen Jobs bleibt unangetastet, da sein Branch wegen inzwischen divergiertem `main` nicht mergebar ist.
 - Neue CI und Review durch Chat D erforderlich; kein automatischer Merge.
+
+
+### 2026-11-10 – StoryRuleBoundary-Regression
+
+- Eigenständiger Test-Branch `test/chat-b/story-rule-boundary-regression-20261110` vom aktuellen `main` `5fa4037450c955f9dd393472239e7b5de1aa7fc3`.
+- Neuer Test `app/test/story_rule_boundary_regression_test.dart`: Erzähländerung zulässig; Fakten-/Kampagnenidentitätsänderung abgelehnt; identischer Zustand zulässig.
+- Produktionscode bleibt unverändert; neue GitHub-CI erforderlich. Keine Überschneidung mit offenen Chat-B-Storymodul-Änderungen.
