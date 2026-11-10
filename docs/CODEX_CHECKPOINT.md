@@ -2552,3 +2552,10 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - Ausgangspunkt: `main` `73f377ece91cb14a5074ddba16fbbc57b153026e`; vorheriger PR #666 bestand 6/6 CI-Jobs, war aber wegen divergierter gemeinsamer Dokumentation nicht mergebar.
 - Eigener neuer Branch `fix/chat-b/rabenwacht-negated-revisit-rebased-20261110` überträgt nur die Negationsprüfung und drei positive/negative Regressionstests auf den aktuellen `main`.
 - Keine Änderungen an Domänenmodellen, Speicherung, Regelwerk oder Spielstandformat. GitHub-CI des neuen Branches ist gesondert zu prüfen; alte grüne CI ist kein Freigabenachweis für neue Commits.
+
+
+### 2026-11-10 – Chat B: Regressionstests zur Story-/Regelzustandsgrenze
+
+- Basis `main` `5fa4037450c955f9dd393472239e7b5de1aa7fc3`; Branch `test/chat-b/story-rule-boundary-regression-20261110`.
+- Vier deterministische Tests der vorhandenen `StoryRuleBoundary.ensureRuleStateUnchanged` hinzugefügt: positive reine Erzähländerung und identische Kampagne; negative Fakten- und Kampagnenname-Änderung.
+- Keine Änderung an Produktionscode, Schema, Controller, Regelwerten oder Persistenz. CI des neuen Branches gesondert prüfen.
