@@ -51,6 +51,26 @@ class StoryRulesBoundaryTests(unittest.TestCase):
                 ["symlinked app/lib/story module"], check_repository(root)
             )
 
+    def test_parent_directory_symlinks_fail_before_scanning_sources(self):
+        for linked_part in ("app", "app/lib"):
+            with self.subTest(linked_part=linked_part), TemporaryDirectory() as temp:
+                root = Path(temp)
+                external = root / "outside"
+                (external / "story").mkdir(parents=True)
+                (external / "domain").mkdir()
+                (external / "story" / "unsafe.dart").write_text(
+                    "import '../domain/rules_engine.dart';", encoding="utf-8"
+                )
+                if linked_part == "app":
+                    (root / "app").symlink_to(external, target_is_directory=True)
+                else:
+                    (root / "app").mkdir()
+                    (root / "app/lib").symlink_to(external, target_is_directory=True)
+                errors = check_repository(root)
+                self.assertEqual(2, len(errors), errors)
+                self.assertTrue(all("symlinked" in error for error in errors))
+                self.assertFalse(any("unsafe.dart" in error for error in errors))
+
     def test_story_rejects_rule_engine_dependency(self):
         self.assertEqual(
             ["app/lib/story/example.dart: story must not import ../domain/rules_engine.dart"],

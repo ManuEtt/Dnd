@@ -2246,3 +2246,13 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 
 - **Finaler veröffentlichter Branch-HEAD:** `b90a900fdf0e2c1c09b89f89b08dee3fe7d66650` (reiner CI-Anstoß-Commit mit identischem Quellbaum wie der vorherige Dokumentations-HEAD).
 - **CI-Hinweis:** Die beiden vorherigen Actions-Läufe wurden durch nachfolgende Branch-Commits abgebrochen; die Quell-History-Erhaltung blieb erfolgreich, vollständige finale Abnahme steht aus. Der PR bleibt Draft.
+
+
+## 2026-11-10 – Eltern-Symlinks vor Dart-Modulprüfung sperren
+
+- Basis: `73f377ece91cb14a5074ddba16fbbc57b153026e`; Branch: `fix/chat-d/boundary-parent-symlink-20261110`.
+- Problem: Bei einem verlinkten `app/` oder `app/lib/` konnten reale Modulverzeichnisse außerhalb des Checkouts durchsucht werden; bisher wurden nur die Modulwurzeln selbst und gefundene Einträge kontrolliert.
+- Implementiert: Prüfung jedes Pfadsegments vor dem Traversieren, sofortige Ablehnung mit neutraler Meldung; bestehende Modulgrenzen und erlaubte Importe unverändert.
+- Positive Abdeckung: bestehende Repository- und Importtests. Negative Regressionen: verlinktes `app/` und verlinktes `app/lib/`.
+- Noch nicht getestet: vollständiger neuer CI-Lauf auf finalem Commit, Android-Realgerät. Keine Datenmigration.
+- Nächster Schritt: finale Python-/Backend-/Flutter-/Android-/Release-CI prüfen und bei Erfolg konfliktfrei integrieren.

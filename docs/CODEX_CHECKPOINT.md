@@ -2539,3 +2539,11 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - Main-Basis beim Abgleich: `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`. Die beiden fachlichen Dateien des PRs wurden auf dem aktuellen Main-Baum erhalten; README und Checkpoints wurden aus dem aktuellen Main übernommen und append-only ergänzt.
 - Der ursprüngliche HEAD hatte sechs erfolgreiche CI-Jobs in [#42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537). Der neue Merge-HEAD ist noch nicht getestet; erneute vollständige GitHub-CI ist Freigabegate.
 - Keine Regel-, Controller-, Persistenz-, SQLite-/JSON-, Appversions- oder Spielstandänderung. Physisches Android-Gerät/TalkBack/IME nicht geprüft.
+
+
+## 2026-11-10 – Story-/Regelgrenzen: Symlink-Vorfahren
+
+- Ausgangs-main: `73f377ece91cb14a5074ddba16fbbc57b153026e`; Branch: `fix/chat-d/boundary-parent-symlink-20261110`.
+- Änderung: `scripts/check_domain_boundaries.py` prüft `app/`, `app/lib/` und beide Modulverzeichnisse auf symbolische Links vor dem rekursiven Scan.
+- Tests: `scripts/tests/test_domain_boundaries.py` deckt beide Eltern-Symlinkvarianten und das Verbot externer Dart-Lesezugriffe ab.
+- Teststand: GitHub-CI des finalen Branches noch nicht abgenommen; bestehende Main-CI erfolgreich. Kein Geräte- oder Migrationslauf; keine Datenformatänderung.

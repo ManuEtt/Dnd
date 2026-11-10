@@ -200,10 +200,21 @@ def check_repository(root: Path = ROOT) -> list[str]:
     # are also rejected: the scan must stay inside this repository.
     for module in modules:
         relative = module.relative_to(root).as_posix()
+        # A symlink in app/ or app/lib/ redirects both module scans outside
+        # the checkout even when story/ and domain/ are ordinary directories.
+        # Inspect the full relative ancestry before walking any Dart sources.
+        current = root
+        linked = False
+        for component in module.relative_to(root).parts:
+            current = current / component
+            if current.is_symlink():
+                result.append(f"symlinked {current.relative_to(root).as_posix()} module ancestor")
+                linked = True
+                break
+        if linked:
+            continue
         if not module.is_dir():
             result.append(f"missing {relative} module")
-        elif module.is_symlink():
-            result.append(f"symlinked {relative} module")
     if result:
         return result
     for module in modules:
