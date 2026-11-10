@@ -2539,3 +2539,10 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - Main-Basis beim Abgleich: `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`. Die beiden fachlichen Dateien des PRs wurden auf dem aktuellen Main-Baum erhalten; README und Checkpoints wurden aus dem aktuellen Main übernommen und append-only ergänzt.
 - Der ursprüngliche HEAD hatte sechs erfolgreiche CI-Jobs in [#42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537). Der neue Merge-HEAD ist noch nicht getestet; erneute vollständige GitHub-CI ist Freigabegate.
 - Keine Regel-, Controller-, Persistenz-, SQLite-/JSON-, Appversions- oder Spielstandänderung. Physisches Android-Gerät/TalkBack/IME nicht geprüft.
+
+
+### 2026-11-10 – Chat B: Rabenwacht-Rückreise, konfliktfreier Neuansatz
+
+- Ausgangspunkt: `main` `73f377ece91cb14a5074ddba16fbbc57b153026e`; vorheriger PR #666 bestand 6/6 CI-Jobs, war aber wegen divergierter gemeinsamer Dokumentation nicht mergebar.
+- Eigener neuer Branch `fix/chat-b/rabenwacht-negated-revisit-rebased-20261110` überträgt nur die Negationsprüfung und drei positive/negative Regressionstests auf den aktuellen `main`.
+- Keine Änderungen an Domänenmodellen, Speicherung, Regelwerk oder Spielstandformat. GitHub-CI des neuen Branches ist gesondert zu prüfen; alte grüne CI ist kein Freigabenachweis für neue Commits.
