@@ -51,6 +51,39 @@ class StoryRulesBoundaryTests(unittest.TestCase):
                 ["symlinked app/lib/story module"], check_repository(root)
             )
 
+    def test_symlinked_parent_cannot_redirect_both_modules(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            external = root / "external"
+            (external / "story").mkdir(parents=True)
+            (external / "domain").mkdir()
+            (root / "app").mkdir()
+            try:
+                (root / "app/lib").symlink_to(
+                    external, target_is_directory=True
+                )
+            except (OSError, NotImplementedError) as error:
+                self.skipTest(f"directory symlinks unsupported: {error}")
+            self.assertEqual(
+                ["symlinked app/lib source root"], check_repository(root)
+            )
+
+    def test_symlinked_app_root_is_rejected_before_source_scan(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            external = root / "external"
+            (external / "lib/story").mkdir(parents=True)
+            (external / "lib/domain").mkdir()
+            try:
+                (root / "app").symlink_to(
+                    external, target_is_directory=True
+                )
+            except (OSError, NotImplementedError) as error:
+                self.skipTest(f"directory symlinks unsupported: {error}")
+            self.assertEqual(
+                ["symlinked app source root"], check_repository(root)
+            )
+
     def test_story_rejects_rule_engine_dependency(self):
         self.assertEqual(
             ["app/lib/story/example.dart: story must not import ../domain/rules_engine.dart"],
