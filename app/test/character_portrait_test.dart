@@ -27,25 +27,29 @@ void main() {
   testWidgets('Bildmaße werden vor dem vollständigen Dekodieren geprüft', (
     tester,
   ) async {
-    final valid = await _pngImage(256, 256);
-    final tooLarge = await _pngImage(257, 1);
+    // Image encoding and decoding use real engine futures and must not run
+    // inside the fake async zone supplied by testWidgets.
+    await tester.runAsync(() async {
+      final valid = await _pngImage(256, 256);
+      final tooLarge = await _pngImage(257, 1);
 
-    expect(
-      await validatePortraitImageBytes(valid),
-      PortraitImageValidationResult.valid,
-    );
-    expect(
-      await validatePortraitImageBytes(tooLarge),
-      PortraitImageValidationResult.tooLarge,
-    );
-    expect(
-      await validatePortraitImageBytes(Uint8List.fromList([1, 2, 3])),
-      PortraitImageValidationResult.invalid,
-    );
-    expect(
-      await validatePortraitImageBytes(Uint8List(0)),
-      PortraitImageValidationResult.invalid,
-    );
+      expect(
+        await validatePortraitImageBytes(valid),
+        PortraitImageValidationResult.valid,
+      );
+      expect(
+        await validatePortraitImageBytes(tooLarge),
+        PortraitImageValidationResult.tooLarge,
+      );
+      expect(
+        await validatePortraitImageBytes(Uint8List.fromList([1, 2, 3])),
+        PortraitImageValidationResult.invalid,
+      );
+      expect(
+        await validatePortraitImageBytes(Uint8List(0)),
+        PortraitImageValidationResult.invalid,
+      );
+    });
   });
 
   test('Die Bildvorlage überlebt JSON-Export und -Import unverändert', () {
