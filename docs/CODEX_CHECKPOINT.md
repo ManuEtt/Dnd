@@ -2531,3 +2531,11 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Finaler Code-HEAD:** `f25c9bdbc371974fb8c9f2ea6283204df4845080`.
 - **GitHub Actions:** nach Veröffentlichung gestartet; vollständige CI und Mergefähigkeit noch nicht bestätigt.
 - **README-Nachtrag:** PR-Link ergänzt; kein Merge behauptet.
+
+
+## 2026-11-09 – Aktualisierung des Wilden-Angreifer-Dialogs auf aktuelle Main-Basis
+
+- PR [#647](https://github.com/ManuEtt/Dnd/pull/647), Branch `feat/chat-c/savage-attacker-live-offer-reset-20261108`; ursprünglicher UI-/Test-HEAD `69dd94292a1c2f4b0580fbf51378a0017446c449`.
+- Main-Basis beim Abgleich: `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`. Die beiden fachlichen Dateien des PRs wurden auf dem aktuellen Main-Baum erhalten; README und Checkpoints wurden aus dem aktuellen Main übernommen und append-only ergänzt.
+- Der ursprüngliche HEAD hatte sechs erfolgreiche CI-Jobs in [#42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537). Der neue Merge-HEAD ist noch nicht getestet; erneute vollständige GitHub-CI ist Freigabegate.
+- Keine Regel-, Controller-, Persistenz-, SQLite-/JSON-, Appversions- oder Spielstandänderung. Physisches Android-Gerät/TalkBack/IME nicht geprüft.
