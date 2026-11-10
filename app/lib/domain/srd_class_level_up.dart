@@ -109,9 +109,7 @@ class SrdClassLevelUpRules {
   }) {
     final first = findSrdClass(hero.className);
     final hasSecondary = hero.hasSecondClass;
-    final other = hasSecondary
-        ? findSrdClass(hero.secondaryClassName)
-        : null;
+    final other = hasSecondary ? findSrdClass(hero.secondaryClassName) : null;
     final selected = findSrdClass(className);
     // A level-up is a rule action, not a repair path for malformed legacy
     // class profiles. Validate the complete existing split before deriving
@@ -136,9 +134,7 @@ class SrdClassLevelUpRules {
       );
     }
     if (selected == null) {
-      throw const FormatException(
-        'Klasse ist nicht im SRD 5.2.1 hinterlegt.',
-      );
+      throw const FormatException('Klasse ist nicht im SRD 5.2.1 hinterlegt.');
     }
     final isSecondary = other != null && selected.name == other.name;
     if (selected.name != first.name && !isSecondary) {
