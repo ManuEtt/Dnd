@@ -1421,3 +1421,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 **Spielstände/Migration:** Keine Modell-, Event-, JSON-, SQLite-, Backend-, UI-, Story- oder Android-Version geändert; kein Migrationsbedarf.
 
 **Nächster konkreter Schritt:** Volle CI am finalen PR-HEAD auf Dart-Format, Flutter-Analyse, alle Flutter-Tests und Android-Builds prüfen; Abweichungen reparieren und PR erst bei vollständigem CI-Erfolg aus Draft freigeben.
+
+
+### 2026-11-10 – Wilder Angreifer: Würfelnachweise
+
+- Ausgangs-Main: `73f377ece91cb14a5074ddba16fbbc57b153026e`.
+- Branch: `feat/chat-a/savage-attacker-independent-rolls-20261110`.
+- PR: https://github.com/ManuEtt/Dnd/pull/670 (Draft).
+- Implementierung: Identische `DiceResult`-Objektreferenzen für Original-/Alternativwurf und kritische Zusatzwürfel abweisen; getrennte Würfe mit gleichen Augen zulassen.
+- Geänderte Fachdateien: `app/lib/domain/srd_savage_attacker_rules.dart`, `app/test/srd_savage_attacker_rules_test.dart`.
+- Tests: Positive/negative Regressionen ergänzt; GitHub Actions noch nicht ausgewertet. Lokale Flutter-Tests hier nicht ausgeführt.
+- Migration: keine. Risiko: Objektidentität allein beweist keine unabhängige Zufallsziehung; die autoritative Würfelgrenze muss die Ergebnisse weiterhin bestätigen.
+- Nächster Schritt: CI auswerten und etwaige Formatierungs-/Testfehler auf diesem Branch korrigieren.
