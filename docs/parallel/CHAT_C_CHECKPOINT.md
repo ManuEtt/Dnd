@@ -854,3 +854,15 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Bis zur erfolgreichen CI und endgültigen Konfliktprüfung kein Merge. Gemeinsame Dokumentationsanhänge bei späteren parallelen PR-Integrationen strikt verlustfrei koordinieren.
 - **Kompatibilität:** App `0.8.52+102` unverändert, SQLite/JSON und sämtliche historischen Spielstände unverändert, keine Migration.
 - **NÄCHSTER SCHRITT:** Das bestehende `HealingSpellDialog`-Auswahlformular auf echtem 320-dp-Android-Gerät bei 200 % Text mit TalkBack und geöffneter IME prüfen: aktualisierter Verbrauch darf keine alte Platz- und Komponentenfreigabe übernehmen.
+
+
+## 2026-11-09 – Angriffsentscheidung bei geändertem Talentangebot zurücksetzen
+
+- **Main-Basis:** `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`; **Branch:** `feat/chat-c/savage-attacker-live-offer-reset-20261108`.
+- **PR:** [#647](https://github.com/ManuEtt/Dnd/pull/647). Der bisherige Quell-/Test-HEAD `69dd94292a1c2f4b0580fbf51378a0017446c449` wurde mit dem aktuellen Main-Baum verbunden; der neue Merge-HEAD ist nach dem Push zu verifizieren.
+- **Fachdateien:** `app/lib/ui/savage_attacker_selection_dialog.dart`, `app/test/savage_attacker_live_offer_reset_test.dart`. Fünf Regressionen für unverändertes Parent-Rebuild, neue Angriffsidentität, abgelaufenen Zug/neue Revision und geänderte Würfelnachweise; kleine Bildschirme, 200 % Text und simulierte IME werden einbezogen.
+- **Verhalten:** Alte Auswahl wird bei geändertem Angebot verworfen; identisches Angebot behält die explizite Wahl. Der Dialog bleibt vorschlags-/schreibfrei.
+- **Vorherige CI:** sechs Jobs auf altem HEAD in [#42515186537](https://github.com/ManuEtt/Dnd/actions/runs/42515186537) erfolgreich. **Neue CI auf dem Merge-HEAD ausstehend**, daher keine aktuelle Testfreigabe.
+- **Kompatibilität:** keine Änderung an Regelengine, Controller, Eventformat, SQLite/JSON, App-Version oder vorhandenen Spielständen.
+- **Nicht getestet:** lokales Flutter/Dart-SDK fehlt; kein physisches Android/TalkBack/IME; neuer Main-basierter vollständiger CI-Lauf ausstehend.
+- **Nächster Schritt:** CI auf dem neuen PR-HEAD vollständig auswerten und nur konkret fehlgeschlagene Gates korrigieren; kein Merge vor grüner Gesamt-CI.
