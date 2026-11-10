@@ -48,10 +48,13 @@ Future<void> _open(
 
 Future<void> _tap(WidgetTester tester, String name) async {
   final finder = _key(name);
-  await tester.ensureVisible(finder);
+  final target = name == 'fireball-map-surveyed'
+      ? find.descendant(of: finder, matching: find.byType(Checkbox))
+      : finder;
+  await tester.ensureVisible(target);
   await tester.pumpAndSettle();
-  expect(finder.hitTestable(), findsOneWidget);
-  await tester.tap(finder);
+  expect(target.hitTestable(), findsOneWidget);
+  await tester.tap(target);
   await tester.pumpAndSettle();
 }
 
