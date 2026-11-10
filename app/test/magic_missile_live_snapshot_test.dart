@@ -129,7 +129,9 @@ void main() {
     redraw.value++;
     await tester.pumpAndSettle();
     expect(
-      tester.widget<DropdownButtonFormField<String>>(_field('slot')).initialValue,
+      tester
+          .widget<DropdownButtonFormField<String>>(_field('slot'))
+          .initialValue,
       'regular-3',
     );
     expect(find.text('Grad 3: 2 frei'), findsOneWidget);
@@ -175,7 +177,9 @@ void main() {
     expect(find.text('Grad 3: 2 frei'), findsNothing);
     expect(find.text('Grad 1: 4 frei'), findsOneWidget);
     expect(
-      tester.widget<DropdownButtonFormField<String>>(_field('slot')).initialValue,
+      tester
+          .widget<DropdownButtonFormField<String>>(_field('slot'))
+          .initialValue,
       'regular-1',
     );
     expect(
@@ -186,7 +190,13 @@ void main() {
           .initialValue,
       isNull,
     );
-    for (final field in ['visible', 'range', 'verbal', 'somatic', 'protection']) {
+    for (final field in [
+      'visible',
+      'range',
+      'verbal',
+      'somatic',
+      'protection',
+    ]) {
       expect(_checked(tester, field), isFalse);
     }
     await _tap(tester, 'confirm');
