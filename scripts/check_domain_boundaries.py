@@ -195,6 +195,12 @@ def check_imports(relative_path: str, content: str) -> list[str]:
 def check_repository(root: Path = ROOT) -> list[str]:
     result: list[str] = []
     modules = (root / "app/lib/story", root / "app/lib/domain")
+    # A symlink at an ancestor (app/ or app/lib/) can redirect both
+    # apparently ordinary module directories outside the checked checkout.
+    # Fail closed before traversing or reading any source.
+    for ancestor in (root / "app", root / "app/lib"):
+        if ancestor.is_symlink():
+            return [f"symlinked {ancestor.relative_to(root).as_posix()} source root"]
     # A removed or replaced module must not make the import check pass simply
     # because there are no Dart files left to inspect. Symlinked module roots
     # are also rejected: the scan must stay inside this repository.
