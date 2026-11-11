@@ -143,7 +143,9 @@ void main() {
       isTrue,
     );
     expect(
-      tester.widget<FantasyTextButton>(_key('offhand-attack-confirm')).onPressed,
+      tester
+          .widget<FantasyTextButton>(_key('offhand-attack-confirm'))
+          .onPressed,
       isNotNull,
     );
     await _tap(tester, _key('offhand-attack-confirm'));
@@ -186,7 +188,9 @@ void main() {
     );
     expect(_key('offhand-attack-preview'), findsNothing);
     expect(
-      tester.widget<FantasyTextButton>(_key('offhand-attack-confirm')).onPressed,
+      tester
+          .widget<FantasyTextButton>(_key('offhand-attack-confirm'))
+          .onPressed,
       isNull,
     );
     expect(results, isEmpty);
@@ -240,7 +244,9 @@ void main() {
       isFalse,
     );
     expect(
-      tester.widget<FantasyTextButton>(_key('offhand-attack-confirm')).onPressed,
+      tester
+          .widget<FantasyTextButton>(_key('offhand-attack-confirm'))
+          .onPressed,
       isNull,
     );
     await _tap(tester, _key('offhand-attack-cancel'));

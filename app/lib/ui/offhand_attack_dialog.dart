@@ -128,7 +128,9 @@ class _OffhandAttackDialogState extends State<OffhandAttackDialog> {
                   key: const ValueKey('offhand-weapon'),
                   initialValue: _weaponId,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Nebenhandwaffe'),
+                  decoration: const InputDecoration(
+                    labelText: 'Nebenhandwaffe',
+                  ),
                   items: [
                     for (final item in weapons)
                       DropdownMenuItem(
