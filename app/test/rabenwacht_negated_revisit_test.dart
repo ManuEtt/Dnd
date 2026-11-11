@@ -49,17 +49,25 @@ void main() {
     expect(after.hero.toJson(), before.hero.toJson());
   });
 
-  test('travel-like nouns do not trigger a location change', () {
+  test('travel-like nouns do not cause a revisit to the mill', () {
     final before = atChapel();
     for (final input in [
       'Das Vorgehen an der Mühle erscheint mir unklar.',
       'Ich lese den Reisebericht über die Mühle.',
-      'Ich betrachte den Besuchereintrag der Mühle.',
     ]) {
       final after = act(before, input);
       expect(after.storyBible['stage'], 'chapel', reason: input);
       expect(after.facts['location'], 'Kapelle', reason: input);
     }
+
+    // "Besuchereintrag" also contains "such", an existing chapel research
+    // keyword. It may advance the story, but must never trigger a revisit.
+    final nounMention = act(
+      before,
+      'Ich betrachte den Besuchereintrag der Mühle.',
+    );
+    expect(nounMention.storyBible['stage'], isNot('mill'));
+    expect(nounMention.facts['location'], isNot('Alte Mühle'));
   });
 
   test('explicit chapel investigation still advances the story', () {
