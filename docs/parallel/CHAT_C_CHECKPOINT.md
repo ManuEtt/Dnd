@@ -880,3 +880,14 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität:** Keine Migration, keine Änderung von SQLite, JSON, Controller, Regel- oder Storyengine oder App-Version.
 - **Bekannte Grenzen:** Tatsächlicher Android-Gerätetest, TalkBack und die vollständige Flutter-/APK-Abnahme fehlen bis zur Prüfung.
 - **Nächster Schritt:** CI des PR-Kopfes auf Format, Analyse, alle Flutter-Tests und Android-Build prüfen; nur konkrete Fehler auf demselben Branch korrigieren und erst danach Review/Integration koordinieren.
+
+## 11.11.2026 – Vollständige CI-Abnahme für PR #685
+
+- **Ausgangs-Main:** `cddaa07e1656e220ed4ee79a7dc0dc6062577b4c`; koordinierter Integrationsstand im Branch mit Main `5cfb0fb47c086eea1c8ba8efd669149f01ad3459`. Ein anschließend integrierter, unabhängiger Porträtfix im neueren Main verändert nicht die beiden Chronikdateien.
+- **Eigener Branch:** `feat/chat-c/chronicle-numeric-display-20261111`; **geprüfter Code-/Test-HEAD:** `bb21090386bde88867789a34e4e577ff11349602`; **Pull Request:** https://github.com/ManuEtt/Dnd/pull/685 (Draft, kein Merge).
+- **Geänderte Produkt- und Testdateien:** `app/lib/ui/fantasy_combat_chronicle.dart` sowie `app/test/fantasy_combat_chronicle_test.dart`. Dokumentation zusätzlich: `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md`.
+- **GETESTET:** [Workflow #42958511774](https://github.com/ManuEtt/Dnd/actions/runs/42958511774) **vollständig grün**, sechs erfolgreiche Jobs. Python-Verifikationsschritte, Backend-Typecheck/-Build/-Tests; Dart-Format 669 Dateien unverändert; Flutter-Analyse ohne Issues; 20 gezielte UI-Tests; 3.355 vollständige Flutter-Tests; Android-Debug-APK und native Android-Tests; drei ABI-optimierte APKs plus Alpha-/Source-Artefakte. Vorheriger Formatfehler im neuen Test korrigiert und mit grünem Voll-Lauf neu verifiziert. Temporärer Formatdiagnose-Workflow wieder entfernt.
+- **NICHT GETESTET:** echtes Android-Gerät, TalkBack auf Hardware, Upgrade vorhandener Installation und produktive Release-Signierung. Lokaler SDK-Test mangels Flutter nicht durchgeführt; CI-Abnahme ist kein Gerätetest.
+- **BLOCKIERT:** keine bekannten CI-, GitHub- oder Merge-Dateikonflikte auf diesem Code; PR bleibt für Review/Integration offen.
+- **Migration:** keine; SQLite/JSON, alte Spielstände, Regel- und Storyengine sowie App-Version unverändert.
+- **Nächster konkreter Schritt:** separate, überschneidungsfreie Questkarten-UI-Abnahme bei langen Titeln, 320/360 dp, 200 % Text und Tastatur/TalkBack, positive/negative Widgettests; vor Arbeitsbeginn erneute Main-/PR-Prüfung.
