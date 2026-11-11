@@ -1682,3 +1682,11 @@ Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortsw
 
 - Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
 - **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
+
+### 2026-11-11 – Epilogabschluss nur nach eindeutiger Vermächtniswahl
+
+- **Problem und Lösung:** Die drei abschließenden Rabenwacht-Vermächtnisse konnten bisher durch beiläufige Erwähnungen ihrer Bezeichnung ausgelöst werden. Die Erkennung verlangt jetzt eine vollständige, einzelne Entscheidung; Fragen, Zitate, Vergleich mehrerer Optionen und Verneinungen lassen den Epilog offen. Bisherige direkte Befehle und ausdrückliche Ich-/Wir-Wünsche bleiben verwendbar.
+- **Fachpfad und Tests:** `app/lib/story/fourteenth_voice_epilogue.dart` und `app/test/rabenwacht_epilogue_explicit_legacy_choice_test.dart` mit positiven/negativen Fällen, JSON-Wiederaufnahme und Schutz vor wiederholter Vergabe.
+- **Branch:** `fix/chat-b/epilogue-explicit-legacy-choice-20261111`; **PR:** [#694](https://github.com/ManuEtt/Dnd/pull/694) (Draft). CI und Flutter-/Dart-/Android-Abnahme auf finalem Branch-HEAD noch offen; kein lokales Flutter-/Dart-SDK. Ein älterer grüner Workflow gilt nicht als Abnahme dieses PRs.
+- **Kompatibilität:** Keine Migration, keine Änderung an Regel- oder Ressourcenbuchung, JSON/SQLite-Schema, bestehenden Wahlmarkierungen, App-Version oder externem KI-Anbieter.
+- **Grenze:** Weitere Eindeutigkeitsprüfungen für Versammlungs- und Rückkehrbefehle stehen als eigenständige Aufgaben aus. Der PR ist noch nicht integriert.
