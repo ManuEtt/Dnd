@@ -2562,3 +2562,9 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 
 - Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
 - **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
+
+### 2026-11-11 – Rabenwacht-Reiseverbprüfung auf aktueller Main-Basis integriert (CI offen)
+
+- Übernahme des eigenständigen Wortgrenzen-Fixes aus PR #684 mit positivem Gegenbeispiel für Kapellenuntersuchung. Quellbranch-HEAD `b9836aecd8507cf0af96685643cc6e28801d988f` als zweiter Commit-Elternknoten erhalten.
+- Konfliktfreie Konsolidierung der README ausschließlich am Dateiende; alle früheren Main-Nachträge und Story-Checkpoints bleiben erhalten.
+- **Teststand:** Vorgänger-CI #42957164227 bestand 3.353 Flutter-Tests und scheiterte an einem inzwischen korrigierten Regressionstest. Finale CI auf Integrationsstand noch offen; keine Behauptung eines grünen APK-Builds, keine Speicher- oder Schemaänderung.

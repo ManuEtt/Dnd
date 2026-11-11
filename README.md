@@ -1682,3 +1682,9 @@ Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortsw
 
 - Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
 - **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
+
+### 2026-11-11 – Rückreisen von bloßen Wortbestandteilen unterscheiden
+
+- Rabenwacht: Rückreisen werden nur durch eigenständige Bewegungsverben ausgelöst; Begriffe wie „Vorgehen“ oder „Reisebericht“ lösen keinen Ortswechsel aus. Regressionstests prüfen beide Richtungen.
+- Der präzisierte Regressionstest trennt bloße Ortsnennungen von einer eigenständigen Kapellenuntersuchung, die weiterhin zum Archiv führen darf. Originaländerung und Verlauf: PR #684, finaler Quell-Commit `b9836aecd8507cf0af96685643cc6e28801d988f`.
+- **Tests:** Eine ältere CI #42957164227 bestand 3.353 Flutter-Tests, ein neuer Test scheiterte an einer falschen Erwartung und wurde korrigiert. Die CI auf dem konsolidierten Integrationsstand steht aus. Keine JSON-/SQLite-Migration.
