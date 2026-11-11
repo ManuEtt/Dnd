@@ -60,8 +60,10 @@ void main() {
       );
       expect(completed.hero.toJson(), initial.hero.toJson());
       expect(completed.revision, initial.revision);
-      expect(completed.events.map((e) => e.toJson()).toList(),
-          initial.events.map((e) => e.toJson()).toList());
+      expect(
+        completed.events.map((e) => e.toJson()).toList(),
+        initial.events.map((e) => e.toJson()).toList(),
+      );
     }
     expect(jsonEncode(initial.toJson()), original);
   });
