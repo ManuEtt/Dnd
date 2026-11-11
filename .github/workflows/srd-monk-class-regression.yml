@@ -10,11 +10,16 @@ on:
       - 'app/lib/ui/app.dart'
       - 'app/test/monk_uncanny_metabolism_test.dart'
       - 'app/test/monk_perfect_focus_test.dart'
+      - 'app/test/class_resource_rules_test.dart'
       - '.github/workflows/srd-monk-class-regression.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: srd-monk-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   monk-feature-regression:
@@ -36,10 +41,10 @@ jobs:
         run: flutter pub get
       - name: Verify canonical Dart formatting
         working-directory: app
-        run: dart format --output=none --set-exit-if-changed lib/domain/monk_initiative_features.dart lib/domain/class_resource_rules.dart lib/domain/game_engine.dart lib/services/game_controller.dart lib/ui/app.dart test/monk_uncanny_metabolism_test.dart
+        run: dart format --output=none --set-exit-if-changed lib/domain/monk_initiative_features.dart lib/domain/class_resource_rules.dart lib/domain/game_engine.dart lib/services/game_controller.dart lib/ui/app.dart test/monk_uncanny_metabolism_test.dart test/monk_perfect_focus_test.dart test/class_resource_rules_test.dart
       - name: Analyze changed rules and integrations
         working-directory: app
-        run: flutter analyze lib/domain/monk_initiative_features.dart lib/domain/class_resource_rules.dart lib/domain/game_engine.dart lib/services/game_controller.dart lib/ui/app.dart test/monk_uncanny_metabolism_test.dart
+        run: flutter analyze lib/domain/monk_initiative_features.dart lib/domain/class_resource_rules.dart lib/domain/game_engine.dart lib/services/game_controller.dart lib/ui/app.dart test/monk_uncanny_metabolism_test.dart test/monk_perfect_focus_test.dart test/class_resource_rules_test.dart
       - name: Test initiative, rest and resource regressions
         working-directory: app
         run: flutter test test/monk_uncanny_metabolism_test.dart test/monk_perfect_focus_test.dart test/class_resource_rules_test.dart
