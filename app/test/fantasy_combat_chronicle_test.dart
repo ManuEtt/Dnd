@@ -288,57 +288,61 @@ void main() {
   testWidgets(
     'Ungültige Zahlen aus Import-Ereignissen nicht als Fakten anzeigen',
     (tester) async {
-    final semantics = tester.ensureSemantics();
-    await tester.pumpWidget(
-      screen([
-        event(
-          'invalid',
-          'attack',
-          payload: {
-            'roll': {'total': double.nan},
-            'hit': true,
-            'damage': -5,
-            'hitPointsRestored': -2,
-            'recovered': 1.5,
-            'meters': double.infinity,
-            'enemyAttacksRemaining': -4,
-          },
-        ),
-        event(
-          'invalid-count',
-          'combat.enemyAttackCountConfirmed',
-          payload: {'count': -3},
-        ),
-        event(
-          'fractional-damage',
-          'effect.damage',
-          payload: {'damage': 2.5, 'roll': {'total': double.infinity}},
-        ),
-      ]),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('Treffer'), findsOneWidget);
-    for (final invalid in [
-      'Wurf: NaN',
-      'Wurf: Infinity',
-      'Schaden: -5',
-      'Schaden: 2.5',
-      'Geheilte TP: -2',
-      'Geheilte TP: 1.5',
-      'Bewegung: Infinity',
-      'Weitere Gegnerangriffe: -4',
-      'Gegnerangriffe: -3',
-    ]) {
-      expect(find.textContaining(invalid), findsNothing);
-      expect(
-        find.bySemanticsLabel(RegExp(RegExp.escape(invalid))),
-        findsNothing,
+      final semantics = tester.ensureSemantics();
+      await tester.pumpWidget(
+        screen([
+          event(
+            'invalid',
+            'attack',
+            payload: {
+              'roll': {'total': double.nan},
+              'hit': true,
+              'damage': -5,
+              'hitPointsRestored': -2,
+              'recovered': 1.5,
+              'meters': double.infinity,
+              'enemyAttacksRemaining': -4,
+            },
+          ),
+          event(
+            'invalid-count',
+            'combat.enemyAttackCountConfirmed',
+            payload: {'count': -3},
+          ),
+          event(
+            'fractional-damage',
+            'effect.damage',
+            payload: {
+              'damage': 2.5,
+              'roll': {'total': double.infinity},
+            },
+          ),
+        ]),
       );
-    }
-    expect(tester.takeException(), isNull);
-    semantics.dispose();
-  });
+      await tester.pumpAndSettle();
+
+      expect(find.text('Treffer'), findsOneWidget);
+      for (final invalid in [
+        'Wurf: NaN',
+        'Wurf: Infinity',
+        'Schaden: -5',
+        'Schaden: 2.5',
+        'Geheilte TP: -2',
+        'Geheilte TP: 1.5',
+        'Bewegung: Infinity',
+        'Weitere Gegnerangriffe: -4',
+        'Gegnerangriffe: -3',
+      ]) {
+        expect(find.textContaining(invalid), findsNothing);
+        expect(
+          find.bySemanticsLabel(RegExp(RegExp.escape(invalid))),
+          findsNothing,
+        );
+      }
+      expect(tester.takeException(), isNull);
+      semantics.dispose();
+    },
+  );
 
   for (final width in [320.0, 360.0]) {
     testWidgets('Gültige Grenzwerte bei $width dp und 200 % lesbar', (
@@ -392,7 +396,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('Wurf: -3 · Treffer · Schaden: 0 · Weitere Gegnerangriffe: 2'),
+        find.text(
+          'Wurf: -3 · Treffer · Schaden: 0 · Weitere Gegnerangriffe: 2',
+        ),
         findsOneWidget,
       );
       expect(find.text('Bewegung: 1.5 m'), findsOneWidget);
