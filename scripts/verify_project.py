@@ -160,6 +160,10 @@ def verify_project(root: Path) -> list[str]:
     """Return safe, actionable errors; allow arbitrary additional project files."""
     if not root.is_dir():
         return ['Der gewählte Projektordner existiert nicht.']
+    # A symlinked repository root bypasses checks on required descendants:
+    # every relative path appears ordinary although the entire tree is external.
+    if root.is_symlink():
+        return ['Die Repositorywurzel ist ein symbolischer Link. Originalordner auswählen.']
     if not (root / 'app/pubspec.yaml').is_file() and (root / 'Dnd/app/pubspec.yaml').is_file():
         return [
             'Zusätzlicher Ordner Dnd/ erkannt. README.md, app/, backend/ und '

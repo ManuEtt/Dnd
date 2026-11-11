@@ -2557,3 +2557,8 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 
 - Zwei SQLite-Regressionstests prüfen den wiederholten Import einer älteren Sicherung nach App-Neustart und mehrere fehlerhafte JSON-Formate. Erwartet werden Konflikt- bzw. Validierungsfehler ohne Überschreiben bestätigter Kampagnen, ohne angelegte Teilkampagnen und ohne zusätzliche Revisionsstände.
 - **Branch:** `test/chat-d/backup-import-retry-integrity-20261110`. Tests sind hinzugefügt, CI-Abnahme nach PR-Erstellung ausstehend. Keine Änderung an Datenbankschema, Importformat, App-Version oder produktivem Speicherverhalten.
+
+### 2026-11-10 – Verlinkte Repositorywurzel beim Upload-Check zurückweisen
+
+- Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
+- **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
