@@ -866,3 +866,18 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität:** keine Änderung an Regelengine, Controller, Eventformat, SQLite/JSON, App-Version oder vorhandenen Spielständen.
 - **Nicht getestet:** lokales Flutter/Dart-SDK fehlt; kein physisches Android/TalkBack/IME; neuer Main-basierter vollständiger CI-Lauf ausstehend.
 - **Nächster Schritt:** CI auf dem neuen PR-HEAD vollständig auswerten und nur konkret fehlgeschlagene Gates korrigieren; kein Merge vor grüner Gesamt-CI.
+
+### 2026-11-11 – Heilige Flamme: Gegnerbonus/Bestätigungen nach Snapshotwechsel zurücksetzen
+
+- **Ausgangs-`main`:** `8700a044772e7a9078947b970365f72543ee8d37`.
+- **Branch:** `feat/chat-c/sacred-flame-live-snapshot-20261111`; Code/Test-HEAD vor Dokumentationsnachtrag: `adf150def1cfd8fce51e4ff709eeda035030a3d0`.
+- **Problem:** Unbestätigter GES-Rettungswurfbonus und an ein bestimmtes Ziel gebundene Bestätigungen blieben beim Helden-/Gegnerwechsel in einem weiter geöffneten `SacredFlameDialog` erhalten.
+- **Akzeptanzkriterien:** (1) Derselbe Held/dasselbe Encounter-Objekt behält den Entwurf beim Parent-Rebuild. (2) Neuer Gegner löscht den Bonus und alle Checks. (3) Neuer Held ohne vorbereiteten Zauber verwirft den alten Bonus und deaktiviert die Aktion.
+- **IMPLEMENTIERT:** `didUpdateWidget` setzt TextEditingController, alle zehn booleschen Eingaben und Validierungsfehler ohne Regel- oder Storage-Veränderung zurück.
+- **Geänderte Fachdateien:** `app/lib/ui/sacred_flame_dialog.dart`, `app/test/sacred_flame_live_snapshot_test.dart`. Dokumentationsnachträge an `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md`.
+- **GETESTET:** Quellcode-Review und bestehende Teststruktur abgeglichen; drei neue Widgettests hinzugefügt, noch nicht ausgeführt.
+- **NICHT GETESTET:** Dart format, Flutter analyze/test, Debug-/ABI-APK, natives Android und Gerät/TalkBack/IME.
+- **BLOCKIERT:** Kein lokales Flutter/Dart-SDK; finale GitHub-CI ausstehend. Gemeinsame Dokumentationsdateien bei Integration mit parallelen PRs verlustfrei erhalten.
+- **Migrationen:** Keine. Kein Eingriff in SRD-/Story-Engine, SQLite, JSON oder App-Version.
+- **Nächster Schritt:** GitHub Actions auf finalem PR-Commit prüfen, fehlschlagende Gates korrigieren und erst danach zur Integration freigeben.
+
