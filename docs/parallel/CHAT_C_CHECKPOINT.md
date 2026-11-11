@@ -866,3 +866,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität:** keine Änderung an Regelengine, Controller, Eventformat, SQLite/JSON, App-Version oder vorhandenen Spielständen.
 - **Nicht getestet:** lokales Flutter/Dart-SDK fehlt; kein physisches Android/TalkBack/IME; neuer Main-basierter vollständiger CI-Lauf ausstehend.
 - **Nächster Schritt:** CI auf dem neuen PR-HEAD vollständig auswerten und nur konkret fehlgeschlagene Gates korrigieren; kein Merge vor grüner Gesamt-CI.
+
+## 11.11.2026 – Zahlenvalidierung der Kampfchronik (PR #685)
+
+- **Ausgangs-Main:** `cddaa07e1656e220ed4ee79a7dc0dc6062577b4c`. Nach Entwicklungsbeginn folgten unabhängige Main-Merges; die eigenen UI-Dateien wurden dabei laut Compare nicht verändert.
+- **Branch:** `feat/chat-c/chronicle-numeric-display-20261111`.
+- **Produkt-/Testcommit:** `50373e4987b2bb25cce9e4427c1c338351acdccc`; Dokumentationscommits folgen.
+- **Pull Request:** https://github.com/ManuEtt/Dnd/pull/685 (Draft, kein Merge).
+- **Problem:** Historische/importierte Ereignispayloads konnten negative Schäden und Heilungen, fraktionale TP/Gesamtwürfe und nicht endliche Werte als bestätigte Kampfzahlen anzeigen bzw. vorlesen.
+- **Lösung:** Anzeigevalidierung in `app/lib/ui/fantasy_combat_chronicle.dart` für numerische Werte. Negative ganzzahlige Würfelgesamtergebnisse sowie positive Bruchmeter bleiben ausdrücklich lesbar. Keine Änderung an gespeicherten Spielzuständen.
+- **Regression:** `app/test/fantasy_combat_chronicle_test.dart` um einen Negativfall und zwei Widgetfälle auf 320/360 dp bei 200 % Schrift erweitert. Positive Grenzwerte, verworfene ungültige Felder, sichtbare Darstellung und Screenreader-Semantik sind abgedeckt.
+- **Tests:** Quell-/Teständerungen commitet, aber in dieser Sitzung mangels Flutter-/Dart-SDK **nicht lokal ausgeführt**. GitHub-CI nach dem PR ist gesondert auszuwerten; keine APK oder grüne CI ohne Nachweis behauptet.
+- **Kompatibilität:** Keine Migration, keine Änderung von SQLite, JSON, Controller, Regel- oder Storyengine oder App-Version.
+- **Bekannte Grenzen:** Tatsächlicher Android-Gerätetest, TalkBack und die vollständige Flutter-/APK-Abnahme fehlen bis zur Prüfung.
+- **Nächster Schritt:** CI des PR-Kopfes auf Format, Analyse, alle Flutter-Tests und Android-Build prüfen; nur konkrete Fehler auf demselben Branch korrigieren und erst danach Review/Integration koordinieren.
