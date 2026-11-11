@@ -1,0 +1,23 @@
+name: Temporary Dart formatting diagnostic
+
+on:
+  push:
+    branches:
+      - feat/chat-c/chronicle-numeric-display-20261111
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Show formatted test source
+        working-directory: app
+        run: dart format --output=show test/fantasy_combat_chronicle_test.dart
