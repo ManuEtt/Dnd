@@ -881,3 +881,18 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Migrationen:** Keine. Kein Eingriff in SRD-/Story-Engine, SQLite, JSON oder App-Version.
 - **Nächster Schritt:** GitHub Actions auf finalem PR-Commit prüfen, fehlschlagende Gates korrigieren und erst danach zur Integration freigeben.
 
+
+### 2026-11-11 – Feuerpfeil-Dialog: Keine alten Klassen oder Angriffsbestätigungen weiterverwenden
+
+- **Ausgangs-`main`:** `436ce018f672933ce6782119a5afaac694bbe888`; **Branch:** `feat/chat-c/fire-bolt-live-snapshot-20261111`.
+- **Code/Test-HEAD vor Dokumentationsnachtrag:** `dac1c59aca348fa957fe595d7f5615fd41d3835a`; Commit zuvor: `aa5d34f0c9708542c405d7de5e5da35677848d40`.
+- **Problem:** Beim weiter geöffneten Feuerpfeil-Dialog war die Zauberklasse nur im `initState` berechnet, und die zwölf manuell bestätigten Bedingungen überdauerten später eintreffende Helden-/Gegner-Snapshots.
+- **Akzeptanzkriterien:** (1) Identische Held-/Encounter-Instanzen behalten Klassenwahl und bewusste Eingaben. (2) Ein neuer Held mit anderer erlaubter Zauberklasse erhält einen frischen Dropdown-Zustand und muss alles erneut bestätigen. (3) Ein neues Encounter verwirft alle zielbezogenen Checks und blockiert die alte Bestätigung. (4) Ohne vorbereiteten Zauber ist die Aktion gesperrt.
+- **IMPLEMENTIERT:** `_loadCastingClasses` initial und bei `didUpdateWidget`, frische `KeyedSubtree` pro Snapshot, Reset aller zwölf Booleans und alter Validierungsfehler, bei unverändertem Snapshot kein Verlust des Entwurfs.
+- **Fachdateien:** `app/lib/ui/fire_bolt_dialog.dart`, `app/test/fire_bolt_live_snapshot_test.dart`. Gemeinsame Fortschrittsdokumentation `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md` rein append-only erweitert.
+- **GETESTET:** Aktuelle Flutter-/Domain-Verträge analysiert, Code und vier neue Widgettestfälle gesichert; keine Ausführung vor CI.
+- **NICHT GETESTET:** Formatcheck, `flutter analyze`, vollständiges `flutter test`, native Android-Tests, Debug-/ABI-APKs, echtes Gerät/TalkBack/IME.
+- **BLOCKIERT:** Kein lokal ausführbares Flutter/Dart; finale GitHub-CI noch nicht gestartet. Gemeinsame Dokumentationsdateien nur koordiniert integrieren.
+- **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
+- **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
+

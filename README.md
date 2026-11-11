@@ -1692,3 +1692,13 @@ Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortsw
 - **Prüfungen:** Drei neue positive/negative Widgettestfälle hinzugefügt. Automatische Flutter-/Android-Prüfungen des finalen Branches stehen zum Zeitpunkt dieses Eintrags noch aus.
 - **Kompatibilität:** Nur UI-Entwurfsdaten betroffen; keine Änderung an Regeln, JSON, SQLite, Spielstandschema oder App-Version und keine Migration.
 
+
+### 2026-11-11 – Feuerpfeil: Live-Helden- und Gegnerwechsel sicher neu bestätigen
+
+- **Problem:** Ein weiter geöffneter Feuerpfeil-Dialog behielt nach Helden- oder Gegnerwechsel die zuvor ermittelte Zauberklasse und situative Angriffserlaubnisse. Der sichtbare neue Gegner konnte damit einen alten Bestätigungsentwurf erben.
+- **Lösung:** Bei neuer Helden- oder Encounter-Instanz werden Zauberklassen aus dem aktuellen Helden neu ermittelt, die interne Klassen-Auswahl neu aufgebaut und alle zwölf ziel- bzw. situationsgebundenen Checkboxen samt älteren Fehlern zurückgesetzt. Ein unveränderter Parent-Neuaufbau bewahrt eine bewusst gewählte Klasse und bestehende Eingaben.
+- **Dateien:** `app/lib/ui/fire_bolt_dialog.dart`, `app/test/fire_bolt_live_snapshot_test.dart`.
+- **Branch:** `feat/chat-c/fire-bolt-live-snapshot-20261111`; Code-/Testcommits `aa5d34f0c9708542c405d7de5e5da35677848d40`, `dac1c59aca348fa957fe595d7f5615fd41d3835a`.
+- **Prüfungen:** Vier positive und negative Widget-Regressionen hinzugefügt; automatische Format-, Analyse-, Flutter- und Android-Prüfungen des finalen PR-HEAD stehen zum Zeitpunkt dieses Nachtrags noch aus.
+- **Kompatibilität:** Ausschließlich Flutter-Dialogzustand; keine Änderung an Regeln, Domänenmodellen, JSON, SQLite, Spielstandschema oder App-Version. Keine Migration.
+

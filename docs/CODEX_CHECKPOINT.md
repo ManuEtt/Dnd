@@ -2574,3 +2574,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **Kompatibilität:** Kein Eingriff in Regeln, Controller, Domänenmodelle, SQLite/JSON, App-Version; keine Migration.
 - **Nächster Schritt:** CI des neuen PR-HEAD prüfen; bei rot gezielt den betroffenen UI-Test oder Formatter korrigieren, keine Integration vor grüner CI.
 
+
+### 2026-11-11 – Feuerpfeil: Dialogentwürfe bei aktualisiertem Kampfzustand verwerfen
+
+- **Ausgangs-main:** `436ce018f672933ce6782119a5afaac694bbe888`; Branch: `feat/chat-c/fire-bolt-live-snapshot-20261111`; Code/Test: `dac1c59aca348fa957fe595d7f5615fd41d3835a`.
+- **IMPLEMENTIERT:** `FireBoltDialog.didUpdateWidget` verwirft bei Helden- oder Encounter-Instanzwechsel alte Zauberklassen-Wahl, alle zwölf Angriffsvoraussetzungen/Vorteil-/Nachteil-/Liegend-Checkboxen sowie veraltete Fehlermeldungen. Der initiale Klassen-Cache wird neu aufgebaut; eine generationenbasierte `KeyedSubtree` verhindert alte Dropdown-Formzustände. Beim identischen Snapshot bleiben Eingaben bestehen.
+- **GETESTET:** Code und aktuelle Regel-/Widgettestverträge geprüft; vier neue Widgettests versioniert für unveränderte Instanz, Klassenwechsel, Gegnerwechsel und nun fehlenden vorbereiteten Zauber. Ausführung noch ausstehend.
+- **NICHT GETESTET:** Dart-Formatierung, Flutter-Analyse, vollständige Flutter-Tests, Android-Debug-/ABI-APK-Builds und echte Android-Geräteabnahme/TalkBack/IME.
+- **BLOCKIERT:** Lokales Flutter-/Dart-SDK in dieser Sitzung nicht vorhanden; GitHub Actions nach PR-Öffnung als Testinstanz verwenden. Bei Integration die gemeinsamen README-/Checkpoint-Anhänge anderer PRs verlustfrei bewahren.
+- **NOCH NICHT IMPLEMENTIERT:** Geräte- und Screenreader-Abnahme; weitere unabhängige Kampfdialog-Regressionen.
+- **Kompatibilität:** Keine Änderung an SRD-Engine, Story, Controller, gespeicherten Kampagnen, SQLite/JSON oder Version. Keine Migration.
+- **Nächster Schritt:** Finalen GitHub-CI-Lauf prüfen, echte Fehler beheben und den PR erst nach vollständig grünen Jobs zur Review freigeben.
+
