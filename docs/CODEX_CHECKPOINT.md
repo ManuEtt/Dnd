@@ -2557,3 +2557,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 
 - Zwei SQLite-Regressionstests prüfen den wiederholten Import einer älteren Sicherung nach App-Neustart und mehrere fehlerhafte JSON-Formate. Erwartet werden Konflikt- bzw. Validierungsfehler ohne Überschreiben bestätigter Kampagnen, ohne angelegte Teilkampagnen und ohne zusätzliche Revisionsstände.
 - **Branch:** `test/chat-d/backup-import-retry-integrity-20261110`. Tests sind hinzugefügt, CI-Abnahme nach PR-Erstellung ausstehend. Keine Änderung an Datenbankschema, Importformat, App-Version oder produktivem Speicherverhalten.
+
+### 2026-11-10 – Verlinkte Repositorywurzel beim Upload-Check zurückweisen
+
+- Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
+- **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
+
+### 2026-11-11 – Kampfchronik übernimmt nur plausible Zahlen
+
+- **Basis:** `cddaa07e1656e220ed4ee79a7dc0dc6062577b4c`; **Branch:** `feat/chat-c/chronicle-numeric-display-20261111`; **Produkt-/Testcommit:** `50373e4987b2bb25cce9e4427c1c338351acdccc`; **PR:** [#685](https://github.com/ManuEtt/Dnd/pull/685), Draft.
+- In `fantasy_combat_chronicle.dart` werden ausschließlich endliche, für das jeweilige Feld passende Zahlen als bestätigt angezeigt/vorgelesen. Ein negativer ganzzahliger Wurf, null Schaden und positive Bruchmeter bleiben zulässig; negative Schäden/Heilungen, gebrochene TP/Würfe und NaN/Infinity werden ausgeblendet.
+- Drei neue Widgettestfälle in `fantasy_combat_chronicle_test.dart` (ein Negativfall und 320/360 dp bei 200 % Text) ergänzt. Lokales Flutter/Dart nicht verfügbar: weder Flutter-Tests noch APK, Analyse oder CI als bestanden gewertet; neue PR-Abnahme ausstehend.
+- Spielstands-/Regelzustand, Controller, SQLite/JSON und App-Version unverändert. Main hat zwischenzeitlich unabhängige Dokumentations-/Qualitätsänderungen erhalten; bei Integration verlustfrei erhalten. Nächster Schritt: PR-CI auswerten, Format-/Analyse-/Testfehler auf demselben Branch korrigieren; vor Merge mit aktuellem Main und Parallel-PRs vergleichen.
