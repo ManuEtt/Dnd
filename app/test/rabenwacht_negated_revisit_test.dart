@@ -52,7 +52,7 @@ void main() {
   test('travel-like nouns do not trigger a location change', () {
     final before = atChapel();
     for (final input in [
-      'Ich untersuche das Vorgehen an der Mühle.',
+      'Das Vorgehen an der Mühle erscheint mir unklar.',
       'Ich lese den Reisebericht über die Mühle.',
       'Ich betrachte den Besuchereintrag der Mühle.',
     ]) {
@@ -60,6 +60,12 @@ void main() {
       expect(after.storyBible['stage'], 'chapel', reason: input);
       expect(after.facts['location'], 'Kapelle', reason: input);
     }
+  });
+
+  test('explicit chapel investigation still advances the story', () {
+    final after = act(atChapel(), 'Ich untersuche die Nische der Kapelle.');
+    expect(after.storyBible['stage'], 'archive');
+    expect(after.facts['location'], 'Chronistenhaus');
   });
 
   test('explicit travel verbs still allow a known revisit', () {
