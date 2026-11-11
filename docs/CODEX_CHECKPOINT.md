@@ -2562,3 +2562,14 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 
 - Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
 - **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
+
+### 2026-11-11 – Nebenhandangriff: alte Zustimmung bei Live-Snapshotwechsel verwerfen
+
+- Start-`main`: `8700a044772e7a9078947b970365f72543ee8d37`; Branch: `feat/chat-c/offhand-live-snapshot-reset-20261111`; Code- und Testcommit: `a50470cd6128a11c9cfe9b38ba925118a8b156aa`.
+- **IMPLEMENTIERT:** `OffhandAttackDialog.didUpdateWidget` setzt Waffen-ID, Attribut, Übung, gehaltene Waffen und Zustimmung zurück, wenn der Heldensnapshot oder Zielname wechselt. Ein neuer FormField-Schlüssel verhindert veraltete Dropdown-Auswahl; identische Eingaben bleiben bei gewöhnlichem Rebuild bestehen.
+- **GETESTET:** Quellcode und bestehende Widget-Regressionen am Repositorystand geprüft; neue positive und negative Testfälle versioniert. Kein Flutter-Lauf ausgeführt.
+- **NICHT GETESTET:** `flutter test test/offhand_attack_live_snapshot_test.dart test/offhand_attack_dialog_test.dart`, `flutter analyze`, kompletter Flutter-/Android-CI-Lauf, echte TalkBack-/IME-Geräteabnahme. Kein Flutter/Dart SDK in dieser Sitzung.
+- **BLOCKIERT:** Mergefreigabe bis zum Ergebnis des finalen GitHub-CI-Laufs und zur konfliktfreien Zusammenführung der gemeinsamen Dokumentationsnachträge.
+- **NOCH NICHT IMPLEMENTIERT:** Keine zusätzlichen fachlichen Regeländerungen; mögliche Überprüfung weiterer Live-Snapshot-Dialoge bleibt separat.
+- **Kompatibilität:** Keine Anpassung an SRD-Regeln, Controller, Domänenmodelle, JSON/SQLite oder App-Version.
+- **Nächster Schritt:** Finale CI aller sechs Android-/Flutter-Jobs auf dem PR-HEAD auswerten; bei Fehlern ausschließlich den Nebenhanddialog und die drei Regressionen nachbessern.
