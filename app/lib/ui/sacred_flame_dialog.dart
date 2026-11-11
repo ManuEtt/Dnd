@@ -58,6 +58,28 @@ class _SacredFlameDialogState extends State<SacredFlameDialog> {
   String? _error;
 
   @override
+  void didUpdateWidget(covariant SacredFlameDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (identical(oldWidget.hero, widget.hero) &&
+        identical(oldWidget.encounter, widget.encounter)) {
+      return;
+    }
+    // Player-entered enemy saves and explicit checks describe one particular
+    // hero/encounter snapshot. Never carry them over to another live target.
+    _saveModifier.clear();
+    _visible = false;
+    _range = false;
+    _verbal = false;
+    _somatic = false;
+    _noRadiantDefense = false;
+    _noExtraDc = false;
+    _saveCircumstances = false;
+    _saveAdvantage = false;
+    _saveDisadvantage = false;
+    _error = null;
+  }
+
+  @override
   void dispose() {
     _saveModifier.dispose();
     super.dispose();

@@ -1683,6 +1683,16 @@ Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortsw
 - Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
 - **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
 
+### 2026-11-11 – Heilige Flamme: Gegnerdaten bei Live-Wechsel neu bestätigen
+
+- **Problem:** Ein geöffneter Heilige-Flamme-Dialog übernahm manuell eingegebenen GES-Rettungswurfbonus und Situationsbestätigungen auch dann, wenn der aktive Held oder Gegner aktualisiert wurde.
+- **Lösung:** Bei einem neuen Helden- oder Gegner-Snapshot werden GES-Rettungswurfbonus und alle zugehörigen Checkbox-Bestätigungen sowie alte Fehlermeldungen verworfen. Ein unveränderter Parent-Rebuild erhält den nicht abgesendeten Entwurf.
+- **Dateien:** `app/lib/ui/sacred_flame_dialog.dart`, `app/test/sacred_flame_live_snapshot_test.dart`.
+- **Branch:** `feat/chat-c/sacred-flame-live-snapshot-20261111`; Code- und Testcommit `adf150def1cfd8fce51e4ff709eeda035030a3d0`.
+- **Prüfungen:** Drei neue positive/negative Widgettestfälle hinzugefügt. Automatische Flutter-/Android-Prüfungen des finalen Branches stehen zum Zeitpunkt dieses Eintrags noch aus.
+- **Kompatibilität:** Nur UI-Entwurfsdaten betroffen; keine Änderung an Regeln, JSON, SQLite, Spielstandschema oder App-Version und keine Migration.
+
+
 ### 2026-11-11 – Epilogabschluss nur nach eindeutiger Vermächtniswahl
 
 - **Problem und Lösung:** Die drei abschließenden Rabenwacht-Vermächtnisse konnten bisher durch beiläufige Erwähnungen ihrer Bezeichnung ausgelöst werden. Die Erkennung verlangt jetzt eine vollständige, einzelne Entscheidung; Fragen, Zitate, Vergleich mehrerer Optionen und Verneinungen lassen den Epilog offen. Bisherige direkte Befehle und ausdrückliche Ich-/Wir-Wünsche bleiben verwendbar.
