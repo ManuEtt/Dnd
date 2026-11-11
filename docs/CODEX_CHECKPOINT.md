@@ -2562,3 +2562,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 
 - Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
 - **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
+
+### 2026-11-11 – Abschließende Rabenwacht-Vermächtniswahl gegen unbeabsichtigte Bestätigung absichern
+
+- **Basis-main:** `e8a4c18026f24d801c33d7c6d8d87e6d7dad0930`; vor PR-Erstellung neueres `main` `436ce018f672933ce6782119a5afaac694bbe888`. **Branch:** `fix/chat-b/epilogue-explicit-legacy-choice-20261111`. **PR:** [#694](https://github.com/ManuEtt/Dnd/pull/694) (Draft). Exakten aktuellen Branch-HEAD/CI im PR prüfen.
+- **IMPLEMENTIERT:** Epilog-Dorfvermächtnisse benötigen jetzt eine eigenständige eindeutige Spielerentscheidung; bloße Zitate, Fragen, Alternativenvergleiche oder Negationen dürfen keinen Abschluss auslösen. Neue isolierte Regressionen für alle drei Vermächtnisse, JSON-Wiederaufnahme, Wiederholung und fehlende Voraussetzungen.
+- **Geänderte Fachdateien:** `app/lib/story/fourteenth_voice_epilogue.dart`, `app/test/rabenwacht_epilogue_explicit_legacy_choice_test.dart`. Kein Eingriff in Regel-Engine, Controller, Backend oder Speicherschicht.
+- **GETESTET:** GitHub-Codezustand, andere offene Story-PRs und ihre Fachdateipfade auf Überschneidungen geprüft. Lokale Toolverfügbarkeit geprüft.
+- **NICHT GETESTET:** Dart-/Flutter-Format, Flutter-Tests, Analyse, APK und Geräteabnahme – lokale Flutter-/Dart-SDKs fehlen. CI dieses PRs nicht als erfolgreich bestätigt.
+- **BLOCKIERT:** Finale CI-Abnahme und additive Integration der gemeinsamen README-/Checkpoint-Dokumentation durch Chat D.
+- **NOCH NICHT IMPLEMENTIERT:** Isolierter Schutz weiterer Epilog-Navigationseingaben und Versammlungs-Intents gegen beiläufige Erwähnungen.
+- **Migration:** Keine. Kampagnen-JSON, SQLite-Schema, bestätigter Regelsnapshot, Version `0.8.52+102` und externe Dienste unverändert.
+- **Nächster Schritt:** Finale PR-#694-Actions auf neuestem Commit prüfen und gegebenenfalls gezielt reparieren; danach kontrolliertes Review.
