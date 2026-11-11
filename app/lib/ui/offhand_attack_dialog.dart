@@ -39,6 +39,25 @@ class _OffhandAttackDialogState extends State<OffhandAttackDialog> {
   String? _weaponId, _ability;
   _WeaponTraining _training = _WeaponTraining.unverified;
   bool _held = false, _approved = false;
+  int _selectionGeneration = 0;
+
+  @override
+  void didUpdateWidget(covariant OffhandAttackDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (identical(oldWidget.hero, widget.hero) &&
+        oldWidget.targetName == widget.targetName) {
+      return;
+    }
+    // A previous choice and consent belong to one specific character/target.
+    // Rebuild the weapon FormField as well: initialValue alone does not clear
+    // its internal selection when the dialog receives a new live snapshot.
+    _selectionGeneration++;
+    _weaponId = null;
+    _ability = null;
+    _training = _WeaponTraining.unverified;
+    _held = false;
+    _approved = false;
+  }
 
   bool? get _proficient => switch (_training) {
     _WeaponTraining.unverified => null,
@@ -103,36 +122,39 @@ class _OffhandAttackDialogState extends State<OffhandAttackDialog> {
                 'Waffe, ihr Attribut und deine Waffenübung.',
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                key: const ValueKey('offhand-weapon'),
-                initialValue: _weaponId,
-                isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Nebenhandwaffe'),
-                items: [
-                  for (final item in weapons)
-                    DropdownMenuItem(
-                      value: item.id,
-                      child: Text(
-                        item.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+              KeyedSubtree(
+                key: ValueKey('offhand-weapon-reset-$_selectionGeneration'),
+                child: DropdownButtonFormField<String>(
+                  key: const ValueKey('offhand-weapon'),
+                  initialValue: _weaponId,
+                  isExpanded: true,
+                  decoration: const InputDecoration(labelText: 'Nebenhandwaffe'),
+                  items: [
+                    for (final item in weapons)
+                      DropdownMenuItem(
+                        value: item.id,
+                        child: Text(
+                          item.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                ],
-                onChanged: (value) => _change(() {
-                  _weaponId = value;
-                  final selected = value == null
-                      ? null
-                      : TwoWeaponFightingRules.confirmedOffhand(
-                          widget.hero,
-                          value,
-                        );
-                  _ability = selected?.hasProperty('finesse') == true
-                      ? null
-                      : 'strength';
-                  _training = _WeaponTraining.unverified;
-                  _held = false;
-                }),
+                  ],
+                  onChanged: (value) => _change(() {
+                    _weaponId = value;
+                    final selected = value == null
+                        ? null
+                        : TwoWeaponFightingRules.confirmedOffhand(
+                            widget.hero,
+                            value,
+                          );
+                    _ability = selected?.hasProperty('finesse') == true
+                        ? null
+                        : 'strength';
+                    _training = _WeaponTraining.unverified;
+                    _held = false;
+                  }),
+                ),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
