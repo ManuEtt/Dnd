@@ -969,3 +969,16 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - Verneinte Rückreise wird abgefangen, ohne Bühne, Ort, Held oder Besuchsmerker zu ändern; positive Rückreise bleibt erhalten.
 - Regression: `app/test/rabenwacht_negated_revisit_test.dart`, drei Fälle. Ursprünglicher Draft-PR #666 mit 6/6 grünen Jobs bleibt unangetastet, da sein Branch wegen inzwischen divergiertem `main` nicht mergebar ist.
 - Neue CI und Review durch Chat D erforderlich; kein automatischer Merge.
+
+### 2026-11-11 – Eindeutige Epilog-Vermächtniswahl (PR #694)
+
+- **IMPLEMENTIERT:** Die Dorfzukunft bestätigt ein Vermächtnis nur bei einem vollständigen, einzelnen Spielerbefehl. Zitate, Fragen, Alternativenvergleiche und Verneinungen lösen keinen Abschluss aus. Kurzbefehle und ausdrückliche Ich-/Wir-Wünsche funktionieren. Der Regelzustand wird nicht verändert.
+- **Ausgangs-main:** `e8a4c18026f24d801c33d7c6d8d87e6d7dad0930`; vor PR-Erstellung war `main` bereits auf `436ce018f672933ce6782119a5afaac694bbe888` weitergelaufen. **Branch:** `fix/chat-b/epilogue-explicit-legacy-choice-20261111`; **PR:** https://github.com/ManuEtt/Dnd/pull/694 (Draft). Fach- und Testcommits auf dem Branch; finaler HEAD und Actions-Status über den PR prüfen.
+- **Dateien:** `app/lib/story/fourteenth_voice_epilogue.dart`, `app/test/rabenwacht_epilogue_explicit_legacy_choice_test.dart` sowie additive Projekt-Checkpoints und README-Nachtrag.
+- **GETESTET:** Live-Code, PR- und betroffene Dateipfade, Basisrevision und bestehende Epilog-Regressionen überprüft; keine parallelen Änderungen am Epilog-Modul in offenen PRs gefunden.
+- **NICHT GETESTET:** Flutter-Unit-/Integrationstests, Dart-Format/Analyse, Android-Build und reales Gerät; das Flutter-/Dart-SDK steht in dieser lokalen Laufzeit nicht zur Verfügung. Neue GitHub-CI ist gesondert zu prüfen.
+- **Akzeptanztests (ergänzt, noch nicht ausgeführt):** drei eindeutige positive Vermächtnisse, ausdrückliche Ich-/Wir-Varianten, negative Fragen/Zitate/Mehrdeutigkeiten, Legacy-JSON-Roundtrip und idempotente Wiederaufnahme, fehlende Zeugen und bestehender Abschluss.
+- **BLOCKIERT:** Vollständige CI-Abnahme und Review/Integration der gemeinsamen Dokumentationsnachträge durch Chat D. Keine Verbindung zu externem KI-Provider nötig.
+- **Kompatibilität:** Keine Änderung von SQLite/JSON-Schema, API, Regeln, Questidentitäten, Heldenwerten, Revision oder App-Version. Bestehende bestätigte Wahl bleibt unverändert.
+- **NOCH NICHT IMPLEMENTIERT:** Weitere Absicherung der Rückkehr- und Versammlungsintents außerhalb der endgültigen Vermächtniswahl.
+- **NÄCHSTER SCHRITT:** PR-CI am finalen Commit prüfen, eventuelle Format- oder Testfehler auf demselben Branch beheben; danach kontrollierte Integration durch Chat D.
