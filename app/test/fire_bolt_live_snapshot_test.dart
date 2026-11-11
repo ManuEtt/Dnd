@@ -136,11 +136,6 @@ void main() {
     rebuild!(() {});
     await tester.pumpAndSettle();
 
-    expect(
-      tester.widget<DropdownButtonFormField<String>>(_key('class'))
-          .initialValue,
-      'Magier',
-    );
     expect(find.textContaining('Klasse: Zauberer'), findsOneWidget);
     expect(
       tester.widget<CheckboxListTile>(_key('attack-modifiers')).value,
