@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/srd_high_jump_rules.dart';
 
 void main() {
-  test('high jump strength boundaries use floor for negative odd modifiers', () {
+  test('strength boundaries use floor for negative odd modifiers', () {
     for (var strength = 1; strength <= 30; strength++) {
       final modifier = ((strength - 10) / 2).floor();
       final feet = 3 + modifier;
@@ -40,7 +40,7 @@ void main() {
     }
   });
 
-  test('exact movement budget is sufficient and never double-spends run-up', () {
+  test('exact movement budget does not double-spend run-up', () {
     final assessment = SrdHighJumpRules.preflight(
       strengthScore: 10,
       runUpFeet: 10,
