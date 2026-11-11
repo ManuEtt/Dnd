@@ -416,7 +416,10 @@ class FourteenthVoiceEpilogue {
               'was sie darin festhalten will.',
         );
       }
-      if (_choosesLegacy(text, r'zeugnisse (?:veröffentlichen|veroeffentlichen)')) {
+      if (_choosesLegacy(
+        text,
+        r'zeugnisse (?:veröffentlichen|veroeffentlichen)',
+      )) {
         return _finish(
           c,
           'testimonies',
