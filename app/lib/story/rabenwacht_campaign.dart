@@ -336,7 +336,12 @@ class RabenwachtStoryModule {
 
   /// Travel to discovered locations; visit markers survive saving/loading.
   RabenwachtTurn? _revisit(Campaign c, String input, String stage) {
-    if (!_has(input, 'geh|reise|kehr|zurück|zurueck|lauf|besuch')) {
+    if (!RegExp(
+      r'\b(?:geh(?:e|st|t|en)?|ging(?:st|en)?|reise(?:n|st|t)?|'
+      r'kehr(?:e|st|t|en)?|zurückkehr\w*|zurueckkehr\w*|'
+      r'lauf(?:e|st|t|en)?|läuf(?:st|t)|besuch(?:e|st|t|en)?)\b',
+      caseSensitive: false,
+    ).hasMatch(input)) {
       return null;
     }
     const names = <String, String>{
