@@ -98,10 +98,7 @@ Future<void> _launch(
                 builder: (_) => StatefulBuilder(
                   builder: (context, rebuild) {
                     onRebuild(rebuild);
-                    return FireBoltDialog(
-                      hero: hero(),
-                      encounter: encounter(),
-                    );
+                    return FireBoltDialog(hero: hero(), encounter: encounter());
                   },
                 ),
               );
@@ -118,10 +115,7 @@ Future<void> _launch(
 
 void main() {
   testWidgets('Same snapshot keeps selected class and checks', (tester) async {
-    final hero = _hero(
-      secondaryClassName: 'Zauberer',
-      secondaryClassLevel: 1,
-    );
+    final hero = _hero(secondaryClassName: 'Zauberer', secondaryClassLevel: 1);
     StateSetter? rebuild;
     final choices = <FireBoltChoice?>[];
     await _launch(
@@ -150,10 +144,7 @@ void main() {
   testWidgets('New hero rebuilds class field and requires new consent', (
     tester,
   ) async {
-    var hero = _hero(
-      secondaryClassName: 'Zauberer',
-      secondaryClassLevel: 1,
-    );
+    var hero = _hero(secondaryClassName: 'Zauberer', secondaryClassLevel: 1);
     StateSetter? rebuild;
     final choices = <FireBoltChoice?>[];
     await _launch(
@@ -171,7 +162,8 @@ void main() {
 
     expect(find.text('Magier'), findsNothing);
     expect(
-      tester.widget<DropdownButtonFormField<String>>(_key('class'))
+      tester
+          .widget<DropdownButtonFormField<String>>(_key('class'))
           .initialValue,
       'Zauberer',
     );
@@ -257,15 +249,9 @@ void main() {
     rebuild!(() => hero = _hero(id: 'new-hero', spells: const []));
     await tester.pumpAndSettle();
 
-    expect(
-      tester.widget<CheckboxListTile>(_key('visible')).value,
-      isFalse,
-    );
+    expect(tester.widget<CheckboxListTile>(_key('visible')).value, isFalse);
     expect(find.text('Kein bestätigter Feuerpfeil verfügbar.'), findsOneWidget);
-    expect(
-      tester.widget<FantasyTextButton>(_key('cast')).onPressed,
-      isNull,
-    );
+    expect(tester.widget<FantasyTextButton>(_key('cast')).onPressed, isNull);
     expect(choices, isEmpty);
     await _tap(tester, find.text('Abbrechen'));
     expect(choices, [null]);
