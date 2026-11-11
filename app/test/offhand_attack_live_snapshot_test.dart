@@ -68,11 +68,7 @@ Future<void> _select(WidgetTester tester, String key, String label) async {
 
 Future<void> _approveAxe(WidgetTester tester) async {
   await _select(tester, 'offhand-weapon', 'Nebenhandaxt');
-  await _select(
-    tester,
-    'offhand-proficiency-axe',
-    'Mit dieser Waffe geübt',
-  );
+  await _select(tester, 'offhand-proficiency-axe', 'Mit dieser Waffe geübt');
   await _tap(tester, _key('offhand-weapons-held'));
   await _tap(tester, _key('offhand-attack-approved'));
   final confirmButton = tester.widget<FantasyTextButton>(
