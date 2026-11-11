@@ -48,6 +48,7 @@ void main() {
     expect(after.facts['location'], 'Kapelle');
     expect(after.hero.toJson(), before.hero.toJson());
   });
+
   test('travel-like nouns do not trigger a location change', () {
     final before = atChapel();
     for (final input in [
@@ -72,5 +73,4 @@ void main() {
       expect(after.facts['location'], 'Alte Mühle', reason: input);
     }
   });
-
 }
