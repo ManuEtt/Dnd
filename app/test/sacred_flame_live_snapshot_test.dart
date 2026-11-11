@@ -99,15 +99,12 @@ Future<void> _enterSave(WidgetTester tester, String value) async {
 }
 
 String _save(WidgetTester tester) {
-  return tester.widget<TextField>(_key('enemy-save-modifier'))
-      .controller!
-      .text;
+  final field = tester.widget<TextField>(_key('enemy-save-modifier'));
+  return field.controller!.text;
 }
 
 void main() {
-  testWidgets('Same snapshot retains unsubmitted save and confirmations', (
-    tester,
-  ) async {
+  testWidgets('Same snapshot keeps unsubmitted draft', (tester) async {
     final hero = _hero();
     StateSetter? rebuild;
     final results = <SacredFlameChoice?>[];
@@ -131,9 +128,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('New encounter clears previous enemy save and all checks', (
-    tester,
-  ) async {
+  testWidgets('New enemy revokes saved checks', (tester) async {
     final hero = _hero();
     var encounter = _guard;
     StateSetter? rebuild;
@@ -164,9 +159,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('New hero revokes save and unavailable spell prevents cast', (
-    tester,
-  ) async {
+  testWidgets('New hero revokes spell confirmation', (tester) async {
     var hero = _hero();
     StateSetter? rebuild;
     final results = <SacredFlameChoice?>[];
