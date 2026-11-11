@@ -285,9 +285,9 @@ void main() {
     });
   }
 
-  testWidgets('Ungültige Zahlen aus Import-Ereignissen nicht als Fakten anzeigen', (
-    tester,
-  ) async {
+  testWidgets(
+    'Ungültige Zahlen aus Import-Ereignissen nicht als Fakten anzeigen',
+    (tester) async {
     final semantics = tester.ensureSemantics();
     await tester.pumpWidget(
       screen([
@@ -331,7 +331,10 @@ void main() {
       'Gegnerangriffe: -3',
     ]) {
       expect(find.textContaining(invalid), findsNothing);
-      expect(find.bySemanticsLabel(RegExp(RegExp.escape(invalid))), findsNothing);
+      expect(
+        find.bySemanticsLabel(RegExp(RegExp.escape(invalid))),
+        findsNothing,
+      );
     }
     expect(tester.takeException(), isNull);
     semantics.dispose();
@@ -359,18 +362,27 @@ void main() {
             body: SingleChildScrollView(
               child: FantasyCombatChronicle(
                 events: [
-                  event('valid-roll', 'attack', payload: {
-                    'roll': {'total': -3},
-                    'hit': true,
-                    'damage': 0,
-                    'enemyAttacksRemaining': 2,
-                  }),
+                  event(
+                    'valid-roll',
+                    'attack',
+                    payload: {
+                      'roll': {'total': -3},
+                      'hit': true,
+                      'damage': 0,
+                      'enemyAttacksRemaining': 2,
+                    },
+                  ),
                   event('valid-move', 'combat.moved', payload: {'meters': 1.5}),
-                  event('valid-heal', 'effect.healing', payload: {
-                    'hitPointsRestored': 4,
-                  }),
-                  event('valid-count', 'combat.enemyAttackCountConfirmed',
-                      payload: {'count': 2}),
+                  event(
+                    'valid-heal',
+                    'effect.healing',
+                    payload: {'hitPointsRestored': 4},
+                  ),
+                  event(
+                    'valid-count',
+                    'combat.enemyAttackCountConfirmed',
+                    payload: {'count': 2},
+                  ),
                 ],
               ),
             ),
