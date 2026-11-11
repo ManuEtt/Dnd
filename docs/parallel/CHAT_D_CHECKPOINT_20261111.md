@@ -10,3 +10,11 @@
 - **CI:** ausstehend; nach PR-Erstellung prüfen.
 - **Nächster Schritt:** CI des PR prüfen, eventuelle Regressionstestfehler beheben und die Dokumentationsintegration koordinieren.
 - **Dokumentationskonflikte:** Zentrale README und `docs/CODEX_CHECKPOINT.md` bleiben wegen paralleler append-only-Änderungen vorerst unverändert; Nachtrag im eigenen Checkpoint und PR.
+
+## CI-Nachprüfung 2026-11-11
+
+- **Pull Request:** https://github.com/ManuEtt/Dnd/pull/689 (offen, nicht gemergt).
+- **Workflow:** https://github.com/ManuEtt/Dnd/actions/runs/42989787348, `Android-Alpha bauen`, abgeschlossen mit `success`.
+- **Jobs:** sechs erfolgreich, einschließlich Paket-/Strukturtests, Backendtests, Fluttertests, nativer Dateisicherung und Android-APK-Builds.
+- **Einschränkung:** Die neue Testdatei wurde durch den erfolgreichen Strukturtest-Schritt erfasst, sofern dieser die Python-Unittest-Discovery ausführt; ein separater lokaler Testlauf wurde nicht durchgeführt. Der nächste Dokumentationscommit löst eine erneute CI-Prüfung aus.
+- **Branch-Vergleich vor Nachtrag:** zwei Commits vor `main`, null dahinter; ausschließlich zwei neue Dateien.
