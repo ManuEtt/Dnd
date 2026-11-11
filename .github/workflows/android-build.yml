@@ -90,11 +90,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: Temporäre Dart-Formatdiagnose für Nebenhand-Widertest
-        working-directory: app
-        run: |
-          dart format test/offhand_attack_live_snapshot_test.dart
-          git diff -- test/offhand_attack_live_snapshot_test.dart || true
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
