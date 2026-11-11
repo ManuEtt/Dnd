@@ -1677,3 +1677,14 @@ Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortsw
 
 - Zwei SQLite-Regressionstests prüfen den wiederholten Import einer älteren Sicherung nach App-Neustart und mehrere fehlerhafte JSON-Formate. Erwartet werden Konflikt- bzw. Validierungsfehler ohne Überschreiben bestätigter Kampagnen, ohne angelegte Teilkampagnen und ohne zusätzliche Revisionsstände.
 - **Branch:** `test/chat-d/backup-import-retry-integrity-20261110`. Tests sind hinzugefügt, CI-Abnahme nach PR-Erstellung ausstehend. Keine Änderung an Datenbankschema, Importformat, App-Version oder produktivem Speicherverhalten.
+
+### 2026-11-10 – Verlinkte Repositorywurzel beim Upload-Check zurückweisen
+
+- Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
+- **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
+
+### 2026-11-11 – Unplausible Zahlen in der Kampfchronik ausblenden
+
+- Die Kampf- und Würfelchronik übernimmt ungültige numerische Werte aus älteren/importierten Ereignissen nicht mehr als bestätigte Anzeige: insbesondere negative Schadens-/Heilmengen, gebrochene Würfel-/TP-Werte und NaN/Infinity. Gültige negative Gesamtwürfe, null Schaden und Bruchmeter bleiben sichtbar; TalkBack erhält dieselbe gefilterte Zusammenfassung.
+- **Dateien:** `app/lib/ui/fantasy_combat_chronicle.dart`, `app/test/fantasy_combat_chronicle_test.dart`. **Branch:** `feat/chat-c/chronicle-numeric-display-20261111`. **Produkt-/Testcommit:** `50373e4987b2bb25cce9e4427c1c338351acdccc`. **PR:** [#685](https://github.com/ManuEtt/Dnd/pull/685), Entwurf, noch nicht integriert.
+- Neue positive/negative Widgetregressionen einschließlich 320/360 dp und 200 % Schrift sind geschrieben, mangels lokalem Flutter-/Dart-SDK noch nicht ausgeführt; die neue PR-CI ist gesondert auszuwerten. Keine Änderungen an Regeln, gespeicherten Ereignissen, SQLite/JSON-Schema, App-Version oder bestehenden Spielständen; reale TalkBack-/Geräteabnahme steht aus.
