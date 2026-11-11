@@ -5,47 +5,48 @@ import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_ui.dart';
 import 'package:lebendiger_spielleiter/ui/offhand_attack_dialog.dart';
 
-HeroCharacter _hero({bool withAxe = true, String id = 'rogue'}) =>
-    HeroCharacter(
-      id: id,
-      name: 'Nara',
-      className: 'Schurke',
-      level: 3,
-      abilities: const {
-        'strength': 12,
-        'dexterity': 16,
-        'constitution': 14,
-        'intelligence': 10,
-        'wisdom': 10,
-        'charisma': 10,
-      },
-      hitPoints: 24,
-      maxHitPoints: 24,
-      armorClass: 14,
-      speed: 9,
-      weaponDamage: '1d6',
-      weaponAbility: 'dexterity',
-      weaponProficient: true,
-      equippedWeaponId: 'main',
-      inventory: [
+HeroCharacter _hero({bool withAxe = true, String id = 'rogue'}) {
+  return HeroCharacter(
+    id: id,
+    name: 'Nara',
+    className: 'Schurke',
+    level: 3,
+    abilities: const {
+      'strength': 12,
+      'dexterity': 16,
+      'constitution': 14,
+      'intelligence': 10,
+      'wisdom': 10,
+      'charisma': 10,
+    },
+    hitPoints: 24,
+    maxHitPoints: 24,
+    armorClass: 14,
+    speed: 9,
+    weaponDamage: '1d6',
+    weaponAbility: 'dexterity',
+    weaponProficient: true,
+    equippedWeaponId: 'main',
+    inventory: [
+      const InventoryItem(
+        id: 'main',
+        name: 'Hauptkurzschwert',
+        catalogId: 'weapon-shortsword',
+      ),
+      const InventoryItem(
+        id: 'dagger',
+        name: 'Nebendolch',
+        catalogId: 'weapon-dagger',
+      ),
+      if (withAxe)
         const InventoryItem(
-          id: 'main',
-          name: 'Hauptkurzschwert',
-          catalogId: 'weapon-shortsword',
+          id: 'axe',
+          name: 'Nebenhandaxt',
+          catalogId: 'weapon-handaxe',
         ),
-        const InventoryItem(
-          id: 'dagger',
-          name: 'Nebendolch',
-          catalogId: 'weapon-dagger',
-        ),
-        if (withAxe)
-          const InventoryItem(
-            id: 'axe',
-            name: 'Nebenhandaxt',
-            catalogId: 'weapon-handaxe',
-          ),
-      ],
-    );
+    ],
+  );
+}
 
 Finder _key(String name) => find.byKey(ValueKey(name));
 
@@ -74,10 +75,10 @@ Future<void> _approveAxe(WidgetTester tester) async {
   );
   await _tap(tester, _key('offhand-weapons-held'));
   await _tap(tester, _key('offhand-attack-approved'));
-  expect(
-    tester.widget<FantasyTextButton>(_key('offhand-attack-confirm')).onPressed,
-    isNotNull,
+  final confirmButton = tester.widget<FantasyTextButton>(
+    _key('offhand-attack-confirm'),
   );
+  expect(confirmButton.onPressed, isNotNull);
 }
 
 Future<void> _showDialog(
@@ -122,9 +123,7 @@ Future<void> _showDialog(
 }
 
 void main() {
-  testWidgets('Unchanged live rebuild retains explicit offhand consent', (
-    tester,
-  ) async {
+  testWidgets('Same hero retains explicit consent', (tester) async {
     final currentHero = _hero();
     StateSetter? repaint;
     final results = <OffhandAttackChoice?>[];
@@ -142,21 +141,17 @@ void main() {
       tester.widget<CheckboxListTile>(_key('offhand-attack-approved')).value,
       isTrue,
     );
-    expect(
-      tester
-          .widget<FantasyTextButton>(_key('offhand-attack-confirm'))
-          .onPressed,
-      isNotNull,
+    final confirmButton = tester.widget<FantasyTextButton>(
+      _key('offhand-attack-confirm'),
     );
+    expect(confirmButton.onPressed, isNotNull);
     await _tap(tester, _key('offhand-attack-confirm'));
     expect(results, hasLength(1));
     expect(results.single?.weaponId, 'axe');
     expect(results.single?.playerConfirmed, isTrue);
   });
 
-  testWidgets('New hero drops obsolete weapon and revokes all confirmations', (
-    tester,
-  ) async {
+  testWidgets('New hero revokes obsolete weapon choice', (tester) async {
     var currentHero = _hero();
     StateSetter? repaint;
     final results = <OffhandAttackChoice?>[];
@@ -172,12 +167,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Nebenhandaxt'), findsNothing);
-    expect(
-      tester.widget<DropdownButtonFormField<String>>(
-        _key('offhand-weapon'),
-      ).initialValue,
-      isNull,
+    final selectedWeapon = tester.widget<DropdownButtonFormField<String>>(
+      _key('offhand-weapon'),
     );
+    expect(selectedWeapon.initialValue, isNull);
     expect(
       tester.widget<CheckboxListTile>(_key('offhand-weapons-held')).value,
       isFalse,
@@ -187,12 +180,10 @@ void main() {
       isFalse,
     );
     expect(_key('offhand-attack-preview'), findsNothing);
-    expect(
-      tester
-          .widget<FantasyTextButton>(_key('offhand-attack-confirm'))
-          .onPressed,
-      isNull,
+    final confirmButton = tester.widget<FantasyTextButton>(
+      _key('offhand-attack-confirm'),
     );
+    expect(confirmButton.onPressed, isNull);
     expect(results, isEmpty);
     expect(tester.takeException(), isNull);
 
@@ -214,9 +205,7 @@ void main() {
     expect(results.single?.playerConfirmed, isTrue);
   });
 
-  testWidgets('Target change cannot reuse confirmed bonus-action attack', (
-    tester,
-  ) async {
+  testWidgets('New target revokes confirmed attack', (tester) async {
     final currentHero = _hero();
     var targetName = 'Goblin';
     StateSetter? repaint;
@@ -233,22 +222,18 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Angriffsziel: Wolf'), findsOneWidget);
-    expect(
-      tester.widget<DropdownButtonFormField<String>>(
-        _key('offhand-weapon'),
-      ).initialValue,
-      isNull,
+    final selectedWeapon = tester.widget<DropdownButtonFormField<String>>(
+      _key('offhand-weapon'),
     );
+    expect(selectedWeapon.initialValue, isNull);
     expect(
       tester.widget<CheckboxListTile>(_key('offhand-attack-approved')).value,
       isFalse,
     );
-    expect(
-      tester
-          .widget<FantasyTextButton>(_key('offhand-attack-confirm'))
-          .onPressed,
-      isNull,
+    final confirmButton = tester.widget<FantasyTextButton>(
+      _key('offhand-attack-confirm'),
     );
+    expect(confirmButton.onPressed, isNull);
     await _tap(tester, _key('offhand-attack-cancel'));
     expect(results, [null]);
     expect(tester.takeException(), isNull);
