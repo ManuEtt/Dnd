@@ -90,11 +90,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: Temporäre Format-Diagnostik (nur Arbeitsbaum)
-        working-directory: app
-        run: |
-          dart format test/fire_bolt_live_snapshot_test.dart
-          git diff -- test/fire_bolt_live_snapshot_test.dart || true
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
