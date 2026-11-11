@@ -2562,3 +2562,15 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 
 - Der Quellübertragungs-Validator `scripts/verify_project.py` lehnt nun eine symbolisch verlinkte Repositorywurzel vor Datei- und ZIP-Zugriffen ab. Ein Regressionstest stellt sicher, dass die externe Projektstruktur nicht gelesen oder ihr Pfad in der Fehlermeldung ausgegeben wird.
 - **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
+
+### 2026-11-11 – Heilige-Flamme-Live-Snapshot: Bestätigungen nicht wiederverwenden
+
+- Ausgangs-main: `8700a044772e7a9078947b970365f72543ee8d37`; Branch: `feat/chat-c/sacred-flame-live-snapshot-20261111`; Code/Test: `adf150def1cfd8fce51e4ff709eeda035030a3d0`.
+- **IMPLEMENTIERT:** In `SacredFlameDialog.didUpdateWidget` werden bei Helden-/Gegnerwechsel manuell eingetragener Gegner-Rettungswurfbonus, alle situativen Checkboxen und Validierungsfehler verworfen. Bei identischen Snapshots bleibt der Entwurf bestehen.
+- **GETESTET:** Quellcode und vorhandene Sacred-Flame-Tests analysiert; drei neue Widget-Regressionen versioniert. Ausführung der neuen Tests steht aus.
+- **NICHT GETESTET:** Finaler Dart-Formatcheck, Flutter-Analyse und -Tests, Android-Debug/Release-APKs und Gerät/IME/TalkBack.
+- **BLOCKIERT:** Keine lokale Flutter/Dart-Ausführungsumgebung. Github-Actions-Ergebnisse auf dem finalen Commit sind nach PR-Öffnung gesondert zu prüfen.
+- **NOCH NICHT IMPLEMENTIERT:** Physische Android-Geräteabnahme sowie andere Kampfdialoge mit Live-Snapshotwechsel (jeweils eigene Pakete).
+- **Kompatibilität:** Kein Eingriff in Regeln, Controller, Domänenmodelle, SQLite/JSON, App-Version; keine Migration.
+- **Nächster Schritt:** CI des neuen PR-HEAD prüfen; bei rot gezielt den betroffenen UI-Test oder Formatter korrigieren, keine Integration vor grüner CI.
+
