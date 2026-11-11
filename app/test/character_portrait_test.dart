@@ -1,10 +1,57 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/ui/character_portrait_picker.dart';
 import 'package:lebendiger_spielleiter/ui/fantasy_buttons.dart';
 
+Future<Uint8List> _pngImage(int width, int height) async {
+  final recorder = ui.PictureRecorder();
+  final canvas = Canvas(recorder);
+  canvas.drawRect(
+    Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()),
+    Paint()..color = Colors.deepPurple,
+  );
+  final picture = recorder.endRecording();
+  final image = await picture.toImage(width, height);
+  final data = await image.toByteData(format: ui.ImageByteFormat.png);
+  image.dispose();
+  picture.dispose();
+  final bytes = data!;
+  return bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+}
+
 void main() {
+  testWidgets('Bildmaße werden vor dem vollständigen Dekodieren geprüft', (
+    tester,
+  ) async {
+    // Image encoding and decoding use real engine futures and must not run
+    // inside the fake async zone supplied by testWidgets.
+    await tester.runAsync(() async {
+      final valid = await _pngImage(256, 256);
+      final tooLarge = await _pngImage(257, 1);
+
+      expect(
+        await validatePortraitImageBytes(valid),
+        PortraitImageValidationResult.valid,
+      );
+      expect(
+        await validatePortraitImageBytes(tooLarge),
+        PortraitImageValidationResult.tooLarge,
+      );
+      expect(
+        await validatePortraitImageBytes(Uint8List.fromList([1, 2, 3])),
+        PortraitImageValidationResult.invalid,
+      );
+      expect(
+        await validatePortraitImageBytes(Uint8List(0)),
+        PortraitImageValidationResult.invalid,
+      );
+    });
+  });
+
   test('Die Bildvorlage überlebt JSON-Export und -Import unverändert', () {
     final hero = HeroCharacter(id: 'hero', name: 'Liora', portraitPreset: 7);
     final restored = HeroCharacter.fromJson(hero.toJson());

@@ -100,6 +100,43 @@ class CharacterPortraitChoice {
   final String photoBase64;
 }
 
+/// Result of checking a user-selected portrait without decoding oversized
+/// pixel data. The encoded image dimensions are inspected before a codec is
+/// created, so a tiny compressed file cannot force a huge full-resolution
+/// allocation merely to be rejected afterwards.
+enum PortraitImageValidationResult { valid, invalid, tooLarge }
+
+Future<PortraitImageValidationResult> validatePortraitImageBytes(
+  Uint8List bytes,
+) async {
+  if (bytes.isEmpty) return PortraitImageValidationResult.invalid;
+
+  ui.ImmutableBuffer? buffer;
+  ui.ImageDescriptor? descriptor;
+  ui.Codec? codec;
+  ui.Image? image;
+  try {
+    buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
+    descriptor = await ui.ImageDescriptor.encoded(buffer);
+    if (descriptor.width > 256 || descriptor.height > 256) {
+      return PortraitImageValidationResult.tooLarge;
+    }
+    codec = await descriptor.instantiateCodec();
+    image = (await codec.getNextFrame()).image;
+    if (image.width > 256 || image.height > 256) {
+      return PortraitImageValidationResult.tooLarge;
+    }
+    return PortraitImageValidationResult.valid;
+  } catch (_) {
+    return PortraitImageValidationResult.invalid;
+  } finally {
+    image?.dispose();
+    codec?.dispose();
+    descriptor?.dispose();
+    buffer?.dispose();
+  }
+}
+
 /// Decorative view, no implicit character edits.
 class FantasyCharacterPortrait extends StatelessWidget {
   const FantasyCharacterPortrait({
@@ -248,19 +285,22 @@ class _CharacterPortraitPickerState extends State<CharacterPortraitPicker> {
         );
         return;
       }
-      // Validate that the supplied data is an actual decodable image, not
-      // an arbitrary file with a .jpg or .png extension.
-      final codec = await ui.instantiateImageCodec(bytes);
-      final frame = await codec.getNextFrame();
-      if (frame.image.width > 256 || frame.image.height > 256) {
-        frame.image.dispose();
-        codec.dispose();
-        setState(() => _message = 'Bildauflösung überschreitet 256 Pixel.');
+      // Read encoded dimensions before decoding pixels. This rejects large
+      // images before allocating their full-resolution bitmap.
+      final validation = await validatePortraitImageBytes(bytes);
+      if (!mounted) return;
+      if (validation != PortraitImageValidationResult.valid) {
+        setState(
+          () => _message = switch (validation) {
+            PortraitImageValidationResult.tooLarge =>
+              'Bildauflösung überschreitet 256 Pixel.',
+            PortraitImageValidationResult.invalid =>
+              'Bild konnte nicht geöffnet werden. Bitte eine gültige Bilddatei wählen.',
+            PortraitImageValidationResult.valid => null,
+          },
+        );
         return;
       }
-      frame.image.dispose();
-      codec.dispose();
-      if (!mounted) return;
       setState(() {
         _preset = -1;
         _photo = base64Encode(bytes);
