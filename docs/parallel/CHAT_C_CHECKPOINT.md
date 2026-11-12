@@ -1192,3 +1192,17 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-12 – Schildreaktion: Freie Slots und Zustimmung bei neuem Helden neu aufbauen
+
+- **Basis:** `main` `32d1ffac6f022af65550cd02895e9915816e0f34`; eigener Branch `feat/chat-c/hero-shield-live-snapshot-20261112`; Code/Test-Commit `61a586fed0b8cc17af343b0f33da7d2510e68258`.
+- **Problem:** `HeroShieldReactionDialog` ermittelte Zauberklassen und verfügbare Slots nur im `initState`; spätere aktualisierte Helden behielten zuvor ausgewählte Klassen, Slots und V/S-Bestätigungen.
+- **Akzeptanz:** A) Identischer Held behält Slotwahl/Zustimmungen. B) Anderer Held mit neuer Klasse und weniger Slots setzt alle Eingaben zurück und erlaubt eine neue bestätigte Wahl. C) Verbrauchte Slots und verlorene Vorbereitung sperren die Bestätigung. D) Ungültige neue Klassen erzeugen keine unhandled Flutter-Ausnahme und erlauben keine Autorisierung.
+- **IMPLEMENTIERT:** `_loadOptions` und `didUpdateWidget`, getrennt neu instanziierte Formfelder je Heldenrevision, beide Komponentenchecks und Fehlermeldung zurückgesetzt, defensive Bestätigungsprüfung.
+- **Fachdateien:** `app/lib/ui/hero_shield_reaction_dialog.dart`, `app/test/hero_shield_live_snapshot_test.dart`. Projektnachweise `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md` nur am Ende ergänzt.
+- **GETESTET:** Quell- und Domainvertrag geprüft, vier Widgettests versioniert; Ausführung noch offen.
+- **NICHT GETESTET:** Formatierung, Analyse, Flutter, Android-Debug-/ABI-APKs, native Androidtests, echtes Gerät/IME/TalkBack.
+- **BLOCKIERT:** Kein lokales Flutter/Dart-SDK; finale GitHub-CI nach Öffnen des PR nötig. README-/Checkpoint-Kollisionen mit Parallel-PRs koordinieren.
+- **Migrationen:** Keine, bestehende Spielstände und regelmechanische Zustandsbuchung unverändert.
+- **Nächster Schritt:** PR-HEAD durch GitHub Actions vollständig prüfen und danach zur Review freigeben.
+
