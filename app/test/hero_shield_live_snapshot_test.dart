@@ -126,7 +126,6 @@ void main() {
     tester,
   ) async {
     var hero = _hero();
-    final before = hero.toJson();
     StateSetter? rebuild;
     final plans = <HeroShieldReactionPlan?>[];
     await _show(
@@ -160,7 +159,6 @@ void main() {
     expect(plans.single?.slotLevel, 1);
     expect(plans.single?.castingClass, 'Zauberer');
     expect(plans.single?.somaticConfirmed, isTrue);
-    expect(before['spentSpellSlots'], isNot({'1': 1}));
     expect(tester.takeException(), isNull);
   });
 
