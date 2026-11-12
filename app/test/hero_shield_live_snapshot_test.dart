@@ -136,11 +136,9 @@ void main() {
     );
     await _selectSlot(tester, 'Grad 3 – 2 frei');
     await _approve(tester);
-    rebuild!(() => hero = _hero(
-      id: 'new-sorcerer',
-      className: 'Zauberer',
-      level: 1,
-    ));
+    rebuild!(
+      () => hero = _hero(id: 'new-sorcerer', className: 'Zauberer', level: 1),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Grad 3 – 2 frei'), findsNothing);
@@ -176,9 +174,10 @@ void main() {
     );
     await _approve(tester);
     rebuild!(() {
-      hero = _hero(id: 'spent-hero', level: 1).copyWith(
-        spentSpellSlots: {'1': 2},
-      );
+      hero = _hero(
+        id: 'spent-hero',
+        level: 1,
+      ).copyWith(spentSpellSlots: {'1': 2});
     });
     await tester.pumpAndSettle();
 

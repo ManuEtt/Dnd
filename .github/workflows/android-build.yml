@@ -90,12 +90,6 @@ jobs:
       - name: Flutter-Abhängigkeiten installieren
         working-directory: app
         run: flutter pub get
-      - name: Temporäre Shield-Formatdiagnose
-        working-directory: app
-        run: |
-          dart format test/hero_shield_live_snapshot_test.dart
-          git diff -- test/hero_shield_live_snapshot_test.dart
-          exit 1
       - name: Dart-Formatierung prüfen
         working-directory: app
         run: dart format --output=none --set-exit-if-changed lib test
