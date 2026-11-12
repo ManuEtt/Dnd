@@ -51,13 +51,23 @@ HeroCharacter _hero({
   features: styleConfirmed
       ? const ['Kampfstil: Kampf mit zwei Waffen']
       : const [],
-  inventory: const [
+  inventory: [
     InventoryItem(
       id: 'main',
       name: 'Kurzschwert',
       catalogId: 'weapon-shortsword',
+      stats: InventoryItemStats.fromCatalog(
+        SrdEquipmentCatalog.byId('weapon-shortsword')!,
+      ),
     ),
-    InventoryItem(id: 'offhand', name: 'Dolch', catalogId: 'weapon-dagger'),
+    InventoryItem(
+      id: 'offhand',
+      name: 'Dolch',
+      catalogId: 'weapon-dagger',
+      stats: InventoryItemStats.fromCatalog(
+        SrdEquipmentCatalog.byId('weapon-dagger')!,
+      ),
+    ),
   ],
 );
 
@@ -241,7 +251,7 @@ void main() {
         final result = engine.resolveRoll(prepared, natural: 15);
         expect(result.events.single.payload['damage'], 4);
         expect(result.campaign.encounter!.enemyHitPoints, 96);
-        expect(result.campaign.hero.toJson(), prepared.hero.toJson());
+        expect(result.campaign.hero.toJson(), hero.toJson());
         expect(TwoWeaponFightingRules.canPrepare(result.campaign), isFalse);
         expect(
           Campaign.fromJson(result.campaign.toJson()).toJson(),
