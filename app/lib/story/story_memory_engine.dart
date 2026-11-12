@@ -5,6 +5,15 @@ import '../domain/models.dart';
 /// Confirmed story/session memories, independent of live combat operations.
 /// Explicitly separates scene context, session recap and persistent world facts.
 class MemoryEngine {
+  static final RegExp _genericRecallNoun = RegExp(
+    r'^(?:rueckblick|tagebuch|zusammenfassung|erinnerungen)'
+    r'(?:,?\s+(?:bitte|anzeigen|zeigen|oeffnen))?$',
+  );
+  static final RegExp _diaryDisplayRequest = RegExp(
+    r'^(?:zeig(?:e)?|oeffne)\s+(?:mir\s+)?(?:das\s+)?'
+    r'tagebuch(?:,?\s+bitte)?$',
+  );
+
   /// Recognizes explicit requests for established adventure memories.
   /// Free player actions mentioning historical nouns are not recall commands.
   static bool isRecallRequest(String text) {
@@ -46,14 +55,8 @@ class MemoryEngine {
       ),
       // A bare memory noun is a shortcut, not blanket permission to replace
       // physical diary actions (burn, hide, erase, hand over) with a recap.
-      RegExp(
-        r'^(?:rueckblick|tagebuch|zusammenfassung|erinnerungen)'
-        r'(?:,?\s+(?:bitte|anzeigen|zeigen|oeffnen))?$',
-      ),
-      RegExp(
-        r'^(?:zeig(?:e)?|oeffne)\s+(?:mir\s+)?(?:das\s+)?'
-        r'tagebuch(?:,?\s+bitte)?$',
-      ),
+      _genericRecallNoun,
+      _diaryDisplayRequest,
       RegExp(
         r'^(?:gib|zeige|erstelle)\s+(?:mir\s+)?(?:einen?\s+|die\s+)?(?:rueckblick|zusammenfassung)\b',
       ),
@@ -79,6 +82,16 @@ class MemoryEngine {
       );
     }
     final query = _memoryTokens(action);
+    // Diary display commands request the full confirmed recap. Their UI
+    // verbs ("anzeigen", "oeffnen") are not topical memory search terms.
+    final request = _memoryNormalize(action)
+        .replaceAll(RegExp(r'[.!?]+$'), '')
+        .replaceFirst(RegExp(r'^bitte\s+'), '')
+        .trim();
+    if (_genericRecallNoun.hasMatch(request) ||
+        _diaryDisplayRequest.hasMatch(request)) {
+      query.clear();
+    }
     final candidates =
         <({String text, String identity, int score, int order})>[];
     void add(
