@@ -1702,6 +1702,13 @@ Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortsw
 - **Tests:** Drei neue Widgettests für unveränderte Daten, Heldenwechsel und Zielwechsel ergänzt. Flutter/Dart lokal nicht vorhanden; Ausführung und Android-APK auf dem aktuellen PR-HEAD noch nicht bestätigt.
 - **Kompatibilität:** Keine Änderung an Regeln, Controller, persistierten Spielständen, SQLite, JSON oder App-Version; keine Migration.
 
+### 2026-11-11 – Rückreisen von bloßen Wortbestandteilen unterscheiden
+
+- Rabenwacht: Rückreisen werden nur durch eigenständige Bewegungsverben ausgelöst; Begriffe wie „Vorgehen“ oder „Reisebericht“ lösen keinen Ortswechsel aus. Regressionstests prüfen beide Richtungen.
+- Der präzisierte Regressionstest trennt bloße Ortsnennungen von einer eigenständigen Kapellenuntersuchung, die weiterhin zum Archiv führen darf. Originaländerung und Verlauf: PR #684, finaler Quell-Commit `b9836aecd8507cf0af96685643cc6e28801d988f`.
+- **Tests:** Eine ältere CI #42957164227 bestand 3.353 Flutter-Tests, ein neuer Test scheiterte an einer falschen Erwartung und wurde korrigiert. Die CI auf dem konsolidierten Integrationsstand steht aus. Keine JSON-/SQLite-Migration.
+
+
 
 
 
@@ -2309,11 +2316,6 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 
 
 
-### 2026-11-11 – Rückreisen von bloßen Wortbestandteilen unterscheiden
-
-- Rabenwacht: Rückreisen werden nur durch eigenständige Bewegungsverben ausgelöst; Begriffe wie „Vorgehen“ oder „Reisebericht“ lösen keinen Ortswechsel aus. Regressionstests prüfen beide Richtungen.
-- Der präzisierte Regressionstest trennt bloße Ortsnennungen von einer eigenständigen Kapellenuntersuchung, die weiterhin zum Archiv führen darf. Originaländerung und Verlauf: PR #684, finaler Quell-Commit `b9836aecd8507cf0af96685643cc6e28801d988f`.
-- **Tests:** Eine ältere CI #42957164227 bestand 3.353 Flutter-Tests, ein neuer Test scheiterte an einer falschen Erwartung und wurde korrigiert. Die CI auf dem konsolidierten Integrationsstand steht aus. Keine JSON-/SQLite-Migration.
 
 
 

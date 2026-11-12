@@ -41,3 +41,7 @@ und #333 sind bereits geschlossen und werden nicht erneut als erledigt verbucht.
 Quell-PRs und Branches bleiben bis zur erfolgreichen kombinierten Abnahme erhalten.
 Danach nur unveränderte, vollständig integrierte Heads archivieren und löschen;
 zwischenzeitlich hinzugekommene Arbeit separat prüfen. Keine Spielstandmigration.
+
+## Actions-Konsolidierung
+
+Der vollständige Android-Workflow übernimmt unverändert alle Format-, Analyse-, Backend-, Flutter-, Protokoll-, nativen Android- und APK-Prüfungen. Die redundanten Mönch-/Eldritch-Spezialworkflows und der einmalige Format-Reparaturworkflow sind entfernt; keine Fachtests entfernt. Der zentrale Workflow bleibt manuell startbar. Der sichere Branch-Cleanup prüft offene PRs, Branchschutz und SHA unmittelbar vor der Löschung erneut. Zwei zusätzliche ausführbare Regressionen testen echte Workflow-Logik gegen simulierte GitHub-Antworten. Jetzt 428 Python-Tests bestanden. Historische Actions-Protokolle wurden nicht gelöscht.
