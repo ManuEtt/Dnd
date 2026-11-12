@@ -41,40 +41,39 @@ GameUpdate _replaceEvent(GameUpdate update, GameEvent event) => GameUpdate(
   events: [event],
 );
 
-StoryCampaignEngine _engine(
-  GameUpdate Function(GameUpdate) change,
-) => StoryCampaignEngine(
-  nextId: (prefix) => '$prefix-test',
-  clock: () => _now,
-  commit:
-      (
-        before,
-        next,
-        narration, {
-        required String type,
-        required Map<String, dynamic> payload,
-      }) {
-        final committed = next.copyWith(revision: before.revision + 1);
-        final event = GameEvent(
-          id: 'new-event',
-          campaignId: before.id,
-          sessionId: before.sessionId,
-          timestamp: _now,
-          type: type,
-          payload: {
-            ...payload,
-            'revision': committed.revision,
-            'stateAfter': committed.copyWith(events: const []).toJson(),
+StoryCampaignEngine _engine(GameUpdate Function(GameUpdate) change) =>
+    StoryCampaignEngine(
+      nextId: (prefix) => '$prefix-test',
+      clock: () => _now,
+      commit:
+          (
+            before,
+            next,
+            narration, {
+            required String type,
+            required Map<String, dynamic> payload,
+          }) {
+            final committed = next.copyWith(revision: before.revision + 1);
+            final event = GameEvent(
+              id: 'new-event',
+              campaignId: before.id,
+              sessionId: before.sessionId,
+              timestamp: _now,
+              type: type,
+              payload: {
+                ...payload,
+                'revision': committed.revision,
+                'stateAfter': committed.copyWith(events: const []).toJson(),
+              },
+            );
+            return change(
+              GameUpdate(
+                campaign: committed.copyWith(events: [event]),
+                events: [event],
+              ),
+            );
           },
-        );
-        return change(
-          GameUpdate(
-            campaign: committed.copyWith(events: [event]),
-            events: [event],
-          ),
-        );
-      },
-);
+    );
 
 void main() {
   test('confirmed story audit matches action, revision and saved state', () {
@@ -106,7 +105,10 @@ void main() {
       status: 'open',
     );
     expect(thread.events.single.type, 'memory.storyThreadSaved');
-    expect(thread.events.single.payload['threadId'], thread.campaign.storyThreads.single.id);
+    expect(
+      thread.events.single.payload['threadId'],
+      thread.campaign.storyThreads.single.id,
+    );
     expect(thread.events.single.payload['status'], 'open');
     final restored = Campaign.fromJson(
       jsonDecode(jsonEncode(thread.campaign.toJson())) as Map<String, dynamic>,
