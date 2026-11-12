@@ -2364,3 +2364,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch:** `fix/chat-b/story-revision-boundary-20261112`; **PR:** [#700](https://github.com/ManuEtt/Dnd/pull/700) (Draft). Dart-/Flutter-/Android-CI des finalen Branch-HEADs noch separat zu prüfen; keine lokale SDK-Ausführung.
 - **Kompatibilität:** Kein Datenformat-/SQLite-Schemawechsel, keine Migration oder Änderung an bestätigten Spielständen, Regel-/Quest-/Heldenwerten, App-Version oder externen KI-Kosten.
 - **Grenzen:** Schutz bestehender Ereignishistorien ist ein gesondertes Prüfungspaket; das neue Arbeitspaket ist noch nicht in `main` integriert.
+
+### 2026-11-12 – Bestätigte Ereignishistorie bei Story-Commits absichern
+
+- **Problem:** Der Rückgabewert der Story-Commit-Schnittstelle durfte alte bestätigte Journalereignisse verändern, ohne den unveränderten Regelzustand zu verletzen.
+- **Lösung:** Die Story-Engine schützt nun die vorhandene Reihenfolge und den Inhalt aller bestätigten Ereignisse. Ein neuer Commit darf höchstens ein konsistentes Ereignis mit neuer ID, passender Kampagnen-/Sitzungszuordnung und einem überprüften `stateAfter`-Checkpoint anhängen; semantisch gleiche JSON-Schlüsselreihenfolge bleibt erlaubt.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart`, neuer Regressionstest `app/test/story_event_history_append_only_test.dart` (fünf Testgruppen).
+- **Branch/PR:** `fix/chat-b/story-event-history-append-only-20261112`, [#703](https://github.com/ManuEtt/Dnd/pull/703) (Draft; endgültigen HEAD und CI am PR prüfen).
+- **Prüfungen:** Code/PR-Überschneidungen überprüft, neue Unit-Tests eingecheckt; vollständige Dart-/Flutter-/Android-CI zum Zeitpunkt dieses Nachtrags noch nicht abgenommen. Keine lokale SDK-Ausführung.
+- **Kompatibilität:** Kein Versions-, SQLite-, Schema- oder API-Wechsel und keine Migration. Bestehende Spielstände werden nicht umgeschrieben; bestehende Erzählersetzung unbestätigter freier Züge bleibt unverändert.
+- **Grenzen:** Integrationsreview und vollständige CI noch offen; keine Abnahme echter Geräte oder externer KI-Anbieter.
