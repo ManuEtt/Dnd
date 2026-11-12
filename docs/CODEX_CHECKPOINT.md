@@ -3669,3 +3669,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Erweiterter Schutz unabhängiger unbestätigter KI-/Nachrichtenhistorien; dieses Paket schützt bestätigte Ereignisse im Story-Commit-Pfad.
 - **Migration:** Keine; unveränderte JSON-/SQLite-/App-Version `0.8.52+102`, keine bestätigten Regelwerte oder vorhandenen Spielstände verändert, keine Provider-/Kostenänderungen.
 - **Nächster Schritt:** CI für finalen Commit #703 komplett auswerten und Fehler beheben; erst bei grüner Gesamt-CI als Review-PR freigeben.
+
+### 2026-11-12 – Bestätigte Dialognachrichten sind bei Story-Commits append-only
+
+- **Basis-main:** `32d1ffac6f022af65550cd02895e9915816e0f34`; **Branch:** `fix/chat-b/story-message-history-append-only-20261112`; **PR:** [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft), finalen Commit im PR prüfen.
+- **IMPLEMENTIERT:** Neue Story-Callback-Nachrichtengrenze in `app/lib/story/story_campaign_engine.dart`: bestätigte Nachrichten werden nicht gelöscht, vertauscht oder umgeschrieben. Eine zusätzliche GM-Nachricht benötigt eine frische ID und den exakten bestätigten Erzähltext. Bestehende Legacy-/Preview-Callbacks mit unverändertem `messages` bleiben möglich.
+- **Tests:** Fünf Gruppen in `app/test/story_message_history_append_only_test.dart` (normaler Story-Commit/JSON, negative historische Eingriffe, neue falsche Antwort, Legacy-Preview und unverändert erlaubter unbestätigter KI-Freeturn-Rewrite).
+- **GETESTET:** Aktueller main, Checkpoints, Main-/PR-CI, Story-Quellcode und alle derzeit offenen PR-Dateipfade geprüft. Vollständige erfolgreiche Vorgänger-CI: [#43176604693](https://github.com/ManuEtt/Dnd/actions/runs/43176604693) auf `411601b7dcb40d696257cab4af7309d70f60d781`; Main-CI [#43185323211](https://github.com/ManuEtt/Dnd/actions/runs/43185323211) auf `32d1ffac`. Beide sind **keine** Abnahme dieses neuen PRs.
+- **NICHT GETESTET:** Neue Flutter-Tests, Dart-Format/Analyse und Android-Debug-/ABI-/Release-Builds auf finalem Branch-HEAD stehen aus; mangels lokalem SDK ausschließlich GitHub-CI-Abnahme möglich.
+- **BLOCKIERT:** Finale CI auf PR #706 und Review-/Integrationskoordination. Offene PRs #704 (CI-Modulgrenzentests) und #705 (Hochsprung-Tests) haben keine Überschneidung im Story-Fachcode.
+- **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
+- **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
+- **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
