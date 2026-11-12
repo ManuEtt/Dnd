@@ -65,12 +65,7 @@ class StoryCampaignEngine {
       payload: payload,
     );
     StoryRuleBoundary.ensureRuleStateUnchanged(before, update.campaign);
-    _ensureAppendOnlyEvents(
-      before,
-      update,
-      type: type,
-      payload: payload,
-    );
+    _ensureAppendOnlyEvents(before, update, type: type, payload: payload);
     _ensureAppendOnlyMessages(before, update, narration);
     return update;
   }
