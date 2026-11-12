@@ -20,9 +20,7 @@ HeroCharacter healer({String className = 'Kleriker', int level = 5}) =>
 Finder control(String name) => find.byWidgetPredicate(
   (widget) =>
       widget.key is ValueKey &&
-      (widget.key as ValueKey).value.toString().startsWith(
-        'healing-spell-$name',
-      ),
+      (widget.key as ValueKey).value.toString() == 'healing-spell-$name',
 );
 
 Future<void> open(
