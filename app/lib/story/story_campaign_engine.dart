@@ -66,7 +66,44 @@ class StoryCampaignEngine {
     );
     StoryRuleBoundary.ensureRuleStateUnchanged(before, update.campaign);
     _ensureAppendOnlyEvents(before, update);
+    _ensureAppendOnlyMessages(before, update, narration);
     return update;
+  }
+
+  // Confirmed dialogue history is immutable. A successful story callback may
+  // append one GM response, never rewrite an earlier player's or GM's words.
+  // Journal-free preview callbacks without a new message remain supported.
+  static void _ensureAppendOnlyMessages(
+    Campaign before,
+    GameUpdate update,
+    String narration,
+  ) {
+    final previous = before.messages;
+    final current = update.campaign.messages;
+    if (current.length != previous.length &&
+        current.length != previous.length + 1) {
+      throw const FormatException(
+        'Die Story-Engine darf die Nachrichtenhistorie nicht ersetzen.',
+      );
+    }
+    for (var index = 0; index < previous.length; index++) {
+      if (_canonicalJson(previous[index].toJson()) !=
+          _canonicalJson(current[index].toJson())) {
+        throw const FormatException(
+          'Bestätigte Nachrichten dürfen nicht verändert werden.',
+        );
+      }
+    }
+    if (current.length == previous.length + 1) {
+      final added = current.last;
+      if (added.role != 'gm' ||
+          added.text != narration ||
+          previous.any((message) => message.id == added.id)) {
+        throw const FormatException(
+          'Die neue Spielleiterantwort ist nicht eindeutig bestätigt.',
+        );
+      }
+    }
   }
 
   // Confirmed journal entries are immutable. A story commit may append one
