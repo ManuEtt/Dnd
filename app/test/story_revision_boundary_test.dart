@@ -39,25 +39,28 @@ StoryCampaignEngine _engine(int revisionDelta) => StoryCampaignEngine(
 );
 
 void main() {
-  test('narrative rewrite and single confirmed commit preserve revision order', () {
-    final saved = _campaign();
-    final before = jsonEncode(saved.toJson());
-    for (final delta in [0, 1]) {
-      final candidate = saved.copyWith(
-        revision: saved.revision + delta,
-        scene: 'Ein neuer Weg öffnet sich.',
-        storyBible: const {'stage': 'crossroads'},
-      );
-      expect(
-        () => StoryRuleBoundary.ensureRuleStateUnchanged(saved, candidate),
-        returnsNormally,
-        reason: 'delta $delta',
-      );
-      expect(candidate.hero.toJson(), saved.hero.toJson());
-      expect(candidate.facts, saved.facts);
-    }
-    expect(jsonEncode(saved.toJson()), before);
-  });
+  test(
+    'narrative rewrite and single confirmed commit preserve revision order',
+    () {
+      final saved = _campaign();
+      final before = jsonEncode(saved.toJson());
+      for (final delta in [0, 1]) {
+        final candidate = saved.copyWith(
+          revision: saved.revision + delta,
+          scene: 'Ein neuer Weg öffnet sich.',
+          storyBible: const {'stage': 'crossroads'},
+        );
+        expect(
+          () => StoryRuleBoundary.ensureRuleStateUnchanged(saved, candidate),
+          returnsNormally,
+          reason: 'delta $delta',
+        );
+        expect(candidate.hero.toJson(), saved.hero.toJson());
+        expect(candidate.facts, saved.facts);
+      }
+      expect(jsonEncode(saved.toJson()), before);
+    },
+  );
 
   test('rollback and skipped revisions cannot be disguised as story edits', () {
     final saved = _campaign();
