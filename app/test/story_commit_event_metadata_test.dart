@@ -84,11 +84,7 @@ void main() {
     final event = recap.events.single;
 
     expect(event.type, 'memory.sessionRecapSaved');
-    expect(event.payload.keys.toSet(), {
-      'recapId',
-      'revision',
-      'stateAfter',
-    });
+    expect(event.payload.keys.toSet(), {'recapId', 'revision', 'stateAfter'});
     expect(event.payload['recapId'], recap.campaign.sessionRecaps.single.id);
     expect(event.payload['revision'], recap.campaign.revision);
     expect(
@@ -138,10 +134,7 @@ void main() {
     final payload = good.events.single.payload;
     final invalid = <Map<String, dynamic>>[
       {...payload, 'recapId': 'forged-id'},
-      {
-        'revision': payload['revision'],
-        'stateAfter': payload['stateAfter'],
-      },
+      {'revision': payload['revision'], 'stateAfter': payload['stateAfter']},
       {...payload, 'surpriseReward': 1000},
       {...payload, 'revision': before.revision},
     ];
