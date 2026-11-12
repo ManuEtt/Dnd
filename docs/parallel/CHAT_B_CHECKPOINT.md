@@ -1339,3 +1339,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität:** Keine Änderung von SQLite/JSON-Schema, API, Regeln, Questidentitäten, Heldenwerten, Revision oder App-Version. Bestehende bestätigte Wahl bleibt unverändert.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere Absicherung der Rückkehr- und Versammlungsintents außerhalb der endgültigen Vermächtniswahl.
 - **NÄCHSTER SCHRITT:** PR-CI am finalen Commit prüfen, eventuelle Format- oder Testfehler auf demselben Branch beheben; danach kontrollierte Integration durch Chat D.
+
+### 2026-11-12 – Bestätigte Ereignishistorie bei Story-Commits schützen (PR #703)
+
+- **Ausgangs-main:** `f028a6f3bce7649bd07b9bb2eeca83214bfff7b8` nach der 86-Branch-Migration; **Branch:** `fix/chat-b/story-event-history-append-only-20261112`; **Pull Request:** [#703](https://github.com/ManuEtt/Dnd/pull/703) (Draft); **App-Version:** `0.8.52+102`, unverändert. Fach-/Testcommits `3a4d51b` und `814623e`, Format-/Klarstellungscommit `492d43b`; endgültigen Dokumentations-HEAD im PR prüfen.
+- **Ausgangsproblem:** Das Story-Commit-Callback durfte trotz unveränderter Regelwerte ein beliebig ersetztes `events`-Journal zurückgeben, weil `events` ein zulässiges Storyfeld der Regelgrenze ist.
+- **IMPLEMENTIERT:** `StoryCampaignEngine._commitStory` prüft nach dem Regelzustandsschutz den unveränderten kanonischen JSON-Präfix bereits bestätigter Ereignisse und erlaubt höchstens einen neuen Eintrag. Dieser muss eine neue ID, korrekte Kampagnen-/Session-ID, exakte Rückmeldung in `GameUpdate.events` und den passenden `stateAfter`-Checkpoint besitzen. Keine Verdoppelung oder stille Umschreibung älterer Einträge. Journalfreie bestehende Test-/Preview-Callbacks bleiben kompatibel, solange die Historie erhalten ist.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart`, neuer `app/test/story_event_history_append_only_test.dart`, README und beide Checkpoints nur append-only.
+- **Regressionen:** Fünf Testgruppen für gültigen Commit und JSON-Roundtrip, Löschen/Umordnen/Überschreiben/zusätzlichen Append, widersprüchliche IDs, Sessions und Checkpoints, semantisch gleiche JSON-Schlüsselreihenfolge sowie journalfreie Bestands-Callbacks.
+- **GETESTET:** Aktueller Main-HEAD und sämtliche geöffneten PRs/Dateipfade auf Überschneidungen geprüft. PR #702 bearbeitet nur den unabhängigen Revisionsschutz, nicht `story_campaign_engine.dart` oder diese Testdatei. Neu erstellte Tests und Commits auf GitHub gesichert.
+- **NICHT GETESTET:** Flutter-Tests, Analyzer, Dart-Formatierung und Android-Builds des finalen Commits noch durch CI abzunehmen; lokale Flutter-/Dart-SDKs fehlen. Kein reales Android-Gerät und kein produktiver KI-Provider geprüft.
+- **BLOCKIERT:** Finale unabhängige PR-CI, Review/Integration nach #702 und eventuell verlustfreie README-/Checkpoint-Zusammenführung. Kein direkter Main-Merge.
+- **Kompatibilität/Migration:** Keine Schema-, SQLite-, Versions- oder API-Änderungen; gespeicherte Kampagnen bleiben unverändert, bisherige `replaceNarration`-/KI-Freeturn-Rewrite-Wege bleiben unangetastet. Keine neuen Kosten.
+- **NOCH NICHT IMPLEMENTIERT:** Die Identitäts- und Nachrichtenhistorie außerhalb regulärer `_commitStory`-Callbacks benötigt bei zukünftigen KI-Pfaden eigene Nachweise.
+- **NÄCHSTER SCHRITT:** Vollständige GitHub-CI auf finalem HEAD abnehmen, konkrete Fehler auf demselben Branch beheben, nach erfolgreicher Abnahme zur Review freigeben.
