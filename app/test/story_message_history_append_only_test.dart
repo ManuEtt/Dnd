@@ -7,16 +7,8 @@ import 'package:lebendiger_spielleiter/story/story_campaign_engine.dart';
 
 final _now = DateTime.utc(2026, 11, 12, 12);
 
-NarrativeMessage _message(
-  String id,
-  String role,
-  String text,
-) => NarrativeMessage(
-  id: id,
-  role: role,
-  text: text,
-  timestamp: _now,
-);
+NarrativeMessage _message(String id, String role, String text) =>
+    NarrativeMessage(id: id, role: role, text: text, timestamp: _now);
 
 Campaign _campaign() => Campaign(
   id: 'message-history',
@@ -72,10 +64,7 @@ StoryCampaignEngine _committed() => StoryCampaignEngine(
       }) {
         final committed = next.copyWith(
           revision: before.revision + 1,
-          messages: [
-            ...before.messages,
-            _message('gm-new', 'gm', narration),
-          ],
+          messages: [...before.messages, _message('gm-new', 'gm', narration)],
         );
         final event = GameEvent(
           id: 'event-new',
@@ -134,10 +123,7 @@ void main() {
         _message('player-one', 'player', 'Eine geänderte Spielerentscheidung.'),
         old.last,
       ],
-      [
-        old.first,
-        _message('gm-one', 'gm', 'Eine erfundene frühere Antwort.'),
-      ],
+      [old.first, _message('gm-one', 'gm', 'Eine erfundene frühere Antwort.')],
       [
         old.first,
         _message('injected', 'system', 'Eine manipulierte Systemnotiz.'),
@@ -158,24 +144,27 @@ void main() {
     expect(jsonEncode(before.toJson()), original);
   });
 
-  test('a newly appended answer requires a fresh ID, GM role and exact text', () {
-    final before = _campaign();
-    final original = jsonEncode(before.toJson());
-    for (final response in [
-      _message('gm-one', 'gm', 'Belegtes Ende.'),
-      _message('player-new', 'player', 'Belegtes Ende.'),
-      _message('system-new', 'system', 'Belegtes Ende.'),
-      _message('gm-new', 'gm', 'Eine andere Erzählung.'),
-    ]) {
-      expect(
-        () => _preview(
-          (campaign, _) => [...campaign.messages, response],
-        ).saveSessionRecap(before),
-        throwsFormatException,
-      );
-    }
-    expect(jsonEncode(before.toJson()), original);
-  });
+  test(
+    'a newly appended answer requires a fresh ID, GM role and exact text',
+    () {
+      final before = _campaign();
+      final original = jsonEncode(before.toJson());
+      for (final response in [
+        _message('gm-one', 'gm', 'Belegtes Ende.'),
+        _message('player-new', 'player', 'Belegtes Ende.'),
+        _message('system-new', 'system', 'Belegtes Ende.'),
+        _message('gm-new', 'gm', 'Eine andere Erzählung.'),
+      ]) {
+        expect(
+          () => _preview(
+            (campaign, _) => [...campaign.messages, response],
+          ).saveSessionRecap(before),
+          throwsFormatException,
+        );
+      }
+      expect(jsonEncode(before.toJson()), original);
+    },
+  );
 
   test('journal-free preview keeps legacy unchanged-message behavior', () {
     final before = _campaign();
@@ -199,30 +188,39 @@ void main() {
     expect(jsonEncode(before.toJson()), original);
   });
 
-  test('unconfirmed free-turn narration can still replace only its last GM', () {
-    final engine = GameEngine(clock: () => _now);
-    final local = engine.act(engine.createDemo(), 'Ich winke den Wachen.');
-    expect(local.events.single.type, 'narrative.turn');
-    final original = jsonEncode(local.campaign.toJson());
-    final updated = engine.replaceNarration(
-      local,
-      text: 'Die Wachen grüßen zurück.',
-      provider: 'mock',
-    );
-    expect(updated.campaign.revision, local.campaign.revision);
-    expect(updated.campaign.messages, hasLength(local.campaign.messages.length));
-    expect(updated.campaign.messages.last.text, 'Die Wachen grüßen zurück.');
-    expect(updated.campaign.messages.last.id, local.campaign.messages.last.id);
-    expect(
-      updated.campaign.messages
-          .take(local.campaign.messages.length - 1)
-          .map((message) => message.toJson())
-          .toList(),
-      local.campaign.messages
-          .take(local.campaign.messages.length - 1)
-          .map((message) => message.toJson())
-          .toList(),
-    );
-    expect(jsonEncode(local.campaign.toJson()), original);
-  });
+  test(
+    'unconfirmed free-turn narration can still replace only its last GM',
+    () {
+      final engine = GameEngine(clock: () => _now);
+      final local = engine.act(engine.createDemo(), 'Ich winke den Wachen.');
+      expect(local.events.single.type, 'narrative.turn');
+      final original = jsonEncode(local.campaign.toJson());
+      final updated = engine.replaceNarration(
+        local,
+        text: 'Die Wachen grüßen zurück.',
+        provider: 'mock',
+      );
+      expect(updated.campaign.revision, local.campaign.revision);
+      expect(
+        updated.campaign.messages,
+        hasLength(local.campaign.messages.length),
+      );
+      expect(updated.campaign.messages.last.text, 'Die Wachen grüßen zurück.');
+      expect(
+        updated.campaign.messages.last.id,
+        local.campaign.messages.last.id,
+      );
+      expect(
+        updated.campaign.messages
+            .take(local.campaign.messages.length - 1)
+            .map((message) => message.toJson())
+            .toList(),
+        local.campaign.messages
+            .take(local.campaign.messages.length - 1)
+            .map((message) => message.toJson())
+            .toList(),
+      );
+      expect(jsonEncode(local.campaign.toJson()), original);
+    },
+  );
 }
