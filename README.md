@@ -2374,3 +2374,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Prüfungen:** Code/PR-Überschneidungen überprüft, neue Unit-Tests eingecheckt; vollständige Dart-/Flutter-/Android-CI zum Zeitpunkt dieses Nachtrags noch nicht abgenommen. Keine lokale SDK-Ausführung.
 - **Kompatibilität:** Kein Versions-, SQLite-, Schema- oder API-Wechsel und keine Migration. Bestehende Spielstände werden nicht umgeschrieben; bestehende Erzählersetzung unbestätigter freier Züge bleibt unverändert.
 - **Grenzen:** Integrationsreview und vollständige CI noch offen; keine Abnahme echter Geräte oder externer KI-Anbieter.
+
+### 2026-11-12 – Bestätigte Dialognachrichten bei Story-Commits schützen
+
+- **Problem:** Eine Story-Commit-Rückgabe konnte bisher bereits bestätigte Spieler- oder Spielleitertexte ändern oder entfernen, obwohl die Ereignis- und Regelzustandsgrenzen bestanden.
+- **Lösung:** Die Story-Engine bewahrt alle früheren Dialogeinträge samt Reihenfolge und Inhalt. Höchstens eine neue, korrekt identifizierte Spielleiterantwort mit dem tatsächlich bestätigten Erzähltext darf bei einem Story-Commit hinzukommen.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart` und neue `app/test/story_message_history_append_only_test.dart` (fünf positive/negative Regressionstestgruppen inkl. JSON-Wiederaufnahme und unbestätigter Erzählersetzung).
+- **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
+- **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
+- **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
