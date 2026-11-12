@@ -132,7 +132,7 @@ void main() {
         ).toJson(),
         confirmed.toJson(),
       );
-      await repository.saveCampaign(confirmed);
+      await repository.importCampaign(jsonEncode(confirmed.toJson()));
       await repository.close();
 
       repository = await SqliteCampaignRepository.open(
