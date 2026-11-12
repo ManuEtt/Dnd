@@ -23,6 +23,15 @@ class StoryRuleBoundary {
   };
 
   static void ensureRuleStateUnchanged(Campaign before, Campaign after) {
+    // A narrative rewrite retains its revision; an independently committed
+    // story action advances it once. A narrator must not skip or roll back
+    // confirmed storage revisions, even if all rule fields are unchanged.
+    if (after.revision < before.revision ||
+        after.revision > before.revision + 1) {
+      throw const FormatException(
+        'Die Story-Engine darf Kampagnenrevisionen nicht überspringen oder zurücksetzen.',
+      );
+    }
     final original = Map<String, dynamic>.from(before.toJson());
     final candidate = Map<String, dynamic>.from(after.toJson());
     for (final key in storyOwnedFields) {
