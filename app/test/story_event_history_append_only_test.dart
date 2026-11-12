@@ -34,48 +34,50 @@ Campaign _campaign() => Campaign(
   scene: 'Vor dem Hafen.',
   facts: const {'location': 'harbor'},
   events: [
-    _event('old-one', payload: {
-      'details': {'a': 'one', 'b': 'two'},
-    }),
+    _event(
+      'old-one',
+      payload: {
+        'details': {'a': 'one', 'b': 'two'},
+      },
+    ),
     _event('old-two', payload: {'confirmed': true}),
   ],
   revision: 4,
 );
 
-StoryCampaignEngine _engine(
-  GameUpdate Function(GameUpdate) transform,
-) => StoryCampaignEngine(
-  nextId: (prefix) => '$prefix-new',
-  clock: () => _now,
-  commit:
-      (
-        before,
-        next,
-        narration, {
-        required String type,
-        required Map<String, dynamic> payload,
-      }) {
-        final committed = next.copyWith(revision: before.revision + 1);
-        final event = GameEvent(
-          id: 'new-story-event',
-          campaignId: before.id,
-          sessionId: before.sessionId,
-          timestamp: _now,
-          type: type,
-          payload: {
-            ...payload,
-            'revision': committed.revision,
-            'stateAfter': committed.copyWith(events: const []).toJson(),
+StoryCampaignEngine _engine(GameUpdate Function(GameUpdate) transform) =>
+    StoryCampaignEngine(
+      nextId: (prefix) => '$prefix-new',
+      clock: () => _now,
+      commit:
+          (
+            before,
+            next,
+            narration, {
+            required String type,
+            required Map<String, dynamic> payload,
+          }) {
+            final committed = next.copyWith(revision: before.revision + 1);
+            final event = GameEvent(
+              id: 'new-story-event',
+              campaignId: before.id,
+              sessionId: before.sessionId,
+              timestamp: _now,
+              type: type,
+              payload: {
+                ...payload,
+                'revision': committed.revision,
+                'stateAfter': committed.copyWith(events: const []).toJson(),
+              },
+            );
+            return transform(
+              GameUpdate(
+                campaign: committed.copyWith(events: [...before.events, event]),
+                events: [event],
+              ),
+            );
           },
-        );
-        return transform(
-          GameUpdate(
-            campaign: committed.copyWith(events: [...before.events, event]),
-            events: [event],
-          ),
-        );
-      },
-);
+    );
 
 GameUpdate _withJournal(
   GameUpdate update,
@@ -117,9 +119,12 @@ void main() {
     final oldOne = before.events.first;
     final oldTwo = before.events.last;
     final added = good.events.single;
-    final modified = _event('old-one', payload: {
-      'details': {'a': 'changed', 'b': 'two'},
-    });
+    final modified = _event(
+      'old-one',
+      payload: {
+        'details': {'a': 'changed', 'b': 'two'},
+      },
+    );
     final variants = <List<GameEvent>>[
       [oldOne, added],
       [modified, oldTwo, added],
@@ -128,8 +133,9 @@ void main() {
     ];
     for (final journal in variants) {
       expect(
-        () => _engine((result) => _withJournal(result, journal))
-            .saveSessionRecap(before),
+        () => _engine(
+          (result) => _withJournal(result, journal),
+        ).saveSessionRecap(before),
         throwsFormatException,
       );
     }
@@ -157,18 +163,17 @@ void main() {
       ]),
       _withJournal(good, [
         ...prefix,
-        _event(
-          added.id,
-          sessionId: 'another-session',
-          payload: added.payload,
-        ),
+        _event(added.id, sessionId: 'another-session', payload: added.payload),
       ]),
       _withJournal(good, [
         ...prefix,
-        _event(added.id, payload: {
-          ...added.payload,
-          'stateAfter': {'forged': true},
-        }),
+        _event(
+          added.id,
+          payload: {
+            ...added.payload,
+            'stateAfter': {'forged': true},
+          },
+        ),
       ]),
     ];
     for (final candidate in invalid) {
@@ -182,9 +187,12 @@ void main() {
   test('canonical JSON key order does not change confirmed event history', () {
     final before = _campaign();
     final originalBytes = jsonEncode(before.toJson());
-    final reordered = _event('old-one', payload: {
-      'details': {'b': 'two', 'a': 'one'},
-    });
+    final reordered = _event(
+      'old-one',
+      payload: {
+        'details': {'b': 'two', 'a': 'one'},
+      },
+    );
     final result = _engine(
       (update) => _withJournal(update, [
         reordered,
