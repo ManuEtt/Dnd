@@ -2585,3 +2585,9 @@ Basis-main `4b5d63bc91cf43d3709d7ee84bab623712f4f466`, Branch `feat/chat-a/indom
 - **NOCH NICHT IMPLEMENTIERT:** Keine zusätzlichen fachlichen Regeländerungen; mögliche Überprüfung weiterer Live-Snapshot-Dialoge bleibt separat.
 - **Kompatibilität:** Keine Anpassung an SRD-Regeln, Controller, Domänenmodelle, JSON/SQLite oder App-Version.
 - **Nächster Schritt:** Finale CI aller sechs Android-/Flutter-Jobs auf dem PR-HEAD auswerten; bei Fehlern ausschließlich den Nebenhanddialog und die drei Regressionen nachbessern.
+
+### 2026-11-11 – Rabenwacht-Reiseverbprüfung auf aktueller Main-Basis integriert (CI offen)
+
+- Übernahme des eigenständigen Wortgrenzen-Fixes aus PR #684 mit positivem Gegenbeispiel für Kapellenuntersuchung. Quellbranch-HEAD `b9836aecd8507cf0af96685643cc6e28801d988f` als zweiter Commit-Elternknoten erhalten.
+- Konfliktfreie Konsolidierung der README ausschließlich am Dateiende; alle früheren Main-Nachträge und Story-Checkpoints bleiben erhalten.
+- **Teststand:** Vorgänger-CI #42957164227 bestand 3.353 Flutter-Tests und scheiterte an einem inzwischen korrigierten Regressionstest. Finale CI auf Integrationsstand noch offen; keine Behauptung eines grünen APK-Builds, keine Speicher- oder Schemaänderung.

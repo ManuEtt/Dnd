@@ -2268,3 +2268,9 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
 
 - Ausgangs-Main `5fa4037450c955f9dd393472239e7b5de1aa7fc3`; nächster Schritt: CI-Ergebnis prüfen.
+
+### 2026-11-11 – Rabenwacht-Reiseverbprüfung auf aktueller Main-Basis integriert (CI offen)
+
+- Übernahme des eigenständigen Wortgrenzen-Fixes aus PR #684 mit positivem Gegenbeispiel für Kapellenuntersuchung. Quellbranch-HEAD `b9836aecd8507cf0af96685643cc6e28801d988f` als zweiter Commit-Elternknoten erhalten.
+- Konfliktfreie Konsolidierung der README ausschließlich am Dateiende; alle früheren Main-Nachträge und Story-Checkpoints bleiben erhalten.
+- **Teststand:** Vorgänger-CI #42957164227 bestand 3.353 Flutter-Tests und scheiterte an einem inzwischen korrigierten Regressionstest. Finale CI auf Integrationsstand noch offen; keine Behauptung eines grünen APK-Builds, keine Speicher- oder Schemaänderung.
