@@ -54,6 +54,51 @@ class SrdSpellTargetAssessment {
 class SrdSpellTargetRules {
   const SrdSpellTargetRules._();
 
+  // The working 339-spell SRD 5.2.1 index contains exactly these 18 range
+  // entries. Numeric conversion below stays general-purpose, but a plausible
+  // invented range must not be accepted as audited spell metadata.
+  // Source: SRD 5.2.1 / Spells / Range (CC BY 4.0).
+  // https://www.dndbeyond.com/srd
+  static const _knownRangeForms = <String>{
+    'Self',
+    'Touch',
+    'Sight',
+    'Special',
+    'Unlimited',
+    '5 feet',
+    '10 feet',
+    '15 feet',
+    '30 feet',
+    '60 feet',
+    '90 feet',
+    '100 feet',
+    '120 feet',
+    '150 feet',
+    '300 feet',
+    '500 feet',
+    '1 mile',
+    '500 miles',
+  };
+
+  // These identity/range pairs are separately checked against the indexed
+  // SRD spell descriptions. Public constructors must not silently substitute
+  // another spell's range for one of these known entries. Other spells
+  // still need individual verification; this is NOT a full target engine.
+  static const _pinnedRanges = <String, ({String id, String range})>{
+    'Aid': (id: 'spell-aid', range: '30 feet'),
+    'Burning Hands': (id: 'spell-burning-hands', range: 'Self'),
+    'Counterspell': (id: 'spell-counterspell', range: '60 feet'),
+    'Cure Wounds': (id: 'spell-cure-wounds', range: 'Touch'),
+    'Dimension Door': (id: 'spell-dimension-door', range: '500 feet'),
+    'Fireball': (id: 'spell-fireball', range: '150 feet'),
+    'Magic Missile': (id: 'spell-magic-missile', range: '120 feet'),
+    'Mirage Arcane': (id: 'spell-mirage-arcane', range: 'Sight'),
+    'Project Image': (id: 'spell-project-image', range: '500 miles'),
+    'Sending': (id: 'spell-sending', range: 'Unlimited'),
+    'Shield': (id: 'spell-shield', range: 'Self'),
+    'Word of Recall': (id: 'spell-word-of-recall', range: '5 feet'),
+  };
+
   static int? maxRangeFeet(String range) {
     final match = RegExp(
       r'^([1-9][0-9]*) (foot|feet|mile|miles)$',
@@ -82,6 +127,21 @@ class SrdSpellTargetRules {
     if (range != range.trim()) {
       throw const FormatException(
         'Zauberreichweite enthält nicht bestätigte Randzeichen.',
+      );
+    }
+    if (!_knownRangeForms.contains(range)) {
+      throw UnsupportedError('Ungeprüfte SRD-Zauberreichweite: $range');
+    }
+    final pinned = _pinnedRanges[spell.name];
+    if (pinned != null) {
+      if (spell.id != pinned.id || range != pinned.range) {
+        throw const FormatException(
+          'Die SRD-Zauberreichweite passt nicht zur Zauberidentität.',
+        );
+      }
+    } else if (_pinnedRanges.values.any((entry) => entry.id == spell.id)) {
+      throw const FormatException(
+        'Die SRD-Zauberidentität passt nicht zur geprüften Reichweite.',
       );
     }
     final distance = facts.originDistanceFeet;

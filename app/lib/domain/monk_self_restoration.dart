@@ -1,6 +1,7 @@
 import 'class_resource_rules.dart';
 import 'condition_effects.dart';
 import 'models.dart';
+import 'srd_character_classes.dart';
 
 /// SRD 5.2.1, Monk 10: Self-Restoration.
 /// Exactly one eligible condition can end at the end of the Monk's own turn.
@@ -11,8 +12,30 @@ class MonkSelfRestoration {
 
   static const curable = <String>{'bezaubert', 'verängstigt', 'vergiftet'};
 
-  static bool unlocked(HeroCharacter hero) =>
-      ClassResourceRules.level(hero, 'Mönch') >= 10;
+  /// Untrusted direct/legacy class profiles must not cure a condition
+  /// by treating unknown classes, duplicate aliases or invalid level splits
+  /// as ten confirmed Monk levels.
+  static bool unlocked(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return false;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return false;
+    }
+    return ClassResourceRules.level(hero, 'Mönch') >= 10;
+  }
 
   static List<String> choices(HeroCharacter hero) => !unlocked(hero)
       ? const []

@@ -20,6 +20,82 @@ class FourteenthVoiceAct7 {
     r'\b(?:nicht|niemals|ohne|kein(?:e|en|em|er|es)?)\b',
   ).hasMatch(text);
 
+  // A question, hypothetical consideration or reported refusal is not an
+  // irreversible player decision. Accept only an explicit first-person action.
+  static bool _explicitChoice(String text, RegExp action) {
+    if (text.contains('?') ||
+        _negated(text) ||
+        RegExp(
+          r'\b(?:wenn|falls|ob|würde|wuerde|könnte|koennte|sollte|'
+          r'vielleicht|angenommen|hypothetisch)\b',
+        ).hasMatch(text)) {
+      return false;
+    }
+    return action.hasMatch(text);
+  }
+
+  static final RegExp _refuseOffer = RegExp(
+    r'^(?:ich\s+)?(?:'
+    r'lehne\s+(?:(?:das|den)\s+)?(?:angebot|handel)\s+ab|'
+    r'lehne\s+ab|'
+    r'verweigere\s+(?:(?:das|den)\s+)?(?:angebot|handel)|'
+    r'schlage\s+(?:(?:das|den)\s+)?(?:angebot|handel)\s+aus'
+    r')\.?$',
+  );
+  static final RegExp _feignConsent = RegExp(
+    r'^(?:ich\s+)?(?:'
+    r'täusche\s+(?:die\s+)?zustimmung\s+vor|'
+    r'taeusche\s+(?:die\s+)?zustimmung\s+vor|'
+    r'spiele\s+zustimmung\s+vor|'
+    r'nehme\s+(?:(?:das|den)\s+)?(?:angebot|handel)\s+'
+    r'(?:nur\s+)?zum\s+schein\s+an'
+    r')\.?$',
+  );
+  static final RegExp _entrustLiora = RegExp(
+    r'^(?:ich\s+)?(?:'
+    r'vertraue\s+liora\s+(?:den\s+)?namen\s+an|'
+    r'will\s+liora\s+(?:den\s+)?namen\s+anvertrauen|'
+    r'übergebe\s+liora\s+(?:den\s+)?namen'
+    r')\.?$',
+  );
+  static final RegExp _keepName = RegExp(
+    r'^(?:ich\s+)?(?:'
+    r'will\s+(?:den\s+)?namen\s+selbst\s+(?:bewahren|verwahren)|'
+    r'(?:bewahre|verwahre)\s+(?:den\s+)?namen\s+selbst|'
+    r'behalte\s+(?:den\s+)?namen|'
+    r'(?:den\s+)?namen\s+selbst\s+(?:bewahren|verwahren)'
+    r')\.?$',
+  );
+
+  // Choosing who guards the oath is a confirmed, irreversible story choice.
+  // Merely discussing, questioning or quoting that choice must not unlock
+  // Act VIII. Accept the existing commands and explicit intent variants.
+  static bool _choosesNameCustody(String text, {required bool liora}) {
+    final action = text.replaceAll(RegExp(r'[.!]+$'), '').trim();
+    if (liora) {
+      return const {
+        'ich vertraue liora den namen an',
+        'ich will liora den namen anvertrauen',
+        'ich möchte liora den namen anvertrauen',
+        'ich werde liora den namen anvertrauen',
+        'liora den namen anvertrauen',
+        'ich vertraue liora den namen',
+      }.contains(action);
+    }
+    return const {
+      'ich will den namen selbst bewahren',
+      'ich möchte den namen selbst bewahren',
+      'ich werde den namen selbst bewahren',
+      'ich bewahre den namen selbst',
+      'ich behalte den namen',
+      'ich behalte den namen selbst',
+      'ich will den namen selbst verwahren',
+      'ich möchte den namen selbst verwahren',
+      'ich verwahre den namen selbst',
+      'den namen selbst bewahren',
+    }.contains(action);
+  }
+
   static RabenwachtTurn _move(
     Campaign campaign,
     String stage,
@@ -207,7 +283,7 @@ class FourteenthVoiceAct7 {
           gained: {'voice:termsQuestioned': 'true'},
         );
       }
-      if (_has(text, 'lehn|ablehn|verweig|kein angebot') && !_negated(text)) {
+      if (_explicitChoice(text, _refuseOffer)) {
         return _decision(
           campaign,
           'refused',
@@ -218,8 +294,7 @@ class FourteenthVoiceAct7 {
               'Das vierzehnte Blatt wartet im Lesesaal.',
         );
       }
-      if (_has(text, 'täusch|taeusch|spiele zustimmung|zum schein annehm') &&
-          !_negated(text)) {
+      if (_explicitChoice(text, _feignConsent)) {
         return _decision(
           campaign,
           'feigned',
@@ -305,8 +380,8 @@ class FourteenthVoiceAct7 {
           gained: {'voice:oathPageFound': 'true'},
         );
       }
-      if (_has(text, 'liora anvertrau|vertraue liora|liora den namen') &&
-          !_negated(text)) {
+      if (_explicitChoice(text, _entrustLiora) ||
+          (_choosesNameCustody(text, liora: true) && !_negated(text))) {
         if (campaign.facts['voice:oathPageFound'] != 'true') {
           return RabenwachtTurn(
             campaign,
@@ -331,8 +406,8 @@ class FourteenthVoiceAct7 {
           gained: {'voice:nameCustody': 'liora', 'voice:act7Reached': 'true'},
         );
       }
-      if (_has(text, 'selbst bewahr|selbst verwahr|ich behalte den namen') &&
-          !_negated(text)) {
+      if (_explicitChoice(text, _keepName) ||
+          (_choosesNameCustody(text, liora: false) && !_negated(text))) {
         if (campaign.facts['voice:oathPageFound'] != 'true') {
           return RabenwachtTurn(
             campaign,

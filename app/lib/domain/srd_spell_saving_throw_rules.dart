@@ -8,6 +8,11 @@ import 'srd_character_classes.dart';
 class SrdSpellSavingThrowRules {
   const SrdSpellSavingThrowRules._();
 
+  /// Restricted compatibility entry point for ability-based callers.
+  ///
+  /// The requested ability must belong to a confirmed SRD spellcasting class
+  /// on this character. This does not establish which class prepared a
+  /// particular spell; the caller still verifies that separately.
   static int spellSaveDc(
     HeroCharacter caster, {
     required String spellcastingAbility,
@@ -18,19 +23,28 @@ class SrdSpellSavingThrowRules {
         'Ungeprüfte Gegenstände oder Merkmale könnten den Zauber-SG verändern.',
       );
     }
-    final score = caster.abilities[spellcastingAbility];
-    if (caster.level < 1 ||
-        caster.level > 20 ||
-        score == null ||
-        score < 1 ||
-        score > 30) {
-      throw const FormatException(
-        'Zauberstufe und Zauberattribut müssen bestätigt sein.',
-      );
+    final primary = findSrdClass(caster.className)?.name;
+    final secondary = caster.secondaryClassName.trim().isEmpty
+        ? null
+        : findSrdClass(caster.secondaryClassName)?.name;
+    for (final castingClass in [
+      if (primary != null) primary,
+      if (secondary != null) secondary,
+    ]) {
+      if (_classSpellAbilities[castingClass] != spellcastingAbility) {
+        continue;
+      }
+      // Reuse the full, existing class-level and ability validation instead
+      // of granting an unrelated or malformed profile a plausible spell DC.
+      return statsForClass(
+        caster,
+        castingClass: castingClass,
+        noUnmodelledModifiersConfirmed: true,
+      ).spellSaveDc;
     }
-    return 8 +
-        RulesEngine.proficiencyBonus(caster.level) +
-        RulesEngine.abilityModifier(score);
+    throw const FormatException(
+      'Das Zauberattribut gehört zu keiner bestätigten eigenen Zauberklasse.',
+    );
   }
 
   /// Canonical SRD spellcasting abilities for the eight spellcasting classes.

@@ -139,6 +139,33 @@ class FourteenthVoiceStoryModule {
     return fragments.split('|').any(spoken.contains);
   }
 
+  // Protect, accuse and defer judgement are persistent relationship choices.
+  // Mentioning a verb in a question, quotation or hypothetical is not consent.
+  static final RegExp _protectLiora = RegExp(
+    r'^(?:ich\s+)?(?:'
+    r'(?:schütze|schuetze|beschütze|beschuetze|verteidige)\s+'
+    r'(?:liora|die\s+frau|die\s+fremde)|'
+    r'(?:will|möchte|moechte)\s+(?:liora|die\s+frau|die\s+fremde)\s+'
+    r'(?:schützen|schuetzen|beschützen|beschuetzen|verteidigen)'
+    r')\.?$',
+  );
+  static final RegExp _accuseLiora = RegExp(
+    r'^(?:ich\s+)?(?:'
+    r'(?:beschuldige|verdächtige|verdaechtige)\s+'
+    r'(?:liora|die\s+frau|die\s+fremde)|'
+    r'klage\s+(?:liora|die\s+frau|die\s+fremde)\s+an|'
+    r'(?:will|möchte|moechte)\s+(?:liora|die\s+frau|die\s+fremde)\s+'
+    r'(?:beschuldigen|verdächtigen|verdaechtigen)'
+    r')\.?$',
+  );
+  static final RegExp _seekEvidenceFirst = RegExp(
+    r'^(?:ich\s+)?(?:'
+    r'(?:will\s+)?(?:erst|zuerst)\s+(?:belege|beweise)\s+suchen|'
+    r'suche\s+(?:erst|zuerst)\s+(?:belege|beweise)|'
+    r'ermittle\s+(?:erst|zuerst)'
+    r')\.?$',
+  );
+
   static int evidenceCount(Campaign campaign) => [
     'voice:memorySketch',
     'voice:splitInkLetter',
@@ -396,8 +423,20 @@ class FourteenthVoiceStoryModule {
       );
     }
     if (stage == 'voice-square') {
-      if (_has(spoken, 'schütze|schuetze|verteidig|beschütz|beschuetz') &&
-          _has(spoken, 'liora|frau|fremde')) {
+      final action = spoken.trim();
+      final protect = _protectLiora.hasMatch(action);
+      final accuse = _accuseLiora.hasMatch(action);
+      final investigate = _seekEvidenceFirst.hasMatch(action);
+      if ((protect || accuse || investigate) &&
+          campaign.facts['voice:lioraChoice'] != null) {
+        return RabenwachtTurn(
+          campaign,
+          'Deine erste Entscheidung über Liora ist bereits bestätigt. '
+          'Du kannst weitere Spuren sammeln, ohne diese Vergangenheit '
+          'rückwirkend umzuschreiben.',
+        );
+      }
+      if (protect) {
         return _move(
           campaign,
           stage,
@@ -408,8 +447,7 @@ class FourteenthVoiceStoryModule {
           gained: {'voice:lioraChoice': 'protect'},
         );
       }
-      if (_has(spoken, 'beschuldig|anklag|verdächtig|verdaechtig') &&
-          _has(spoken, 'liora|frau|fremde')) {
+      if (accuse) {
         return _move(
           campaign,
           stage,
@@ -420,7 +458,7 @@ class FourteenthVoiceStoryModule {
           gained: {'voice:lioraChoice': 'accuse'},
         );
       }
-      if (_has(spoken, 'erst belege|zuerst belege|beweise suchen|ermitteln')) {
+      if (investigate) {
         return _move(
           campaign,
           stage,
@@ -428,6 +466,19 @@ class FourteenthVoiceStoryModule {
           'Elda bittet dich in ihr Haus; Tarek zeigt '
           'auf einen seltsamen Brief.',
           gained: {'voice:lioraChoice': 'evidence'},
+        );
+      }
+      if (_has(
+        spoken,
+        'schütze|schuetze|beschütz|beschuetz|verteidig|'
+        'beschuldig|anklag|verdächtig|verdaechtig|'
+        'erst belege|zuerst belege|beweise suchen|ermitteln',
+      )) {
+        return RabenwachtTurn(
+          campaign,
+          'Eine Erwähnung oder Frage ist noch keine Entscheidung über '
+          'Liora. Wähle ausdrücklich: „Ich schütze Liora.“, '
+          '„Ich beschuldige Liora.“ oder „Ich will erst Belege suchen.“',
         );
       }
       if (_has(

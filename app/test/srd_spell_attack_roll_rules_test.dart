@@ -162,8 +162,53 @@ void main() {
       expect(rng.calls, 1);
     });
 
+    test('cancelled advantage permits a confirmed manual die without RNG', () {
+      final rng = _SequenceRandom([19]);
+      final dice = DiceEngine(random: rng);
+      for (final natural in [1, 11, 20]) {
+        final result = _attack(
+          dice: dice,
+          natural: natural,
+          advantage: true,
+          disadvantage: true,
+        );
+        expect(result.roll.rolls, [natural]);
+        expect(result.roll.natural, natural);
+        expect(result.roll.total, natural + 4);
+        expect(result.hit, natural != 1);
+        expect(result.critical, natural == 20);
+      }
+      expect(rng.calls, 0);
+    });
+
+    test('cancelled manual roll still requires target and cover evidence', () {
+      final rng = _SequenceRandom([19]);
+      final dice = DiceEngine(random: rng);
+      expect(
+        () => _attack(
+          dice: dice,
+          natural: 20,
+          advantage: true,
+          disadvantage: true,
+          eligibility: false,
+        ),
+        throwsFormatException,
+      );
+      expect(
+        () => _attack(
+          dice: dice,
+          natural: 20,
+          advantage: true,
+          disadvantage: true,
+          cover: CoverLevel.total,
+        ),
+        throwsFormatException,
+      );
+      expect(rng.calls, 0);
+    });
+
     test('manual single d20 cannot masquerade as advantage roll', () {
-      for (final flags in [(true, false), (false, true), (true, true)]) {
+      for (final flags in [(true, false), (false, true)]) {
         expect(
           () =>
               _attack(natural: 20, advantage: flags.$1, disadvantage: flags.$2),

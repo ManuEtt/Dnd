@@ -1,0 +1,41 @@
+## 06.11.2026 – konfliktarmer Regel-PR, gemeinsame Statusnachträge separat
+
+Aktuelle integrierte Main-Basis: `2a4fab5a56127d866dd2a8933836fd1136d772b3`. README, zentraler und persönlicher Checkpoint, Entwicklungsstatus und Changelog entsprechen in diesem Codebranch unverändert Main. Die eigenen Nachträge sind vollständig im separaten [Dokumentations-PR #607](https://github.com/ManuEtt/Dnd/pull/607) erhalten; das folgt der Konfliktregel in Abschnitt 9 des Parallel-Masterprompts und verhindert wiederkehrende gemeinsame README-Konflikte im Regel-PR #586. Dieser exklusive Fachnachweis bleibt beim Code, ebenso der maschinenlesbare Requirementnachweis und alle Tests.
+
+App-/Backendquellen sind seit Codeabnahme `1bb7c977` unverändert; lokale 3354 Flutter-/79 Backend-Tests, 14 native Tests, ARM64-Debug und ARM64-Alpha mit allen 30 generierten Button-PNGs sind belegt. Neue Main-Paketierungsskripte werden separat erneut geprüft, die finale CI läuft auf dem neuen Head. Kein ungeprüfter Main-Merge behauptet. Der vorherige kombinierte Head `9eb6de6e` hat bereits alle sechs Jobs in CI 42162661840 bestanden. Die folgenden Abschnitte bewahren frühere eingefrorene Momentaufnahmen.
+
+---
+
+## 06.11.2026 – aktueller Main ohne Regelquellenänderung übernommen
+
+Main `84c6259b38c5f742198276ae3d3d0f80d0c4f51e` (Merge #584, Windows-sichere ZIP-Namen) wurde regulär in den eigenen Perfect-Focus-Branch übernommen. Nur README und zentraler Checkpoint kollidierten; Main-Inhalte vollständig erhalten, eigene README-Nachträge danach angehängt. App-Regel-/Testquellen, Backend, Android und Version sind bytegleich zum vorher vollständig lokal geprüften Head `1bb7c977` (3354 Flutter-, 341 Python-, 79 Backend-Tests, ARM64-Debug und 14 native Fälle bestanden). Die neue Python-Prüfung und der aktuelle kombinierte CI-Head werden erneut abgenommen. Kein Main-Push, kein Force-Push. Die folgenden ursprünglichen Einträge bleiben historische Momentaufnahmen der frühen Basis 0e4474c5.
+
+Zusätzliche APK-Prüfung: vorhandene CI-Alpha enthält keine generierten Button-PNGs, lokales Debug enthält alle 30; Architekturjobs im Workflow erzeugen sie nicht. Eine lokale ARM64-Test-APK im Releasemodus mit den 30 Bildern wird aus identischen App-Quellen gesichert. CI-Paketierung ist ein gesonderter Integrationshinweis; keine Änderungen am CI-Workflow im Regelpaket. Tatsächliche finale Ergebnisse stehen in PR #586 und im externen Importleitfaden.
+
+---
+
+## 06.11.2026 – Perfekter Fokus aus konsistenten Mönchsklassen
+
+**Arbeitsbranch:** `fix/chat-a/monk-perfect-focus-profile-20261106`. **Main-Basis:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`, zugehörige Main-CI [42099192485](https://github.com/ManuEtt/Dnd/actions/runs/42099192485) tatsächlich vollständig erfolgreich. **Fachcommit:** `62e4544571f86ac5366b90ce2b91fab698e2eab7`. **PR:** [#586](https://github.com/ManuEtt/Dnd/pull/586), [aktuelle Head-Checks](https://github.com/ManuEtt/Dnd/pull/586/checks). Version **0.8.52+102** unverändert.
+
+**IMPLEMENTIERT:** MonkPerfectFocus.onInitiative prüft vor jeder automatischen Fokusgutschrift bekannte kanonische Klassen, unterschiedliche Mehrklassen und gültige Stufen 1–20. Unbekannte Begleitklassen, doppelte Mönchsaliase und unmögliche Stufensplits erhalten denselben Hero mit recovered=0. Kein nachträgliches Reparieren gespeicherter Figuren. Gültige deutsche/englische Aliase, Mönch 15/Kämpfer 2 in beiden Reihenfolgen und vorhandene Auffüllung auf vier bleiben erhalten. Kein automatischer Unheimlicher Stoffwechsel und keine Heilung. Die veraltete Quellkommentarbehauptung, Stoffwechsel sei nicht implementiert, wurde an die tatsächlich vorhandene separate Integration angepasst.
+
+**GETESTET beim Einfrieren:** 26 neue Domainfälle, sechs echte Controller-/SQLite-Flows und zwei tatsächliche App-UI-Flows sowie 15 bestehende Fachtests. Alle drei Kampfstartwege (Waldschrein, Rabenwacht, bestätigtes KI-Kampfangebot), tatsächlicher Legacy-JSON-Import, Fokusgrenzen, gültige Aliase/Mehrklassen, unveränderte TP/andere Ressourcen, Export/Import, Rekonstruktion, Neustart, requestId-Replay, stale Controller und später SQL-Rollback. Die regulären zwei Initiativewürfe finden weiterhin statt; das Paket blockiert unberechtigte Gutschriften und behauptet keine RNG-freie Kampfabweisung. Bei spätem SQL-Fehler rollt die gespeicherte Transaktion zurück, nicht legitime Würfel; stale/replay verursachen keine zusätzlichen Würfe.
+
+**WEITERE ABNAHME:** Vollständiges `bash scripts/check.sh` läuft auf gleichem Regel-/Testcode. Finale GitHub-CI, lokale Android-/native Prüfung sowie tatsächliche Source-/APK-Artefakte nach Abschluss separat im PR und externen Importleitfaden dokumentieren. Dieser eingefrorene Quellstand beschreibt ausdrücklich den Zeitpunkt vor Gesamtabnahme; keine noch offene Prüfung als Erfolg ausweisen. **NICHT GETESTET:** reales Androidgerät, TalkBack, tatsächliches APK-Upgrade, produktive Signierung. **BLOCKIERT:** keine Implementierungsblockade; Review und koordinierte Main-Integration noch ausstehend. Die bekannte nullable-NPC-whereArgs-Warnung in unverändertem removePendingAction ist kein neuer Fokus-Testfehler.
+
+**UMFANG:** Nur `app/lib/domain/monk_perfect_focus.dart`, drei neue `monk_perfect_focus_profile{,_flow,_ui}_test.dart`, Nachweisdokumentation und vorhandenes Requirement. GameEngine, MonkInitiativeFeatures, öffentliche API, Modelle, Controller und Speicher unverändert. SQLite 3 / äußeres JSON 1 ohne Migration. Alle sieben zuvor offenen PR-Dateilisten geprüft, keine Modulüberschneidung; #579 Sanfter Fall bearbeitet ein anderes spezialisiertes Modul. README gemäß neuer Regel ausschließlich neutral am absoluten Dateiende ergänzt. Fremde Fortschritte bei Integration additiv bewahren. Bardenpaket #576 und frühere Regelpakete sind bereits durch die Integration in Main übernommen; hier keine zweite Implementierung oder Branchlöschung.
+
+**REGELNACHWEIS:** Offizielles SRD 5.2.1 S. 52, Perfect Focus / Monk 15, CC BY 4.0. Tatsächliche Initiative ohne Uncanny Metabolism regeneriert verbrauchte Punkte bei höchstens drei vorhandenen bis auf vier. `CLASS-M-NCH-15-BASE-PERFECT-FOCUS-0` von unverified nach partial mit Code-/Testnachweisen; keine globale SRD-/Charaktererstellungs-Fertigstellung oder erfundenen Entity-Einträge.
+
+**NÄCHSTER KONKRETER SCHRITT:** Nach frischem Main-/PR-Dateiabgleich den expliziten Pfad `MonkInitiativeFeatures.onInitiative(useUncannyMetabolism: true)` auf bekannte, konsistente Klassenberechtigung prüfen. Akzeptanz: ungültige Profile dürfen weder Heilung/Fokus noch einmalige Nutzung/Zusatzwürfel auslösen, gültige Mönchsklassen und Spielerentscheidung bleiben erhalten. Diese zusätzliche Fähigkeit ist nicht durch das aktuelle Paket vollständig abgesichert. Keine automatische Hintergrundentwicklung nach Sitzungsende.
+
+---
+
+## Technische und historische Abgrenzung
+
+Die private Prüfung verwendet den bestehenden findSrdClass-Resolver und die bestehende ClassResourceRules-Formel. Ein geeigneter öffentlicher Klassenvalidator existiert nicht; die öffentliche Konzentrationsprüfung verlangt zusätzlich sachfremde Rettungswurfübungen. Keine erfundenen Bestätigungsflags, keine neue globale Berechnung.
+
+Neue Domainregressionen vor der Änderung: 15 bestanden / 11 fehlgeschlagen, entsprechend tatsächlich unberechtigter Profil-Gutschriften. Nach Änderung 41 Domain-/Bestandsfälle, sechs SQL- und zwei UI-Fälle bestanden. Ein früher Zielaufruf enthielt zusätzlich einen nicht existierenden Testdateinamen; er wurde auf die tatsächlich vorhandene monk_uncanny_metabolism_test.dart korrigiert. Kein Test deaktiviert oder abgeschwächt. Die fünf bisherigen Perfect-Focus- und zehn Uncanny-Fälle bleiben unverändert.
+
+UI-Nachweis bei 360 dp mit echter App, Outbox, sichtbarer Spielleiterantwort und SQLite-Neustart. Kein echter Android-Geräteversuch. Offizielles PDF SHA-256 8974902d109d6e63672d7c490bde9ccf052410503d9cfa768237154fbc5e3d87, Quelle https://www.dndbeyond.com/srd . Lizenzhinweise unverändert in THIRD_PARTY_NOTICES.md. Nachweise unter /workspace/validation/20261106-monk-focus-* und Source-/APK-Lieferung unter /workspace/artifacts/monk-perfect-focus-20261106. Finale Testergebnisse/CI im PR und externen Leitfaden ergänzen; eingefrorene Repo-Dokumentation nicht als spätere Erfolgsbehauptung umdeuten.

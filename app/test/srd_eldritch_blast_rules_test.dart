@@ -323,6 +323,46 @@ void main() {
     }
   });
 
+  test('unusable HP snapshots reject every beam before the first die', () {
+    final source = _warlock();
+    final invalid = <HeroCharacter>[
+      source.copyWith(hitPoints: 0),
+      source.copyWith(hitPoints: -1),
+      source.copyWith(hitPoints: -20),
+      source.copyWith(maxHitPoints: 0),
+      source.copyWith(maxHitPoints: -1),
+      source.copyWith(hitPoints: 21),
+      source.copyWith(hitPoints: 1, maxHitPoints: 0),
+    ];
+    for (final caster in invalid) {
+      final snapshot = jsonEncode(caster.toJson());
+      final random = _SequenceRandom([19, 9, 19, 9]);
+      expect(() => _resolve(caster: caster, random: random), throwsStateError);
+      expect(random.calls, 0);
+      expect(jsonEncode(caster.toJson()), snapshot);
+    }
+    expect(source.hitPoints, 20);
+    expect(source.maxHitPoints, 20);
+  });
+
+  test('one HP and unknown legacy HP fields retain read-only beams', () {
+    final valid = <HeroCharacter>[
+      _warlock().copyWith(hitPoints: 1),
+      _warlock().copyWith(maxHitPoints: null),
+      _warlock().copyWith(hitPoints: null),
+    ];
+    for (final caster in valid) {
+      final snapshot = jsonEncode(caster.toJson());
+      final random = _SequenceRandom([9, 0, 9, 0]);
+      final resolved = _resolve(caster: caster, random: random);
+      expect(resolved.beams, hasLength(2));
+      expect(resolved.beams.every((beam) => beam.hit), isTrue);
+      expect(resolved.totalRawForceDamage, 2);
+      expect(random.calls, 4);
+      expect(jsonEncode(caster.toJson()), snapshot);
+    }
+  });
+
   test('no resources, HP or state are changed; output is read-only', () {
     final hero = _warlock().copyWith(spentPactSlots: 1, concentratingOn: 'Hex');
     final snapshot = jsonEncode(hero.toJson());

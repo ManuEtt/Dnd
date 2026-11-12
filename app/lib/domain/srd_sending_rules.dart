@@ -69,11 +69,26 @@ class SrdSendingRules {
     required SendingRecipientKnowledge knowledge,
     required bool recipientIsCreatureConfirmed,
   }) {
-    if (spell.name != 'Sending' ||
+    // The constructor is public. Matching a spell name and a few fields is
+    // insufficient to authorize a Sending preview with forged metadata.
+    // Pin this narrow rule to the complete current SRD catalogue entry.
+    if (spell.id != 'spell-sending' ||
+        spell.name != 'Sending' ||
         spell.level != 3 ||
+        spell.school != 'Divination' ||
+        spell.classes.length != 3 ||
+        spell.classes[0] != 'Bard' ||
+        spell.classes[1] != 'Cleric' ||
+        spell.classes[2] != 'Wizard' ||
         spell.range != 'Unlimited' ||
         spell.castingTime != 'Action' ||
-        spell.concentration) {
+        spell.components != 'V, S, M (a copper wire)' ||
+        spell.duration != 'Instantaneous' ||
+        !spell.verbal ||
+        !spell.somatic ||
+        !spell.material ||
+        spell.concentration ||
+        spell.ritual) {
       throw UnsupportedError(
         'Nur der konkret bestätigte SRD-Zauber Sending wird unterstützt.',
       );

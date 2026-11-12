@@ -140,8 +140,19 @@ void main() {
       totalLevel: 6,
       secondLevel: 2,
     );
-    expect(MulticlassRules.combinedSpellcasterLevel(mixed), 2);
-    expect(MulticlassRules.spellSlots(mixed).first, 3);
+    final mixedSnapshot = mixed.toJson();
+    expect(MulticlassRules.combinedSpellcasterLevel(mixed), 0);
+    expect(MulticlassRules.spellSlots(mixed), everyElement(0));
+    expect(SpellcastingRules.availableSlots(mixed), isEmpty);
+    expect(
+      () => SpellcastingRules.cast(
+        mixed,
+        spellName: 'Magisches Geschoss',
+        spellLevel: 1,
+      ),
+      throwsStateError,
+    );
+    expect(mixed.toJson(), mixedSnapshot);
     expect(mixed.toJson()['className'], 'Unknown Homebrew');
     expect(mixed.toJson()['secondaryClassName'], 'Wizard');
   });

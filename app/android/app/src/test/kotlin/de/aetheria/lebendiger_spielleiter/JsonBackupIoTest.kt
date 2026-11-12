@@ -87,6 +87,16 @@ class JsonBackupIoTest {
     }
 
     @Test
+    fun onlyConfirmedEmptyDocumentsAreAcceptedAsBackupTargets() {
+        JsonBackupIo.requireEmptyTarget(0L)
+        listOf(null, -1L, 1L, JsonBackupIo.MAX_BYTES.toLong()).forEach { size ->
+            assertThrows(IOException::class.java) {
+                JsonBackupIo.requireEmptyTarget(size)
+            }
+        }
+    }
+
+    @Test
     fun readsExactBoundaryAndClosesWithoutTrustingAnInflatedAvailableSize() {
         val input = TrackingInput(JsonBackupIo.MAX_BYTES, Int.MAX_VALUE)
         val bytes = JsonBackupIo.read(input)

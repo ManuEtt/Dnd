@@ -2268,3 +2268,38 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Branch:** `fix/chat-d/verify-project-root-symlink-20261110`. CI-Prüfung nach PR-Erstellung ausstehend; keine Änderungen an Spielständen, Datenbankschema, App-Laufzeit oder Buildversion.
 
 - Ausgangs-Main `5fa4037450c955f9dd393472239e7b5de1aa7fc3`; nächster Schritt: CI-Ergebnis prüfen.
+
+
+
+
+## 2026-11-09 – Android-SAF-Backupziele vor unbeabsichtigtem Überschreiben schützen
+
+- **Ausgangs-main:** `f848cedef7787e2e89df7b63d93d04dfb06ed8ed`.
+- **Branch:** `fix/chat-d/android-backup-existing-target-20261109`.
+- **Problem:** Android `ACTION_CREATE_DOCUMENT` kann laut API-Referenz ein bestehendes Dokument zurückgeben. Die native Bridge öffnete diesen URI mit truncierendem Modus und löschte ihn bei Schreibfehlern/Abbruch.
+- **Implementiert:** Vor dem Öffnen nur bestätigte 0-Byte-Ziele akzeptieren; fehlende, negative oder nichtleere Größen fail-closed ablehnen. Keine automatische Löschung eines zurückgegebenen URI nach Fehler/Abbruch. Fehlerhinweis nennt mögliche unvollständige Datei.
+- **Geänderte Dateien:** `app/android/app/src/main/kotlin/de/aetheria/lebendiger_spielleiter/JsonBackupBridge.kt`, `JsonBackupIo.kt`, `app/android/app/src/test/kotlin/de/aetheria/lebendiger_spielleiter/JsonBackupIoTest.kt`, README und Checkpoints sowie Integrationsbericht.
+- **Tests ergänzt:** Bestätigtes 0-Byte-Ziel akzeptiert; null, negative und nichtleere Größen abgelehnt. Vorhandene Stream-/Abbruchtests bleiben.
+- **Nicht getestet:** Finaler CI-Workflow, echte SAF-Provider-/Geräteprüfung, atomare Absicherung gegen parallele externe Änderungen nach Metadatenabfrage.
+- **Migration:** Keine. JSON, SQLite, Spielstände, Backups und App-Version bleiben unverändert.
+- **Nächster Schritt:** Vollständige CI auf finalem PR-HEAD prüfen; Geräte-/Providerabnahme separat.
+
+
+
+
+## 2026-11-10 – Eltern-Symlinks vor Dart-Modulprüfung sperren
+
+- Basis: `73f377ece91cb14a5074ddba16fbbc57b153026e`; Branch: `fix/chat-d/boundary-parent-symlink-20261110`.
+- Problem: Bei einem verlinkten `app/` oder `app/lib/` konnten reale Modulverzeichnisse außerhalb des Checkouts durchsucht werden; bisher wurden nur die Modulwurzeln selbst und gefundene Einträge kontrolliert.
+- Implementiert: Prüfung jedes Pfadsegments vor dem Traversieren, sofortige Ablehnung mit neutraler Meldung; bestehende Modulgrenzen und erlaubte Importe unverändert.
+- Positive Abdeckung: bestehende Repository- und Importtests. Negative Regressionen: verlinktes `app/` und verlinktes `app/lib/`.
+- Noch nicht getestet: vollständiger neuer CI-Lauf auf finalem Commit, Android-Realgerät. Keine Datenmigration.
+- Nächster Schritt: finale Python-/Backend-/Flutter-/Android-/Release-CI prüfen und bei Erfolg konfliktfrei integrieren.
+
+
+
+### 2026-11-11 – Rabenwacht-Reiseverbprüfung auf aktueller Main-Basis integriert (CI offen)
+
+- Übernahme des eigenständigen Wortgrenzen-Fixes aus PR #684 mit positivem Gegenbeispiel für Kapellenuntersuchung. Quellbranch-HEAD `b9836aecd8507cf0af96685643cc6e28801d988f` als zweiter Commit-Elternknoten erhalten.
+- Konfliktfreie Konsolidierung der README ausschließlich am Dateiende; alle früheren Main-Nachträge und Story-Checkpoints bleiben erhalten.
+- **Teststand:** Vorgänger-CI #42957164227 bestand 3.353 Flutter-Tests und scheiterte an einem inzwischen korrigierten Regressionstest. Finale CI auf Integrationsstand noch offen; keine Behauptung eines grünen APK-Builds, keine Speicher- oder Schemaänderung.

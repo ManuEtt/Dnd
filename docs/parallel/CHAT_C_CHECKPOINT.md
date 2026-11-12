@@ -895,3 +895,300 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Lokal kein Flutter- oder Dart-SDK; dokumentationsseitige Überschneidungen mit bestehenden offenen PRs müssen bei der Integration verlustfrei zusammengeführt werden.
 - **Migrationen:** Keine; ausschließlich UI-lokaler Entwurfszustand betroffen, bestätigte Spielstände und Regeln bleiben unverändert.
 - **Nächster Schritt:** CI auf dem finalen PR-SHA abwarten und bei grünen Jobs die manuelle Android-/TalkBack-Prüfung der Nebenhand-Formularauswahl bei Zielwechsel durchführen.
+
+
+## 05.11.2026 – JSON-Export mit 200 % Schrift und langen Spielständen (PR #583)
+
+- **Ausgangs-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`.
+- **Branch:** `feat/chat-c/backup-export-large-text-20261105`; **Pull Request:** [#583](https://github.com/ManuEtt/Dnd/pull/583), Draft.
+- **Problem:** Der Exportdialog verwendete eine innere `SingleChildScrollView` unter einem festen Titel. Lange auswählbare JSON-Texte bei 320/360 dp, 200 % Schrift und verkleinertem sichtbarem Bildschirm brauchen eine gemeinsame scrollbarere Dialogoberfläche mit erreichbaren Aktionen.
+- **IMPLEMENTIERT:** In `app/lib/ui/backup_dialogs.dart` nur den Exportdialog auf `AlertDialog(scrollable: true)` umgestellt, innere Scrollfläche entfernt und Dialogränder verkleinert; Save/Copy/Close, Busy- und Android-Zurück-Sperre, vollständiger JSON-Text, Fehlermeldungs-Live-Region unverändert.
+- **Widgettests:** Neue `app/test/backup_export_large_text_accessibility_test.dart`: sechs positive/negative Fälle bei 320/360 dp/200 % Schrift/220 dp IME-Inset. Prüfen vollständiges JSON in Zwischenablage und Dateidienst, eindeutige Schließaktion, gesperrte Doppelaktionen und Zurück während wartender Dateioperation, Abbruchmeldung, private Pfade nicht in UI, Screenreader-Live-Meldung.
+- **GETESTET:** Main-SHA, offenen PR-Status und drei fremde PR-Dateilisten geprüft; keine UI-Pfadüberschneidung. GitHub-Code-/Testdateien erstellt.
+- **NICHT GETESTET:** Dart-Formatter/Flutter-Analyse und tatsächliche Widget-/Gesamttests sowie Android-Debug-/ABI-APKs des finalen PR-Kopfes bis zur CI-Auswertung; physisches Android mit TalkBack/IME.
+- **BLOCKIERT:** Lokale Dart-/Flutter-SDKs fehlen. PR bis vollständiger CI und Review Draft; keine automatische Integration.
+- **Kompatibilität:** Kein JSON-/SQLite-/Schema-/API-/Berechtigungs-/App-Versionswechsel und keine Migration.
+- **NÄCHSTER SCHRITT:** CI dieses Branches prüfen; fehlerhafte Formatierung oder Widgetannahmen im selben PR korrigieren und vollständig neu testen.
+
+---
+
+
+## 2026-11-06 – Busy-Sperren aller Abenteuer-Schnellaktionen für TalkBack
+
+- **Basis-main:** `0e4474c55ce80f625f373394d6f7855b4a2487ad`; unabhängiger Main-Fortschritt `84c6259b38c5f742198276ae3d3d0f80d0c4f51e`.
+- **Branch:** `feat/chat-c/quick-actions-busy-semantics-20261106`, **Code-/Testcommit:** `90cb263a396912257974422c7dfdb20969ff8f5a`; **PR:** [#588](https://github.com/ManuEtt/Dnd/pull/588) (Draft).
+- **Ausgangsproblem:** Bei `busy` sind alle vier fixierten Aktionen deaktiviert. Der Angriff erklärte den Zustand bereits, Sprache/Untersuchen/W20 nicht. Die Tab-/Enter-Regression existiert bereits und blieb unangetastet.
+- **IMPLEMENTIERT:** Gemeinsamer sprechbarer Busy-Grund bei den drei bisher nicht erläuterten Schnellaktionen, bei verfügbarem Zustand kein Sperrhinweis, bei kontextgesperrtem Angriff weiterhin eigener Grund.
+- **Dateien:** `app/lib/ui/fantasy_art.dart`, neue `app/test/fantasy_quick_actions_busy_semantics_test.dart`, append-only README und additive Checkpoint-Nachträge.
+- **Widgettests:** Fünf Fälle für 320/360 dp, 2x Schrift, 270 dp Android-IME, Semantik-Labels/-Hints, Disable-Flag, keine unzulässigen Aufrufe, Zustandswechsel Busy → Bereit.
+- **GETESTET:** Quell- und Testanordnung sowie bestehende Fokus-/Hit-Tests geprüft; alle offenen konkurrierenden Fach-PR-Dateilisten ohne UI-Überschneidung.
+- **NICHT GETESTET:** Flutter-Format/Analyse/Vollsuite und Android-/ABI-/Native-CI auf dem finalen Branch-HEAD noch offen; Realgerät/TalkBack/IME nicht durchgeführt.
+- **BLOCKIERT:** Fehlendes lokales Flutter-SDK; abschließende GitHub-CI und Integration durch Review. Keine automatische Mergefreigabe.
+- **Kompatibilität:** Keine Migration/Schema-/JSON-/SQLite-/Regel-/Controller-/Backup-/Versionsänderung.
+- **NÄCHSTER SCHRITT:** Branch-CI auswerten, bei Format-/Widgetfehlern gleiches Paket korrigieren und erneut testen.
+
+
+## 2026-11-06 – Zustandskreis-Verwaltung bei großer Schrift (PR #591)
+
+- **Ausgangs-main:** `84c6259b38c5f742198276ae3d3d0f80d0c4f51e`; während Entwicklung vorgerückter main `9a0fa855374a67805e531ad8574e048d99b33745`.
+- **Eigener Branch:** `feat/chat-c/ward-management-large-text-20261106`; **Code-/Testcommit:** `8a562f633262ae304dc927465f337d3bc8ca5e27`; **Draft-PR:** [#591](https://github.com/ManuEtt/Dnd/pull/591).
+- **Ausgangsproblem:** Zwei überlange, intrinsisch breite TextButton.icon-Aktionen im `FantasyEffectWard` sind auf 320/360 dp bei 200 % Schrift und offenem IME nicht gezielt auf vollständige Lesbarkeit abgesichert.
+- **IMPLEMENTIERT:** Vollbreite, flexible mehrzeilige Label-Darstellung für beide Aktionen nur bei großer Schrift / kleinem Inhalt; reguläres UI unverändert. Exakte bestehenden Callback- und Button-Keys erhalten; fehlende Aktionen bleiben unsichtbar.
+- **Geänderte Fachdateien:** `app/lib/ui/fantasy_effect_ward.dart`, `app/test/fantasy_ward_management_large_text_test.dart`; gemeinsame README/CODEX-Notizen ausschließlich angehängt.
+- **Tests:** fünf neue Widgetfälle, 320/360 dp bei 200 % + 220 dp IME; vollständige Labels, physisch sichtbare Schaltflächen, einzeln auslösbare Aktionen, fehlende Verwaltungsrechte, unveränderte JSON-Snapshots, Standardansicht.
+- **GETESTET:** Aktuelle Fachmodule, bestehende Tests und alle offenen fremden PR-Fachdateien auf Überschneidung geprüft; neue Code-/Testdatei auf Branch committet.
+- **NICHT GETESTET:** Finale Dart-Formatierung, Flutter-Analyse und Vollsuite, Android-Debug-/ABI-/Native-Build und reales Android mit TalkBack vor Abschluss der CI.
+- **BLOCKIERT:** Lokale Flutter-/Dart-SDKs fehlen; Freigabe erst mit GitHub-CI und Review. Gemeinsame Dokumentationsnachträge anderer Chats nicht überschreiben.
+- **Migration:** keine; unveränderte Regeln, JSON-/SQLite-Schemata, Speicher- und App-Version.
+- **NÄCHSTER SCHRITT:** Main-Synchronisierung, vollständige CI und ggf. identische Regressionskorrektur auf demselben Draft-PR.
+
+
+
+## 06.11.2026 – NPC-Beziehungsentwurf bleibt beim Zielwechsel nicht erhalten
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`.
+- **Branch:** `feat/chat-c/npc-relationship-note-reset-20261106`; **Fach-/Test-Commit:** `bc9fe9f24554980e180cfa5c3057b80331237f8d`. Finaler HEAD inklusive Dokumentation ist gesondert abzulesen.
+- **PR:** [#596](https://github.com/ManuEtt/Dnd/pull/596), Draft, kein automatischer Merge.
+- **Ausgangsproblem:** Beim Wechsel von NPC A zu NPC B konnte eine unbestätigte Erklärung aus A unverändert für B bestätigt werden.
+- **IMPLEMENTIERT:** NPC-ID-spezifischer TextFormField-Key und explizites Zurücksetzen des Notizentwurfs beim Figurenwechsel; Beziehungsvorauswahl bleibt aus dem gewählten NPC. Keine Domänen- oder Persistenzänderung.
+- **Geänderte Dateien:** `app/lib/ui/campaign_memory_panel.dart`, `app/test/campaign_memory_npc_switch_draft_test.dart`, additive README- und zentrale sowie persönliche Checkpoint-Nachträge.
+- **Positive und negative Tests ergänzt:** A→B nur mit neuer Begründung speichern, leere Begründung sperrt Bestätigung, A→B→A keine alte Texteingabe, Abbrechen ohne gespeicherte Änderung, Original-JSON bleibt gleich.
+- **GETESTET:** GitHub-main, alle 15 zuvor offenen PR-Dateipfade, eigener Branch, Quellcode-/Testcommits und Draft-PR auf GitHub. Main-CI [#42168660349](https://github.com/ManuEtt/Dnd/actions/runs/42168660349) ist erfolgreich, aber kein neuer Testnachweis.
+- **NICHT GETESTET:** lokaler Flutter/Dart-Test (SDK fehlt); finale GitHub-CI, Flutter-Analyse, Dart-Format, APK/ABI-Android-Build, echtes TalkBack/IME und Altdatenupgrade.
+- **BLOCKIERT:** Abschluss der PR-CI; Konfliktmanagement für gemeinsame README-/Checkpoint-Dateien durch koordinierte Integration.
+- **Migration/Kompatibilität:** Keine SQLite-, JSON-, Controller-, Regeln-, Story- oder Versionsänderung.
+- **NÄCHSTER SCHRITT:** Finale PR-CI und Widgettests prüfen, Format- oder Regressionfehler gezielt beheben, anschließend Android-IME/TalkBack auf Realgerät gesondert abnehmen.
+
+---
+
+
+
+## 06.11.2026 – Große Schrift für Angriffsfolge und Reaktionen
+
+- **Ausgangs-main:** `9a0fa855374a67805e531ad8574e048d99b33745`, später konfliktfrei mit `95c605898f1bcae26e0a23afa55c767ec5b20744` per Zwei-Eltern-Merge synchronisiert.
+- **Branch:** `feat/chat-c/combat-threat-wide-seals-20261106`. **Fach-/Test-Commit:** `66e1b4ddf3cd0e1fcc9ced00b2bfab47e6907790`, **Main-Sync:** `837c00ffe3f4e97648c482224f16426e7d918204`. **Draft-PR:** [#603](https://github.com/ManuEtt/Dnd/pull/603).
+- **Problem:** Schmale Android-Ansichten bei großer Schrift führten bestätigte Siegel für Gegnerangriffe, Schildentscheidung und Reaktionen in einem engen Wrap.
+- **IMPLEMENTIERT:** Statussiegel ab 180 % Schrift bei unter 500 dp jeweils vollbreit auf eigener Zeile; für Normaltext verbleibt die bisherige kompakte Wrap-Variante. Keys, Warntexte und TalkBack-Ansagen unverändert.
+- **Fachdateien:** `app/lib/ui/fantasy_combat_threat_status.dart` sowie neue `app/test/fantasy_combat_threat_large_text_test.dart`. README, `docs/CODEX_CHECKPOINT.md` und diese Datei append-only.
+- **Tests ergänzt:** 320/360 dp / 200 % / 220 dp IME, alle sechs Meldungen breit, vollständig mehrzeilig und einzeln vorlesbar, positive Normalschriftanordnung, negativer abgeschlossener Kampf ohne laufende Hinweise.
+- **GETESTET:** GitHub-Main, offene PRs, relevante alte Tests, Fachcode und Branch-Synchronisation geprüft. Kein lokales Flutter/Dart-SDK; bisher kein vollständiger Test auf finalem PR-HEAD ausgeführt.
+- **NICHT GETESTET:** neue GitHub-CI des finalen SHA, echte Android-TalkBack-/IME- und Altspielstand-Geräteprüfung sowie signierter Release.
+- **BLOCKIERT:** Finale CI und kontrollierte Zusammenführung gemeinsamer Nachträge; Draft und kein automatischer Merge.
+- **NOCH NICHT IMPLEMENTIERT:** Keine Änderungen an Regel-/Spielstandzustand; reale Hardware-Bedienprüfung.
+- **Migration:** Keine Änderung an JSON/SQLite, Rule-/Story-APIs, Berechtigungen, App-Version oder Upgradeformat.
+- **NÄCHSTER SCHRITT:** Nach grüner CI echte 320-dp-Android-Ansicht mit 200 % Schrift und geöffneter Tastatur prüfen, jede Warnung durch TalkBack einzeln vorlesen und Abschlusssiegel ohne veraltete Warnungen bestätigen.
+
+---
+
+
+
+---
+
+## 2026-11-06 – SRD-Ausrüstungskatalog bei IME und 200 % Schrift
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`.
+- **Branch:** `feat/chat-c/equipment-catalog-large-text-ime-20261106`.
+- **Fach-/Test-Commit:** `7fe870aab784880f7982c9fa1a298d50727d106c` (UI-Fachcommit `beb80e5c2e1995d44028e220840857db7fe919bf`).
+- **Pull Request:** [#614](https://github.com/ManuEtt/Dnd/pull/614), Draft bis CI auf finalem HEAD geprüft.
+- **IMPLEMENTIERT:** `EquipmentCatalogDialog` berücksichtigt `viewInsets.bottom` für die Ergebnishöhe und erlaubt auf kleinen Fenstern das Scrollen des Dialogs. Bei unter 500 dp und mindestens 180 % Schrift stehen beide 48-dp-Iconaktionen unterhalb der Gegenstandsdaten; die kompakte Zeile bei Standardschrift bleibt erhalten. Das Suchfeld bietet die Android-IME-Aktion „Suchen“ und gibt den Fokus nach Bestätigung frei. Keine automatische Auswahl oder Inventaränderung.
+- **Änderungen:** `app/lib/ui/equipment_catalog_dialog.dart`; neuer Regressionstest `app/test/equipment_catalog_large_text_ime_test.dart`.
+- **Akzeptanz und Regressionen:** 320/360 dp, 200 % Schrift, 220 dp Tastatur-Inset: Schaltflächen, Gegenstand und Kategorie erreichbar, explizite Auswahl; kein Treffer mit sicherem Abbruch; Kompaktansicht mit Standardschrift. Bestehende `app/test/ui_equipment_catalog_test.dart` bleibt unverändert.
+- **GETESTET:** Aktuellen Main-HEAD, alle initial 26 und anschließend 30 offenen PRs samt geänderten Dateipfaden geprüft; die Fachdateien sind konfliktfrei. Branch, zwei Fach-/Test-Commits und PR veröffentlicht. Lokal ist `python3 --version` verfügbar, `flutter` und `dart` jedoch nicht.
+- **NICHT GETESTET:** Neue oder bestehende Flutter-Widgettests, Dart-Format/Analyse, vollständige Python-/Backend-/Flutter-Tests, Android-Debug/native/ABI-/Alpha-Build auf dem finalen PR-HEAD, echtes Android/TalkBack, Upgrade und Signierung. GitHub-Actions-Ergebnis ist für den finalen Dokumentationsstand gesondert zu prüfen.
+- **BLOCKIERT:** Kein Flutter-/Dart-SDK und kein Git-Checkout wegen DNS-Sperre im lokalen Container. Es wird **kein** lokaler Testlauf oder fertiges APK behauptet.
+- **Kompatibilität:** Keine Datenbank-/JSON-Migration, kein verändertes Inventar-/SRD-Regelmodell, keine neuen Assets oder Rechte; App-Version `0.8.52+102` bleibt bestehen.
+- **Koordination:** `README.md` und `docs/CODEX_CHECKPOINT.md` nur additiv, fremde Nachträge von Chat D bei Integration verlustfrei übernehmen; keine eigenmächtigen Merges.
+- **NÄCHSTER SCHRITT:** Finalen #614-CI-Lauf auf seinem exakten HEAD mit Flutter-Format, Analyse, Widget-/Gesamttests sowie Android-/Backend-/Python-Pipeline prüfen; bei tatsächlichen Fehlern denselben Branch korrigieren und erst nach grüner CI zur Integration vorlegen.
+
+
+---
+
+## 2026-11-07 – Korrektur nach CI-Regressionsbefund in PR #614
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **Branch:** `feat/chat-c/equipment-catalog-large-text-ime-20261106`; **PR:** [#614](https://github.com/ManuEtt/Dnd/pull/614), weiterhin Draft.
+- **Vorheriger HEAD:** `30312de82392635abd012ea7d7677cf48ce082e6`; [CI #42288957572](https://github.com/ManuEtt/Dnd/actions/runs/42288957572) **fehlgeschlagen**: 3.321 Flutter-Tests bestanden, drei neu hinzugefügte Katalog-Widgettests fehlgeschlagen, weil die tatsächlichen lazily gebauten Ergebniszeilen zunächst nicht im Widgetbaum lagen. Formatierung, Analyse, Backend-/Python-Prüfungen vor den Flutter-Tests waren erfolgreich. Debug-/ABI-APKs nicht gebaut.
+- **IMPLEMENTIERT:** Widgettests scrollen gezielt innerhalb der Katalog-ListView bis zum gesuchten Eintrag bzw. leeren Ergebniszustand, **bevor** dessen Widgets erwartet werden (positiver und negativer Fall, 320/360 dp bei 200 % und 220 dp IME). Zusätzlich bewahrt ein am Dialog-State verwalteter `TextEditingController` die Suchanfrage, wenn das erste ListView-Element während des Scrollens recycelt wird. Keine automatische Inventarauswahl.
+- **Fach-/Test-Commits:** `556707edfa5b9686138c934e505b010630361674` und `3c26b44144b2b3cd138fb10152928861a96244ba`; finale Dokumentations-SHA nach Commit ermitteln.
+- **Geänderte Fachdateien:** `app/lib/ui/equipment_catalog_dialog.dart`, `app/test/equipment_catalog_large_text_ime_test.dart`. Gemeinsam genutzte Projektdokumente nur append-only.
+- **GETESTET:** Exakte Fehlerursachen und drei fehlgeschlagene Testnamen aus kompletter CI-Ausgabe geprüft; keine Tests deaktiviert. Branch und PR erneut auf unverändertes `main` und weitere PRs geprüft.
+- **NICHT GETESTET:** Die zwei Fixes sind bisher noch nicht durch einen vollständigen Dart-/Flutter-/Android-CI-Lauf auf exakt dem finalen neuen HEAD abgenommen. Flutter/Dart lokal nicht installiert. Reales Gerät, TalkBack, Update, Store-Signierung offen.
+- **BLOCKIERT:** CI-Abschluss des finalen HEADs erforderlich; keine Datenmigration (SQLite 3 / JSON 1 unverändert, App `0.8.52+102`).
+- **NÄCHSTER SCHRITT:** Neue finale CI gezielt auf alle drei früher fehlgeschlagenen Katalogfälle, vollständige Flutter-Suite und Android-/Alpha-Artefakte prüfen, bei weiteren Fehlern nur denselben isolierten PR reparieren.
+
+
+
+
+
+---
+
+## 2026-11-07 – Ressourcenfehler im Zauberdialog ohne UI-Absturz behandeln
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`.
+- **Branch:** `feat/chat-c/spell-resource-dialog-guard-20261107`; eigenständiges UI-Paket unabhängig vom Ausrüstungskatalog-PR #614 sowie allen geprüften offenen PR-Fachdateien.
+- **IMPLEMENTIERT:** `app/lib/ui/spellcasting_dialog.dart` prüft `SpellcastingRules.availableSlots` und `availablePactSlots` jetzt während der UI-Erstellung in einem gesicherten Block. Bei einer `FormatException` oder `StateError` erscheint eine zugängliche Fehlermeldung, keine falsche freie Platzanzahl; die Bestätigung ist deaktiviert. Abbrechen ist weiter verfügbar. Keine implizite Ressourcenbuchung.
+- **REGRESSIONSTESTS:** `app/test/spell_resource_dialog_invalid_state_test.dart` prüft normalen überhöhten Platzverbrauch, negativen Paktverbrauch sowie unveränderte positive Bestätigung; bestehender `app/test/spellcasting_dialog_test.dart` bleibt bestehen.
+- **GETESTET:** Quellcode- und bestehende Teststruktur geprüft, bereits vorhandene Regel-Exceptions und Schalter validiert; noch kein GitHub-Actions-Lauf auf diesem neuen Branch abgeschlossen.
+- **NICHT GETESTET:** Dart-Formatierung, Flutter-Analyse und Flutter-Suite, Backend, Android-APK und reale TalkBack-/Android-Geräte.
+- **KOMPATIBILITÄT:** Keinerlei Regel-, Schema-, JSON- oder SQLite-Änderung; App `0.8.52+102` unverändert. Ungültiger gespeicherter Verbrauch wird nicht automatisch korrigiert, sondern angezeigt und fail-closed behandelt.
+- **BLOCKIERT:** Lokale Flutter-/Dart-Installation fehlt; CI-Prüfung über GitHub erforderlich.
+- **NÄCHSTER SCHRITT:** Draft-PR gegen main erstellen, CI auswerten, eventuell Fehler im selben Branch korrigieren; erst nach vollständiger Prüfung zur Review geben.
+
+
+
+
+---
+
+## 2026-11-07 – Stufenaufstiegsverfahren bei großer Android-Schrift erreichbar
+
+- **Ausgangs-main:** `0a813df100aa649c2204018349b0db9af09fb83f`; **eigener Branch:** `feat/chat-c/levelup-method-large-text-20261107`. Kein Merge auf main, keine Übernahme fremder Dateien. Andere UI-PRs #614 und #618 betreffen getrennte Fachdateien und sind CI-geprüft sowie bereit für Review.
+- **Ausgangsproblem:** Der bisher ungerahmte `SegmentedButton` mit „Erfahrung“/„Meilenstein“ im Stufenaufstiegsdialog besitzt bei doppelter Schrift keine horizontal scrollbare Bedienfläche. Bei niedrigem XP-Stand darf die erreichbare Meilenstein-Alternative nicht abgeschnitten oder unbeabsichtigt gewählt werden.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_class_level_up_dialog.dart`: beide Auswahlsegmente in horizontalem `SingleChildScrollView` mit stabilem Key `levelup-method-scroll`; Auswahl und Bestätigungsablauf bleiben unverändert, kein automatischer Stufenanstieg.
+- **REGRESSIONSTESTS:** `app/test/srd_class_level_up_large_text_method_test.dart`: bei 320/360 dp und 200 % Schrift durch explizite Meilensteinwahl trotz 0 EP Vorschlag erreichbar; bei 0 EP ohne Meilenstein bestätigen blockiert, Abbruch liefert null; bei normaler Schrift bleibt EP-Vorauswahl; gespeichertes Heldenmodell bleibt vor Apply unverändert.
+- **TESTSTATUS:** Fach- und Testdatei im eigenen GitHub-Branch eingecheckt. Dart-Format, Flutter-Analyse, Widgettests, Python/Backend und Android-APK auf diesem Branch **noch nicht CI-geprüft**; kein lokales Flutter-/Dart-SDK.
+- **KOMPATIBILITÄT:** Unverändertes SRD-Regelwerk, Version `0.8.52+102`, SQLite-/JSON-Schema und Speicherdaten. Keine Migration, kein KI-/Domain-Eingriff.
+- **NÄCHSTER SCHRITT:** Eigenen Draft-PR gegen unverändertes main erstellen; CI-Format, Flutter-Analyse, gezielte Tests, gesamte Suite und APK-Matrix prüfen und bei Fehlern nur denselben Branch korrigieren; anschließend Review-Freigabe.
+
+
+
+
+---
+
+## 2026-11-07 – Große Schrift: Stufenaufstieg per EP oder Meilenstein erreichbar
+
+- **Ausgangs-main:** `f580d4c40f6a29df0098f656094844bfca1ed573` (inkl. integriertem CI-PR #613). **Branch:** `feat/chat-c/levelup-method-large-text-20261107-mainf580`; neuer branch vom aktuellsten main, um bereits von anderen ergänzte README-/Checkpoint-Nachträge verlustfrei mitzunehmen. Ein noch nicht publizierter Vorläuferbranch `feat/chat-c/levelup-method-large-text-20261107` ist dadurch ersetzt; er wird nicht gemergt.
+- **Problem:** Der nicht scrollbare `SegmentedButton` im Stufenaufstiegsdialog kann bei 200 % Android-Schrift den „Meilenstein“-Eintrag abschneiden. Gerade bei unzureichenden EP darf das notwendige explizite Alternativverfahren nicht unzugänglich werden.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_class_level_up_dialog.dart` rahmt die bisherige Auswahl in einen horizontalen `SingleChildScrollView` mit stabilem `levelup-method-scroll`-Key ein. Dieselben zwei Auswahlzustände, vorhandene Regelvorprüfung und ausdrückliche Bestätigung bleiben unverändert; keine sofortige Änderung an Charakterdaten.
+- **REGRESSIONSTESTS:** `app/test/srd_class_level_up_large_text_method_test.dart`: bei 320/360 dp und 200 % Schrift bleibt der Meilenstein bei 0 EP erreichbar, ein Vorschlag entsteht erst nach bewusster Wahl und Bestätigung; bei 0 EP ohne Meilenstein erfolgt kein Aufstieg, Abbrechen liefert null; bei normaler Schrift bleibt die EP-Vorauswahl; Heldendaten werden nicht stillschweigend mutiert.
+- **GETESTET:** Target-Datei auf dem neueren main gegen die vorige Ausgangsbasis geprüft und als unverändert festgestellt; Originalcode und vorhandene UI-/Domain-Tests gelesen; keine vollständige CI auf dem neuen Branch bisher.
+- **NICHT GETESTET:** Format, Analyse, vollständige Flutter-/Python-/Backend-Tests auf finalem HEAD, Debug- und ABI-APK, Android-Gerät/TalkBack. Lokales Dart/Flutter-SDK fehlt.
+- **KOMPATIBILITÄT:** SRD-Regeln, App `0.8.52+102`, SQLite-/JSON-Schema, Spielstände und bereits bestätigte Ressourcen unverändert; keine Migration.
+- **NÄCHSTER SCHRITT:** Draft-PR gegen aktuelles main eröffnen; vollständigen CI-Lauf inklusive Widgetregression und Android-Matrix auswerten, bei Fehlern im eigenen Branch korrigieren; nur bei vollständig grüner CI Review-Freigabe, kein Main-Merge.
+
+
+
+
+---
+
+## 2026-11-07 – Kämpfer-Kampfstil bei 200 % Android-Schrift nutzbar
+
+- **Ausgangs-main:** `5766d64880fee8e35d15ac39fc14dc7ef965ccba` (einschließlich integriertem SDK-PR #626). **Branch:** `feat/chat-c/fighter-style-large-text-20261107`. Parallele offene PRs inklusive #625 und #618 auf Fachdateiüberschneidungen geprüft; keine identische UI-/Testdatei.
+- **PROBLEM:** Im Klassenstartassistenten war der Kämpfer-Kampfstil die einzige noch nicht breitenbegrenzte Dropdown-Auswahl. Auf 320/360 dp und großer Android-Schrift kann der Text „Kampf mit großen Waffen“ über den Dialogrand hinausragen.
+- **IMPLEMENTIERT:** `app/lib/ui/srd_class_selection_dialog.dart` setzt am Kämpfer-Kampfstil `isExpanded: true`, `isDense: false`, `itemHeight: null`, begrenzt Anzeige auf eine visuelle Zeile mit Ellipse. Die SRD-Auswahlliste und der gespeicherte Schlüssel bleiben unverändert.
+- **REGRESSIONSTESTS:** `app/test/fighter_style_large_text_dialog_test.dart`: 320/360 dp bei verdoppelter Textgröße und offener IME, Auswahl des langen Kampfstils, zwei Fertigkeiten und drei Meisterschaften, Bestätigung mit ursprünglicher Kennung; negativer Abbruch ohne Auswahl; 360 dp bei Normaltext.
+- **GETESTET:** Vorhandene Kämpfer-/SRD-UI- und Domain-Tests sowie Regelkatalog geprüft, Code und neue Tests im eigenen Branch auf GitHub committed. Kein CI-Ergebnis auf diesem neuen HEAD bisher.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse und gesamte Widgetsuite, Python-/Backend-/Android-CI sowie reales Android-Gerät/TalkBack. Flutter/Dart lokal nicht vorhanden.
+- **KOMPATIBILITÄT:** Keine Änderung der Spielregeln, Klassen-/Inventardaten, App-Version, SQLite-/JSON-Schema oder Spielstände. Kein Main-Merge.
+- **NÄCHSTER SCHRITT:** Draft-PR gegen aktuellen Main-HEAD eröffnen, CI inklusive 320/360-dp-Tests und APK-Matrix auswerten, nötigenfalls nur im eigenen Branch reparieren und erst bei vollständigem Erfolg zum Review freigeben.
+
+
+
+
+
+---
+
+## 2026-11-08 – Zustandsquellen bei Live-Charakter- und Kampfwechsel sicher erneuern
+
+- **Ausgangs-main:** `0ce0ad86e9eddf8302e495561d12a889008de49a`. **Branch:** `feat/chat-c/condition-source-live-refresh-20261108`. Offene PR-Fachdateien aller parallelen Arbeitsbereiche geprüft, keine Überschneidung mit `condition_effect_dialog.dart` oder dem neuen Widgettest.
+- **PROBLEM:** Im bereits geöffneten Zustandsquellen-Dialog kann sich der zugrunde liegende Charakter-/Kampf-Snapshot aktualisieren. Die Auswahl einer inzwischen entfernten Quelle blieb im `DropdownButtonFormField` gespeichert; dasselbe galt für einen wirkungsgebundenen Zugendpunkt nach Wechsel des aktiven Zuges. Das konnte zu ungültigen Dropdown-Werten, verdeckten Fehlzuordnungen oder einer nicht neu bestätigten Auswahl führen.
+- **IMPLEMENTIERT:** `app/lib/ui/condition_effect_dialog.dart`: `didUpdateWidget` verwirft eine nicht mehr vorhandene Quell-ID und verlangt erneute bewusste Auswahl, setzt bei Charakterwechsel auch den Entwurfszustand zurück und fällt bei weggefallener letzter Quelle sicher in den Hinzufügen-Modus zurück. Geänderte Begegnung/Runde/aktive Zugfolge setzt zeitgebundene Endpunkte auf `untilRemoved`. Nach Quell-/Kampf-Snapshot variierende `KeyedSubtree`-Keys erzeugen die entsprechenden Flutter-Formfelder neu; öffentliche Finder-Keys bleiben unverändert. Die frühere Bestätigungslogik des Controllers bleibt verbindlich.
+- **TESTS IMPLEMENTIERT:** `app/test/condition_effect_live_snapshot_test.dart`: 320/360 dp, 200 % Text mit 220 dp IME: verschwundene gewählte Quelle sperrt Entfernung, erneute ausdrückliche Wahl funktioniert; bei wegfallender letzter Quelle kein stiller Entfernenmodus; anderer Held mit gleicher Effekt-ID übernimmt die alte Auswahl nicht; beim Wechsel zum Gegnerzug wird eine zuvor gewählte Zugenddauer vor positiver Bestätigung auf Dauerzustand zurückgesetzt. Ursprüngliche Charakterdaten bleiben unverändert.
+- **GETESTET:** GitHub-main, echte Dialog- und Domain-Quelldateien, bestehende UI- und IME-Regressionsfälle sowie alle offenen PR-Fachdateien geprüft. Code- und Testdateien auf eigenem GitHub-Branch gesichert. **Keine erfolgreiche CI** auf diesem neuen Head zum Zeitpunkt des Nachtrags behauptet.
+- **NICHT GETESTET:** Dart-Format/Flutter-Analyse/Flutter-Vollsuite, Backend/Python, native Android-Tests, Debug-/Release-APK und echtes Android-Gerät/TalkBack.
+- **KOMPATIBILITÄT:** Keine SRD-5.2.1-/Regeländerung, keine Spielstandsmigration, keine Änderung an SQLite/JSON/Controller/Backend, App-Version `0.8.52+102` unverändert. Nur nicht bestätigte UI-Entwürfe reagieren auf neue Snapshots.
+- **NÄCHSTER SCHRITT:** Eigenen Draft-PR eröffnen, vollständige GitHub-CI auswerten und jede Format-/Analyse-/Widgetabweichung auf diesem Branch korrigieren. Erst bei vollständig grüner CI Ready for Review, niemals ungeprüft in main mergen.
+
+
+
+## 2026-11-09 – Heilzauber-Dialog bei Live-Charakterwechsel aktualisieren
+
+- **Ausgangsproblem:** `HealingSpellDialog` ermittelte vorbereitete Heilzauber, Zauberklassen und freie Zauber-/Paktplätze nur beim Öffnen. Ein aktualisierter Charakter-Snapshot konnte im geöffneten Dialog veraltete Auswahlwerte und bereits erteilte Komponentenbestätigungen stehen lassen. Dropdown-Formularfelder hielten zudem ihre alten `initialValue`-Werte.
+- **Lösung:** Bei einer neuen `HeroCharacter`-Instanz werden Zauberangebot, Zauberklasse, Platzangebot, Fehlermeldungen und verbale/gestische Bestätigungen vollständig zurückgesetzt. Versionsgebundene Dropdown-Schlüssel erzwingen das erneute Initialisieren der Formularfelder. Dieselbe Charakter-ID mit aktualisierten Daten wird ausdrücklich berücksichtigt.
+- **Dateien:** `app/lib/ui/healing_spell_dialog.dart`, `app/test/healing_spell_dialog_test.dart`.
+- **Regressionstests:** Live-Wechsel mit geänderter Zauberliste und Platzverbrauch prüft neue Grad-Auswahl und erneute verbale Bestätigung; Wechsel ohne vorbereiteten Heilzauber prüft Entfernung aller Auswahlfelder und deaktivierte Bestätigung.
+- **Branch:** `feat/chat-c/healing-spell-live-hero-refresh-20261109`; Basis-Main zum Branchstart: `b2e1a021067cec39b7c85bdad11aa98477cac14e`.
+- **Commitstände:** UI `1e20a8f639ceecece9d39c513405e2f043bd1cde`; Tests `852f4fa329a7a092495072e930da7bd235ba6b78`.
+- **Tests/CI:** In dieser Umgebung nicht lokal ausführbar (kein Flutter/Dart-SDK); vollständige GitHub-Actions-Prüfung nach PR-Erstellung ausstehend.
+- **Kompatibilität:** Keine Änderung an Regeln, Charaktermodell, Spielständen, SQLite/JSON, Ressourcenbuchung oder App-Version. Dialog bleibt reine Auswahl; tatsächliches Wirken und Ressourcenverbrauch verbleiben in der Engine.
+- **Grenzen:** Live-Änderungen werden anhand einer neuen `HeroCharacter`-Objektinstanz erkannt; In-place-Mutationen des unveränderlichen Charaktermodells sind nicht vorgesehen. Keine physische Android-/TalkBack-Abnahme.
+- **Nächster Schritt:** PR-CI vollständig abnehmen und bei Fehlern den finalen Branch korrigieren.
+
+
+
+## 2026-11-09 – Heilzauberdialog bei Live-Charakterwechsel erneuern
+Der Dialog `HealingSpellDialog` berechnete Zauberliste, Klassenoptionen und freie Ressourcen bisher nur beim Öffnen. Wird sein `hero`-Snapshot im geöffneten Dialog ersetzt, initialisiert `didUpdateWidget` die Auswahl neu: Zauber/Plätze/Klasse, Komponentenfreigaben und Fehlermeldungen werden zurückgesetzt. Die Dropdown-Unterstruktur erhält einen `ObjectKey` des Heldensnapshots, damit Flutter keine alten Dropdown-Initialwerte weiterverwendet.
+
+Ein neuer Widget-Test simuliert den Snapshotwechsel bei bereits gesetzten verbalen/gestischen Bestätigungen und gewähltem höherem Zauberplatz. Der neue Charakter kennt nur noch „Heilendes Wort“ und hat alle Plätze verbraucht; der Test erwartet zurückgesetzte Bestätigungen, keine gestische Komponente und deaktivierte Wirken-Bestätigung.
+
+Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-v2`. GitHub-CI ist nach dem letzten Commit noch nicht gelaufen; lokale Dart-/Flutter-Werkzeuge stehen nicht zur Verfügung. Keine Aussage über Geräteabnahme oder Main-Merge.
+
+
+
+## 2026-11-09 – Heilzauberdialog bei Live-Charakterwechsel erneuern
+Der Dialog `HealingSpellDialog` berechnete Zauberliste, Klassenoptionen und freie Ressourcen bisher nur beim Öffnen. Wird sein `hero`-Snapshot im geöffneten Dialog ersetzt, initialisiert `didUpdateWidget` die Auswahl neu: Zauber/Plätze/Klasse, Komponentenfreigaben und Fehlermeldungen werden zurückgesetzt. Die parallel in `main` integrierte Angebotsversion (`_offerVersion`) wird in den Dropdown-Schlüsseln verwendet und verhindert, dass Flutter alte Initialwerte weiterverwendet.
+
+Ein neuer Widget-Test simuliert den Snapshotwechsel bei bereits gesetzten verbalen/gestischen Bestätigungen und gewähltem höherem Zauberplatz. Der neue Charakter kennt nur noch „Heilendes Wort“ und hat alle Plätze verbraucht; der Test erwartet zurückgesetzte Bestätigungen, keine gestische Komponente und deaktivierte Wirken-Bestätigung.
+
+Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI ist nach dem letzten Commit noch nicht gelaufen; lokale Dart-/Flutter-Werkzeuge stehen nicht zur Verfügung. Keine Aussage über Geräteabnahme oder Main-Merge.
+
+
+
+## 2026-11-10 – Feuerball-Karte bei großer Schrift und Android-Tastatur bedienen (PR #673)
+
+- **Ausgangs-main:** `73f377ece91cb14a5074ddba16fbbc57b153026e`.
+- **Branch:** `feat/chat-c/fireball-grid-accessibility-20261110`.
+- **Fachcommit:** `c9b56edd103f47bdec39feb3174c2dac3f4dff39`; **Testcommit:** `52158f792b4265bcbeb55a76817e709c122fcb65`. Finaler HEAD nach Dokumentationscommits im PR separat prüfen.
+- **Pull Request:** [#673](https://github.com/ManuEtt/Dnd/pull/673) (Draft bis vollständiger CI).
+- **Ausgangsproblem:** Feuerball-Flächenvorschau mit 26-dp-Kartenfeldern und innerem vertikalem Scrollbereich war bei 320/360 dp, 200 % Schrift und simuliertem 220-dp-IME schwer bedienbar.
+- **IMPLEMENTIERT:** Karte mit 48-dp-Touchzielen, `AlertDialog(scrollable: true)` und kompakten Rändern; nur horizontales Karten-Scrollen bleibt separat. Fehlermeldung als Semantics-Live-Region. Die Vorschau bleibt rein lesend und bestätigt weder Ziele noch Schaden.
+- **Geänderte Fachdateien:** `app/lib/ui/srd_fireball_grid_preview_dialog.dart` und neue `app/test/srd_fireball_grid_small_screen_test.dart`. Dokumentation append-only in README, zentralem und persönlichem Checkpoint.
+- **Neue positive/negative Tests:** Vier Widgettests für 320/360 dp bei 200 % Schrift und simulierter IME; Reachability von Aktionen und Fehlermeldung, 48-dp-Felder, fehlende Bestätigung, ausdrückliche Prüfung, Rücksetzung nach Kartenbearbeitung und 32×32-Karte.
+- **GETESTET:** GitHub-main und alle 58 zu Planungsbeginn offenen PRs einschließlich ihrer Dateipfade geprüft. Kein offener PR berührte die beiden Fach-/Testdateien. Branch, Fach- und Testcommit sowie Draft-PR im GitHub-Repository vorhanden. Letzte main-Gesamt-CI #42788659259 auf Main-SHA erfolgreich; **kein Testnachweis für diesen neuen Branch**.
+- **NICHT GETESTET:** Lokales Dart-/Flutter-Format, Analyse, Flutter-/Widgettests, Python-/Backend-/Android-/APK-Läufe (kein SDK und kein GitHub-Netzwerkcheckout); neue GitHub-CI auf finalem Branch-HEAD ausstehend; echtes Android/TalkBack/IME nicht geprüft.
+- **BLOCKIERT:** Finale vollständige GitHub-Actions-CI und technische Geräteabnahme. Zentral gemeinsame Dokumentationsnachträge anderer offener PRs bei Integration mit Chat D verlustfrei konsolidieren.
+- **Kompatibilität/Migration:** Keine Änderung an Regeln, Würfen, Controller, API, JSON-/SQLite-Spielständen, Schemas, Backups, App-Version oder Berechtigungen; keine Migration.
+- **NÄCHSTER SCHRITT:** Finale CI auf dem PR-Head auswerten und bei Fehlern ausschließlich die neue UI-/Widgettest-Änderung korrigieren; danach reales Gerät 320 dp/200 %/IME/TalkBack testen. Keine Integration vor grünem Gesamt-HEAD.
+
+
+
+
+## 11.11.2026 – Zahlenvalidierung der Kampfchronik (PR #685)
+
+- **Ausgangs-Main:** `cddaa07e1656e220ed4ee79a7dc0dc6062577b4c`. Nach Entwicklungsbeginn folgten unabhängige Main-Merges; die eigenen UI-Dateien wurden dabei laut Compare nicht verändert.
+- **Branch:** `feat/chat-c/chronicle-numeric-display-20261111`.
+- **Produkt-/Testcommit:** `50373e4987b2bb25cce9e4427c1c338351acdccc`; Dokumentationscommits folgen.
+- **Pull Request:** https://github.com/ManuEtt/Dnd/pull/685 (Draft, kein Merge).
+- **Problem:** Historische/importierte Ereignispayloads konnten negative Schäden und Heilungen, fraktionale TP/Gesamtwürfe und nicht endliche Werte als bestätigte Kampfzahlen anzeigen bzw. vorlesen.
+- **Lösung:** Anzeigevalidierung in `app/lib/ui/fantasy_combat_chronicle.dart` für numerische Werte. Negative ganzzahlige Würfelgesamtergebnisse sowie positive Bruchmeter bleiben ausdrücklich lesbar. Keine Änderung an gespeicherten Spielzuständen.
+- **Regression:** `app/test/fantasy_combat_chronicle_test.dart` um einen Negativfall und zwei Widgetfälle auf 320/360 dp bei 200 % Schrift erweitert. Positive Grenzwerte, verworfene ungültige Felder, sichtbare Darstellung und Screenreader-Semantik sind abgedeckt.
+- **Tests:** Quell-/Teständerungen commitet, aber in dieser Sitzung mangels Flutter-/Dart-SDK **nicht lokal ausgeführt**. GitHub-CI nach dem PR ist gesondert auszuwerten; keine APK oder grüne CI ohne Nachweis behauptet.
+- **Kompatibilität:** Keine Migration, keine Änderung von SQLite, JSON, Controller, Regel- oder Storyengine oder App-Version.
+- **Bekannte Grenzen:** Tatsächlicher Android-Gerätetest, TalkBack und die vollständige Flutter-/APK-Abnahme fehlen bis zur Prüfung.
+- **Nächster Schritt:** CI des PR-Kopfes auf Format, Analyse, alle Flutter-Tests und Android-Build prüfen; nur konkrete Fehler auf demselben Branch korrigieren und erst danach Review/Integration koordinieren.
+
+## 11.11.2026 – Vollständige CI-Abnahme für PR #685
+
+- **Ausgangs-Main:** `cddaa07e1656e220ed4ee79a7dc0dc6062577b4c`; koordinierter Integrationsstand im Branch mit Main `5cfb0fb47c086eea1c8ba8efd669149f01ad3459`. Ein anschließend integrierter, unabhängiger Porträtfix im neueren Main verändert nicht die beiden Chronikdateien.
+- **Eigener Branch:** `feat/chat-c/chronicle-numeric-display-20261111`; **geprüfter Code-/Test-HEAD:** `bb21090386bde88867789a34e4e577ff11349602`; **Pull Request:** https://github.com/ManuEtt/Dnd/pull/685 (Draft, kein Merge).
+- **Geänderte Produkt- und Testdateien:** `app/lib/ui/fantasy_combat_chronicle.dart` sowie `app/test/fantasy_combat_chronicle_test.dart`. Dokumentation zusätzlich: `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md`.
+- **GETESTET:** [Workflow #42958511774](https://github.com/ManuEtt/Dnd/actions/runs/42958511774) **vollständig grün**, sechs erfolgreiche Jobs. Python-Verifikationsschritte, Backend-Typecheck/-Build/-Tests; Dart-Format 669 Dateien unverändert; Flutter-Analyse ohne Issues; 20 gezielte UI-Tests; 3.355 vollständige Flutter-Tests; Android-Debug-APK und native Android-Tests; drei ABI-optimierte APKs plus Alpha-/Source-Artefakte. Vorheriger Formatfehler im neuen Test korrigiert und mit grünem Voll-Lauf neu verifiziert. Temporärer Formatdiagnose-Workflow wieder entfernt.
+- **NICHT GETESTET:** echtes Android-Gerät, TalkBack auf Hardware, Upgrade vorhandener Installation und produktive Release-Signierung. Lokaler SDK-Test mangels Flutter nicht durchgeführt; CI-Abnahme ist kein Gerätetest.
+- **BLOCKIERT:** keine bekannten CI-, GitHub- oder Merge-Dateikonflikte auf diesem Code; PR bleibt für Review/Integration offen.
+- **Migration:** keine; SQLite/JSON, alte Spielstände, Regel- und Storyengine sowie App-Version unverändert.
+- **Nächster konkreter Schritt:** separate, überschneidungsfreie Questkarten-UI-Abnahme bei langen Titeln, 320/360 dp, 200 % Text und Tastatur/TalkBack, positive/negative Widgettests; vor Arbeitsbeginn erneute Main-/PR-Prüfung.
+
+
+
+### 2026-11-11 – Feuerpfeil-Dialog: Keine alten Klassen oder Angriffsbestätigungen weiterverwenden
+
+- **Ausgangs-`main`:** `436ce018f672933ce6782119a5afaac694bbe888`; **Branch:** `feat/chat-c/fire-bolt-live-snapshot-20261111`.
+- **Code/Test-HEAD vor Dokumentationsnachtrag:** `dac1c59aca348fa957fe595d7f5615fd41d3835a`; Commit zuvor: `aa5d34f0c9708542c405d7de5e5da35677848d40`.
+- **Problem:** Beim weiter geöffneten Feuerpfeil-Dialog war die Zauberklasse nur im `initState` berechnet, und die zwölf manuell bestätigten Bedingungen überdauerten später eintreffende Helden-/Gegner-Snapshots.
+- **Akzeptanzkriterien:** (1) Identische Held-/Encounter-Instanzen behalten Klassenwahl und bewusste Eingaben. (2) Ein neuer Held mit anderer erlaubter Zauberklasse erhält einen frischen Dropdown-Zustand und muss alles erneut bestätigen. (3) Ein neues Encounter verwirft alle zielbezogenen Checks und blockiert die alte Bestätigung. (4) Ohne vorbereiteten Zauber ist die Aktion gesperrt.
+- **IMPLEMENTIERT:** `_loadCastingClasses` initial und bei `didUpdateWidget`, frische `KeyedSubtree` pro Snapshot, Reset aller zwölf Booleans und alter Validierungsfehler, bei unverändertem Snapshot kein Verlust des Entwurfs.
+- **Fachdateien:** `app/lib/ui/fire_bolt_dialog.dart`, `app/test/fire_bolt_live_snapshot_test.dart`. Gemeinsame Fortschrittsdokumentation `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md` rein append-only erweitert.
+- **GETESTET:** Aktuelle Flutter-/Domain-Verträge analysiert, Code und vier neue Widgettestfälle gesichert; keine Ausführung vor CI.
+- **NICHT GETESTET:** Formatcheck, `flutter analyze`, vollständiges `flutter test`, native Android-Tests, Debug-/ABI-APKs, echtes Gerät/TalkBack/IME.
+- **BLOCKIERT:** Kein lokal ausführbares Flutter/Dart; finale GitHub-CI noch nicht gestartet. Gemeinsame Dokumentationsdateien nur koordiniert integrieren.
+- **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
+- **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
+

@@ -328,4 +328,80 @@ void main() {
       expect(() => Campaign.fromJson(data), throwsFormatException);
     }
   });
+
+  test('Unknown direct queue actor is never silently skipped', () {
+    final engine = GameEngine();
+    final game = _game(engine);
+    // A direct constructor bypasses the import-time registered-ID check.
+    // All living actors remain present and sorted, so filtering unknown IDs
+    // alone would incorrectly consider this queue current.
+    final queue = ManualCombatTurnQueue(
+      encounterId: 'foe',
+      actorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf', 'intruder'],
+      activeIndex: 4,
+      round: 2,
+    );
+    final invalid = game.copyWith(manualTurnQueue: queue);
+    expect(SrdInitiativeRosterRules.isCurrent(invalid, queue), isFalse);
+    expect(() => engine.advanceManualTurnQueue(invalid), throwsFormatException);
+    expect(() => Campaign.fromJson(invalid.toJson()), throwsFormatException);
+    expect(game.manualTurnQueue, isNull);
+  });
+
+  test('Removed actor invalid; registered defeated actor remains', () {
+    final engine = GameEngine();
+    final game = _game(engine);
+    final queued = engine
+        .establishManualTurnQueue(
+          game,
+          orderedActorIds: ['orc', 'goblin', 'hero', 'foe', 'wolf'],
+          baseInitiativeConfirmed: true,
+          tiedOrderConfirmed: true,
+        )
+        .campaign;
+    final defeated = queued.copyWith(
+      trackedAreaCreatures: [
+        _creature('orc', 17),
+        _creature('goblin', 15),
+        _creature('wolf', 10, hp: 0),
+      ],
+    );
+    expect(
+      SrdInitiativeRosterRules.isCurrent(defeated, defeated.manualTurnQueue!),
+      isTrue,
+    );
+    final afterDefeat = engine.advanceManualTurnQueue(defeated).campaign;
+    expect(afterDefeat.manualTurnQueue!.activeActorId, 'goblin');
+
+    // A historical in-memory queue may outlive a removed creature, while
+    // the current live actors still look complete after roster filtering.
+    final removed = queued.copyWith(
+      trackedAreaCreatures: [_creature('orc', 17), _creature('goblin', 15)],
+    );
+    expect(
+      SrdInitiativeRosterRules.isCurrent(removed, removed.manualTurnQueue!),
+      isFalse,
+    );
+    expect(() => engine.advanceManualTurnQueue(removed), throwsFormatException);
+    // A direct snapshot with colliding hero/creature IDs is never current.
+    final collision = queued.copyWith(
+      trackedAreaCreatures: [
+        ...queued.trackedAreaCreatures,
+        _creature('hero', 9),
+      ],
+    );
+    expect(
+      SrdInitiativeRosterRules.isCurrent(collision, collision.manualTurnQueue!),
+      isFalse,
+    );
+    // No mutation of the originally established, serialized queue.
+    expect(queued.manualTurnQueue!.actorIds, [
+      'orc',
+      'goblin',
+      'hero',
+      'foe',
+      'wolf',
+    ]);
+    expect(queued.manualTurnQueue!.round, 1);
+  });
 }

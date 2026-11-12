@@ -53,3 +53,12 @@ Nur Nahkampf nach abgeschlossener Angriffsaktion. Light-Fernkampf, Munition,
 Nick, allgemeine Waffenwechsel, weitere Kampfstilquellen und Positionsverwaltung
 bleiben eigene Pakete. Gerät/Altspielstand-Update und produktive Signierung offen.
 Tatsächliche Gesamtläufe und Artefakte: [CODEX_CHECKPOINT.md](CODEX_CHECKPOINT.md).
+
+
+## Nachtrag 06.11.2026 – Gewählter Zweihand-Kampfstil bei Paladin und Waldläufer
+
+Die frühere Beschränkung des bestätigten Kampfstil-Bonus auf Kämpfer galt nur für das damals implementierte Teilstück. Die SRD-5.2.1-Klassenmerkmale **Fighting Style** gewähren den Zugang zum gewählten Fighting-Style-Talent bei Kämpfer-Klassenstufe 1 sowie Paladin- und Waldläufer-Klassenstufe 2. Der separat gewählte und im Helden explizit hinterlegte Kampfstil `Kampfstil: Kampf mit zwei Waffen` darf daher auch bei diesen beiden Klassen den passenden Attributsmodifikator einmal zum Light-Nebenhand-Schaden addieren.
+
+`TwoWeaponFightingRules.getStyle` prüft dafür die wirklichen **eigenen** Klassenstufen und ein konsistentes Haupt-/Nebenklassenprofil, einschließlich kanonischer SRD-Aliase; unbekannte Zweitklassen, doppelte Alias-Klassen, verwaiste Zweitstufen und ungültige Gesamtstufen schalten den Bonus nicht frei. Der Klassenname allein vergibt **kein** Talent und keinen Stil. `TwoWeaponFightingRules.attackBonus` verlangt für Nicht-Kämpfer weiterhin die separat bestätigte Waffenübung; die Angriffsaktion, zulässigen Light-Waffen, Bonusaktion, negative Modifikatoren, kritische Würfel und Save-/Event-/Revisionsschranken bleiben unverändert. Keine Monster-/Fernkampf-/Nick-/Dual-Wielder-Automatik.
+
+Quelle: Wizards of the Coast LLC, [D&D SRD 5.2.1](https://www.dndbeyond.com/srd), Classes / Fighter 1, Paladin 2, Ranger 2 (Fighting Style); Feats / Two-Weapon Fighting; Equipment / Light; CC BY 4.0. Requirement `RULE-COMBAT-TWO-WEAPON-FIGHTING` bleibt `partial`. Neue Tests in `app/test/two_weapon_style_class_eligibility_test.dart` prüfen die Klassen- und Mehrklassenstufengrenzen, Ablehnung ungültiger Profile, kritische/negative Modifikatoren und den tatsächlichen Nebenhand-Angriff über GameEngine samt JSON-Roundtrip. Keine Änderung an SQLite/JSON, keine Migration; finale CI- und Geräteabnahme gesondert prüfen.

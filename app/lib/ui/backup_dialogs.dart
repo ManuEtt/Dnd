@@ -224,33 +224,34 @@ class _ExportBackupDialogState extends State<_ExportBackupDialog> {
   Widget build(BuildContext context) => PopScope(
     canPop: !_busy,
     child: AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       title: Text(widget.title),
       content: SizedBox(
         width: 600,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Sichere den vollständigen Charakter oder Spielstand als JSON-Datei. '
-                'Wähle einen lokalen Speicherort für eine lokale Sicherung. '
-                'Du kannst den Text auch kopieren.',
-              ),
-              const SizedBox(height: 12),
-              FantasyTextButton(
-                label: 'Als Datei speichern',
-                icon: Icons.save_outlined,
-                style: FantasyButtonStyle.iron,
-                onPressed: _busy ? null : _saveFile,
-              ),
-              _BackupStatus(busy: _busy, message: _message),
-              const SizedBox(height: 12),
-              SelectableText(
-                widget.json,
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-              ),
-            ],
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Sichere den vollständigen Charakter oder Spielstand als JSON-Datei. '
+              'Wähle einen lokalen Speicherort für eine lokale Sicherung. '
+              'Du kannst den Text auch kopieren.',
+            ),
+            const SizedBox(height: 12),
+            FantasyTextButton(
+              label: 'Als Datei speichern',
+              icon: Icons.save_outlined,
+              style: FantasyButtonStyle.iron,
+              onPressed: _busy ? null : _saveFile,
+            ),
+            _BackupStatus(busy: _busy, message: _message),
+            const SizedBox(height: 12),
+            SelectableText(
+              widget.json,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+            ),
+          ],
         ),
       ),
       actions: [

@@ -60,19 +60,26 @@ class SrdMagicMissileMultiTargetRules {
     required Iterable<SrdMagicMissileTarget> confirmedTargets,
     required List<String> dartTargetIds,
   }) {
-    if (spell.name != 'Magic Missile' ||
+    // Public SrdSpellDefinition constructors are untrusted. Bind the
+    // allocation to the complete catalog identity, not just a familiar name
+    // and a subset of values: otherwise a forged ID, school or class ordering
+    // could be presented as the SRD spell.
+    if (spell.id != 'spell-magic-missile' ||
+        spell.name != 'Magic Missile' ||
         spell.level != 1 ||
+        spell.school != 'Evocation' ||
+        spell.classes.length != 2 ||
+        spell.classes[0] != 'Sorcerer' ||
+        spell.classes[1] != 'Wizard' ||
         spell.castingTime != 'Action' ||
         spell.range != '120 feet' ||
-        spell.duration != 'Instantaneous' ||
         spell.components != 'V, S' ||
+        spell.duration != 'Instantaneous' ||
         !spell.verbal ||
         !spell.somatic ||
         spell.material ||
         spell.concentration ||
-        spell.ritual ||
-        spell.classes.length != 2 ||
-        !spell.classes.toSet().containsAll(const ['Sorcerer', 'Wizard'])) {
+        spell.ritual) {
       throw UnsupportedError(
         'Die bestätigten Metadaten für Magic Missile fehlen.',
       );

@@ -2458,17 +2458,26 @@
       "class_name": "Mönch",
       "subclass": null,
       "class_level": 2,
-      "source": "Classes: Mönch / level 2",
+      "source": "SRD 5.2.1, Monk level 2: Uncanny Metabolism, printed p. 51",
       "source_url": "https://www.dndbeyond.com/srd",
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#m-nch_2_base_uncanny-metabolism_2",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/monk_uncanny_metabolism_test.dart",
+        "app/test/monk_uncanny_metabolism_profile_test.dart",
+        "app/test/monk_uncanny_metabolism_profile_engine_test.dart",
+        "app/test/monk_uncanny_metabolism_profile_flow_test.dart",
+        "app/test/monk_uncanny_metabolism_profile_ui_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/monk_initiative_features.dart",
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/game_engine.dart",
+        "app/lib/ui/app.dart"
+      ],
+      "note": "Ausdrücklich gewählte Initiative-Regel: Klassen-/Stufenprofil und Ressourcen werden vor allen Würfen geprüft; stufengerechte Heilung, Fokus und Langrastnutzung, KI-Angebots-UI, drei Engine-Kampfeinstiege sowie echte SQLite-/UI-Regressionen getestet. UI-Bestätigung für Freitext-/Skript-Kampfbeginn und reale Geräteabnahme offen; keine vollständige SRD-Abdeckung. Siehe docs/parallel/CHAT_A_MONK_METABOLISM_PREFLIGHT_20261107.md."
     },
     {
       "id": "CLASS-M-NCH-3-BASE-DEFLECT-ATTACKS-0",
@@ -2811,12 +2820,22 @@
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#m-nch_15_base_perfect-focus_0",
       "unlocks_catalogued": true,
-      "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "rule_implemented": "partial",
+      "tests": [
+        "app/test/monk_perfect_focus_test.dart",
+        "app/test/monk_perfect_focus_profile_test.dart",
+        "app/test/monk_perfect_focus_profile_flow_test.dart",
+        "app/test/monk_perfect_focus_profile_ui_test.dart",
+        "app/test/monk_uncanny_metabolism_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/monk_perfect_focus.dart",
+        "app/lib/domain/monk_initiative_features.dart",
+        "app/lib/domain/class_resource_rules.dart",
+        "app/lib/domain/game_engine.dart"
+      ],
+      "note": "SRD 5.2.1 S. 52, CC BY 4.0: Mönch 15 regeneriert bei tatsächlicher Initiative ohne gewählten Unheimlichen Stoffwechsel verbrauchten Fokus bei höchstens drei verfügbaren Punkten bis auf vier. Bekannte, unterschiedliche Klassen und konsistente Stufen sind erforderlich; ungültige Altprofile erhalten denselben Hero ohne Gutschrift. 26 neue Domain-, sechs echte SQLite- und zwei App-UI-Fälle plus 15 Bestandsfälle gezielt bestanden: drei Kampfstartpfade, Aliase/Mehrklassen, Grenzen, unveränderte TP und andere Ressourcen, Export/Import, Neustart, Replay, veraltete Revision und später SQL-Rollback. Reguläre Initiativewürfe bleiben; keine RNG-freie Kampfabweisung. Finale Gesamt-/Android-Abnahme im PR #586; Geräteabnahme sowie die Profilberechtigung des expliziten Stoffwechselpfads separat offen, deshalb partial."
     },
     {
       "id": "CLASS-M-NCH-16-BASE-ABILITY-SCORE-IMPROVEMENT-0",

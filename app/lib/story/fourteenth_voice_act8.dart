@@ -24,6 +24,17 @@ class FourteenthVoiceAct8 {
     r'\b(?:nicht|niemals|ohne|kein(?:e|en|em|er|es)?)\b',
   ).hasMatch(text);
 
+  // A location or the name of the council is not an instruction to convene
+  // it. Require an explicit summoning action and a named group of witnesses.
+  // Otherwise "Ich verrate Liora ..." accidentally matches "rat".
+  static bool _convenesCouncil(String text) =>
+      !_negated(text) &&
+      RegExp(r'\b(?:rat|versammlung|zeugen)\b').hasMatch(text) &&
+      RegExp(
+        r'\b(?:berufe|berufen|einberufen|einberufe|versammle|versammeln|'
+        r'rufe|rufen|zusammenrufen|lade|einladen)\b',
+      ).hasMatch(text);
+
   static int evidenceCount(Campaign c) => const [
     'voice:memorySketch',
     'voice:splitInkLetter',
@@ -137,8 +148,7 @@ class FourteenthVoiceAct8 {
           'und mindestens zwei unabhängige Spuren.',
         );
       }
-      if (_said(text, 'rat|versammlung|zeugen versammeln|dorfplatz') &&
-          !_negated(text)) {
+      if (_convenesCouncil(text)) {
         return _move(
           c,
           'voice-council',

@@ -70,8 +70,17 @@ class SrdEldritchBlastRules {
         'müssen unabhängig bestätigt sein.',
       );
     }
+    // Direct/legacy snapshots can bypass the editor's HP invariants. SRD
+    // creatures at 0 HP cannot act, and 0 maximum HP means instant death.
+    // Unknown (null) HP is left untouched; no missing value is invented.
+    final currentHp = caster.hitPoints;
+    final maximumHp = caster.maxHitPoints;
+    final invalidHitPoints =
+        (currentHp != null && currentHp <= 0) ||
+        (maximumHp != null &&
+            (maximumHp <= 0 || (currentHp != null && currentHp > maximumHp)));
     if (caster.isDead ||
-        caster.hitPoints == 0 ||
+        invalidHitPoints ||
         !ConditionRules.canTakeActions(caster) ||
         (caster.equippedArmorId.isNotEmpty && !caster.equippedArmorTrained) ||
         (caster.equippedShieldId.isNotEmpty && !caster.equippedShieldTrained)) {

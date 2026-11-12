@@ -108,11 +108,33 @@ class SrdClassLevelUpRules {
     Map<String, int> abilityIncreases = const {},
   }) {
     final first = findSrdClass(hero.className);
-    final other = hero.hasSecondClass
-        ? findSrdClass(hero.secondaryClassName)
-        : null;
+    final hasSecondary = hero.hasSecondClass;
+    final other = hasSecondary ? findSrdClass(hero.secondaryClassName) : null;
     final selected = findSrdClass(className);
-    if (selected == null || first == null) {
+    // A level-up is a rule action, not a repair path for malformed legacy
+    // class profiles. Validate the complete existing split before deriving
+    // the next class level or allowing HeroCharacter.copyWith to normalize it.
+    // Keep these guards explicit so invalid legacy profiles fail closed.
+    if (first == null || hero.level < 1 || hero.level > 20) {
+      throw const FormatException(
+        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+      );
+    }
+    if (hasSecondary) {
+      if (other == null ||
+          other.name == first.name ||
+          hero.secondaryClassLevel < 1 ||
+          hero.secondaryClassLevel >= hero.level) {
+        throw const FormatException(
+          'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+        );
+      }
+    } else if (hero.secondaryClassLevel != 0) {
+      throw const FormatException(
+        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+      );
+    }
+    if (selected == null) {
       throw const FormatException('Klasse ist nicht im SRD 5.2.1 hinterlegt.');
     }
     final isSecondary = other != null && selected.name == other.name;

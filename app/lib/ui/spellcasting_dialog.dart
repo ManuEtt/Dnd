@@ -44,9 +44,20 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
   @override
   Widget build(BuildContext context) {
     final hero = widget.hero;
-    final slots = SpellcastingRules.availableSlots(hero);
-    final pactLeft = SpellcastingRules.availablePactSlots(hero);
-    final slotText = slots.isEmpty
+    Map<int, int> slots = const {};
+    var pactLeft = 0;
+    String? resourceError;
+    try {
+      slots = SpellcastingRules.availableSlots(hero);
+      pactLeft = SpellcastingRules.availablePactSlots(hero);
+    } on FormatException catch (error) {
+      resourceError = error.message;
+    } on StateError catch (error) {
+      resourceError = error.message.toString();
+    }
+    final slotText = resourceError != null
+        ? 'Zauberressourcen können nicht bestätigt werden.'
+        : slots.isEmpty
         ? 'Keine regulären Zauberplätze'
         : slots.entries.map((e) => '${e.key}: ${e.value} frei').join(' · ');
     return AlertDialog(
@@ -59,7 +70,19 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(slotText),
-              if (SpellcastingRules.pactSlotCount(hero) > 0)
+              if (resourceError != null)
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    resourceError,
+                    key: const ValueKey('spell-dialog-resource-error'),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+              if (resourceError == null &&
+                  SpellcastingRules.pactSlotCount(hero) > 0)
                 Text(
                   'Paktmagie Grad ${SpellcastingRules.pactSlotLevel(hero)}: '
                   '$pactLeft/${SpellcastingRules.pactSlotCount(hero)} frei',
@@ -179,7 +202,7 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
           key: const ValueKey('spell-dialog-cast'),
           label: 'Verbrauch bestätigen',
           style: FantasyButtonStyle.arcane,
-          onPressed: hero.spells.isEmpty
+          onPressed: hero.spells.isEmpty || resourceError != null
               ? null
               : () {
                   try {

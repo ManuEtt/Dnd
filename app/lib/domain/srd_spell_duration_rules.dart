@@ -50,8 +50,81 @@ class SrdSpellDurationAssessment {
 class SrdSpellDurationRules {
   const SrdSpellDurationRules._();
 
-  static SrdSpellDurationAssessment inspect(SrdSpellDefinition spell) =>
-      parse(spell.duration, concentrationRequired: spell.concentration);
+  // The 339-entry working SRD 5.2.1 catalogue uses 24 distinct duration
+  // strings. "Special" requires individual spell rules; the other 23 are
+  // the only text forms this metadata interpreter has actually classified.
+  // A plausible time like "999 days" must not mint an unaudited rule.
+  static const _knownDurationForms = <String>{
+    'Instantaneous',
+    '8 hours',
+    'Concentration, up to 1 hour',
+    '24 hours',
+    'Concentration, up to 1 minute',
+    '10 days',
+    'Until dispelled',
+    'Concentration, up to 10 minutes',
+    '1 hour',
+    '1 minute',
+    '7 days',
+    'Concentration, up to 8 hours',
+    'Up to 8 hours',
+    'Concentration, up to 1 day',
+    '10 minutes',
+    '1 day',
+    '30 days',
+    'Until dispelled or triggered',
+    '1 round',
+    'Concentration, up to 2 hours',
+    'Up to 1 hour',
+    'Up to 1 minute',
+    'Concentration, up to 6 rounds',
+  };
+
+  // A public SrdSpellDefinition constructor bypasses the catalogue loader.
+  // Pin independently reviewed, duration-sensitive spells to both their
+  // stable catalogue identity and exact duration metadata. This is a scoped
+  // integrity guard, NOT proof that all 339 spell effects were audited.
+  // Source: SRD 5.2.1 / Spells / Duration and individual spell entries,
+  // Wizards of the Coast LLC, CC BY 4.0, https://www.dndbeyond.com/srd.
+  static const _pinnedDurations = <String, ({String id, String duration})>{
+    'Aid': (id: 'spell-aid', duration: '8 hours'),
+    'Arcane Lock': (id: 'spell-arcane-lock', duration: 'Until dispelled'),
+    'Bless': (id: 'spell-bless', duration: 'Concentration, up to 1 minute'),
+    'Counterspell': (id: 'spell-counterspell', duration: 'Instantaneous'),
+    'Fly': (id: 'spell-fly', duration: 'Concentration, up to 10 minutes'),
+    'Geas': (id: 'spell-geas', duration: '30 days'),
+    'Glyph of Warding': (
+      id: 'spell-glyph-of-warding',
+      duration: 'Until dispelled or triggered',
+    ),
+    'Haste': (id: 'spell-haste', duration: 'Concentration, up to 1 minute'),
+    'Hex': (id: 'spell-hex', duration: 'Concentration, up to 1 hour'),
+    'Invisibility': (
+      id: 'spell-invisibility',
+      duration: 'Concentration, up to 1 hour',
+    ),
+    'Mage Armor': (id: 'spell-mage-armor', duration: '8 hours'),
+    'Magic Missile': (id: 'spell-magic-missile', duration: 'Instantaneous'),
+    'Shield': (id: 'spell-shield', duration: '1 round'),
+    'Tsunami': (id: 'spell-tsunami', duration: 'Concentration, up to 6 rounds'),
+  };
+
+  static SrdSpellDurationAssessment inspect(SrdSpellDefinition spell) {
+    final pinned = _pinnedDurations[spell.name];
+    if (pinned != null) {
+      if (spell.id != pinned.id || spell.duration != pinned.duration) {
+        throw const FormatException(
+          'Die SRD-Zauberdauer passt nicht zur bestätigten Zauberidentität.',
+        );
+      }
+    } else if (_pinnedDurations.values.any((item) => item.id == spell.id)) {
+      // A forged display name must not bypass a pinned catalogue ID.
+      throw const FormatException(
+        'Die SRD-Zauberidentität passt nicht zur geprüften Zauberdauer.',
+      );
+    }
+    return parse(spell.duration, concentrationRequired: spell.concentration);
+  }
 
   static SrdSpellDurationAssessment parse(
     String duration, {
@@ -72,6 +145,9 @@ class SrdSpellDurationRules {
       throw const FormatException(
         'Konzentration und Zauberdauer widersprechen sich.',
       );
+    }
+    if (!_knownDurationForms.contains(value)) {
+      throw UnsupportedError('Ungeprüfte SRD-Zauberdauer: $value');
     }
 
     if (value == 'Instantaneous') {

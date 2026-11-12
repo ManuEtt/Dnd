@@ -1,0 +1,1174 @@
+{
+  "date": "2026-11-12",
+  "base_main": "5b304473fe5811efb551c95d19eeae469bdf1d67",
+  "branches": [
+    {
+      "name": "origin",
+      "sha": "5b304473fe5811efb551c95d19eeae469bdf1d67"
+    },
+    {
+      "name": "docs/chat-a/monk-focus-status-20261106",
+      "sha": "62a1954fccfb64bad97c31e9397a0910c29e21d4"
+    },
+    {
+      "name": "feat/chat-a/acid-splash-target-unicode-20261108",
+      "sha": "e1a67882221ea357a8f3d34642ab744c85476f0c"
+    },
+    {
+      "name": "feat/chat-a/audited-material-recipe-identity-20261107",
+      "sha": "bbdae15959807144e0eb48ea00a83d83b902a173"
+    },
+    {
+      "name": "feat/chat-a/automatic-save-ability-bounds-20261109",
+      "sha": "7b5261d379cc2c01a84e5238c8d5fd25b72c40b7"
+    },
+    {
+      "name": "feat/chat-a/cone-direction-symmetry-tests-20261111",
+      "sha": "be9730125942341120261bc157054dfdbaaa0a22"
+    },
+    {
+      "name": "feat/chat-a/long-jump-evidence-validation-20261112",
+      "sha": "6e6b972a07e8fe2071f0bb99a5dbf29719d44b4a"
+    },
+    {
+      "name": "feat/chat-a/magic-missile-catalog-identity-20261109",
+      "sha": "af09f44bcbfa11a822083a7468e65cf30068ff64"
+    },
+    {
+      "name": "feat/chat-a/manual-initiative-actor-integrity-20261106",
+      "sha": "3b8cf401ec90ee30749761122db31de47d24b8fb"
+    },
+    {
+      "name": "feat/chat-a/monk-self-restoration-profile-20261106",
+      "sha": "8585edb106c6dad359b95820c6817bf57fa493db"
+    },
+    {
+      "name": "feat/chat-a/monk-slow-fall-class-preflight-20261105",
+      "sha": "13dacb7fe97384e5ecc0f198dba0f0d47c889893"
+    },
+    {
+      "name": "feat/chat-a/paladin-lay-on-hands-profile-20261106",
+      "sha": "685448fc0bbedb92916205bc7d157f8b1b761fc0"
+    },
+    {
+      "name": "feat/chat-a/ranger-feral-senses-class-preflight-20261105",
+      "sha": "1624a8fb00beeaaed271995ebcbf2c382731a6ba"
+    },
+    {
+      "name": "feat/chat-a/savage-attacker-independent-rolls-20261110",
+      "sha": "619b634c92987cd4663d9dcc5a131fe5dd564528"
+    },
+    {
+      "name": "feat/chat-a/sending-catalog-identity-20261107",
+      "sha": "71dcac0e205ec415e99a42b396a47e4e11eaaa17"
+    },
+    {
+      "name": "feat/chat-a/spell-attack-cancelled-manual-roll-20261108",
+      "sha": "87b879981506192eead4556228c0817229d42c0e"
+    },
+    {
+      "name": "feat/chat-a/spell-duration-metadata-integrity-20261107",
+      "sha": "c5273a6513506185e28a8492229ec4625b762d4a"
+    },
+    {
+      "name": "feat/chat-a/spell-preflight-class-profile-20261107",
+      "sha": "3357d59e6bcac5450ac8e0b0b5cc457ae9f482bd"
+    },
+    {
+      "name": "feat/chat-a/spell-range-metadata-integrity-20261107",
+      "sha": "629a9adfd6a686c2d43c99456c618e40f26a2443"
+    },
+    {
+      "name": "feat/chat-a/spell-save-dc-class-identity-20261109",
+      "sha": "f24fb48c6f2ac1a1cbf2e9f0ca6d62eef8bc6af1"
+    },
+    {
+      "name": "feat/chat-a/wall-of-fire-catalog-identity-20261107",
+      "sha": "797dfc2079d2564b355be5f050af31c411db478d"
+    },
+    {
+      "name": "feat/chat-b/act7-explicit-story-decisions-20261107",
+      "sha": "a5e6600a2cb6940ea44c4e1f49348f8cc8b48979"
+    },
+    {
+      "name": "feat/chat-b/ai-invisible-operators-20261108",
+      "sha": "feac726803c5afee684cfd7a5074aa6cc928a050"
+    },
+    {
+      "name": "feat/chat-b/liora-square-explicit-intent-20261107",
+      "sha": "1a38ba896996009c766a64c1236d66055bf1d0a0"
+    },
+    {
+      "name": "feat/chat-b/npc-memory-hidden-name-identity-20261106",
+      "sha": "237f6e6accf18c91f91ea03bc67a61f1481c6507"
+    },
+    {
+      "name": "feat/chat-b/npc-narrator-note-id-integrity-20261106",
+      "sha": "b24ce941639ff4630eb9bb1543c0af55464d1240"
+    },
+    {
+      "name": "feat/chat-b/npc-typed-context-legacy-main-20261106",
+      "sha": "ecac70fb78f6be4dda0bf36d58128b45a58c371b"
+    },
+    {
+      "name": "feat/chat-b/npc-typed-context-legacy-safety-20261106",
+      "sha": "150c0a5efb0a9287b80f2f86cc16805caf57dc09"
+    },
+    {
+      "name": "feat/chat-b/recap-open-lead-id-integrity-20261106",
+      "sha": "7e5ad01c351deba0a2a7dc01e09b9a1c46aa22c4"
+    },
+    {
+      "name": "feat/chat-b/resume-legacy-format-marks-20261106",
+      "sha": "a05e50b19572305520a62bb09a4ec0c5753e079b"
+    },
+    {
+      "name": "feat/chat-b/structured-npc-legacy-unicode-20261105",
+      "sha": "f03f62f4bf0ef2e1b9682e6a5c302442897ebdc6"
+    },
+    {
+      "name": "feat/chat-c/backup-export-large-text-20261105",
+      "sha": "e52a46bf8bdd968c89939d91518656bb0d51c7a7"
+    },
+    {
+      "name": "feat/chat-c/chronicle-numeric-display-20261111",
+      "sha": "9f3ae54fbf8388918099a8a7b9a6f7f6a80dcec3"
+    },
+    {
+      "name": "feat/chat-c/combat-threat-wide-seals-20261106",
+      "sha": "13d4225a4dc414a3ccdd1e6145e044c623e1f944"
+    },
+    {
+      "name": "feat/chat-c/condition-source-live-refresh-20261108",
+      "sha": "f6a343cdbf79d9f1d0ae62fc1a4f8917d221bb86"
+    },
+    {
+      "name": "feat/chat-c/equipment-catalog-large-text-ime-20261106",
+      "sha": "a84559f7e8a88c9d6fd2ca16054943dc16a0266f"
+    },
+    {
+      "name": "feat/chat-c/fighter-style-large-text-20261107",
+      "sha": "e9d5b506470539c5f4f76e253b5f5366c1712c10"
+    },
+    {
+      "name": "feat/chat-c/fire-bolt-live-snapshot-20261111",
+      "sha": "f896e5e3ea3486cb1c32381d174a6de6c35adc15"
+    },
+    {
+      "name": "feat/chat-c/fireball-grid-accessibility-20261110",
+      "sha": "0aa53e6e420bec95d020191f1ed909f376c2a5a5"
+    },
+    {
+      "name": "feat/chat-c/healing-spell-live-hero-refresh-20261108",
+      "sha": "f2a3da1977b12008a6af80339900bbf757ab23a8"
+    },
+    {
+      "name": "feat/chat-c/healing-spell-live-hero-refresh-20261109",
+      "sha": "7ec17bfe1ddf35d5d4989f27be695750d2e8caf1"
+    },
+    {
+      "name": "feat/chat-c/healing-spell-live-hero-refresh-20261109-final",
+      "sha": "9bdf1f5e0160908404fbab18bed00aed3b90f2e8"
+    },
+    {
+      "name": "feat/chat-c/healing-spell-live-hero-refresh-20261109-v2",
+      "sha": "eafdcd32111d249699a09fab750b494b054b56f6"
+    },
+    {
+      "name": "feat/chat-c/levelup-method-large-text-20261107",
+      "sha": "ddbb3d8cadd94938f9f793b94d5918be09cdc018"
+    },
+    {
+      "name": "feat/chat-c/levelup-method-large-text-20261107-mainf580",
+      "sha": "e577858a879843140fce49248edaf6ff46805a07"
+    },
+    {
+      "name": "feat/chat-c/magic-missile-live-snapshot-20261110",
+      "sha": "2dbb7c57dd25fa3c5964d9de6ea3446f07c54464"
+    },
+    {
+      "name": "feat/chat-c/material-live-snapshot-reset-20261110",
+      "sha": "699784f6c7cf0585948503060a4b1a0aea674a95"
+    },
+    {
+      "name": "feat/chat-c/npc-relationship-note-reset-20261106",
+      "sha": "45d0ed43818aa2575cbd9cdd03552f6e8a3ffe07"
+    },
+    {
+      "name": "feat/chat-c/offhand-live-snapshot-reset-20261111",
+      "sha": "1a297e16225667f497cd4b5a5992f5808194e938"
+    },
+    {
+      "name": "feat/chat-c/quick-actions-busy-semantics-20261106",
+      "sha": "1138074e405f2744a73225036b19f145b71ac807"
+    },
+    {
+      "name": "feat/chat-c/spell-resource-dialog-guard-20261107",
+      "sha": "b038e507e962f3e62d7f83453585178344d98871"
+    },
+    {
+      "name": "feat/chat-c/ward-management-large-text-20261106",
+      "sha": "b11215399643fe2007e7b593a5a49cb6fd9ef1ef"
+    },
+    {
+      "name": "fix/chat-a/bard-font-class-profile-20261105",
+      "sha": "8ff6d3e94307e1cbf383c24dc9e33cdd0951a606"
+    },
+    {
+      "name": "fix/chat-a/class-feature-catalog-profile-20261106",
+      "sha": "3cb3b0a08f8b0c478dd911c9efe460ec775b4d51"
+    },
+    {
+      "name": "fix/chat-a/eldritch-blast-hp-preflight-20261106",
+      "sha": "a7ddc494da85722ebdd0051a0e585ef35a4973f6"
+    },
+    {
+      "name": "fix/chat-a/extra-creature-relative-total-cover-20261105",
+      "sha": "44d73be158b183647f72609fc51f5253307ad4bc"
+    },
+    {
+      "name": "fix/chat-a/level-up-class-profile-validation-20261109",
+      "sha": "fe35900f8f7d0b82c713bef0e86897bd912265ac"
+    },
+    {
+      "name": "fix/chat-a/level-up-class-profile-validation-20261109b2e",
+      "sha": "8abbdc45fea7194ff28ce1f9d8ccf0012acdac2c"
+    },
+    {
+      "name": "fix/chat-a/monk-metabolism-preflight-20261106",
+      "sha": "9b9a8c0313cc0723166ce5a00c2158e993376a1d"
+    },
+    {
+      "name": "fix/chat-a/monk-perfect-focus-profile-20261106",
+      "sha": "b667d13fb0aa1948b570f7c52cfb7da0a7c8a20c"
+    },
+    {
+      "name": "fix/chat-a/multiclass-normal-slots-profile-20261106",
+      "sha": "27a4f765b725afec785d4946eff07caf7cc43bfd"
+    },
+    {
+      "name": "fix/chat-a/triggered-spell-casting-time-identity-20261106",
+      "sha": "65453ce292dfc223ded29e7f153433b617f65b95"
+    },
+    {
+      "name": "fix/chat-a/two-weapon-style-paladin-ranger-20261106",
+      "sha": "25b67c34e9585be03948a40cdbc74009b097733c"
+    },
+    {
+      "name": "fix/chat-b/act7-custody-explicit-intent-20261107",
+      "sha": "21d27df80b43c7b2e06606451368cc779a8df7f5"
+    },
+    {
+      "name": "fix/chat-b/act8-council-explicit-intent-20261107",
+      "sha": "49b6f9aae6dff1702d3b172c2e06a844fdeb1703"
+    },
+    {
+      "name": "fix/chat-b/epilogue-explicit-legacy-choice-20261111",
+      "sha": "dd6e628c9af773f08f7f2a628cb8f3db6cd7f257"
+    },
+    {
+      "name": "fix/chat-b/morrow-ending-explicit-choice-20261107",
+      "sha": "fb6d2f87a00e2021f4b658295aca2388c65f3dc7"
+    },
+    {
+      "name": "fix/chat-b/npc-continuity-note-id-20261107",
+      "sha": "f2b18734cc911b3a0da6550dcdcee0d80bf8ed22"
+    },
+    {
+      "name": "fix/chat-b/npc-excerpt-unique-note-ids-20261109",
+      "sha": "edf957196bc2357fef6b5d03a16b93a9f589a7ba"
+    },
+    {
+      "name": "fix/chat-b/npc-resume-session-guard-20261106",
+      "sha": "7df9a880db8b70362047d190d1ab5521b5d36bee"
+    },
+    {
+      "name": "fix/chat-b/npc-selection-terminal-newline-id-20261106",
+      "sha": "9d17326fa01ac4b503394851c8335bd431ceeaa2"
+    },
+    {
+      "name": "fix/chat-b/place-resume-full-id-match-20261109",
+      "sha": "70b42e50f08e873f4312e804e50e8c85bf68355b"
+    },
+    {
+      "name": "fix/chat-b/rabenwacht-negated-revisit-main-20261110",
+      "sha": "0bb96b38f238b30ea402e24995302f5c2b9808ec"
+    },
+    {
+      "name": "fix/chat-b/rabenwacht-negated-travel-20261109",
+      "sha": "5e63455c2c61b108e9e215858bfcafe8ad4b7110"
+    },
+    {
+      "name": "fix/chat-b/rabenwacht-negated-travel-main-sync-20261109",
+      "sha": "60c77d563705ca06fc0e25dc53e7dcec8ba4736e"
+    },
+    {
+      "name": "fix/chat-b/rabenwacht-travel-verb-boundaries-20261110",
+      "sha": "b9836aecd8507cf0af96685643cc6e28801d988f"
+    },
+    {
+      "name": "fix/chat-b/rabenwacht-travel-verb-main-20261111",
+      "sha": "378c9eda583932fa2eccfda116490e3d0b769740"
+    },
+    {
+      "name": "fix/chat-d/android-backup-existing-target-20261109",
+      "sha": "ab08fe822383125ddb4d4373ce99edcaad6d2fb4"
+    },
+    {
+      "name": "fix/chat-d/boundary-parent-symlink-20261110",
+      "sha": "0fdd58581f50b80874cef5a09a62d8f445bcf350"
+    },
+    {
+      "name": "fix/chat-d/verify-project-root-symlink-20261110",
+      "sha": "adb76a29a8dcc047a6790e0b2f10567e62cf1046"
+    },
+    {
+      "name": "fix/integration/monk-ci-coverage-20261111",
+      "sha": "9de8f75507654b155c5881cddafa243809846834"
+    },
+    {
+      "name": "fix/integration/offhand-live-main-20261111",
+      "sha": "50dcaf20b60f27f487248d997928eacbfb058aae"
+    },
+    {
+      "name": "fix/integration/rabenwacht-travel-verbs-main-20261111",
+      "sha": "503355d671439f09396c772cb9b099e764e14966"
+    },
+    {
+      "name": "fix/integration/rabenwacht-verbs-after-ui-20261111",
+      "sha": "34529fd017d7438dc7fddfff3c7a9a89b4a755d4"
+    },
+    {
+      "name": "main",
+      "sha": "5b304473fe5811efb551c95d19eeae469bdf1d67"
+    },
+    {
+      "name": "test/chat-a/high-jump-boundary-matrix-20261111",
+      "sha": "988e9c31034e53ae3a088fc3f6c1801d8d260a67"
+    },
+    {
+      "name": "test/chat-a/long-jump-boundary-matrix-20261111",
+      "sha": "f58219bc9d402f487ee54a703e6e7d49e34950f5"
+    },
+    {
+      "name": "test/chat-b/story-rule-boundary-regression-20261110",
+      "sha": "cbe3f979589c8e9e18299a27ca4cecca03020e64"
+    }
+  ],
+  "conflicts": [
+    {
+      "ref": "origin/feat/chat-a/monk-slow-fall-class-preflight-20261105",
+      "sha": "13dacb7fe97384e5ecc0f198dba0f0d47c889893",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/ranger-feral-senses-class-preflight-20261105",
+      "sha": "1624a8fb00beeaaed271995ebcbf2c382731a6ba",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-a/extra-creature-relative-total-cover-20261105",
+      "sha": "44d73be158b183647f72609fc51f5253307ad4bc",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/backup-export-large-text-20261105",
+      "sha": "e52a46bf8bdd968c89939d91518656bb0d51c7a7",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-a/bard-font-class-profile-20261105",
+      "sha": "8ff6d3e94307e1cbf383c24dc9e33cdd0951a606",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-b/structured-npc-legacy-unicode-20261105",
+      "sha": "f03f62f4bf0ef2e1b9682e6a5c302442897ebdc6",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/quick-actions-busy-semantics-20261106",
+      "sha": "1138074e405f2744a73225036b19f145b71ac807",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-b/npc-memory-hidden-name-identity-20261106",
+      "sha": "237f6e6accf18c91f91ea03bc67a61f1481c6507",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-b/npc-typed-context-legacy-safety-20261106",
+      "sha": "150c0a5efb0a9287b80f2f86cc16805caf57dc09",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-a/two-weapon-style-paladin-ranger-20261106",
+      "sha": "25b67c34e9585be03948a40cdbc74009b097733c",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-b/npc-typed-context-legacy-main-20261106",
+      "sha": "ecac70fb78f6be4dda0bf36d58128b45a58c371b",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "app/lib/story/npc_identity_memory.dart",
+        "app/test/npc_typed_context_legacy_marks_test.dart"
+      ]
+    },
+    {
+      "ref": "origin/feat/chat-c/ward-management-large-text-20261106",
+      "sha": "b11215399643fe2007e7b593a5a49cb6fd9ef1ef",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-a/class-feature-catalog-profile-20261106",
+      "sha": "3cb3b0a08f8b0c478dd911c9efe460ec775b4d51",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-a/multiclass-normal-slots-profile-20261106",
+      "sha": "27a4f765b725afec785d4946eff07caf7cc43bfd",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-a/triggered-spell-casting-time-identity-20261106",
+      "sha": "65453ce292dfc223ded29e7f153433b617f65b95",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-b/resume-legacy-format-marks-20261106",
+      "sha": "a05e50b19572305520a62bb09a4ec0c5753e079b",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-a/eldritch-blast-hp-preflight-20261106",
+      "sha": "a7ddc494da85722ebdd0051a0e585ef35a4973f6",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/npc-relationship-note-reset-20261106",
+      "sha": "45d0ed43818aa2575cbd9cdd03552f6e8a3ffe07",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/combat-threat-wide-seals-20261106",
+      "sha": "13d4225a4dc414a3ccdd1e6145e044c623e1f944",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/docs/chat-a/monk-focus-status-20261106",
+      "sha": "62a1954fccfb64bad97c31e9397a0910c29e21d4",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-a/monk-perfect-focus-profile-20261106",
+      "sha": "b667d13fb0aa1948b570f7c52cfb7da0a7c8a20c",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/monk-self-restoration-profile-20261106",
+      "sha": "8585edb106c6dad359b95820c6817bf57fa493db",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-b/recap-open-lead-id-integrity-20261106",
+      "sha": "7e5ad01c351deba0a2a7dc01e09b9a1c46aa22c4",
+      "doc_conflicts": [
+        "README.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-b/npc-narrator-note-id-integrity-20261106",
+      "sha": "b24ce941639ff4630eb9bb1543c0af55464d1240",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/paladin-lay-on-hands-profile-20261106",
+      "sha": "685448fc0bbedb92916205bc7d157f8b1b761fc0",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/npc-selection-terminal-newline-id-20261106",
+      "sha": "9d17326fa01ac4b503394851c8335bd431ceeaa2",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/npc-resume-session-guard-20261106",
+      "sha": "7df9a880db8b70362047d190d1ab5521b5d36bee",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/manual-initiative-actor-integrity-20261106",
+      "sha": "3b8cf401ec90ee30749761122db31de47d24b8fb",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/equipment-catalog-large-text-ime-20261106",
+      "sha": "a84559f7e8a88c9d6fd2ca16054943dc16a0266f",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-a/monk-metabolism-preflight-20261106",
+      "sha": "9b9a8c0313cc0723166ce5a00c2158e993376a1d",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/npc-continuity-note-id-20261107",
+      "sha": "f2b18734cc911b3a0da6550dcdcee0d80bf8ed22",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/spell-preflight-class-profile-20261107",
+      "sha": "3357d59e6bcac5450ac8e0b0b5cc457ae9f482bd",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/spell-resource-dialog-guard-20261107",
+      "sha": "b038e507e962f3e62d7f83453585178344d98871",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/act8-council-explicit-intent-20261107",
+      "sha": "49b6f9aae6dff1702d3b172c2e06a844fdeb1703",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/spell-duration-metadata-integrity-20261107",
+      "sha": "c5273a6513506185e28a8492229ec4625b762d4a",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/spell-range-metadata-integrity-20261107",
+      "sha": "629a9adfd6a686c2d43c99456c618e40f26a2443",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/levelup-method-large-text-20261107",
+      "sha": "ddbb3d8cadd94938f9f793b94d5918be09cdc018",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/morrow-ending-explicit-choice-20261107",
+      "sha": "fb6d2f87a00e2021f4b658295aca2388c65f3dc7",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/levelup-method-large-text-20261107-mainf580",
+      "sha": "e577858a879843140fce49248edaf6ff46805a07",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "app/test/srd_class_level_up_large_text_method_test.dart"
+      ]
+    },
+    {
+      "ref": "origin/feat/chat-a/audited-material-recipe-identity-20261107",
+      "sha": "bbdae15959807144e0eb48ea00a83d83b902a173",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/fighter-style-large-text-20261107",
+      "sha": "e9d5b506470539c5f4f76e253b5f5366c1712c10",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-b/act7-explicit-story-decisions-20261107",
+      "sha": "a5e6600a2cb6940ea44c4e1f49348f8cc8b48979",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/sending-catalog-identity-20261107",
+      "sha": "71dcac0e205ec415e99a42b396a47e4e11eaaa17",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/act7-custody-explicit-intent-20261107",
+      "sha": "21d27df80b43c7b2e06606451368cc779a8df7f5",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "app/lib/story/fourteenth_voice_act7.dart"
+      ]
+    },
+    {
+      "ref": "origin/feat/chat-b/liora-square-explicit-intent-20261107",
+      "sha": "1a38ba896996009c766a64c1236d66055bf1d0a0",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/wall-of-fire-catalog-identity-20261107",
+      "sha": "797dfc2079d2564b355be5f050af31c411db478d",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-b/ai-invisible-operators-20261108",
+      "sha": "feac726803c5afee684cfd7a5074aa6cc928a050",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/acid-splash-target-unicode-20261108",
+      "sha": "e1a67882221ea357a8f3d34642ab744c85476f0c",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/condition-source-live-refresh-20261108",
+      "sha": "f6a343cdbf79d9f1d0ae62fc1a4f8917d221bb86",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/spell-attack-cancelled-manual-roll-20261108",
+      "sha": "87b879981506192eead4556228c0817229d42c0e",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/spell-save-dc-class-identity-20261109",
+      "sha": "f24fb48c6f2ac1a1cbf2e9f0ca6d62eef8bc6af1",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/npc-excerpt-unique-note-ids-20261109",
+      "sha": "edf957196bc2357fef6b5d03a16b93a9f589a7ba",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/automatic-save-ability-bounds-20261109",
+      "sha": "7b5261d379cc2c01a84e5238c8d5fd25b72c40b7",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/place-resume-full-id-match-20261109",
+      "sha": "70b42e50f08e873f4312e804e50e8c85bf68355b",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-a/level-up-class-profile-validation-20261109",
+      "sha": "fe35900f8f7d0b82c713bef0e86897bd912265ac",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/healing-spell-live-hero-refresh-20261109",
+      "sha": "7ec17bfe1ddf35d5d4989f27be695750d2e8caf1",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "app/lib/ui/healing_spell_dialog.dart"
+      ]
+    },
+    {
+      "ref": "origin/feat/chat-c/healing-spell-live-hero-refresh-20261108",
+      "sha": "f2a3da1977b12008a6af80339900bbf757ab23a8",
+      "doc_conflicts": [],
+      "code_conflicts": [
+        "app/test/healing_spell_dialog_test.dart"
+      ]
+    },
+    {
+      "ref": "origin/feat/chat-c/healing-spell-live-hero-refresh-20261109-v2",
+      "sha": "eafdcd32111d249699a09fab750b494b054b56f6",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "app/lib/ui/healing_spell_dialog.dart",
+        "app/test/healing_spell_dialog_test.dart"
+      ]
+    },
+    {
+      "ref": "origin/feat/chat-c/healing-spell-live-hero-refresh-20261109-final",
+      "sha": "9bdf1f5e0160908404fbab18bed00aed3b90f2e8",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "app/test/healing_spell_dialog_test.dart"
+      ]
+    },
+    {
+      "ref": "origin/fix/chat-b/rabenwacht-negated-travel-20261109",
+      "sha": "5e63455c2c61b108e9e215858bfcafe8ad4b7110",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "app/lib/story/rabenwacht_campaign.dart",
+        "app/test/rabenwacht_negated_revisit_test.dart"
+      ]
+    },
+    {
+      "ref": "origin/feat/chat-a/magic-missile-catalog-identity-20261109",
+      "sha": "af09f44bcbfa11a822083a7468e65cf30068ff64",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-d/android-backup-existing-target-20261109",
+      "sha": "ab08fe822383125ddb4d4373ce99edcaad6d2fb4",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_D_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/rabenwacht-negated-travel-main-sync-20261109",
+      "sha": "60c77d563705ca06fc0e25dc53e7dcec8ba4736e",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "app/lib/story/rabenwacht_campaign.dart"
+      ]
+    },
+    {
+      "ref": "origin/fix/chat-a/level-up-class-profile-validation-20261109b2e",
+      "sha": "8abbdc45fea7194ff28ce1f9d8ccf0012acdac2c",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "app/lib/domain/srd_class_level_up.dart",
+        "app/test/srd_class_level_up_test.dart"
+      ]
+    },
+    {
+      "ref": "origin/fix/chat-d/boundary-parent-symlink-20261110",
+      "sha": "0fdd58581f50b80874cef5a09a62d8f445bcf350",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_D_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "scripts/tests/test_domain_boundaries.py"
+      ]
+    },
+    {
+      "ref": "origin/fix/chat-b/rabenwacht-negated-revisit-main-20261110",
+      "sha": "0bb96b38f238b30ea402e24995302f5c2b9808ec",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": [
+        "app/lib/story/rabenwacht_campaign.dart"
+      ]
+    },
+    {
+      "ref": "origin/feat/chat-c/fireball-grid-accessibility-20261110",
+      "sha": "0aa53e6e420bec95d020191f1ed909f376c2a5a5",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/material-live-snapshot-reset-20261110",
+      "sha": "699784f6c7cf0585948503060a4b1a0aea674a95",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/savage-attacker-independent-rolls-20261110",
+      "sha": "619b634c92987cd4663d9dcc5a131fe5dd564528",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_A_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/magic-missile-live-snapshot-20261110",
+      "sha": "2dbb7c57dd25fa3c5964d9de6ea3446f07c54464",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-d/verify-project-root-symlink-20261110",
+      "sha": "adb76a29a8dcc047a6790e0b2f10567e62cf1046",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_D_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/test/chat-b/story-rule-boundary-regression-20261110",
+      "sha": "cbe3f979589c8e9e18299a27ca4cecca03020e64",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/rabenwacht-travel-verb-boundaries-20261110",
+      "sha": "b9836aecd8507cf0af96685643cc6e28801d988f",
+      "doc_conflicts": [
+        "README.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/integration/rabenwacht-travel-verbs-main-20261111",
+      "sha": "503355d671439f09396c772cb9b099e764e14966",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_D_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/chronicle-numeric-display-20261111",
+      "sha": "9f3ae54fbf8388918099a8a7b9a6f7f6a80dcec3",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/cone-direction-symmetry-tests-20261111",
+      "sha": "be9730125942341120261bc157054dfdbaaa0a22",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/rabenwacht-travel-verb-main-20261111",
+      "sha": "378c9eda583932fa2eccfda116490e3d0b769740",
+      "doc_conflicts": [],
+      "code_conflicts": [
+        "app/test/rabenwacht_negated_revisit_test.dart"
+      ]
+    },
+    {
+      "ref": "origin/test/chat-a/high-jump-boundary-matrix-20261111",
+      "sha": "988e9c31034e53ae3a088fc3f6c1801d8d260a67",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/chat-b/epilogue-explicit-legacy-choice-20261111",
+      "sha": "dd6e628c9af773f08f7f2a628cb8f3db6cd7f257",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_B_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/integration/rabenwacht-verbs-after-ui-20261111",
+      "sha": "34529fd017d7438dc7fddfff3c7a9a89b4a755d4",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/fix/integration/monk-ci-coverage-20261111",
+      "sha": "9de8f75507654b155c5881cddafa243809846834",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-c/fire-bolt-live-snapshot-20261111",
+      "sha": "f896e5e3ea3486cb1c32381d174a6de6c35adc15",
+      "doc_conflicts": [
+        "README.md",
+        "docs/CODEX_CHECKPOINT.md",
+        "docs/parallel/CHAT_C_CHECKPOINT.md"
+      ],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/test/chat-a/long-jump-boundary-matrix-20261111",
+      "sha": "f58219bc9d402f487ee54a703e6e7d49e34950f5",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    },
+    {
+      "ref": "origin/feat/chat-a/long-jump-evidence-validation-20261112",
+      "sha": "6e6b972a07e8fe2071f0bb99a5dbf29719d44b4a",
+      "doc_conflicts": [],
+      "code_conflicts": []
+    }
+  ],
+  "status": "Locally integrated; combined CI pending; no branch deletion authorized by this evidence alone."
+}

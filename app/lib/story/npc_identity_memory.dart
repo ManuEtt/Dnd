@@ -45,7 +45,7 @@ class NpcIdentityContext {
     'campaignId': campaignId,
     'campaignRevision': revision,
     'npcId': npcId,
-    'npcName': _oneLine(npcName),
+    'npcName': _oneLine(npcName, name: true),
     'alive': alive,
     'relationship': _oneLine(relationship),
     'notes': List<Map<String, Object>>.unmodifiable([
@@ -68,6 +68,11 @@ class NpcIdentityContext {
 class NpcIdentityMemory {
   const NpcIdentityMemory._();
 
+  // The typed Story identity contract uses canonical IDs, just like the
+  // player-selected NPC transport. Never put legacy control/format marks
+  // into an ID-bearing context map.
+  static final RegExp _safeNpcId = RegExp(r'^[a-zA-Z0-9_-]{1,64}$');
+
   static NpcIdentityContext read(
     Campaign campaign, {
     required String npcId,
@@ -75,9 +80,7 @@ class NpcIdentityMemory {
     int maxNotes = 3,
   }) {
     if (campaign.id.trim().isEmpty ||
-        npcId.trim() != npcId ||
-        npcId.isEmpty ||
-        npcId.length > 128 ||
+        !_safeNpcId.hasMatch(npcId) ||
         expectedRevision < 0 ||
         campaign.revision != expectedRevision ||
         maxNotes < 1 ||
@@ -171,4 +174,19 @@ class NpcIdentityMemory {
   }
 }
 
-String _oneLine(String value) => value.replaceAll(RegExp(r'\s+'), ' ').trim();
+// Legacy campaign imports can contain invisible bidi and other formatting
+// marks. This is an outbound, read-only projection: preserve the stored raw
+// values so revision validation still compares the original confirmed data.
+// Formatting inside a *name* joins its two visible parts; formatting inside a
+// note or relationship separates words rather than silently merging them.
+final RegExp _formatMarks = RegExp(
+  r'[\u00ad\u034f\u061c\u180e\u200b-\u200f'
+  r'\u202a-\u202e\u2060-\u206f\ufeff]',
+);
+final RegExp _controlMarks = RegExp(r'[\x00-\x1f\x7f-\x9f\u2028\u2029]');
+
+String _oneLine(String value, {bool name = false}) => value
+    .replaceAll(_formatMarks, name ? '' : ' ')
+    .replaceAll(_controlMarks, ' ')
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .trim();
