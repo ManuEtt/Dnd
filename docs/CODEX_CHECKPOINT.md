@@ -3669,3 +3669,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Erweiterter Schutz unabhängiger unbestätigter KI-/Nachrichtenhistorien; dieses Paket schützt bestätigte Ereignisse im Story-Commit-Pfad.
 - **Migration:** Keine; unveränderte JSON-/SQLite-/App-Version `0.8.52+102`, keine bestätigten Regelwerte oder vorhandenen Spielstände verändert, keine Provider-/Kostenänderungen.
 - **Nächster Schritt:** CI für finalen Commit #703 komplett auswerten und Fehler beheben; erst bei grüner Gesamt-CI als Review-PR freigeben.
+
+### 2026-11-12 – Schildreaktionsdialog: Veraltete Helden-Snapshots nicht übernehmen
+
+- **Ausgangs-main:** `32d1ffac6f022af65550cd02895e9915816e0f34`; Branch `feat/chat-c/hero-shield-live-snapshot-20261112`; Code/Test `61a586fed0b8cc17af343b0f33da7d2510e68258`.
+- **IMPLEMENTIERT:** `HeroShieldReactionDialog.didUpdateWidget` lädt Klassen und Zauberplätze bei neuem Helden-Snapshot neu, widerruft V/S-Checkboxen und alte Fehler und erzwingt dank generationenbasierter `KeyedSubtree` frische Dropdown-Formzustände. `_confirm` prüft die aktuellen UI-Voraussetzungen defensiv.
+- **GETESTET:** Code und Regeln/Widgettestverträge eingesehen. Vier Widgetregressionen hinzugefügt: unveränderter Snapshot erhält Auswahl; anderer Held erhält neue Klasse/Slots ohne alte Zustimmung; verbrauchte Plätze/verlorener Zauber sperren Bestätigung; ungültige Klasse verhindert Fehler/Bestätigung. Die CI-Ausführung ist noch nicht nachgewiesen.
+- **NICHT GETESTET:** `dart format`, `flutter analyze`, vollständiges `flutter test`, Android-Debug-/ABI-Builds, natives Android und Gerät/TalkBack/IME.
+- **BLOCKIERT:** Kein lokales Flutter/Dart-SDK für sofortige Ausführung; CI auf dem finalen Branch-Commit abwarten. Parallele README-/Checkpoint-Nachträge bei Integration verlustfrei erhalten.
+- **NOCH NICHT IMPLEMENTIERT:** Echte Geräteabnahme und weitere unabhängige UI-Regressionen.
+- **Kompatibilität:** Keine Änderung an Regeln, Story, SQLite, JSON oder App-Version; kein Migrationsbedarf.
+- **Nächster Schritt:** CI auf dem PR-HEAD kontrollieren, Fehler beheben und bei grüner CI zur Review freigeben.
+

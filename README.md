@@ -2374,3 +2374,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Prüfungen:** Code/PR-Überschneidungen überprüft, neue Unit-Tests eingecheckt; vollständige Dart-/Flutter-/Android-CI zum Zeitpunkt dieses Nachtrags noch nicht abgenommen. Keine lokale SDK-Ausführung.
 - **Kompatibilität:** Kein Versions-, SQLite-, Schema- oder API-Wechsel und keine Migration. Bestehende Spielstände werden nicht umgeschrieben; bestehende Erzählersetzung unbestätigter freier Züge bleibt unverändert.
 - **Grenzen:** Integrationsreview und vollständige CI noch offen; keine Abnahme echter Geräte oder externer KI-Anbieter.
+
+### 2026-11-12 – Schildreaktion: Zauberplätze und Bestätigungen beim Heldenwechsel erneuern
+
+- **Problem:** Der Dialog zur Schildreaktion hielt alte Zauberklasse, verfügbare Slots und V/S-Bestätigungen fest, wenn die Hero-Instanz bei geöffnetem Dialog gewechselt wurde.
+- **Lösung:** Verfügbare Klassen und Slots werden bei geändertem Helden-Snapshot neu ermittelt. Die Dropdown-Felder erhalten einen neuen internen Formzustand; beide Komponentenbestätigungen und alte Fehlermeldungen werden verworfen. Bei unverändertem Snapshot bleibt die Auswahl erhalten. Die UI-Bestätigung prüft zusätzlich aktuelle Vorbereitung, Klassenmitgliedschaft und positiven Slot-Restbestand.
+- **Dateien:** `app/lib/ui/hero_shield_reaction_dialog.dart`, `app/test/hero_shield_live_snapshot_test.dart`.
+- **Branch:** `feat/chat-c/hero-shield-live-snapshot-20261112`; Implementierungscommit `8be2c1b755814d8af08d2f07d237cb0a3056ba4e`; Teststand `61a586fed0b8cc17af343b0f33da7d2510e68258`.
+- **Prüfungen:** Vier neue Widgettests hinzugefügt; Dart-Formatierung, Analyse, vollständige Flutter-/Android-CI stehen zum Zeitpunkt dieses Nachtrags noch aus.
+- **Kompatibilität:** Keine Änderungen an Spielregeln, Domain, SQLite, JSON, bestehenden Spielständen oder App-Version; keine Migration erforderlich.
+
