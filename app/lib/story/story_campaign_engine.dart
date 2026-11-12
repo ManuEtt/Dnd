@@ -65,7 +65,50 @@ class StoryCampaignEngine {
       payload: payload,
     );
     StoryRuleBoundary.ensureRuleStateUnchanged(before, update.campaign);
+    _ensureAppendOnlyEvents(before, update);
     return update;
+  }
+
+  // Confirmed journal entries are immutable. A story commit may append one
+  // event, but must never drop, reorder or rewrite any existing event.
+  // Keep callbacks without a journal (used by standalone story previews)
+  // compatible as long as they do not alter the confirmed history.
+  static void _ensureAppendOnlyEvents(Campaign before, GameUpdate update) {
+    final previous = before.events;
+    final current = update.campaign.events;
+    final hasNewEvent = current.length == previous.length + 1;
+    if ((!hasNewEvent && current.length != previous.length) ||
+        update.events.length != (hasNewEvent ? 1 : 0)) {
+      throw const FormatException(
+        'Die Story-Engine darf das Ereignisjournal nicht ersetzen.',
+      );
+    }
+    for (var index = 0; index < previous.length; index++) {
+      if (_canonicalJson(previous[index].toJson()) !=
+          _canonicalJson(current[index].toJson())) {
+        throw const FormatException(
+          'Bestätigte Ereignisse dürfen nicht verändert werden.',
+        );
+      }
+    }
+    if (hasNewEvent) {
+      final added = current.last;
+      final checkpoint = added.payload['stateAfter'];
+      if (added.campaignId != before.id ||
+          added.sessionId != before.sessionId ||
+          previous.any((event) => event.id == added.id) ||
+          _canonicalJson(added.toJson()) !=
+              _canonicalJson(update.events.single.toJson()) ||
+          checkpoint is! Map<String, dynamic> ||
+          _canonicalJson(checkpoint) !=
+              _canonicalJson(
+                update.campaign.copyWith(events: const []).toJson(),
+              )) {
+        throw const FormatException(
+          'Das neue Story-Ereignis ist nicht konsistent bestätigt.',
+        );
+      }
+    }
   }
 
   /// Replaces the narration of the latest unconfirmed free turn, never rules.
