@@ -87,15 +87,17 @@ GameUpdate _withJournal(
 );
 
 void main() {
-  test('confirmed history survives one story event, JSON and replay', () {
+  test('confirmed history survives one story event and JSON roundtrip', () {
     final before = _campaign();
     final savedBytes = jsonEncode(before.toJson());
     final update = _engine((result) => result).saveSessionRecap(before);
 
     expect(update.events, hasLength(1));
     expect(update.campaign.events, hasLength(3));
-    expect(update.campaign.events.take(2).map((e) => e.toJson()).toList(),
-        before.events.map((e) => e.toJson()).toList());
+    expect(
+      update.campaign.events.take(2).map((e) => e.toJson()).toList(),
+      before.events.map((e) => e.toJson()).toList(),
+    );
     expect(update.campaign.events.last.toJson(), update.events.single.toJson());
     expect(update.campaign.sessionRecaps, hasLength(1));
     expect(update.campaign.revision, 5);
@@ -195,16 +197,21 @@ void main() {
     expect(jsonEncode(before.toJson()), originalBytes);
   });
 
-  test('journal-free legacy callback remains valid if history is unchanged', () {
-    final before = Campaign.fromJson(
-      jsonDecode(jsonEncode(_campaign().toJson())) as Map<String, dynamic>,
-    );
-    final result = _engine(
-      (update) => _withJournal(update, before.events, reported: []),
-    ).saveSessionRecap(before);
-    expect(result.campaign.events.map((e) => e.toJson()).toList(),
-        before.events.map((e) => e.toJson()).toList());
-    expect(result.events, isEmpty);
-    expect(result.campaign.sessionRecaps, hasLength(1));
-  });
+  test(
+    'journal-free legacy callback remains valid if history is unchanged',
+    () {
+      final before = Campaign.fromJson(
+        jsonDecode(jsonEncode(_campaign().toJson())) as Map<String, dynamic>,
+      );
+      final result = _engine(
+        (update) => _withJournal(update, before.events, reported: []),
+      ).saveSessionRecap(before);
+      expect(
+        result.campaign.events.map((e) => e.toJson()).toList(),
+        before.events.map((e) => e.toJson()).toList(),
+      );
+      expect(result.events, isEmpty);
+      expect(result.campaign.sessionRecaps, hasLength(1));
+    },
+  );
 }
