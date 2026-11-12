@@ -1692,3 +1692,12 @@ Eine ausdrücklich verneinte Rückreise zu einem bekannten Ort darf keinen Ortsw
 - **Prüfungen:** Drei neue positive/negative Widgettestfälle hinzugefügt. Automatische Flutter-/Android-Prüfungen des finalen Branches stehen zum Zeitpunkt dieses Eintrags noch aus.
 - **Kompatibilität:** Nur UI-Entwurfsdaten betroffen; keine Änderung an Regeln, JSON, SQLite, Spielstandschema oder App-Version und keine Migration.
 
+
+### 2026-11-11 – Nebenhandangriff nach Helden- und Zielwechsel erneut bestätigen
+
+- **Problem:** Ein geöffneter Nebenhandangriff-Dialog konnte die bereits gewählte Waffe, Waffenübung und Zustimmung über einen neuen Helden- oder Gegner-Snapshot hinweg beibehalten.
+- **Lösung:** Der Dialog verwirft bei geänderten Heldenreferenzen oder Zielnamen sämtliche unbestätigten Auswahlen und Bestätigungen. Die Waffen-Auswahl wird als neues Flutter-FormField aufgebaut, damit ein alter Dropdown-Wert nicht erhalten bleibt; bei unverändertem Rebuild bleibt die gültige Eingabe bestehen.
+- **Betroffene Dateien:** `app/lib/ui/offhand_attack_dialog.dart`, `app/test/offhand_attack_live_snapshot_test.dart`.
+- **Branch:** `feat/chat-c/offhand-live-snapshot-reset-20261111`; **Code- und Testcommit:** `a50470cd6128a11c9cfe9b38ba925118a8b156aa`; Pull-Request- und finaler CI-Nachweis folgen über GitHub.
+- **Tests:** Drei neue Widgettests für unveränderte Daten, Heldenwechsel und Zielwechsel ergänzt. Flutter/Dart lokal nicht vorhanden; Ausführung und Android-APK auf dem aktuellen PR-HEAD noch nicht bestätigt.
+- **Kompatibilität:** Keine Änderung an Regeln, Controller, persistierten Spielständen, SQLite, JSON oder App-Version; keine Migration.

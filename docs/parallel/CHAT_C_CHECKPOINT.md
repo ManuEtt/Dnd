@@ -881,3 +881,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Migrationen:** Keine. Kein Eingriff in SRD-/Story-Engine, SQLite, JSON oder App-Version.
 - **Nächster Schritt:** GitHub Actions auf finalem PR-Commit prüfen, fehlschlagende Gates korrigieren und erst danach zur Integration freigeben.
 
+
+### 2026-11-11 – Nebenhandangriff nach Helden-/Zielwechsel erneut bestätigen
+
+- **Ausgangs-`main`:** `8700a044772e7a9078947b970365f72543ee8d37`.
+- **Branch:** `feat/chat-c/offhand-live-snapshot-reset-20261111`, Code- und Testcommit `a50470cd6128a11c9cfe9b38ba925118a8b156aa`; PR-Nummer und finaler Dokumentations-HEAD nach Erstellung im PR nachweisen.
+- **Problem:** Beim Live-Austausch des Heldensnapshots oder des Zielnamens bestand das Risiko, Waffe, Waffenübung, Waffenhaltung und Zustimmung eines vorherigen Angriffs weiterzuverwenden. Ein `DropdownButtonFormField` hält seine interne Auswahl selbst nach Änderung von `initialValue` normalerweise weiter.
+- **Akzeptanz:** Neues Ziel oder Heldensnapshot verlangt vollständig neue Auswahl und ausdrückliche Zustimmung, Waffe aus altem Inventar darf nicht auswählbar bleiben; reines Rebuild mit identischen Daten behält die Auswahl. Nie automatische Buchung einer Bonusaktion.
+- **IMPLEMENTIERT:** `didUpdateWidget` mit Fail-Closed-Reset und generationsgebundenem `KeyedSubtree` für die Waffenauswahl.
+- **Dateien:** `app/lib/ui/offhand_attack_dialog.dart`; `app/test/offhand_attack_live_snapshot_test.dart`; Dokumentationsnachträge in `README.md`, `docs/CODEX_CHECKPOINT.md` und diesem Checkpoint.
+- **GETESTET:** Manueller Abgleich mit bestehenden Dialog- und Test-Schnittstellen; drei positive/negative Widgettest-Szenarien als Quellcode erstellt. Kein ausgeführter Fluttertest.
+- **NICHT GETESTET:** Flutter-Format, Analyse, Widgettests (neu + Bestand), vollständige GitHub-CI, APK und physisches Android-Gerät mit 320/360 dp, 200 % Schrift und IME/TalkBack.
+- **BLOCKIERT:** Lokal kein Flutter- oder Dart-SDK; dokumentationsseitige Überschneidungen mit bestehenden offenen PRs müssen bei der Integration verlustfrei zusammengeführt werden.
+- **Migrationen:** Keine; ausschließlich UI-lokaler Entwurfszustand betroffen, bestätigte Spielstände und Regeln bleiben unverändert.
+- **Nächster Schritt:** CI auf dem finalen PR-SHA abwarten und bei grünen Jobs die manuelle Android-/TalkBack-Prüfung der Nebenhand-Formularauswahl bei Zielwechsel durchführen.
