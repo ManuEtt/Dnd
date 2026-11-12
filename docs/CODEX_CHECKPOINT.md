@@ -3645,3 +3645,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 ### 2026-11-12 – Gesamtintegration der vorhandenen Entwicklungsbranches
 
 86 Nebenbranches mit erhaltener Quellhistorie auf einem Integrationsbranch zusammengeführt. Konflikte bei Akt VII, Heilzauber-Formularen, Reiseverben, Profilprüfungen und Dokumentation aufgelöst. Lokal 426 Python- und 79 Backendtests, Typecheck, Build, Struktur und Modulgrenzen bestanden. Gemeinsame Flutter-/Android-CI und sichere Branchbereinigung noch offen. Details und Herkunft: [Migrationsbericht](docs/parallel/MIGRATION_20261112.md), Branch `fix/integration/all-branches-20261112`. Keine Änderung der Spielstandformate.
+
+### 2026-11-12 – Story-Kommandos dürfen gespeicherte Revisionen nicht überspringen
+
+- **Basis-main:** `31607a6eb0924970aa4d6d1869ab65352e808787`; **Branch:** `fix/chat-b/story-revision-boundary-20261112`; **PR:** [#700](https://github.com/ManuEtt/Dnd/pull/700) (Draft). Finalen Head nach Dokumentationscommit prüfen.
+- **IMPLEMENTIERT:** Die Story-Regelgrenze schützt die monotone Kampagnenrevision: gleiche Revision für eine unverbindliche Erzählersetzung, genau +1 für einen abgeschlossenen Story-Commit. Rücksprünge und übersprungene Revisionen sind fehlerhaft, auch wenn ansonsten nur Storytexte verändert wurden.
+- **Fachdateien:** `app/lib/story/story_rule_boundary.dart`, `app/test/story_revision_boundary_test.dart` (5 neue Testgruppen: Positiv/Negativ, Regelunveränderlichkeit, Callback-Integration, JSON-Wiederaufnahme).
+- **GETESTET:** Tatsächliche Main-/PR-/Codeprüfung; offene Arbeitspakete auf identische Fachdateipfade geprüft. Vorheriger Story-PR [#694](https://github.com/ManuEtt/Dnd/pull/694) hat vollständige grüne [CI #43047667100](https://github.com/ManuEtt/Dnd/actions/runs/43047667100) auf `dd6e628c`, ist aber noch **nicht in main**. Dieser CI-Nachweis gilt nicht für #700.
+- **NICHT GETESTET:** Neue Flutter-/Dart-/Android-Gates lokal mangels SDK; CI für #700 auf finalem Commit ist noch abzuwarten. Kein Realgerät oder produktiver KI-Provider getestet.
+- **BLOCKIERT:** Abschließendes CI-Ergebnis und koordinierte Integration des neuen PRs inklusive additiver README-/Checkpoint-Nachträge.
+- **NOCH NICHT IMPLEMENTIERT:** Weitergehender Schutz der Ereignishistorie gegen unautorisierte KI-/Story-Modifikationen.
+- **Migration:** Keine, Schema-Version 1 und App-Version `0.8.52+102` unverändert; keine Änderungen an bestätigten Helden-/Regel-/Questwerten oder bestehenden Spielständen.
+- **Nächster Schritt:** PR #700 auf finalem Head vollständig in GitHub Actions abnehmen; danach konfliktfreies Review vor Merge.
