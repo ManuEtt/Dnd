@@ -3645,3 +3645,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 ### 2026-11-12 – Gesamtintegration der vorhandenen Entwicklungsbranches
 
 86 Nebenbranches mit erhaltener Quellhistorie auf einem Integrationsbranch zusammengeführt. Konflikte bei Akt VII, Heilzauber-Formularen, Reiseverben, Profilprüfungen und Dokumentation aufgelöst. Lokal 426 Python- und 79 Backendtests, Typecheck, Build, Struktur und Modulgrenzen bestanden. Gemeinsame Flutter-/Android-CI und sichere Branchbereinigung noch offen. Details und Herkunft: [Migrationsbericht](docs/parallel/MIGRATION_20261112.md), Branch `fix/integration/all-branches-20261112`. Keine Änderung der Spielstandformate.
+
+### 2026-11-12 – Bestätigte Story-Ereignisse bleiben bei Commit-Callbacks unverändert
+
+- **Ausgangs-main:** `f028a6f3bce7649bd07b9bb2eeca83214bfff7b8`; **Branch:** `fix/chat-b/story-event-history-append-only-20261112`; **PR:** [#703](https://github.com/ManuEtt/Dnd/pull/703) (Draft). Endgültigen HEAD im PR prüfen.
+- **IMPLEMENTIERT:** `StoryCampaignEngine._commitStory` verhindert abgeworfene, umsortierte oder umgeschriebene Journalereignisse und mehrfache Neu-Anhänge. Ein neuer Eintrag muss eine eindeutige ID, die aktuelle Kampagne/Sitzung, die identische Einzelrückmeldung und einen zum resultierenden Kampagnenzustand passenden `stateAfter`-Checkpoint besitzen.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart`, `app/test/story_event_history_append_only_test.dart` (5 deterministische Positiv-/Negativgruppen), additive README- und persönliche/zentrale Checkpoints.
+- **GETESTET:** Main/Quellcode/Tests und konkurrierende PR-Dateipfade geprüft. Letzter vollständiger positiver CI-Nachweis für den vorherigen Revisionsschutz PR #700: [#43159713255](https://github.com/ManuEtt/Dnd/actions/runs/43159713255), Commit `3a06107f6bdd6149baa55bb4151082a2205cb7ad` (nur Vorarbeit, kein Nachweis für #703). Integration des Revisionsschutzes wird separat unter [#702](https://github.com/ManuEtt/Dnd/pull/702) geprüft.
+- **NICHT GETESTET:** Neue Tests und vollständige Flutter-/Backend-/Android-Alpha-CI für #703 auf finalem Branch-HEAD. Lokale SDKs fehlen; kein Realgerät und kein echter externer Erzähler geprüft.
+- **BLOCKIERT:** CI-/Review-Abnahme und koordinierte Integration mit dem derzeit laufenden PR #702; gemeinsame README-/Checkpoint-Nachträge beim Merge verlustfrei übernehmen.
+- **NOCH NICHT IMPLEMENTIERT:** Erweiterter Schutz unabhängiger unbestätigter KI-/Nachrichtenhistorien; dieses Paket schützt bestätigte Ereignisse im Story-Commit-Pfad.
+- **Migration:** Keine; unveränderte JSON-/SQLite-/App-Version `0.8.52+102`, keine bestätigten Regelwerte oder vorhandenen Spielstände verändert, keine Provider-/Kostenänderungen.
+- **Nächster Schritt:** CI für finalen Commit #703 komplett auswerten und Fehler beheben; erst bei grüner Gesamt-CI als Review-PR freigeben.
