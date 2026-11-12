@@ -1340,6 +1340,19 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **NOCH NICHT IMPLEMENTIERT:** Weitere Absicherung der Rückkehr- und Versammlungsintents außerhalb der endgültigen Vermächtniswahl.
 - **NÄCHSTER SCHRITT:** PR-CI am finalen Commit prüfen, eventuelle Format- oder Testfehler auf demselben Branch beheben; danach kontrollierte Integration durch Chat D.
 
+### 2026-11-12 – Story-/Regelgrenze gegen Revisionssprünge schützen (PR #700)
+
+- **Ausgangs-main:** `31607a6eb0924970aa4d6d1869ab65352e808787`; **Branch:** `fix/chat-b/story-revision-boundary-20261112`; **Pull Request:** [#700](https://github.com/ManuEtt/Dnd/pull/700) (Draft). **App-Version:** `0.8.52+102`, unverändert. **Fachcommits:** `aa4b2409`, `d3392032`, `d3a4128c`; finalen Dokumentations-HEAD im PR prüfen.
+- **IMPLEMENTIERT:** `StoryRuleBoundary.ensureRuleStateUnchanged` lässt für eine Erzählerersetzung nur die bisherige Revision und für einen regulären bestätigten Story-Commit höchstens eine zusätzliche Revision zu. Negative Sprünge, Rückschritte und ausgelassene Revisionen werden abgewiesen. Sonstige Regelgrenzen bleiben unverändert.
+- **Geänderte Dateien:** `app/lib/story/story_rule_boundary.dart` und neuer `app/test/story_revision_boundary_test.dart`; append-only README, zentraler sowie eigener Checkpoint.
+- **Akzeptanztests:** fünf Testgruppen, positive unveränderte/+1 Revision, negative Rollbacks und übersprungene Revisionen, bestehende verbotene HP-Änderungen, eingebundene `StoryCampaignEngine`-Commit-Callbacks sowie Legacy-JSON-Import/Wiederaufnahme.
+- **GETESTET:** GitHub-Main-Stand, 69 offene PRs und die betroffenen Fach-/Testdateien auf Konflikte geprüft; PR #680 testet andere Fälle, PR #694 betrifft das unabhängige Epilogmodul.
+- **NICHT GETESTET:** Lokale Dart-/Flutter-Prüfungen und Android-Builds mangels SDK; neue CI auf finalem PR-HEAD nach Dokumentationscommit noch gesondert abzunehmen.
+- **BLOCKIERT:** Vollständige CI-/Android-Abnahme und koordinierte Integration der gemeinsam geänderten README-/Checkpoint-Dateien durch den Integrationstrack.
+- **NOCH NICHT IMPLEMENTIERT:** Über die Revisionsgrenze hinausgehende abgesicherte Historien-/Event-Semantik der Story-Schnittstelle ist getrennt zu untersuchen.
+- **Kompatibilität/Migration:** Kein SQLite- oder JSON-Schemawechsel, keine Änderungen an Spielständen, API, Regelwerten oder Kostenfreigabe. Bereits gespeicherte Revisionen werden nicht verändert.
+- **NÄCHSTER SCHRITT:** Finalen CI-Lauf #700 auf tatsächlichem Branch-HEAD prüfen, auftretende Fehler im selben Branch beheben und anschließend nach Review integrieren.
+
 ### 2026-11-12 – Bestätigte Ereignishistorie bei Story-Commits schützen (PR #703)
 
 - **Ausgangs-main:** `f028a6f3bce7649bd07b9bb2eeca83214bfff7b8` nach der 86-Branch-Migration; **Branch:** `fix/chat-b/story-event-history-append-only-20261112`; **Pull Request:** [#703](https://github.com/ManuEtt/Dnd/pull/703) (Draft); **App-Version:** `0.8.52+102`, unverändert. Fach-/Testcommits `3a4d51b` und `814623e`, Format-/Klarstellungscommit `492d43b`; endgültigen Dokumentations-HEAD im PR prüfen.

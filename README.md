@@ -2357,6 +2357,14 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 
 86 Nebenbranches mit erhaltener Quellhistorie auf einem Integrationsbranch zusammengeführt. Konflikte bei Akt VII, Heilzauber-Formularen, Reiseverben, Profilprüfungen und Dokumentation aufgelöst. Lokal 426 Python- und 79 Backendtests, Typecheck, Build, Struktur und Modulgrenzen bestanden. Gemeinsame Flutter-/Android-CI und sichere Branchbereinigung noch offen. Details und Herkunft: [Migrationsbericht](docs/parallel/MIGRATION_20261112.md), Branch `fix/integration/all-branches-20261112`. Keine Änderung der Spielstandformate.
 
+### 2026-11-12 – Kampagnenrevisionen an der Story-/Regelgrenze absichern
+
+- **Problem und Lösung:** Die reine Erzählgrenze nahm die Kampagnenrevision bislang vollständig aus dem Schutzvergleich aus. Erzählersetzungen dürfen jetzt weiterhin dieselbe Revision behalten; neue Story-Commits dürfen um genau eins fortschreiten. Rückschritte und ausgelassene Revisionen werden abgewiesen.
+- **Dateien:** `app/lib/story/story_rule_boundary.dart`; neue deterministische Regressionen in `app/test/story_revision_boundary_test.dart` für erlaubte/unerlaubte Revisionsübergänge, Callback-Integration und JSON-Wiederaufnahme.
+- **Branch:** `fix/chat-b/story-revision-boundary-20261112`; **PR:** [#700](https://github.com/ManuEtt/Dnd/pull/700) (Draft). Dart-/Flutter-/Android-CI des finalen Branch-HEADs noch separat zu prüfen; keine lokale SDK-Ausführung.
+- **Kompatibilität:** Kein Datenformat-/SQLite-Schemawechsel, keine Migration oder Änderung an bestätigten Spielständen, Regel-/Quest-/Heldenwerten, App-Version oder externen KI-Kosten.
+- **Grenzen:** Schutz bestehender Ereignishistorien ist ein gesondertes Prüfungspaket; das neue Arbeitspaket ist noch nicht in `main` integriert.
+
 ### 2026-11-12 – Bestätigte Ereignishistorie bei Story-Commits absichern
 
 - **Problem:** Der Rückgabewert der Story-Commit-Schnittstelle durfte alte bestätigte Journalereignisse verändern, ohne den unveränderten Regelzustand zu verletzen.
