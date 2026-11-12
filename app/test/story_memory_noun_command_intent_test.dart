@@ -82,13 +82,26 @@ void main() {
       jsonDecode(jsonEncode(_campaign().toJson())) as Map<String, dynamic>,
     );
     final before = jsonEncode(saved.toJson());
-    final update = GameEngine(
-      clock: () => _now,
-    ).act(saved, 'Tagebuch anzeigen.');
-    expect(update.events.single.type, 'memory.recalled');
-    expect(update.narration, contains('Die Bibliothek ist geöffnet.'));
-    expect(update.campaign.hero.toJson(), saved.hero.toJson());
-    expect(update.campaign.facts, saved.facts);
+    final engine = GameEngine(clock: () => _now);
+    for (final request in [
+      'Tagebuch anzeigen.',
+      'Rückblick bitte.',
+      'Zeig mir das Tagebuch.',
+      'Öffne mir das Tagebuch, bitte.',
+    ]) {
+      final update = engine.act(saved, request);
+      expect(update.events.single.type, 'memory.recalled', reason: request);
+      expect(
+        update.narration,
+        contains('Die Bibliothek ist geöffnet.'),
+        reason: request,
+      );
+      expect(update.campaign.hero.toJson(), saved.hero.toJson());
+      expect(update.campaign.facts, saved.facts);
+    }
+    final unrelated = engine.act(saved, 'Was weißt du über die Drachenhöhle?');
+    expect(unrelated.events.single.type, 'memory.recalled');
+    expect(unrelated.narration, contains('keine passende Erinnerung'));
     expect(jsonEncode(saved.toJson()), before);
   });
 }
