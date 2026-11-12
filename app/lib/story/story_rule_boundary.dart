@@ -29,7 +29,8 @@ class StoryRuleBoundary {
     if (after.revision < before.revision ||
         after.revision > before.revision + 1) {
       throw const FormatException(
-        'Die Story-Engine darf Kampagnenrevisionen nicht überspringen oder zurücksetzen.',
+        'Die Story-Engine darf Kampagnenrevisionen nicht '
+        'überspringen oder zurücksetzen.',
       );
     }
     final original = Map<String, dynamic>.from(before.toJson());
