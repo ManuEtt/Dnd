@@ -3669,3 +3669,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Erweiterter Schutz unabhängiger unbestätigter KI-/Nachrichtenhistorien; dieses Paket schützt bestätigte Ereignisse im Story-Commit-Pfad.
 - **Migration:** Keine; unveränderte JSON-/SQLite-/App-Version `0.8.52+102`, keine bestätigten Regelwerte oder vorhandenen Spielstände verändert, keine Provider-/Kostenänderungen.
 - **Nächster Schritt:** CI für finalen Commit #703 komplett auswerten und Fehler beheben; erst bei grüner Gesamt-CI als Review-PR freigeben.
+
+### 2026-11-12 – Tagebuchaktionen dürfen keine ungewollten Rückblicke auslösen
+
+- **Basis-main:** `32d1ffac6f022af65550cd02895e9915816e0f34`; **Branch:** `fix/chat-b/memory-diary-recall-intent-20261112`; **PR:** [#708](https://github.com/ManuEtt/Dnd/pull/708) (Draft; finalen HEAD prüfen).
+- **IMPLEMENTIERT:** Erinnerungsparser in `app/lib/story/story_memory_engine.dart` erkennt bloße Nomen `Tagebuch`, `Rückblick`, `Erinnerungen`, `Zusammenfassung` weiterhin als Kurzbefehle, aber nicht mehr destruktive Spielerhandlungen mit demselben Wortbeginn. `Öffne das Tagebuch nicht` und `Erinnere dich nicht ...` lösen keinen Rückblick aus.
+- **Tests:** Vier Regressionstestgruppen in `app/test/story_memory_noun_command_intent_test.dart` für positive Nomen-/Anzeigebefehle, negative Handlungen, echte `GameEngine`-Eventklassifikation sowie Legacy-JSON/gesicherte Fakten.
+- **GETESTET:** Aktuelle Main-/PR-Historie, Fachimplementierung und vorhandene Tests überprüft. Vorgänger-Main-CI [#43185323211](https://github.com/ManuEtt/Dnd/actions/runs/43185323211) auf `32d1ffac` vollständig erfolgreich. PR #706 [#43221597923](https://github.com/ManuEtt/Dnd/actions/runs/43221597923) hat Flutter-Tests bestanden, Android-Build läuft. Diese Läufe gelten **nicht** als CI-Nachweis für #708.
+- **NICHT GETESTET:** Neue vollständige Dart-/Flutter-Tests, Format-/Analyse- und Android-Build-Gates für den finalen PR #708; kein Realgerät und kein produktiver KI-Anbieter.
+- **BLOCKIERT:** CI-Abnahme und Integration samt verlustfreier Dokumentationszusammenführung; lokal kein Dart-/Flutter-SDK verfügbar. Andere offene PRs #704–#707 bearbeiten getrennte Fachmodule.
+- **NOCH NICHT IMPLEMENTIERT:** Weitere breit erkannte Erinnerungs- und Story-Intents außerhalb dieses neuen eng begrenzten Pakets.
+- **Migration:** Keine; bestehende Kampagnen, Datenformat, Regelzustand, SQLite und App-Version `0.8.52+102` unverändert.
+- **Nächster Schritt:** Finalen GitHub-Workflow von PR #708 prüfen, konkrete Fehler auf dem Branch beheben, danach zur Review freigeben.
