@@ -1366,3 +1366,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine Schema-, SQLite-, Versions- oder API-Änderungen; gespeicherte Kampagnen bleiben unverändert, bisherige `replaceNarration`-/KI-Freeturn-Rewrite-Wege bleiben unangetastet. Keine neuen Kosten.
 - **NOCH NICHT IMPLEMENTIERT:** Die Identitäts- und Nachrichtenhistorie außerhalb regulärer `_commitStory`-Callbacks benötigt bei zukünftigen KI-Pfaden eigene Nachweise.
 - **NÄCHSTER SCHRITT:** Vollständige GitHub-CI auf finalem HEAD abnehmen, konkrete Fehler auf demselben Branch beheben, nach erfolgreicher Abnahme zur Review freigeben.
+
+### 2026-11-12 – Bestätigte Dialoghistorie an der Story-Commit-Grenze absichern (PR #706)
+
+- **Ausgangs-main:** `32d1ffac6f022af65550cd02895e9915816e0f34`, grüne main-CI [#43185323211](https://github.com/ManuEtt/Dnd/actions/runs/43185323211); **Branch:** `fix/chat-b/story-message-history-append-only-20261112`; **PR:** [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft); Version `0.8.52+102`. Fach-/Testcommits `86bf0c94` und `4c0365df`; finalen Dokumentations-HEAD und CI im PR prüfen.
+- **Ausgangsproblem:** Die bereits geschützte Ereignishistorie verhindert nicht, dass ein fehlerhaftes Story-Commit-Callback früher bestätigte Spieler- und Spielleiter-Nachrichten im `messages`-Array umschreibt, umsortiert oder entfernt.
+- **IMPLEMENTIERT:** `StoryCampaignEngine._commitStory` prüft nach den bestehenden Regel- und Ereignisgrenzen alle vorherigen Nachrichten kanonisch auf unveränderten Inhalt und Reihenfolge. Höchstens eine neue Nachricht ist erlaubt, ausschließlich vom Spielleiter, mit neuer ID und exakt dem übergebenen bestätigten Erzähltext. Ein Callback ohne neuen Eintrag bleibt für ältere Preview-/Mock-Verträge zulässig. Die gesonderten, bereits geprüften Freeturn-Rewrites werden nicht verändert.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart`, neuer `app/test/story_message_history_append_only_test.dart`, plus additive README und zwei Checkpoints.
+- **Akzeptanztests:** Fünf Testgruppen zu Normal-Commit inkl. JSON-Roundtrip, alten Textänderungen/Trunkierung/Umsortierung/Einschub, falscher neuer Nachricht (ID/Rolle/Text), Legacy-Preview-Callbacks und gültigem unbestätigten Narration-Rewrite.
+- **GETESTET:** Main-HEAD, Masterprompt, Fachcode, bestehende Testverträge und offene PR-Dateipfade geprüft. Vorheriger PR #703 vollständig erfolgreich auf `411601b7dcb40d696257cab4af7309d70f60d781` in [CI #43176604693](https://github.com/ManuEtt/Dnd/actions/runs/43176604693), danach in main integriert. Dieser ältere Lauf ist **kein Testnachweis für #706**.
+- **NICHT GETESTET:** Neue Flutter-Unit-/Integrationstests, Dart-Format, Flutter-Analyse, Android-Builds/APKs und Realgerät für #706 stehen bis zum neuen CI-Ergebnis aus.
+- **BLOCKIERT:** Vollständige GitHub-CI auf finalem PR-HEAD, danach Review; keine lokalen Dart-/Flutter-SDKs. Offene PRs #704/#705 ändern ausschließlich fachfremde Tests und nicht die eigenen Story-Dateien.
+- **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
+- **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
+- **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
