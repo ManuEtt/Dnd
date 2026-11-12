@@ -2374,3 +2374,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Prüfungen:** Code/PR-Überschneidungen überprüft, neue Unit-Tests eingecheckt; vollständige Dart-/Flutter-/Android-CI zum Zeitpunkt dieses Nachtrags noch nicht abgenommen. Keine lokale SDK-Ausführung.
 - **Kompatibilität:** Kein Versions-, SQLite-, Schema- oder API-Wechsel und keine Migration. Bestehende Spielstände werden nicht umgeschrieben; bestehende Erzählersetzung unbestätigter freier Züge bleibt unverändert.
 - **Grenzen:** Integrationsreview und vollständige CI noch offen; keine Abnahme echter Geräte oder externer KI-Anbieter.
+
+### 2026-11-12 – Erinnerungsabrufe von Tagebuchaktionen unterscheiden
+
+- **Problem:** Die Gedächtnis-Befehlserkennung interpretierte auch Spielerhandlungen wie „Tagebuch verbrennen“, „Erinnerungen löschen“ oder verneinte Anzeigeaufforderungen als Anfrage für einen automatischen Rückblick.
+- **Lösung:** Bloße Erinnerungsnomen funktionieren weiter als Kurzbefehle, benötigen bei erweitertem Text aber eindeutige Anzeige-/Öffnungsabsicht; destruktive oder ausdrücklich verneinte Handlungen werden als normale Spielerentscheidungen behandelt.
+- **Dateien:** `app/lib/story/story_memory_engine.dart`; vier neue Regressionstestgruppen unter `app/test/story_memory_noun_command_intent_test.dart` für Positiv-/Negativfälle, GameEngine-Ereignisse und JSON-Wiederaufnahme.
+- **Branch und PR:** `fix/chat-b/memory-diary-recall-intent-20261112`, [#708](https://github.com/ManuEtt/Dnd/pull/708) (Draft). Die vollständige Dart-/Flutter-/Android-CI des finalen neuen PRs ist zum Zeitpunkt dieses Nachtrags noch nicht abgenommen.
+- **Kompatibilität:** Keine Änderung an JSON-/SQLite-Schema, API, Regelwerten, bestätigten Spielständen, App-Version oder externen KI-Kosten; keine Migration.
+- **Grenzen:** Review und echte Geräte-/Provider-Prüfung bleiben separat.
