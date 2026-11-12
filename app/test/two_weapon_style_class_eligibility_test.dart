@@ -241,7 +241,7 @@ void main() {
         final result = engine.resolveRoll(prepared, natural: 15);
         expect(result.events.single.payload['damage'], 4);
         expect(result.campaign.encounter!.enemyHitPoints, 96);
-        expect(result.campaign.hero.toJson(), hero.toJson());
+        expect(result.campaign.hero.toJson(), prepared.hero.toJson());
         expect(TwoWeaponFightingRules.canPrepare(result.campaign), isFalse);
         expect(
           Campaign.fromJson(result.campaign.toJson()).toJson(),
