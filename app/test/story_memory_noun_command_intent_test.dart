@@ -83,10 +83,9 @@ void main() {
       jsonDecode(jsonEncode(_campaign().toJson())) as Map<String, dynamic>,
     );
     final before = jsonEncode(saved.toJson());
-    final update = GameEngine(clock: () => _now).act(
-      saved,
-      'Tagebuch anzeigen.',
-    );
+    final update = GameEngine(
+      clock: () => _now,
+    ).act(saved, 'Tagebuch anzeigen.');
     expect(update.events.single.type, 'memory.recalled');
     expect(update.narration, contains('Die Bibliothek ist geöffnet.'));
     expect(update.campaign.hero.toJson(), saved.hero.toJson());
