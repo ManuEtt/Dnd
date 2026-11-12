@@ -3681,3 +3681,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+### 2026-11-12 – Typ- und Auditdaten-Vertrauen bei bestätigten Story-Ereignissen schließen
+
+- **Ausgangs-main:** `196cfd6e9f1616999a177da7c33ff7c72f814fea` (App `0.8.52+102`); **Branch:** `fix/chat-b/story-commit-event-metadata-20261112`; **PR:** [#712](https://github.com/ManuEtt/Dnd/pull/712) (Draft). Finalen SHA nach Dokumentationscommit prüfen.
+- **IMPLEMENTIERT:** Die Story-Commit-Validierung vergleicht den tatsächlichen neuen Ereignistyp mit dem angeforderten Story-Typ und die vollständigen Auditdaten mit dem angeforderten Payload, der fortgeschriebenen Revision und dem finalen Checkpoint. Manipulierte Ereignistypen, fehlende/zusätzliche/veränderte Auditfelder und Ereignisse ohne Revisionsschritt werden verworfen.
+- **Fachdateien:** `app/lib/story/story_campaign_engine.dart`; neu `app/test/story_commit_event_metadata_test.dart` (fünf Gruppen: echte bestätigte Aktionen, Typfälschung, Felder, Revisionsrückfall, kanonische JSON-Schlüsselreihenfolge und Preview).
+- **GETESTET:** Main-Stand, offene PRs #705/#707/#708/#710/#711 und deren Fachdateien geprüft. Frühere vollständige grüne [Main-CI #43185323211](https://github.com/ManuEtt/Dnd/actions/runs/43185323211) auf `32d1ffac6f022af65550cd02895e9915816e0f34` und PR #706 belegt nur die Ausgangsbasis, nicht die neue Änderung.
+- **NICHT GETESTET:** Neue Tests, Dart-Format/Flutter-Analyse, vollständige Flutter-/Android-/Backend-CI auf dem abschließenden Branch-HEAD; lokale Flutter-/Dart-SDKs nicht installiert, kein echtes Android-Gerät und kein produktiver KI-Provider getestet.
+- **BLOCKIERT:** Vollständige neue CI-Abnahme und koordinierte Integration. README/Checkpoint parallel ausschließlich append-only fortschreiben.
+- **NOCH NICHT IMPLEMENTIERT:** Allgemein generative Abenteuerfortsetzung über die bekannten validierten Storyschritte hinaus, vollständige reale Geräte- und KI-Anbieterabnahme.
+- **Kompatibilität/Migration:** Keine Schema-, SQLite-, App-Version-, Regel-/Quest- oder API-Änderung; keine Migration und keine Freigabe zusätzlicher KI-Kosten.
+- **Nächster Schritt:** Finalen CI-Lauf #712 überprüfen, konkrete Fehler im Branch korrigieren und den PR erst nach vollständigem Grün zur Review freigeben.
