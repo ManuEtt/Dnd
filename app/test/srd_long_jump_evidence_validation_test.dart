@@ -17,7 +17,7 @@ void main() {
     );
   });
 
-  test('unrequested dice totals and conflicting obstacle facts fail closed', () {
+  test('unrequested rolls and conflicting obstacle facts fail closed', () {
     for (final (freePath, height, check, landing, obstacle) in [
       (true, null, null, 10, null),
       (true, 30, null, null, null),
