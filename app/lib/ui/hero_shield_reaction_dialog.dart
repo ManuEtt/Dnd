@@ -24,10 +24,20 @@ class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
   String? _error;
   bool _verbal = false;
   bool _somatic = false;
+  int _formRevision = 0;
 
   @override
   void initState() {
     super.initState();
+    _loadOptions();
+  }
+
+  void _loadOptions() {
+    _classes = const [];
+    _slots = const [];
+    _castingClass = null;
+    _slotKey = null;
+    _error = null;
     try {
       _classes = HeroShieldReactionRules.castingClasses(widget.hero);
       _slots = HeroShieldReactionRules.slots(widget.hero);
@@ -40,6 +50,18 @@ class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
     }
   }
 
+  @override
+  void didUpdateWidget(covariant HeroShieldReactionDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (identical(oldWidget.hero, widget.hero)) return;
+
+    // Class, remaining slots and consent belong to one hero snapshot.
+    _loadOptions();
+    _formRevision++;
+    _verbal = false;
+    _somatic = false;
+  }
+
   MagicMissileSlot? get _selectedSlot {
     for (final slot in _slots) {
       if (slot.key == _slotKey) return slot;
@@ -49,7 +71,12 @@ class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
 
   void _confirm() {
     final slot = _selectedSlot;
-    if (_castingClass == null || slot == null || !_verbal || !_somatic) {
+    if (HeroShieldReactionRules.preparedName(widget.hero) == null ||
+        !_classes.contains(_castingClass) ||
+        slot == null ||
+        slot.remaining <= 0 ||
+        !_verbal ||
+        !_somatic) {
       setState(
         () => _error = 'Eigene Klasse, Platz und beide Komponenten bestätigen.',
       );
@@ -86,32 +113,44 @@ class _HeroShieldReactionDialogState extends State<HeroShieldReactionDialog> {
           Text(_error!, key: const ValueKey('hero-shield-error')),
         if (HeroShieldReactionRules.preparedName(widget.hero) == null)
           const Text('Der Zauber Schild ist nicht vorbereitet.'),
-        DropdownButtonFormField<String>(
-          key: const ValueKey('hero-shield-class'),
-          initialValue: _castingClass,
-          isExpanded: true,
-          decoration: const InputDecoration(labelText: 'Zauberklasse'),
-          items: [
-            for (final name in _classes)
-              DropdownMenuItem(value: name, child: Text(name)),
-          ],
-          onChanged: (value) => setState(() => _castingClass = value),
+        KeyedSubtree(
+          key: ValueKey('hero-shield-class-revision-$_formRevision'),
+          child: DropdownButtonFormField<String>(
+            key: const ValueKey('hero-shield-class'),
+            initialValue: _castingClass,
+            isExpanded: true,
+            decoration: const InputDecoration(labelText: 'Zauberklasse'),
+            items: [
+              for (final name in _classes)
+                DropdownMenuItem(value: name, child: Text(name)),
+            ],
+            onChanged: (value) => setState(() {
+              _castingClass = value;
+              _error = null;
+            }),
+          ),
         ),
-        DropdownButtonFormField<String>(
-          key: const ValueKey('hero-shield-slot'),
-          initialValue: _slotKey,
-          isExpanded: true,
-          decoration: const InputDecoration(labelText: 'Zauberplatz'),
-          items: [
-            for (final slot in _slots)
-              DropdownMenuItem(
-                value: slot.key,
-                child: Text(
-                  '${slot.pactMagic ? 'Pakt ' : ''}Grad ${slot.level} – ${slot.remaining} frei',
+        KeyedSubtree(
+          key: ValueKey('hero-shield-slot-revision-$_formRevision'),
+          child: DropdownButtonFormField<String>(
+            key: const ValueKey('hero-shield-slot'),
+            initialValue: _slotKey,
+            isExpanded: true,
+            decoration: const InputDecoration(labelText: 'Zauberplatz'),
+            items: [
+              for (final slot in _slots)
+                DropdownMenuItem(
+                  value: slot.key,
+                  child: Text(
+                    '${slot.pactMagic ? 'Pakt ' : ''}Grad ${slot.level} – ${slot.remaining} frei',
+                  ),
                 ),
-              ),
-          ],
-          onChanged: (value) => setState(() => _slotKey = value),
+            ],
+            onChanged: (value) => setState(() {
+              _slotKey = value;
+              _error = null;
+            }),
+          ),
         ),
         CheckboxListTile(
           key: const ValueKey('hero-shield-verbal'),
