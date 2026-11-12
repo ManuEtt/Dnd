@@ -41,6 +41,17 @@ internal object JsonBackupIo {
 
     fun isValidPayload(bytes: ByteArray): Boolean = bytes.isNotEmpty() && bytes.size <= MAX_BYTES
 
+    /**
+     * A provider may return an existing document for ACTION_CREATE_DOCUMENT.
+     * Only a confirmed zero-byte target is safe to open with truncating mode.
+     * Missing or negative metadata is treated as unverified and rejected.
+     */
+    fun requireEmptyTarget(size: Long?) {
+        if (size != 0L) {
+            throw IOException("Refusing to overwrite a non-empty or unverified document")
+        }
+    }
+
     fun read(input: InputStream, cancelled: () -> Boolean = { false }): ByteArray =
         input.use { source ->
             val result = ByteArrayOutputStream(BUFFER_BYTES)

@@ -1,4 +1,5 @@
 import 'srd_spell_catalog.dart';
+import 'srd_wall_of_fire_catalog_identity.dart';
 
 /// Horizontal sides are named relative to a separately confirmed wall
 /// placement. The naming does not infer facing, target height, or cover.
@@ -126,13 +127,7 @@ class SrdWallOfFireHeatSideRules {
   static SrdWallOfFireHeatSideAssessment previewConfirmedTrigger(
     SrdWallOfFireHeatSideRequest facts,
   ) {
-    final spell = facts.spell;
-    if (spell.id != 'spell-wall-of-fire' ||
-        spell.name != 'Wall of Fire' ||
-        spell.level != 4 ||
-        spell.range.trim() != '120 feet') {
-      throw const FormatException('Kein bestätigter Wall-of-Fire-Zauber.');
-    }
+    SrdWallOfFireCatalogIdentity.validate(facts.spell);
     if (!facts.hotSideSelectedAtCastConfirmed ||
         !facts.targetRegionConfirmed ||
         !facts.distanceConfirmed ||

@@ -64,10 +64,18 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
   bool _disadvantage = false;
   bool _prone = false;
   bool _fiveFeet = false;
+  int _classFieldRevision = 0;
 
   @override
   void initState() {
     super.initState();
+    _loadCastingClasses();
+  }
+
+  void _loadCastingClasses() {
+    _castingClass = null;
+    _classes = const [];
+    _setupError = null;
     try {
       _classes = FireBoltRules.castingClasses(widget.hero);
       if (_classes.isNotEmpty) _castingClass = _classes.first;
@@ -76,6 +84,33 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
     } on StateError catch (e) {
       _setupError = e.message;
     }
+  }
+
+  @override
+  void didUpdateWidget(covariant FireBoltDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (identical(oldWidget.hero, widget.hero) &&
+        identical(oldWidget.encounter, widget.encounter)) {
+      return;
+    }
+
+    // These confirmations belong to one hero/encounter snapshot. A new
+    // encounter or hero must not inherit the previous target's consent.
+    _loadCastingClasses();
+    _classFieldRevision++;
+    _visible = false;
+    _withinRange = false;
+    _verbal = false;
+    _somatic = false;
+    _fireDefenses = false;
+    _shieldReaction = false;
+    _circumstances = false;
+    _noAttackModifiers = false;
+    _advantage = false;
+    _disadvantage = false;
+    _prone = false;
+    _fiveFeet = false;
+    _error = null;
   }
 
   Widget _check(
@@ -170,17 +205,23 @@ class _FireBoltDialogState extends State<FireBoltDialog> {
                 FireBoltRules.preparedName(widget.hero) == null)
               const Text('Kein bestätigter Feuerpfeil verfügbar.')
             else
-              DropdownButtonFormField<String>(
-                key: const ValueKey('fire-bolt-class'),
-                initialValue: _castingClass,
-                decoration: const InputDecoration(
-                  labelText: 'Zaubernde Klasse',
+              KeyedSubtree(
+                key: ValueKey('fire-bolt-class-revision-$_classFieldRevision'),
+                child: DropdownButtonFormField<String>(
+                  key: const ValueKey('fire-bolt-class'),
+                  initialValue: _castingClass,
+                  decoration: const InputDecoration(
+                    labelText: 'Zaubernde Klasse',
+                  ),
+                  items: [
+                    for (final name in _classes)
+                      DropdownMenuItem(value: name, child: Text(name)),
+                  ],
+                  onChanged: (value) => setState(() {
+                    _castingClass = value;
+                    _error = null;
+                  }),
                 ),
-                items: [
-                  for (final name in _classes)
-                    DropdownMenuItem(value: name, child: Text(name)),
-                ],
-                onChanged: (value) => setState(() => _castingClass = value),
               ),
             _check('visible', 'Das Ziel ist sichtbar.', _visible, (v) {
               _visible = v;

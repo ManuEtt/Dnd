@@ -3,6 +3,7 @@ import 'condition_rules.dart';
 import 'condition_effects.dart';
 import 'models.dart';
 import 'rules_engine.dart';
+import 'srd_character_classes.dart';
 
 /// SRD 5.2.1 Paladin 1: Lay on Hands, for the confirmed player character.
 /// Targeting allies needs actual party-member records and is not guessed.
@@ -10,8 +11,37 @@ import 'rules_engine.dart';
 class PaladinLayOnHands {
   const PaladinLayOnHands._();
 
-  static int remaining(HeroCharacter hero) =>
-      ClassResourceRules.remaining(hero, 'layOnHands');
+  /// Directly constructed and older profiles can contain contradictory class
+  /// names or level splits. Such data must not unlock healing resources.
+  static int? _paladinLevel(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return null;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return null;
+    }
+    return (primary == 'Paladin' ? hero.primaryClassLevel : 0) +
+        (secondary == 'Paladin' ? hero.secondaryClassLevel : 0);
+  }
+
+  /// Read-only availability fails closed for inconsistent legacy profiles.
+  /// Explicit use rejects the profile before spending any healing points.
+  static int remaining(HeroCharacter hero) {
+    if ((_paladinLevel(hero) ?? 0) < 1) return 0;
+    return ClassResourceRules.remaining(hero, 'layOnHands');
+  }
 
   /// A confirmed Bonus Action; the encounter's action economy is checked by
   /// the caller. A Poisoned removal costs five points without healing.
@@ -20,7 +50,13 @@ class PaladinLayOnHands {
     int healing = 0,
     bool removePoisoned = false,
   }) {
-    if (ClassResourceRules.level(hero, 'Paladin') < 1) {
+    final paladinLevel = _paladinLevel(hero);
+    if (paladinLevel == null) {
+      throw const FormatException(
+        'Die bestätigten Klassen und Stufen sind nicht konsistent.',
+      );
+    }
+    if (paladinLevel < 1) {
       throw StateError('Handauflegen erfordert mindestens eine Paladinstufe.');
     }
     final currentHp = hero.hitPoints;

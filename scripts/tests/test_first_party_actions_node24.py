@@ -21,11 +21,6 @@ EXPECTED = {
         ("upload-artifact", "v6"): 5,
         ("download-artifact", "v7"): 1,
     }),
-    "dart-format-reparieren.yml": Counter({
-        ("checkout", "v6"): 1, ("upload-artifact", "v6"): 1,
-    }),
-    "chat-a-eldritch-regression.yml": Counter({("checkout", "v6"): 1}),
-    "srd-monk-class-regression.yml": Counter({("checkout", "v6"): 1}),
     "cleanup-merged-safe-20261027.yml": Counter(),
 }
 
@@ -67,28 +62,32 @@ class FirstPartyActionsNode24Tests(unittest.TestCase):
                     )
 
     def test_comments_do_not_count_as_action_steps(self):
-        source = self.sources["dart-format-reparieren.yml"]
+        source = self.sources["android-build.yml"]
         commented = source + (
             "\n# - uses: actions/checkout@v4"
             "\n# uses: actions/upload-artifact@v4\n"
         )
         self.assertEqual(
             first_party_actions(commented),
-            EXPECTED["dart-format-reparieren.yml"],
+            EXPECTED["android-build.yml"],
         )
 
-    def test_manual_repair_remains_manual_and_regressions_are_preserved(self):
-        manual = self.sources["dart-format-reparieren.yml"]
-        self.assertIn("workflow_dispatch:", manual)
-        self.assertIn("git diff --check", manual)
-        self.assertIn("dart format lib test", manual)
-        self.assertIn("git push origin", manual)
-        self.assertIn("retention-days: 30", manual)
-        for file in ("chat-a-eldritch-regression.yml", "srd-monk-class-regression.yml"):
-            with self.subTest(file=file):
-                source = self.sources[file]
-                self.assertIn("pull_request:", source)
-                self.assertIn("flutter test", source)
+    def test_consolidated_pipeline_preserves_all_regression_gates(self):
+        pipeline = self.sources["android-build.yml"]
+        for gate in (
+            "workflow_dispatch:", "pull_request:",
+            "dart format --output=none --set-exit-if-changed lib test",
+            "run: flutter analyze", "run: flutter test\n",
+            "flutter build apk --debug", "RUN_BACKEND_SMOKE: '1'",
+        ):
+            self.assertIn(gate, pipeline)
+        for name in (
+            "srd_eldritch_blast_rules_test.dart",
+            "srd_eldritch_blast_encounter_test.dart",
+            "monk_uncanny_metabolism_test.dart",
+            "monk_perfect_focus_test.dart", "class_resource_rules_test.dart",
+        ):
+            self.assertTrue((ROOT / "app/test" / name).is_file())
         cleanup = self.sources["cleanup-merged-safe-20261027.yml"]
         self.assertIn("uses: actions/github-script@v8", cleanup)
         self.assertIn("github.rest.git.deleteRef", cleanup)

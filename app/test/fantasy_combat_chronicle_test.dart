@@ -284,4 +284,132 @@ void main() {
       semantics.dispose();
     });
   }
+
+  testWidgets(
+    'Ungültige Zahlen aus Import-Ereignissen nicht als Fakten anzeigen',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      await tester.pumpWidget(
+        screen([
+          event(
+            'invalid',
+            'attack',
+            payload: {
+              'roll': {'total': double.nan},
+              'hit': true,
+              'damage': -5,
+              'hitPointsRestored': -2,
+              'recovered': 1.5,
+              'meters': double.infinity,
+              'enemyAttacksRemaining': -4,
+            },
+          ),
+          event(
+            'invalid-count',
+            'combat.enemyAttackCountConfirmed',
+            payload: {'count': -3},
+          ),
+          event(
+            'fractional-damage',
+            'effect.damage',
+            payload: {
+              'damage': 2.5,
+              'roll': {'total': double.infinity},
+            },
+          ),
+        ]),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Treffer'), findsOneWidget);
+      for (final invalid in [
+        'Wurf: NaN',
+        'Wurf: Infinity',
+        'Schaden: -5',
+        'Schaden: 2.5',
+        'Geheilte TP: -2',
+        'Geheilte TP: 1.5',
+        'Bewegung: Infinity',
+        'Weitere Gegnerangriffe: -4',
+        'Gegnerangriffe: -3',
+      ]) {
+        expect(find.textContaining(invalid), findsNothing);
+        expect(
+          find.bySemanticsLabel(RegExp(RegExp.escape(invalid))),
+          findsNothing,
+        );
+      }
+      expect(tester.takeException(), isNull);
+      semantics.dispose();
+    },
+  );
+
+  for (final width in [320.0, 360.0]) {
+    testWidgets('Gültige Grenzwerte bei $width dp und 200 % lesbar', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final semantics = tester.ensureSemantics();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildFantasyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: FantasyCombatChronicle(
+                events: [
+                  event(
+                    'valid-roll',
+                    'attack',
+                    payload: {
+                      'roll': {'total': -3},
+                      'hit': true,
+                      'damage': 0,
+                      'enemyAttacksRemaining': 2,
+                    },
+                  ),
+                  event('valid-move', 'combat.moved', payload: {'meters': 1.5}),
+                  event(
+                    'valid-heal',
+                    'effect.healing',
+                    payload: {'hitPointsRestored': 4},
+                  ),
+                  event(
+                    'valid-count',
+                    'combat.enemyAttackCountConfirmed',
+                    payload: {'count': 2},
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+          'Wurf: -3 · Treffer · Schaden: 0 · Weitere Gegnerangriffe: 2',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Bewegung: 1.5 m'), findsOneWidget);
+      expect(find.text('Geheilte TP: 4'), findsOneWidget);
+      expect(find.text('Gegnerangriffe: 2'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(RegExp(r'^Angriffswurf, .*Wurf: -3')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+      semantics.dispose();
+    });
+  }
 }

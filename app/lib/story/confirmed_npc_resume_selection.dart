@@ -92,6 +92,7 @@ class ConfirmedNpcResumeSelector {
     int maxNotesPerNpc = 2,
   }) {
     if (campaign.id.trim().isEmpty ||
+        campaign.sessionId.trim().isEmpty ||
         expectedRevision < 0 ||
         expectedRevision > 2147483647 ||
         campaign.revision != expectedRevision ||

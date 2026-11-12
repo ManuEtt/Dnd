@@ -156,6 +156,23 @@ class _ChronicleEntry extends StatelessWidget {
 /// An explicit allowlist prevents stateAfter, internal identifiers or arbitrary
 /// third-party payload fields from being exposed as player-facing prose.
 class _EventSummary {
+  // Legacy/imported events can contain invalid numeric values. Present only
+  // finite, meaningful numbers; do not modify their persisted payloads.
+  static String? _displayNumber(
+    Object? value, {
+    bool allowNegative = false,
+    bool allowFraction = false,
+  }) {
+    if (value is! num ||
+        !value.isFinite ||
+        (!allowNegative && value < 0) ||
+        (!allowFraction && value % 1 != 0)) {
+      return null;
+    }
+    if (value is int) return '$value';
+    return value % 1 == 0 ? value.toStringAsFixed(0) : '$value';
+  }
+
   static String title(String type) => switch (type) {
     'combat.started' => 'Kampf begonnen',
     'combat.turnCompleted' => 'Kampfrunde abgeschlossen',
@@ -203,33 +220,38 @@ class _EventSummary {
         ? payload['roll'] as Map
         : null;
 
-    if (roll != null && roll['total'] is num) {
-      result.add('Wurf: ${roll['total']}');
+    final rollTotal = _displayNumber(roll?['total'], allowNegative: true);
+    if (rollTotal != null) {
+      result.add('Wurf: $rollTotal');
     }
     if (payload['pendingEnemyShieldHit'] == true) {
       result.add('Schildentscheidung offen');
     } else if (payload['hit'] is bool) {
       result.add(payload['hit'] == true ? 'Treffer' : 'Verfehlt');
     }
-    if (payload['pendingEnemyShieldHit'] != true && payload['damage'] is num) {
-      result.add('Schaden: ${payload['damage']}');
+    final damage = _displayNumber(payload['damage']);
+    if (payload['pendingEnemyShieldHit'] != true && damage != null) {
+      result.add('Schaden: $damage');
     }
-    if (payload['hitPointsRestored'] is num) {
-      result.add('Geheilte TP: ${payload['hitPointsRestored']}');
+    final restored = _displayNumber(payload['hitPointsRestored']);
+    if (restored != null) {
+      result.add('Geheilte TP: $restored');
     }
-    if (payload['recovered'] is num) {
-      result.add('Geheilte TP: ${payload['recovered']}');
+    final recovered = _displayNumber(payload['recovered']);
+    if (recovered != null) {
+      result.add('Geheilte TP: $recovered');
     }
-    if (payload['meters'] is num) {
-      result.add('Bewegung: ${payload['meters']} m');
+    final meters = _displayNumber(payload['meters'], allowFraction: true);
+    if (meters != null) {
+      result.add('Bewegung: $meters m');
     }
-    if (event.type == 'combat.enemyAttackCountConfirmed' &&
-        payload['count'] is int) {
-      result.add('Gegnerangriffe: ${payload['count']}');
+    final count = _displayNumber(payload['count']);
+    if (event.type == 'combat.enemyAttackCountConfirmed' && count != null) {
+      result.add('Gegnerangriffe: $count');
     }
-    if (payload['enemyAttacksRemaining'] is int &&
-        (payload['enemyAttacksRemaining'] as int) > 0) {
-      result.add('Weitere Gegnerangriffe: ${payload['enemyAttacksRemaining']}');
+    final remaining = _displayNumber(payload['enemyAttacksRemaining']);
+    if (remaining != null && (payload['enemyAttacksRemaining'] as num) > 0) {
+      result.add('Weitere Gegnerangriffe: $remaining');
     }
     if (event.type == 'combat.shieldHitResolved') {
       if (payload['choice'] == 'cast') {

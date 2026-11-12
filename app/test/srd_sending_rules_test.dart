@@ -52,6 +52,79 @@ void main() {
     },
   );
 
+  test('Sending rejects forged catalog identity before message preview', () {
+    SrdSpellDefinition altered({
+      String? id,
+      String? name,
+      int? level,
+      String? school,
+      List<String>? classes,
+      String? castingTime,
+      String? range,
+      String? components,
+      String? duration,
+      bool? verbal,
+      bool? somatic,
+      bool? material,
+      bool? concentration,
+      bool? ritual,
+    }) => SrdSpellDefinition(
+      id: id ?? sending.id,
+      name: name ?? sending.name,
+      level: level ?? sending.level,
+      school: school ?? sending.school,
+      classes: classes ?? sending.classes,
+      castingTime: castingTime ?? sending.castingTime,
+      range: range ?? sending.range,
+      components: components ?? sending.components,
+      duration: duration ?? sending.duration,
+      verbal: verbal ?? sending.verbal,
+      somatic: somatic ?? sending.somatic,
+      material: material ?? sending.material,
+      concentration: concentration ?? sending.concentration,
+      ritual: ritual ?? sending.ritual,
+    );
+
+    final forgeries = <(String, SrdSpellDefinition)>[
+      ('id', altered(id: 'spell-fake-sending')),
+      ('name', altered(name: 'Sending ')),
+      ('level', altered(level: 4)),
+      ('school', altered(school: 'Evocation')),
+      ('missing class', altered(classes: const ['Wizard'])),
+      (
+        'reordered class list',
+        altered(classes: const ['Wizard', 'Cleric', 'Bard']),
+      ),
+      ('casting time', altered(castingTime: 'Bonus Action')),
+      ('range', altered(range: '120 feet')),
+      ('materials', altered(components: 'V, S, M (a silver wire)')),
+      ('duration', altered(duration: '1 minute')),
+      ('verbal flag', altered(verbal: false)),
+      ('somatic flag', altered(somatic: false)),
+      ('material flag', altered(material: false)),
+      ('concentration flag', altered(concentration: true)),
+      ('ritual flag', altered(ritual: true)),
+    ];
+    for (final (field, forged) in forgeries) {
+      expect(
+        () => SrdSendingRules.prepare(
+          spell: forged,
+          recipientId: 'known-npc-42',
+          message: 'Bitte antworte.',
+          knowledge: SendingRecipientKnowledge.personallyMet,
+          recipientIsCreatureConfirmed: true,
+        ),
+        throwsUnsupportedError,
+        reason: field,
+      );
+    }
+
+    final valid = prepare(message: 'Bitte antworte.');
+    expect(valid.recipientId, 'known-npc-42');
+    expect(valid.wordCount, 2);
+    expect(valid.message, 'Bitte antworte.');
+  });
+
   test('a confirmed creature met personally qualifies with 25 words', () {
     final words = List.filled(25, 'Wort').join(' ');
     final plan = prepare(recipientId: '  npc-01  ', message: '  $words  ');

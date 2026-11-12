@@ -293,6 +293,9 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
               DropdownButtonFormField<String>(
                 key: const ValueKey('fighter-fighting-style'),
                 initialValue: _fighterStyle,
+                isExpanded: true,
+                isDense: false,
+                itemHeight: null,
                 decoration: const InputDecoration(
                   labelText: 'Kampfstil wählen',
                 ),
@@ -301,7 +304,11 @@ class _SrdClassSelectionDialogState extends State<SrdClassSelectionDialog> {
                       in FighterCreationRules.fightingStyles.entries)
                     DropdownMenuItem(
                       value: entry.key,
-                      child: Text(entry.value),
+                      child: Text(
+                        entry.value,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                 ],
                 onChanged: (value) => setState(() => _fighterStyle = value),

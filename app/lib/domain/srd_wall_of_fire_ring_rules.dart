@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'srd_spell_catalog.dart';
+import 'srd_wall_of_fire_catalog_identity.dart';
 import 'srd_spell_grid_target_rules.dart';
 import 'srd_sphere_area_rules.dart';
 
@@ -70,12 +71,7 @@ class SrdWallOfFireRingRules {
     required int verifiedOuterDiameterFeet,
     required int verifiedHeightFeet,
   }) {
-    if (spell.id != 'spell-wall-of-fire' ||
-        spell.name != 'Wall of Fire' ||
-        spell.level != 4 ||
-        spell.range.trim() != '120 feet') {
-      throw const FormatException('Kein bestätigter Wall-of-Fire-Zauber.');
-    }
+    SrdWallOfFireCatalogIdentity.validate(spell);
     if (!ringShapeVerifiedFromEffect ||
         !outerDiameterConventionConfirmed ||
         !solidSurfaceConfirmed) {

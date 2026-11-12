@@ -222,17 +222,75 @@ void main() {
     }
   });
 
-  test('triggered time text cannot escape explicit trigger path', () {
+  test('unverified triggered time text fails before spell preflight', () {
     final missile = catalog.find('Magic Missile')!;
+    final hero = _wizard();
+    final original = jsonEncode(hero.toJson());
     for (final text in [
       'Reaction, which you take when hit',
       'Bonus Action, which you take after attacking',
+      catalog.find('Counterspell')!.castingTime,
+      catalog.find('Divine Smite')!.castingTime,
     ]) {
       final forged = _alter(missile, time: text);
-      final assessment = SrdSpellCastingTimeRules.inspect(forged);
-      expect(assessment.permitsExistingSingleTurnPreflight, isFalse);
-      expect(() => _plan(_wizard(), forged), throwsUnsupportedError);
+      expect(
+        () => SrdSpellCastingTimeRules.inspect(forged),
+        throwsUnsupportedError,
+      );
+      expect(() => _plan(hero, forged), throwsUnsupportedError);
     }
+    expect(jsonEncode(hero.toJson()), original);
+    expect(hero.spentSpellSlots, isEmpty);
+  });
+
+  test('all eight triggered spells require their exact published time', () {
+    final triggered = catalog.spells
+        .where(
+          (spell) =>
+              spell.castingTime.startsWith('Reaction, which you take ') ||
+              spell.castingTime.startsWith('Bonus Action, which you take '),
+        )
+        .toList();
+    expect(triggered.length, 8);
+    for (final spell in triggered) {
+      final accepted = SrdSpellCastingTimeRules.inspect(spell);
+      expect(
+        accepted.kind,
+        spell.castingTime.startsWith('Reaction,')
+            ? SrdSpellCastingTimeKind.triggeredReaction
+            : SrdSpellCastingTimeKind.triggeredBonusAction,
+        reason: spell.name,
+      );
+      expect(accepted.permitsExistingSingleTurnPreflight, isFalse);
+      final downgraded = _alter(spell, time: 'Action');
+      expect(
+        () => SrdSpellCastingTimeRules.inspect(downgraded),
+        throwsFormatException,
+        reason: spell.name,
+      );
+      final other = triggered.firstWhere(
+        (candidate) => candidate.castingTime != spell.castingTime,
+      );
+      expect(
+        () => SrdSpellCastingTimeRules.inspect(
+          _alter(spell, time: other.castingTime),
+        ),
+        throwsFormatException,
+        reason: spell.name,
+      );
+    }
+    expect(
+      SrdSpellCastingTimeRules.requireSingleTurn(
+        catalog.find('Magic Missile')!,
+      ).kind,
+      SrdSpellCastingTimeKind.action,
+    );
+    expect(
+      SrdSpellCastingTimeRules.requireSingleTurn(
+        catalog.find('Detect Magic')!,
+      ).ritualOption,
+      isTrue,
+    );
   });
 
   test('the existing preflight still denies unverified reactions and time', () {

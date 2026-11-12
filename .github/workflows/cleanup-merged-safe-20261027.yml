@@ -116,6 +116,23 @@ jobs:
                 skipped++;
                 continue;
               }
+              // Recheck references and protection immediately before deletion:
+              // another session may have opened a PR since the initial list.
+              const liveBranch = await github.rest.repos.getBranch({
+                owner, repo, branch: name
+              });
+              const livePulls = await github.paginate(github.rest.pulls.list, {
+                owner, repo, state: 'open', per_page: 100
+              });
+              if (liveBranch.data.protected ||
+                  liveBranch.data.commit.sha !== sha ||
+                  livePulls.some(pr => pr.base.ref === name ||
+                    (pr.head.repo?.full_name === owner + '/' + repo &&
+                     pr.head.ref === name))) {
+                core.warning('Branch wird inzwischen verwendet/geschützt: ' + name);
+                skipped++;
+                continue;
+              }
               await github.rest.git.deleteRef({
                 owner, repo, ref: 'heads/' + name
               });

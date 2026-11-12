@@ -1,6 +1,7 @@
 import 'class_resource_rules.dart';
 import 'condition_rules.dart';
 import 'models.dart';
+import 'srd_character_classes.dart';
 
 /// Read-only calculation for SRD 5.2.1 Monk level 4: Slow Fall.
 ///
@@ -28,9 +29,28 @@ class SrdMonkSlowFallResult {
 class SrdMonkSlowFallRules {
   const SrdMonkSlowFallRules._();
 
-  /// null means the feature is not unlocked. This is intentionally distinct
-  /// from 0 damage reduction. Multiclass uses Monk level, not hero.level.
+  /// null means the feature is not unlocked or the class snapshot is invalid.
+  /// This is intentionally distinct from 0 damage reduction. Multiclass uses
+  /// Monk level, not hero.level. Invalid legacy/direct profiles fail closed.
   static int? maximumReduction(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return null;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return null;
+    }
     final monkLevel = ClassResourceRules.level(hero, 'Mönch');
     return monkLevel >= 4 ? monkLevel * 5 : null;
   }

@@ -1,5 +1,6 @@
 import 'class_resource_rules.dart';
 import 'models.dart';
+import 'srd_character_classes.dart';
 
 /// SRD 5.2.1, Ranger level 18: Feral Senses grants Blindsight (30 feet).
 ///
@@ -13,11 +14,31 @@ class SrdRangerFeralSensesRules {
   static const int grantedRangeDecimeters = 90;
 
   /// No stored feature flag is needed. Multiclass levels are checked against
-  /// the confirmed Ranger *class* level, not total character level.
-  static int? blindsightRangeFeet(HeroCharacter hero) =>
-      ClassResourceRules.level(hero, 'Waldläufer') >= 18
-      ? grantedRangeFeet
-      : null;
+  /// the confirmed Ranger *class* level, not total character level. Invalid
+  /// direct/legacy class snapshots cannot grant a creature a new sense.
+  static int? blindsightRangeFeet(HeroCharacter hero) {
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0) {
+      return null;
+    }
+    final primary = findSrdClass(hero.className)?.name;
+    final secondary = hero.hasSecondClass
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (primary == null ||
+        (hero.hasSecondClass
+            ? hero.secondaryClassLevel < 1 ||
+                  secondary == null ||
+                  secondary == primary
+            : hero.secondaryClassLevel != 0)) {
+      return null;
+    }
+    return ClassResourceRules.level(hero, 'Waldläufer') >= 18
+        ? grantedRangeFeet
+        : null;
+  }
 
   /// Only answers whether a *confirmed distance* falls within this sense's
   /// range. It never asserts detection through cover, darkness or hiding.

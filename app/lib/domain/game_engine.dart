@@ -418,6 +418,9 @@ class GameEngine {
       );
     }
     final foe = AdventureCatalog.forHero(valid.archetype, campaign.hero);
+    if (useUncannyMetabolism) {
+      MonkInitiativeFeatures.prepareUncannyMetabolism(campaign.hero);
+    }
     final initiative = CharacterRuleEngine.initiative(campaign.hero);
     final heroInitiative = dice.check(
       modifier: initiative.modifier,
@@ -3842,6 +3845,9 @@ class GameEngine {
         );
       }
       final enemy = AdventureCatalog.forHero('skeleton', current.hero);
+      if (useUncannyMetabolism) {
+        MonkInitiativeFeatures.prepareUncannyMetabolism(current.hero);
+      }
       final initiative = CharacterRuleEngine.initiative(current.hero);
       final heroRoll = dice.check(
         modifier: initiative.modifier,
@@ -4082,6 +4088,9 @@ class GameEngine {
           'Am Waldrand hältst du inne. Für den Dornenwächter benötigen wir einen bestätigten Charakterbogen.',
           type: 'rules.blocked',
         );
+      }
+      if (useUncannyMetabolism) {
+        MonkInitiativeFeatures.prepareUncannyMetabolism(current.hero);
       }
       final initiative = CharacterRuleEngine.initiative(current.hero);
       final heroInit = dice.check(

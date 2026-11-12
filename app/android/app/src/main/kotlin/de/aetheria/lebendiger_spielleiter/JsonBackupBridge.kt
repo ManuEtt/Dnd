@@ -6,7 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.provider.DocumentsContract
+import android.provider.OpenableColumns
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -118,11 +118,27 @@ internal class JsonBackupBridge(
             return true
         }
         val resolver = activity.contentResolver
-        val context = activity.applicationContext
         try {
             workers.execute {
                 try {
                     val value: Any = if (requestCode == REQUEST_SAVE) {
+                        // ACTION_CREATE_DOCUMENT may return an existing document for
+                        // some providers. Never truncate a non-empty or unverified target.
+                        val targetSize = resolver.query(
+                            uri,
+                            arrayOf(OpenableColumns.SIZE),
+                            null,
+                            null,
+                            null,
+                        )?.use { cursor ->
+                            val sizeColumn = cursor.getColumnIndex(OpenableColumns.SIZE)
+                            if (!cursor.moveToFirst() || sizeColumn < 0 || cursor.isNull(sizeColumn)) {
+                                null
+                            } else {
+                                cursor.getLong(sizeColumn)
+                            }
+                        }
+                        JsonBackupIo.requireEmptyTarget(targetSize)
                         val output = resolver.openOutputStream(uri, "w")
                             ?: throw IOException("Missing output stream")
                         operation.stream.set(output)
@@ -142,9 +158,7 @@ internal class JsonBackupBridge(
                             operation.stream.compareAndSet(input, null)
                         }
                     }
-                    if (operation.cancelled.get()) {
-                        if (requestCode == REQUEST_SAVE) deleteCreatedDocument(resolver, context, uri)
-                    } else {
+                    if (!operation.cancelled.get()) {
                         main.post { succeed(operation, value) }
                     }
                 } catch (_: BackupTooLargeException) {
@@ -152,11 +166,15 @@ internal class JsonBackupBridge(
                         fail(operation, "too_large", "Die Datei darf höchstens 10 MiB groß sein.")
                     }
                 } catch (_: Exception) {
-                    // ACTION_CREATE_DOCUMENT creates a new file rather than overwriting one.
-                    // Remove a partial new document when its provider permits deletion.
-                    if (requestCode == REQUEST_SAVE) deleteCreatedDocument(resolver, context, uri)
+                    // Never delete a returned URI on failure: provider contracts may return
+                    // an existing document. A partial new file is safer than deleting user data.
                     if (!operation.cancelled.get()) {
-                        main.post { fail(operation, "io", "Die Datei konnte nicht gelesen oder gespeichert werden.") }
+                        val message = if (requestCode == REQUEST_SAVE) {
+                            "Die Datei konnte nicht gespeichert werden. Eine unvollständige Datei kann zurückbleiben."
+                        } else {
+                            "Die Datei konnte nicht gelesen werden."
+                        }
+                        main.post { fail(operation, "io", message) }
                     }
                 }
             }
@@ -213,18 +231,5 @@ internal class JsonBackupBridge(
         private const val REQUEST_SAVE = 61051
         private const val REQUEST_OPEN = 61052
 
-        private fun deleteCreatedDocument(
-            resolver: android.content.ContentResolver,
-            context: android.content.Context,
-            uri: Uri,
-        ) {
-            try {
-                if (DocumentsContract.isDocumentUri(context, uri)) {
-                    DocumentsContract.deleteDocument(resolver, uri)
-                }
-            } catch (_: Exception) {
-                // Providers may refuse deletion. Neither the URI nor its contents enter logs.
-            }
-        }
     }
 }

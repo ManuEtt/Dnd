@@ -38,6 +38,29 @@ class SrdSpellPreflightRules {
     'Unsichtbarkeit': 'Invisibility',
   };
 
+  /// An SRD casting class is not valid in isolation if its owning character
+  /// has a contradictory or unknown multiclass snapshot. Directly built
+  /// and historic heroes can bypass the JSON and class-editor validators.
+  static void _requireValidClassProfile(HeroCharacter hero) {
+    final first = findSrdClass(hero.className)?.name;
+    final secondDeclared = hero.secondaryClassName.isNotEmpty;
+    final second = secondDeclared
+        ? findSrdClass(hero.secondaryClassName)?.name
+        : null;
+    if (hero.level < 1 ||
+        hero.level > 20 ||
+        hero.primaryClassLevel < 1 ||
+        hero.secondaryClassLevel < 0 ||
+        first == null ||
+        (secondDeclared
+            ? hero.secondaryClassLevel < 1 || second == null || second == first
+            : hero.secondaryClassLevel != 0)) {
+      throw const FormatException(
+        'Zauberfreigabe erfordert ein konsistentes SRD-Klassenprofil.',
+      );
+    }
+  }
+
   static String? _preparedName(HeroCharacter hero, SrdSpellDefinition spell) {
     for (final known in hero.spells) {
       if (known == spell.name || _knownAliases[known] == spell.name) {
@@ -72,6 +95,7 @@ class SrdSpellPreflightRules {
     // class choice rather than inferring it from the shared list.
     bool preparedForCastingClassConfirmed = false,
   }) {
+    _requireValidClassProfile(hero);
     final knownName = _preparedName(hero, spell);
     if (knownName == null) {
       throw const FormatException(

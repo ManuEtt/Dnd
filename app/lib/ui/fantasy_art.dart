@@ -595,8 +595,10 @@ class FantasyPinnedActionBar extends StatelessWidget {
         View.of(context).viewInsets.bottom > 0;
     // Keep the existing InkWell tree untouched while the action is enabled:
     // an always-on Tooltip would alter the pointer-down/pressed interaction.
+    const busyReason = 'Eine Handlung wird bereits verarbeitet.';
+    final busyHint = busy ? busyReason : null;
     final attackDisabledReason = busy
-        ? 'Eine Handlung wird bereits verarbeitet.'
+        ? busyReason
         : !attackEnabled
         ? attackUnavailableReason ?? 'Hier ist derzeit kein Angriff möglich.'
         : null;
@@ -668,6 +670,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
                     color: FantasyPalette.gold,
                     width: double.infinity,
                     compact: true,
+                    semanticHint: busyHint,
                     onTap: busy ? null : onSpeech,
                   ),
                 ),
@@ -682,6 +685,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
                     color: FantasyPalette.blue,
                     width: double.infinity,
                     compact: true,
+                    semanticHint: busyHint,
                     onTap: busy ? null : onInspect,
                   ),
                 ),
@@ -706,6 +710,7 @@ class FantasyPinnedActionBar extends StatelessWidget {
                     color: Color(0xffae90d8),
                     width: double.infinity,
                     compact: true,
+                    semanticHint: busyHint,
                     onTap: busy ? null : onRoll,
                   ),
                 ),

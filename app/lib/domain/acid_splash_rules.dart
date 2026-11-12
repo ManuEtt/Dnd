@@ -89,6 +89,15 @@ class AcidSplashResult {
 class AcidSplashRules {
   const AcidSplashRules._();
 
+  // Application integrity: hidden direction/format controls must not be
+  // accepted as confirmed creature identities in permanent combat events.
+  // This is not an additional SRD naming rule. Visible Unicode stays valid.
+  static final RegExp _unsafeTargetText = RegExp(
+    r'[\x00-\x1F\x7F-\x9F\u00AD\u034F\u061C\u180E'
+    r'\u200B-\u200F\u2028-\u202E\u2060-\u206F'
+    r'\uFEFF\uFFF9-\uFFFB]',
+  );
+
   static const spellNames = <String>[
     'Säurespritzer',
     'Saeurespritzer',
@@ -157,9 +166,10 @@ class AcidSplashRules {
     for (final target in targets) {
       if (target.id.trim().isEmpty ||
           target.id.trim() != target.id ||
-          target.id.contains(RegExp(r'[\x00-\x1F\x7F]')) ||
+          _unsafeTargetText.hasMatch(target.id) ||
           target.id.length > 128 ||
           target.name.trim().isEmpty ||
+          _unsafeTargetText.hasMatch(target.name) ||
           target.name.length > 128 ||
           !ids.add(target.id) ||
           target.maxHitPoints < 1 ||

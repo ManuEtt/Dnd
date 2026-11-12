@@ -16,9 +16,17 @@ class SrdManualSavingThrowRules {
     if (!abilityNames.contains(ability)) {
       throw const FormatException('Unbekanntes Rettungswurf-Attribut.');
     }
-    // Preserve the existing requirement even when a condition causes failure.
-    if (hero.abilities[ability] == null) {
+    // Validate the confirmed score before the automatic-failure short path.
+    // Otherwise invalid imported or constructed scores could be accepted as
+    // confirmed saving-throw evidence just because no d20 is rolled.
+    final score = hero.abilities[ability];
+    if (score == null) {
       throw StateError('Das Attribut $ability ist nicht bestätigt.');
+    }
+    if (score < 1 || score > 30) {
+      throw const FormatException(
+        'Der bestätigte Rettungswurf-Attributswert muss 1–30 betragen.',
+      );
     }
     if (ConditionRules.hasAutomaticSavingThrowFailure(hero, ability)) {
       return null;

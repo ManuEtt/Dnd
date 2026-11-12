@@ -22,11 +22,29 @@ class ConfirmedNpcContinuityExcerpt {
     if (!_validId.hasMatch(npcId) || maxNotes < 1 || maxNotes > 3) {
       throw const FormatException('Ungültige NPC-Kurzfassung.');
     }
-    final snapshot = NpcContinuityReader.read(
-      campaign,
-      npcId: npcId,
-      limit: maxNotes,
-    );
+    final snapshot = NpcContinuityReader.read(campaign, npcId: npcId, limit: 1);
+
+    // A note ID is evidence only when it uniquely identifies one saved
+    // record across the campaign. Legacy in-memory states may bypass the
+    // stricter JSON-import validation; never present their ambiguous IDs as
+    // confirmed history.
+    final idCounts = <String, int>{};
+    for (final note in campaign.npcRelationshipNotes) {
+      idCounts[note.id] = (idCounts[note.id] ?? 0) + 1;
+    }
+    final eligible = <({NpcRelationshipNote note, int position})>[];
+    for (var index = 0; index < campaign.npcRelationshipNotes.length; index++) {
+      final note = campaign.npcRelationshipNotes[index];
+      if (note.npcId == npcId &&
+          _validId.stringMatch(note.id) == note.id &&
+          idCounts[note.id] == 1) {
+        eligible.add((note: note, position: index));
+      }
+    }
+    eligible.sort((a, b) {
+      final byTime = b.note.recordedAt.compareTo(a.note.recordedAt);
+      return byTime != 0 ? byTime : b.position.compareTo(a.position);
+    });
 
     final name = _clean(snapshot.name, 100, joinName: true);
     if (name.isEmpty) {
@@ -39,7 +57,9 @@ class ConfirmedNpcContinuityExcerpt {
       'Aktuelle Beziehung: ${relationship.isEmpty ? 'unbekannt' : relationship}',
     ];
     var added = 0;
-    for (final note in snapshot.recentNotes) {
+    for (final entry in eligible) {
+      if (added == maxNotes) break;
+      final note = entry.note;
       final text = _clean(note.note, 280);
       if (text.isEmpty) continue;
       final relation = _clean(note.relationship, 80);

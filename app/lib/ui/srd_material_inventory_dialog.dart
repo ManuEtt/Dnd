@@ -50,10 +50,37 @@ class _SrdMaterialInventoryDialogState
   String _targetCountText = '';
   String? _setupError;
   String? _error;
+  int _snapshotGeneration = 0;
 
   @override
   void initState() {
     super.initState();
+    _loadSnapshot();
+  }
+
+  @override
+  void didUpdateWidget(covariant SrdMaterialInventoryDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.hero, widget.hero) ||
+        !identical(oldWidget.spell, widget.spell)) {
+      // Material approvals are tied to the exact hero and spell snapshot.
+      // Remount the form fields as well: their internal selected values do
+      // not automatically follow a changed initialValue.
+      _snapshotGeneration++;
+      _loadSnapshot();
+    }
+  }
+
+  void _loadSnapshot() {
+    _requirements = const [];
+    _selectedStacks.clear();
+    _identityConfirmed.clear();
+    _quantityConfirmed.clear();
+    _consumptionConfirmed.clear();
+    _targetCountText = '';
+    _setupError = null;
+    _error = null;
+
     try {
       _requirements = SrdSpellComponentRules.auditedItems(widget.spell);
       if (_requirements.isEmpty) {
@@ -172,6 +199,7 @@ class _SrdMaterialInventoryDialogState
     insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
     title: const Text('Zaubermaterialien bestätigen'),
     content: SizedBox(
+      key: ValueKey('material-form-$_snapshotGeneration'),
       width: 470,
       child: Column(
         mainAxisSize: MainAxisSize.min,

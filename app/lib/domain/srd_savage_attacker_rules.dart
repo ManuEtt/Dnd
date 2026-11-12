@@ -76,6 +76,20 @@ class SrdSavageAttackerRules {
       );
     }
 
+    // Reusing one roll object is not evidence of two independent throws.
+    // Equal faces in distinct rolls remain valid.
+    if (identical(original, alternative) ||
+        (critical &&
+            (identical(originalCriticalExtra, alternativeCriticalExtra) ||
+                identical(original, originalCriticalExtra) ||
+                identical(original, alternativeCriticalExtra) ||
+                identical(alternative, originalCriticalExtra) ||
+                identical(alternative, alternativeCriticalExtra)))) {
+      throw const FormatException(
+        'Wilder Angreifer benötigt unabhängige Würfelnachweise.',
+      );
+    }
+
     final parsed = _parseWeaponExpression(weaponDamageExpression);
     _verifyRoll(original, parsed);
     _verifyRoll(alternative, parsed);

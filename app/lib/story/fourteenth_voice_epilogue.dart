@@ -26,6 +26,16 @@ class FourteenthVoiceEpilogue {
   static bool _said(String text, String alternatives) =>
       alternatives.split('|').any(text.contains);
 
+  // An offered ending is not a confirmed decision merely because a player
+  // quotes it, compares alternatives, or asks a question about it.
+  static bool _choosesLegacy(String text, String choice) {
+    final action = text.replaceAll(RegExp(r'[.!]+$'), '').trim();
+    return RegExp(
+      '^(?:(?:ich|wir) (?:möchte|möchten|will|wollen) )?$choice'
+      r'$',
+    ).hasMatch(action);
+  }
+
   static bool _negated(String text) => RegExp(
     r'\b(?:nicht|niemals|ohne|kein(?:e|en|em|er|es)?)\b',
   ).hasMatch(text);
@@ -396,7 +406,7 @@ class FourteenthVoiceEpilogue {
           'Du hast noch keine Dorfentscheidung bestätigt.',
         );
       }
-      if (_said(text, 'gedenkbuch anlegen')) {
+      if (_choosesLegacy(text, r'(?:ein )?gedenkbuch anlegen')) {
         return _finish(
           c,
           'memorial',
@@ -406,7 +416,10 @@ class FourteenthVoiceEpilogue {
               'was sie darin festhalten will.',
         );
       }
-      if (_said(text, 'zeugnisse veröffentlichen|zeugnisse veroeffentlichen')) {
+      if (_choosesLegacy(
+        text,
+        r'zeugnisse (?:veröffentlichen|veroeffentlichen)',
+      )) {
         return _finish(
           c,
           'testimonies',
@@ -416,7 +429,7 @@ class FourteenthVoiceEpilogue {
               'wird dadurch nicht wiederhergestellt.',
         );
       }
-      if (_said(text, 'dorffest veranstalten|fest veranstalten')) {
+      if (_choosesLegacy(text, r'(?:(?:ein )?dorffest|fest) veranstalten')) {
         return _finish(
           c,
           'festival',
