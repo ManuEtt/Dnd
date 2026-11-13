@@ -10,8 +10,19 @@ HeroCharacter _hero() => HeroCharacter(
   name: 'Aria',
   className: 'Magier',
   level: 5,
+  abilities: const {
+    'strength': 10,
+    'dexterity': 12,
+    'constitution': 14,
+    'intelligence': 16,
+    'wisdom': 12,
+    'charisma': 14,
+  },
   hitPoints: 20,
   maxHitPoints: 20,
+  armorClass: 14,
+  speed: 9,
+  weaponDamage: '1d4',
 );
 
 Campaign _campaign() {
@@ -65,11 +76,7 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> _enter(
-  WidgetTester tester,
-  String id,
-  String value,
-) async {
+Future<void> _enter(WidgetTester tester, String id, String value) async {
   final field = _field(id);
   await tester.ensureVisible(field);
   await tester.enterText(field, value);
