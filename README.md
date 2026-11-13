@@ -2383,3 +2383,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+### 2026-11-13 – Sitzungsgrenze für bestätigtes NPC-Gedächtnis
+
+- **Problem:** Ein typisierter NPC-Erinnerungskontext konnte trotz leerer oder ausschließlich aus Leerzeichen bestehender gespeicherter Sitzungskennung erzeugt werden; extrem hohe Revisionen wurden nicht einheitlich begrenzt.
+- **Lösung:** `NpcIdentityMemory.read` verweigert den Kontext ohne gültige nichtleere Sitzung sowie außerhalb der Revisionsgrenze 0–2147483647. Gültige Sitzungen und bestätigte Erinnerungen werden weiterhin unverändert gelesen.
+- **Betroffen:** `app/lib/story/npc_identity_memory.dart`; drei positive/negative Testfälle in `app/test/npc_identity_session_bounds_test.dart`.
+- **Nachweis:** Branch `fix/chat-b/npc-identity-session-guard-20261113`, [PR #734](https://github.com/ManuEtt/Dnd/pull/734) (Draft), Quell-/Teststand `81f6396705c21675157bc3ba073a72404af588db`; finaler Dokumentations-Head auf GitHub prüfen.
+- **Prüfung:** Quellcode und vorhandene Modellverträge geprüft. Neue Tests, Analyzer, Formatter, Python-/Backend-Checks sowie Android-Build auf finalem Stand noch **nicht ausgeführt**; CI nach endgültigem Commit gesondert abnehmen.
+- **Kompatibilität:** Kein JSON-/SQLite-/API-/Versionswechsel, keine Migration; gespeicherte Spielstände und Regelzustände bleiben unverändert.
+- **Grenzen:** Review, GitHub-CI und Integration ausstehend. Konkurrierende README-Nachträge nur verlustfrei zusammenführen.
