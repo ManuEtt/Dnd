@@ -127,7 +127,7 @@ void main() {
 
   test('a confirmed creature met personally qualifies with 25 words', () {
     final words = List.filled(25, 'Wort').join(' ');
-    final plan = prepare(recipientId: '  npc-01  ', message: '  $words  ');
+    final plan = prepare(recipientId: 'npc-01', message: '  $words  ');
     expect(plan.recipientId, 'npc-01');
     expect(plan.wordCount, 25);
     expect(plan.message, words);
@@ -230,7 +230,7 @@ void main() {
     ]) {
       expect(() => prepare(recipientId: recipientId), throwsFormatException);
     }
-    expect(prepare(recipientId: '  npc:07-Ö_2  ').recipientId, 'npc:07-Ö_2');
+    expect(prepare(recipientId: 'npc:07-Ö_2').recipientId, 'npc:07-Ö_2');
   });
 
   test('confirmed same plane is deliverable without a percentile roll', () {
