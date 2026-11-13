@@ -655,11 +655,21 @@ CREATE TABLE settings (
     if (campaign == null) {
       throw const InvalidSaveException('Diese Kampagne wurde nicht gefunden.');
     }
-    return const JsonEncoder.withIndent('  ').convert({
+    final archive = const JsonEncoder.withIndent('  ').convert({
       'format': 'living-gm-campaign',
       'schemaVersion': 1,
       'campaign': campaign.toJson(),
     });
+    // Never offer an export that this app's import limit would reject.
+    // UTF-8 bytes, not Dart UTF-16 code units, determine archive size.
+    const maxArchiveBytes = 10 * 1024 * 1024;
+    if (archive.length > maxArchiveBytes ||
+        utf8.encode(archive).length > maxArchiveBytes) {
+      throw const InvalidSaveException(
+        'Der Spielstand ist für den JSON-Export größer als 10 MB.',
+      );
+    }
+    return archive;
   }
 
   @override
