@@ -2393,3 +2393,30 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-13 – Sitzungsgrenze für bestätigtes NPC-Gedächtnis
+
+- **Problem:** Ein typisierter NPC-Erinnerungskontext konnte trotz leerer oder ausschließlich aus Leerzeichen bestehender gespeicherter Sitzungskennung erzeugt werden; extrem hohe Revisionen wurden nicht einheitlich begrenzt.
+- **Lösung:** `NpcIdentityMemory.read` verweigert den Kontext ohne gültige nichtleere Sitzung sowie außerhalb der Revisionsgrenze 0–2147483647. Gültige Sitzungen und bestätigte Erinnerungen werden weiterhin unverändert gelesen.
+- **Betroffen:** `app/lib/story/npc_identity_memory.dart`; drei positive/negative Testfälle in `app/test/npc_identity_session_bounds_test.dart`.
+- **Nachweis:** Branch `fix/chat-b/npc-identity-session-guard-20261113`, [PR #734](https://github.com/ManuEtt/Dnd/pull/734) (Draft), Quell-/Teststand `81f6396705c21675157bc3ba073a72404af588db`; finaler Dokumentations-Head auf GitHub prüfen.
+- **Prüfung:** Quellcode und vorhandene Modellverträge geprüft. Neue Tests, Analyzer, Formatter, Python-/Backend-Checks sowie Android-Build auf finalem Stand noch **nicht ausgeführt**; CI nach endgültigem Commit gesondert abnehmen.
+- **Kompatibilität:** Kein JSON-/SQLite-/API-/Versionswechsel, keine Migration; gespeicherte Spielstände und Regelzustände bleiben unverändert.
+- **Grenzen:** Review, GitHub-CI und Integration ausstehend. Konkurrierende README-Nachträge nur verlustfrei zusammenführen.
+
+### 2026-11-13 – Ältere gespeicherte NPCs gezielt wiederaufnehmen
+
+- **Problem:** Der bestätigte NPC-Kurzrückblick enthält höchstens drei zuletzt relevante Personen; eine ältere bekannte Figur konnte nicht ausdrücklich per gespeicherter ID ausgewählt werden.
+- **Lösung:** `ConfirmedNpcResumeSelector.readSelected` stellt einen einzelnen gespeicherten NPC unabhängig von der Top-drei-Auswahl dar. Die Auswahl verwendet ausschließlich eine eindeutige kanonische ID; Notizen werden begrenzt, nach Zeit sortiert und bei mehrdeutigen oder unsicheren Notiz-IDs ausgeschlossen. Bei fehlenden Notizen wird keine neue Historie erfunden.
+- **Betroffene Funktionen/Tests:** `app/lib/story/confirmed_npc_resume_selection.dart` und sechs Testgruppen in `app/test/confirmed_npc_resume_explicit_selection_test.dart` (alte NPCs, Doppelidentitäten, Unicode-/Notizschutz, ungültige Grenzen, Sitzungswechsel sowie JSON-/SQLite-Neustart).
+- **Nachweis:** Branch `feat/chat-b/explicit-npc-resume-20261113`, [PR #739](https://github.com/ManuEtt/Dnd/pull/739) (Draft bei Erstellung); Fach-/Testcommits `23429e3d` und `b194a547`. Finalen Dokumentations-HEAD gesondert prüfen.
+- **Prüfung/CI:** GitHub-Main und offene PR-Fachpfade vorab geprüft; Flutter-/Dart-/Backend-/Python-/Android-Tests dieses neuen PRs noch nicht bestätigt. Kein grüner Build ohne tatsächlichen CI-Nachweis.
+- **Kompatibilität/Migration:** Ausschließlich lesende Story-Projektion; kein Versions-, API-, JSON- oder SQLite-Schemawechsel, keine Änderungen an bestätigten Regeln oder Spielständen, keine externen KI-Kosten.
+- **Grenzen:** Noch keine UI-Anbindung der expliziten NPC-Auswahl und keine reale Android-/Produktiv-KI-Abnahme; Test-/Integrationsprüfung und verlustfreie Zusammenführung aller README-Nachträge erforderlich.
+
+### 2026-11-13 – Bestätigte NPC-Wiederaufnahme und Sitzungsgrenzen integriert
+
+- **Zusammenführung:** Bestätigte NPC-Erinnerungskontexte werden ohne gültige Sitzung beziehungsweise mit unzulässiger Revision abgelehnt; gespeicherte NPCs können unabhängig von der begrenzten Übersicht gezielt über ihre eindeutige ID wiederaufgenommen werden.
+- **Code und Regressionen:** `app/lib/story/npc_identity_memory.dart` und `app/lib/story/confirmed_npc_resume_selection.dart` sowie beide neuen Testdateien für Sitzungsgrenzen und explizite NPC-Auswahl.
+- **Herkunft:** [PR #734](https://github.com/ManuEtt/Dnd/pull/734) (`4c0e61cd647009742d1125652513de7529f2d1f5`) und [PR #739](https://github.com/ManuEtt/Dnd/pull/739) (`d3240ca001c31ee47c0216a76e29a6f1b6429c26`), jeweils vollständige Einzel-CI erfolgreich. Gemeinsamer Integrations-PR wird separat vollständig geprüft.
+- **Kompatibilität:** Keine Datenmigration und keine Änderungen an SQLite, Spielständen, SRD-Regeln, Backend-Anbietern oder App-Version. Alle bisherigen README-Nachträge in unveränderter Reihenfolge übernommen.

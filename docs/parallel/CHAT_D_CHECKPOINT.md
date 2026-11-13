@@ -2317,3 +2317,14 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** CI-Abnahme und integrationssicherer Append-only-Abgleich der gemeinsam genutzten Dokumente.
 - **NOCH NICHT IMPLEMENTIERT:** Keine Änderungen an Spielstandimporten, SQLite, UI, Regelengine, Story oder Android-Prozess; keine Migration.
 - **NÄCHSTER SCHRITT:** Finale CI für #736 auswerten und gegebenenfalls im eigenen Branch reparieren; danach abgestimmt integrieren.
+
+### 2026-11-13 – Konfliktfreie NPC-Integration mit verlustfreien Append-only-Protokollen
+
+- **Main-Basis:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `fix/chat-d/integrate-npc-session-resume-20261113`.
+- **Ursprungs-PRs:** [#734](https://github.com/ManuEtt/Dnd/pull/734) (Session-/Revisionvalidierung) und [#739](https://github.com/ManuEtt/Dnd/pull/739) (ausgewählten gespeicherten NPC explizit wiederaufnehmen); Head-Commits `4c0e61cd647009742d1125652513de7529f2d1f5` und `d3240ca001c31ee47c0216a76e29a6f1b6429c26`.
+- **IMPLEMENTIERT:** Fachcode und zugehörige Tests ohne Dateipfadüberschneidung übernommen. README, zentrale Checkpoints und NPC-Checkpoint mit beiden vollständigen historischen Quell-Nachträgen hinter bestehendem Main-Ende zusammengesetzt; Original-HEADs als zusätzliche Merge-Eltern gesichert.
+- **GETESTET:** Beide PRs haben getrennte vollständige GitHub-Workflow-Läufe mit sechs erfolgreichen Jobs: [#43391441614](https://github.com/ManuEtt/Dnd/actions/runs/43391441614) und [#43396270122](https://github.com/ManuEtt/Dnd/actions/runs/43396270122). Original-Fachpfade stimmen mit dem unveränderten Main-Ausgangspunkt überein.
+- **NICHT GETESTET:** Kombinierter neuer Integrationsbranch samt Flutter-Tests, Backend, Android-Debug/Release-ABIs und Alpha-Artefakten. Reales Android-Gerät, Offline- und externer KI-Anbieter nicht geprüft.
+- **BLOCKIERT:** Merge erst nach vollständiger gemeinsamer CI und Kontrolle des aktuellen `main`- und PR-Status; bei Rot gezielt den Integrationsbranch korrigieren.
+- **NOCH NICHT IMPLEMENTIERT:** Keine Änderungen an SQLite, JSON-Schema, Spielständen, Regel-/UI- oder Backend-Anbieter-Modulen; keine Migration.
+- **NÄCHSTER SCHRITT:** CI auf endgültigem Integrations-HEAD überprüfen, bei Erfolg sicher integrieren und anschließend `main` erneut prüfen.

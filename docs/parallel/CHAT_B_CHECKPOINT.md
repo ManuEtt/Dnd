@@ -1380,3 +1380,38 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-13 – Bestätigten NPC-Kontext an gültige Sitzung binden (PR #734)
+
+- **Ausgangs-main:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7`; **Branch:** `fix/chat-b/npc-identity-session-guard-20261113`; **PR:** https://github.com/ManuEtt/Dnd/pull/734 (Draft); **App-Version:** `0.8.52+102` unverändert.
+- **Ausgangsproblem:** `NpcIdentityMemory.read` lieferte einen bestätigten, typisierten NPC-Kontext auch bei leerer/Whitespace-Sitzungskennung und unbegrenzten großen Revisionen. Andere Wiederaufnahmereader prüfen diese Grenzen bereits.
+- **IMPLEMENTIERT:** Bei fehlender Sitzungsidentität oder Revision außerhalb 0–2147483647 wird fail-closed mit `FormatException` abgebrochen. Gültige Daten bleiben unverändert.
+- **Dateien:** `app/lib/story/npc_identity_memory.dart`, `app/test/npc_identity_session_bounds_test.dart`; append-only README und beide Checkpoints.
+- **Akzeptanzkriterien:** Ungültige Sitzungskennungen und Revisionen zurückweisen; gültiger JSON-Roundtrip, Stale-Session-Erkennung und gültige Maximalrevision weiterhin zulassen; kein Rule-/Savegame-Write.
+- **GETESTET:** Live-main, offene PRs einschließlich deren geänderte Story-Dateien, tatsächliche Modell-/Story-Verträge und Quellcode manuell geprüft. Fachänderung und drei neue Testfälle auf Branch committet. Ausgangs-PR-Head vor Doku `81f6396705c21675157bc3ba073a72404af588db`.
+- **NICHT GETESTET:** Flutter-Unit-Tests, Dart-Format, `flutter analyze`, Python-/Backend-Prüfungen und Android-Debug-Build lokal nicht verfügbar (kein Flutter-/Dart-SDK; kein lokaler Repository-Clone wegen Netzwerkgrenze). Finale PR-CI steht aus.
+- **BLOCKIERT:** CI-/Android-Abnahme des finalen Commit-SHA und koordinierter, verlustfreier Merge aller README-/Checkpoint-Nachträge. PR bleibt Draft.
+- **Migration:** Keine. JSON-Schema 1, SQLite, Spielstandwerte, Ressourcen, Regeln und Provider-Verträge unverändert.
+- **NOCH NICHT IMPLEMENTIERT:** Keine Änderungen an Story-Rückblicken anderer Module; Session-ID-Validierung dieser anderen Pfade ist ein getrenntes Paket.
+- **NÄCHSTER SCHRITT:** PR #734 auf finalem Commit in GitHub Actions vollständig prüfen; bei roten Dart-/Flutter-Tests im eigenen Branch korrigieren und erst nach Grün durch Integrationstrack reviewen/mergen lassen.
+
+### 2026-11-13 – Explizite Wiederaufnahme eines gespeicherten NPCs (PR #739)
+
+- **Ausgangs-main:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7`; **Branch:** `feat/chat-b/explicit-npc-resume-20261113`; **Pull Request:** [#739](https://github.com/ManuEtt/Dnd/pull/739) (anfangs Draft), Version unverändert `0.8.52+102`. Fachcommit `23429e3d73c339c4a730bc64f7da17e24905a11e`; Testcommit `b194a54717ee3ebc908596506eba7c5c1e79467d`; finalen Dokumentations-Head auf GitHub prüfen.
+- **Ausgangsproblem:** Der read-only NPC-Rückblick wählt maximal drei Personen mit jüngsten Notizen. Ältere, ausdrücklich gewählte NPCs außerhalb dieses Fensters und bereits gespeicherte NPCs ohne Notizhistorie hatten keine ID-basierte Auswahl.
+- **IMPLEMENTIERT:** Neue `ConfirmedNpcResumeSelector.readSelected` für genau eine, eindeutig gespeicherte und vollständig kanonische NPC-ID. Die Auswahl benötigt eine gültige Kampagne, nichtleere Sitzung, exakte Revision, 1–3 Notizen als Obergrenze; sie erfindet bei leerer Historie keine Fakten, entfernt uneindeutige Notizidentitäten aus dem Kontext, sortiert bestätigte Notizen deterministisch und nutzt den unveränderten vollständigen Rohstempel über NPCs/Notizen zur Revalidierung.
+- **Dateien:** `app/lib/story/confirmed_npc_resume_selection.dart`, neuer `app/test/confirmed_npc_resume_explicit_selection_test.dart`, README und beide append-only Checkpoints.
+- **Akzeptanztests:** Sechs Testgruppen zu älteren gleichnamigen NPCs außerhalb des Top-drei-Fensters, gespeicherten NPCs ohne Notizen, ungültigen/doppelten Identitäten, kollidierenden Notiz-IDs und Unicode, veralteten Revisionen/Sitzungen/Historien sowie JSON-/SQLite-Roundtrip.
+- **GETESTET:** Haupt-HEAD, bisherige Fachtests und 28 offene PR-Metadaten auf eigene Story-Fileüberschneidung geprüft; keine offene Fachänderung an diesen neuen Dateipfaden festgestellt. Änderungen auf eigenem Branch gepusht.
+- **NICHT GETESTET:** Neue Dart-/Flutter-Tests, Dart-Formatierung, Analyzer, Python-/Backend-Checks und Android-Build/APK auf finalem Branch-HEAD sind vor der GitHub-CI-Auswertung noch nicht bestätigt. Lokales Dart-/Flutter-SDK fehlt.
+- **BLOCKIERT:** CI auf finalem Commit, anschließendes Review und verlustfreie Zusammenführung der gemeinsam verwendeten README-/Checkpoint-Dateien durch den Integrationstrack.
+- **Kompatibilität/Migration:** Nur lesende NPC-Projektion; unveränderte JSON-/SQLite-Schemata, keine Migrationsarbeiten, keine Regelzustands-/Kostenfreigabe-Änderungen, keine Speicherwrites.
+- **NOCH NICHT IMPLEMENTIERT:** Direkte Android-UI-Auswahl historischer NPCs und ID-basierter Erzählertransport; getrennte künftige Funktionspakete.
+- **NÄCHSTER SCHRITT:** CI/Flutter-Tests für PR #739 auf exaktem finalen HEAD prüfen, konkrete Fehler auf demselben Branch beheben und erst nach vollständiger grüner CI zur koordinierten Integration freigeben.
+
+### 2026-11-13 – Koordinierter Integrationsstand NPC-Sitzungsgrenze und bestätigte ID-Auswahl
+
+- Beide unabhängigen NPC-Pakete aus PR #734 (`4c0e61cd647009742d1125652513de7529f2d1f5`) und PR #739 (`d3240ca001c31ee47c0216a76e29a6f1b6429c26`) in einem Integrationsbranch ohne Überschreiben der ursprünglichen Fachdateien verbunden.
+- `npc_identity_memory.dart` lehnt Sitzungsgrenzen ohne gültige Sitzung oder mit ungültiger Revision ab; `confirmed_npc_resume_selection.dart` erlaubt gezielte Wiederaufnahme gespeicherter NPCs per verifizierter ID.
+- Alle individuellen README-/zentralen/persönlichen Checkpoints append-only erhalten. Beide Quell-CIs vollständig grün; kombinierte CI auf neuem Branch zur separaten Abnahme ausstehend.
+- Keine Spielstandmigration, Schemaänderung, SRD-Regeländerung oder neue KI-Kosten. Nächster Schritt: volle Integrations-CI und danach geschützter Merge.
