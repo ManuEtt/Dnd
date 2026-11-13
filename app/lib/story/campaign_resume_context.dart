@@ -139,11 +139,24 @@ class CampaignResumeReader {
         ? ''
         : _excerpt(campaign.sessionRecaps.last.summary, 800);
 
+    // An imported key may differ only beyond the visible length limit or
+    // by invisible legacy marks. Do not present two different stored facts
+    // under one apparently confirmed name. Count every source key before
+    // applying the display limit: hidden or older collisions still matter.
+    final visibleKeyCounts = <String, int>{};
+    for (final rawKey in campaign.facts.keys) {
+      final visible = _excerpt(rawKey, 80);
+      if (visible.isEmpty) continue;
+      visibleKeyCounts[visible] = (visibleKeyCounts[visible] ?? 0) + 1;
+    }
+
     final facts = <String>[];
     for (final fact in campaign.facts.entries.toList().reversed) {
       final key = _excerpt(fact.key, 80);
       final value = _excerpt(fact.value, 180);
-      if (key.isEmpty || value.isEmpty) continue;
+      if (key.isEmpty || value.isEmpty || visibleKeyCounts[key] != 1) {
+        continue;
+      }
       facts.add('$key: $value');
       if (facts.length == maxFacts) break;
     }
