@@ -18,7 +18,7 @@ class SrdRangerTirelessRules {
   static int maximumTemporaryHitPointUses(HeroCharacter hero) {
     if ((_rangerClassLevel(hero) ?? 0) < 10) return 0;
     final wisdom = hero.abilities['wisdom'];
-    if (wisdom == null) return 0;
+    if (wisdom == null || wisdom < 1 || wisdom > 30) return 0;
     final modifier = RulesEngine.abilityModifier(wisdom);
     return modifier < 1 ? 1 : modifier;
   }
@@ -48,7 +48,8 @@ class SrdRangerTirelessRules {
     if (rangerLevel < 10) {
       throw StateError('Unermüdlich erfordert Waldläufer-Klassenstufe 10.');
     }
-    if (hero.abilities['wisdom'] == null) {
+    final wisdom = hero.abilities['wisdom'];
+    if (wisdom == null || wisdom < 1 || wisdom > 30) {
       throw StateError('Weisheit ist noch nicht bestätigt.');
     }
     if (hero.isDead ||
@@ -64,7 +65,7 @@ class SrdRangerTirelessRules {
       throw StateError('Alle Nutzungen von Unermüdlich sind verbraucht.');
     }
     final roll = dice.roll('1d8');
-    final modifier = RulesEngine.abilityModifier(hero.abilities['wisdom']!);
+    final modifier = RulesEngine.abilityModifier(wisdom);
     final total = roll.total + modifier;
     final granted = total < 1 ? 1 : total;
     final oldTemporaryHitPoints = hero.temporaryHitPoints;
