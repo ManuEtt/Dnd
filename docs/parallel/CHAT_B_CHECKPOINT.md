@@ -1380,3 +1380,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-13 – Vollständig kanonische NPC-ID im bestätigten Kurzrückblick (#743)
+
+- **Ausgangs-main:** `12c09fc1f41de095ed7d71ded45099faa7059194`; aktuelle spätere Main-Änderungen am unabhängigen Weitsprungtest; **Branch:** `fix/chat-b/npc-excerpt-terminal-id-20261113`; **PR:** [#743](https://github.com/ManuEtt/Dnd/pull/743) (Draft). App-Version `0.8.52+102`.
+- **Ausgangsproblem:** `_validId.hasMatch(npcId)` prüft den vollständigen NPC-Identifier nicht zuverlässig bei abschließenden Zeilentrennern; die rohe Kennung wird in den bestätigten Rückblick eingesetzt.
+- **IMPLEMENTIERT:** `_validId.stringMatch(npcId) == npcId` als vollständige Identitätsprüfung vor der Rückblickprojektion. Bestehende Quellschutz-, Unicode- und Notizregeln bleiben unverändert.
+- **Geänderte Dateien:** `app/lib/story/confirmed_npc_continuity_excerpt.dart`, neuer `app/test/confirmed_npc_excerpt_terminal_id_test.dart`, README und beide append-only Checkpoints.
+- **Akzeptanz und Tests:** Ungültige CR-/LF-/CRLF-/Unicode-Endungen, Zero-Width- und Leerzeichen-IDs abweisen; gültige vollständige IDs bis 64 Zeichen nach JSON-Neustart akzeptieren; unveränderte bestätigte Notizen und Heldenwerte; keine automatische Identitätskürzung.
+- **GETESTET:** Live-main, offene PR-Dateipfade, bestehende Modul-/Testverträge gesichtet und isolierte Regressionen versioniert; aktuelle offene Story-PRs ändern das Fachmodul nicht.
+- **NICHT GETESTET:** Neue Flutter-/Dart-Tests, Format, Analyzer, Python/Backend und Android-CI auf finalem PR-HEAD; realer Android-Gerätetest und produktiver Erzähler.
+- **BLOCKIERT:** Finale CI und koordinierte Integration; README-/Checkpoint-Konflikte ausschließlich verlustfrei zusammenführen.
+- **NOCH NICHT IMPLEMENTIERT:** Aufruferseitige UI-Auswahl älterer bestätigter NPCs ist ein separater, derzeit offener Funktionsbereich.
+- **Kompatibilität/Migration:** Keine Migration, keine Speicherwrites, keine Änderung von Regeln, Spielstand oder Kostenfreigaben.
+- **NÄCHSTER SCHRITT:** CI für PR #743 auf dem exakten finalen HEAD prüfen, fehlerhafte Stellen im selben Branch korrigieren und erst nach vollständiger grüner CI zur Review freigeben.
