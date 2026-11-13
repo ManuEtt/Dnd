@@ -79,6 +79,7 @@ class NpcIdentityMemory {
     required int expectedRevision,
     int maxNotes = 3,
   }) {
+    // A confirmed NPC context must belong to a real session boundary.
     if (campaign.id.trim().isEmpty ||
         campaign.sessionId.trim().isEmpty ||
         !_safeNpcId.hasMatch(npcId) ||
