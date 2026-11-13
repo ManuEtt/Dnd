@@ -36,8 +36,10 @@ END
           repository.deleteCampaignAndReconcileSelection(campaign.id),
           throwsA(isA<Exception>()),
         );
-        expect((await repository.getCampaign(campaign.id))!.toJson(),
-            campaign.toJson());
+        expect(
+          (await repository.getCampaign(campaign.id))!.toJson(),
+          campaign.toJson(),
+        );
         expect(await repository.loadSettings(), {
           'lastCampaignId': campaign.id,
           'theme': 'dark',
