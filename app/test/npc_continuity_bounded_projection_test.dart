@@ -31,13 +31,7 @@ Campaign _campaign({
   scene: 'Eine unbestätigte Szene über gestohlenes Gold.',
   npcs:
       npcs ??
-      const [
-        WorldNpc(
-          id: 'mira',
-          name: 'Mira',
-          relationship: 'freundlich',
-        ),
-      ],
+      const [WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich')],
   npcRelationshipNotes: notes,
 );
 
@@ -52,13 +46,7 @@ void main() {
     final relationship = 'verbündet ' * 200;
     final note = '🐉' * 700;
     final campaign = _campaign(
-      npcs: [
-        WorldNpc(
-          id: 'mira',
-          name: name,
-          relationship: relationship,
-        ),
-      ],
+      npcs: [WorldNpc(id: 'mira', name: name, relationship: relationship)],
       notes: [_note(note)],
     );
     final savedBefore = jsonEncode(campaign.toJson());
@@ -153,13 +141,7 @@ void main() {
       final relationship = 'freundlich ' * 20;
       final note = '🐉' * 200;
       final source = _campaign(
-        npcs: [
-          WorldNpc(
-            id: 'mira',
-            name: name,
-            relationship: relationship,
-          ),
-        ],
+        npcs: [WorldNpc(id: 'mira', name: name, relationship: relationship)],
         notes: [_note(note)],
       );
       final folder = await Directory.systemTemp.createTemp(
