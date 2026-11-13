@@ -73,7 +73,10 @@ void main() {
       original,
       expectedRevision: 0,
     );
-    expect(overview.entries.map((entry) => entry.npcId), isNot(contains('mira-1')));
+    expect(
+      overview.entries.map((entry) => entry.npcId),
+      isNot(contains('mira-1')),
+    );
 
     final selected = ConfirmedNpcResumeSelector.readSelected(
       original,
@@ -85,7 +88,10 @@ void main() {
     expect(selected.entries.single.npcId, 'mira-1');
     expect(selected.entries.single.name, 'Mira');
     expect(selected.entries.single.recentNotes, hasLength(2));
-    expect(selected.entries.single.recentNotes.first, contains('bewacht die Karte'));
+    expect(
+      selected.entries.single.recentNotes.first,
+      contains('bewacht die Karte'),
+    );
     expect(selected.entries.single.recentNotes.last, contains('Nordbrücke'));
     expect(selected.playerOverview, contains('NPC-ID: mira-1'));
     expect(selected.playerOverview, isNot(contains('kennt den Hafen')));
@@ -200,7 +206,7 @@ void main() {
     expect(jsonEncode(campaign.toJson()), before);
   });
 
-  test('stale raw histories, session changes and invalid limits are rejected', () {
+  test('stale history, session and invalid limits are rejected', () {
     final campaign = _campaign(
       notes: [
         _note('new', 'mira-1', 'Neuer Hinweis.'),
@@ -284,7 +290,7 @@ void main() {
     expect(campaign.hero.hitPoints, 17);
   });
 
-  test('explicit NPC survives JSON and SQLite restart without save changes', () async {
+  test('explicit NPC survives JSON and SQLite restart', () async {
     final campaign = _campaign(
       notes: [
         _note('map', 'mira-1', 'Mira kennt die Brücke.'),
