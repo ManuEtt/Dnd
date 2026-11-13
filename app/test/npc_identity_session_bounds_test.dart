@@ -4,28 +4,28 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
 import 'package:lebendiger_spielleiter/story/npc_identity_memory.dart';
 
-Campaign _campaign({
-  String sessionId = 'session-verified',
-  int revision = 4,
-}) => Campaign(
-  id: 'identity-session-bounds',
-  name: 'Der Weg zum Turm',
-  world: 'Valdorn',
-  sessionId: sessionId,
-  revision: revision,
-  hero: HeroCharacter(id: 'hero', name: 'Aria', hitPoints: 17),
-  scene: 'Ein unbestätigter Erzählerbericht.',
-  npcs: const [WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich')],
-  npcRelationshipNotes: [
-    NpcRelationshipNote(
-      id: 'note-1',
-      npcId: 'mira',
-      relationship: 'freundlich',
-      note: 'Mira kennt den Weg zum Turm.',
-      recordedAt: DateTime.utc(2026, 11, 13),
-    ),
-  ],
-);
+Campaign _campaign({String sessionId = 'session-verified', int revision = 4}) =>
+    Campaign(
+      id: 'identity-session-bounds',
+      name: 'Der Weg zum Turm',
+      world: 'Valdorn',
+      sessionId: sessionId,
+      revision: revision,
+      hero: HeroCharacter(id: 'hero', name: 'Aria', hitPoints: 17),
+      scene: 'Ein unbestätigter Erzählerbericht.',
+      npcs: const [
+        WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich'),
+      ],
+      npcRelationshipNotes: [
+        NpcRelationshipNote(
+          id: 'note-1',
+          npcId: 'mira',
+          relationship: 'freundlich',
+          note: 'Mira kennt den Weg zum Turm.',
+          recordedAt: DateTime.utc(2026, 11, 13),
+        ),
+      ],
+    );
 
 NpcIdentityContext _read(Campaign campaign) => NpcIdentityMemory.read(
   campaign,
