@@ -2383,3 +2383,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+### 2026-11-13 – Ältere gespeicherte NPCs gezielt wiederaufnehmen
+
+- **Problem:** Der bestätigte NPC-Kurzrückblick enthält höchstens drei zuletzt relevante Personen; eine ältere bekannte Figur konnte nicht ausdrücklich per gespeicherter ID ausgewählt werden.
+- **Lösung:** `ConfirmedNpcResumeSelector.readSelected` stellt einen einzelnen gespeicherten NPC unabhängig von der Top-drei-Auswahl dar. Die Auswahl verwendet ausschließlich eine eindeutige kanonische ID; Notizen werden begrenzt, nach Zeit sortiert und bei mehrdeutigen oder unsicheren Notiz-IDs ausgeschlossen. Bei fehlenden Notizen wird keine neue Historie erfunden.
+- **Betroffene Funktionen/Tests:** `app/lib/story/confirmed_npc_resume_selection.dart` und sechs Testgruppen in `app/test/confirmed_npc_resume_explicit_selection_test.dart` (alte NPCs, Doppelidentitäten, Unicode-/Notizschutz, ungültige Grenzen, Sitzungswechsel sowie JSON-/SQLite-Neustart).
+- **Nachweis:** Branch `feat/chat-b/explicit-npc-resume-20261113`, [PR #739](https://github.com/ManuEtt/Dnd/pull/739) (Draft bei Erstellung); Fach-/Testcommits `23429e3d` und `b194a547`. Finalen Dokumentations-HEAD gesondert prüfen.
+- **Prüfung/CI:** GitHub-Main und offene PR-Fachpfade vorab geprüft; Flutter-/Dart-/Backend-/Python-/Android-Tests dieses neuen PRs noch nicht bestätigt. Kein grüner Build ohne tatsächlichen CI-Nachweis.
+- **Kompatibilität/Migration:** Ausschließlich lesende Story-Projektion; kein Versions-, API-, JSON- oder SQLite-Schemawechsel, keine Änderungen an bestätigten Regeln oder Spielständen, keine externen KI-Kosten.
+- **Grenzen:** Noch keine UI-Anbindung der expliziten NPC-Auswahl und keine reale Android-/Produktiv-KI-Abnahme; Test-/Integrationsprüfung und verlustfreie Zusammenführung aller README-Nachträge erforderlich.
