@@ -3681,3 +3681,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+### 2026-11-13 – Gespeicherte NPCs gezielt für Kampagnenfortsetzung auswählen (#739)
+
+- **Ausgangs-main/Version:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7` / `0.8.52+102`. Branch `feat/chat-b/explicit-npc-resume-20261113`, [PR #739](https://github.com/ManuEtt/Dnd/pull/739), Fachcommit `23429e3d`, Testcommit `b194a547` (endgültigen GitHub-PR-HEAD separat prüfen).
+- **IMPLEMENTIERT:** Lesende `ConfirmedNpcResumeSelector.readSelected` für einen vom Spieler ausdrücklich gewählten eindeutig gespeicherten NPC, auch außerhalb der drei zuletzt relevanten Figuren. Gültige kanonische IDs, gespeicherter Kampagnen-/Session-/Revisionsstempel, eindeutige Notiz-IDs, deterministische Notizreihenfolge, begrenzte und sanitisierte Projektion. Keine erfundenen Erinnerungen bei NPCs ohne Notizen.
+- **Neue Regression:** `app/test/confirmed_npc_resume_explicit_selection_test.dart` mit sechs Gruppen für positive/negative Auswahl, Historie, Datenintegrität, Stale-Guard, JSON- und SQLite-Neustart.
+- **GETESTET:** GitHub-Hauptstand, 28 offene PRs, Fachmodul und existierende Testverträge vor der Änderung gesichtet. Open PRs #734/#724/#716/#712/#708 verändern nicht die neuen Fach-/Testdateien.
+- **NICHT GETESTET:** Neue Dart-/Flutter-Tests, Format, Analyse, Python-/Backend-CI und Android-Build auf finalem PR-Commit noch nicht abgeschlossen. Kein lokales Dart-/Flutter-SDK und kein Realgerät. Ältere grüne CI gehört zu früheren PRs, nicht zu #739.
+- **BLOCKIERT:** Finale CI-Auswertung und koordinierte Dokumentationsintegration. PR bleibt bis zur CI-Prüfung im Draft.
+- **NOCH NICHT IMPLEMENTIERT:** UI-/Erzählertransport dieser ausdrücklichen Auswahl; eigener künftiger Auftrag.
+- **Migration/Grenzen:** Keine. Read-only, keine Schema-/API-/Versionsänderung, keine Spielstands- oder Regelmutationen und keine neuen KI-Kosten.
+- **Nächster Schritt:** Finalen GitHub-Workflow von PR #739 auswerten, Fehler anhand seiner Logs korrigieren, danach zur Review freigeben; Integration erfolgt separat.
