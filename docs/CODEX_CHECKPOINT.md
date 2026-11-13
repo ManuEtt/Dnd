@@ -3681,3 +3681,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+### 2026-11-13 – Bestätigten Wiederaufnahmekontext vor kollidierenden Faktentiteln schützen (PR #724)
+
+- **Main-Basis:** `41fcae3697f3e95c749498a2ec70318858e8dd8c`; **Branch:** `fix/chat-b/resume-fact-visible-key-collision-20261113`; **PR:** [#724](https://github.com/ManuEtt/Dnd/pull/724) (Draft); finalen Branch-HEAD im PR prüfen. App `0.8.52+102` unverändert.
+- **IMPLEMENTIERT:** `CampaignResumeReader.read` prüft nun die Sichtbarkeit sämtlicher Faktenschlüssel unter bestehender 80-UTF-16-Einheiten-/Unicode-Bereinigung und schließt jede mehrdeutige sichtbare Identität aus dem bestätigten Rückblick aus. Eindeutige Einträge bleiben neueste zuerst auswählbar; verdeckte Quellen außerhalb der Ausgabelimits werden berücksichtigt. `requireCurrent` bewahrt die Rohquellen-Provenienz.
+- **Dateien:** `app/lib/story/campaign_resume_context.dart`, neuer `app/test/campaign_resume_fact_visible_key_collision_test.dart`; README, zentraler Checkpoint und paralleler Fachcheckpoint ausschließlich append-only.
+- **Regressionen erstellt:** 5 Testgruppen für gekürzte Langschlüssel, unsichtbare Marken/Leerzeichen, sichere Faktenlimits, nachträgliche Änderungen versteckter Rohquellen und JSON-/SQLite-Restart ohne Datenmutation.
+- **GETESTET:** Repository/Main-Stand, verbindliche Projektdokumente, vorhandene Fachtests sowie geänderte Dateipfade aller zum Entwicklungsbeginn offenen PRs analysiert. Keine automatischen oder manuellen Tests für diesen neuen PR von diesem Chat ausgeführt.
+- **NICHT GETESTET:** Neue Dart-Tests, Formatierung, Analyzer, vollständige Flutter-Tests, Backend-/SQLite-/Android-Gates, reale Geräte und externe Provider. Alle Testausführungen sind auf Benutzerwunsch dem separaten Qualitäts-/Integrationschat übergeben.
+- **BLOCKIERT:** Review und Zusammenführung bis zu unabhängig bestätigter Test-/CI-Abnahme. Gemeinsam genutzte README-/Checkpoint-Nachträge müssen beim Merge verlustfrei übernommen werden.
+- **NOCH NICHT IMPLEMENTIERT:** Weitergehende semantische Auflösung absichtlich unterschiedlicher, nach Projektion nicht eindeutig identifizierbarer Fakten; dies darf nicht durch KI oder Heuristik erfunden werden.
+- **Kompatibilität:** Keine Migration oder Versionserhöhung, keine Speicherung, JSON-/SQLite-/Schema-/API-Änderung, keine Änderungen an Helden-/Quest-/Regelwerten oder bestätigten Ereignissen.
+- **Nächster Schritt für Prüfer:** `cd app && dart format --output=none --set-exit-if-changed lib test && flutter analyze && flutter test test/campaign_resume_fact_visible_key_collision_test.dart test/campaign_resume_stale_snapshot_test.dart test/campaign_resume_context_test.dart`; vollständige CI separat kontrollieren, dann PR koordiniert integrieren.
