@@ -65,7 +65,7 @@ class StoryCampaignEngine {
       payload: payload,
     );
     StoryRuleBoundary.ensureRuleStateUnchanged(before, update.campaign);
-    _ensureAppendOnlyEvents(before, update);
+    _ensureAppendOnlyEvents(before, update, type: type, payload: payload);
     _ensureAppendOnlyMessages(before, update, narration);
     return update;
   }
@@ -110,7 +110,12 @@ class StoryCampaignEngine {
   // event, but must never drop, reorder or rewrite any existing event.
   // Keep callbacks without a journal (used by standalone story previews)
   // compatible as long as they do not alter the confirmed history.
-  static void _ensureAppendOnlyEvents(Campaign before, GameUpdate update) {
+  static void _ensureAppendOnlyEvents(
+    Campaign before,
+    GameUpdate update, {
+    required String type,
+    required Map<String, dynamic> payload,
+  }) {
     final previous = before.events;
     final current = update.campaign.events;
     final hasNewEvent = current.length == previous.length + 1;
@@ -131,7 +136,17 @@ class StoryCampaignEngine {
     if (hasNewEvent) {
       final added = current.last;
       final checkpoint = added.payload['stateAfter'];
-      if (added.campaignId != before.id ||
+      // The callback must record the *requested* local story action, not
+      // invent another event type or replace its confirmed audit fields.
+      final expectedPayload = {
+        ...payload,
+        'revision': update.campaign.revision,
+        'stateAfter': update.campaign.copyWith(events: const []).toJson(),
+      };
+      if (update.campaign.revision != before.revision + 1 ||
+          added.type != type ||
+          _canonicalJson(added.payload) != _canonicalJson(expectedPayload) ||
+          added.campaignId != before.id ||
           added.sessionId != before.sessionId ||
           previous.any((event) => event.id == added.id) ||
           _canonicalJson(added.toJson()) !=

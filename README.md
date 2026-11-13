@@ -2383,3 +2383,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+### 2026-11-12 – Story-Ereignisse an tatsächlich bestätigte Handlungen binden
+
+- **Problem:** Die Story-Engine kontrollierte Eventidentität und Checkpoint, aber nicht, ob ein neuer Ereignistyp und seine Auditdaten mit der tatsächlich ausgeführten Storyaktion übereinstimmen.
+- **Lösung:** Neue Story-Commits akzeptieren nur den angeforderten Ereignistyp und die erwarteten Aktionsdaten inklusive fortgeschriebener Revision und finalem `stateAfter`-Checkpoint. Eingeschleuste, entfernte oder verfälschte Auditfelder sowie ein Ereignis ohne neuen Revisionsschritt werden abgewiesen.
+- **Dateien:** `app/lib/story/story_campaign_engine.dart`; neue Regressionen in `app/test/story_commit_event_metadata_test.dart` mit echten Spielengine-Commits, gefälschtem Typ, Auditfeld-/Revisionsmanipulation, JSON-Schlüsselreihenfolge und Preview-Kompatibilität.
+- **Branch/PR:** `fix/chat-b/story-commit-event-metadata-20261112`, [#712](https://github.com/ManuEtt/Dnd/pull/712) (Draft). Die vollständige CI des finalen Dokumentations-HEADs ist bei diesem Nachtrag noch nicht abgeschlossen; keine lokale Dart-/Flutter-SDK-Ausführung.
+- **Kompatibilität:** Keine Änderungen an bestehenden Spielständen, SQLite/JSON-Schema, Mechaniken, Nachrichten- oder Ereignishistorie, App-Version, öffentlicher API oder kostenpflichtigen Anbietern. Keine Migration.
+- **Grenzen:** Externe Geräte-/KI-Anbieter-Abnahmen und die Integration dieses PRs erfolgen separat nach erfolgreicher CI.

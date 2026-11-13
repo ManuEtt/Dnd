@@ -1380,3 +1380,16 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-12 – Bestätigte Story-Ereignisse gegen falsche Auditmetadaten schützen (PR #712)
+
+- **Ausgangs-main:** `196cfd6e9f1616999a177da7c33ff7c72f814fea`; **Branch:** `fix/chat-b/story-commit-event-metadata-20261112`; **PR:** [#712](https://github.com/ManuEtt/Dnd/pull/712) (Draft). **App-Version:** `0.8.52+102`; Code-/Test-/Format-Commits `11f9324`, `f26751b`, `2b2317b`, `107b12e`; finaler Dokumentations-HEAD im PR.
+- **IMPLEMENTIERT:** `StoryCampaignEngine._commitStory` gibt ursprünglichen Aktions-`type` und `payload` an den vorhandenen Append-only-Eventguard weiter. Bei neuem Event müssen Typ und vollständiger Auditpayload exakt mit dem Storyauftrag, `revision = before + 1` und `stateAfter` des bestätigten Zustands übereinstimmen. JSON-Objektschlüsselreihenfolge bleibt irrelevant; Legacy-Callbacks ohne Journal sind weiterhin erlaubt.
+- **Betroffene Dateien:** `app/lib/story/story_campaign_engine.dart`, neue `app/test/story_commit_event_metadata_test.dart`, additiver README-Eintrag, zentraler und persönlicher Checkpoint.
+- **Regressionstests:** Tatsächlicher GameEngine-Sitzungsrückblick und Storythread mit korrekter JSON-Wiederaufnahme; gefälschter Event-Typ, fehlende, zusätzliche und manipulierte Aktionsdaten, stale Revision mit passendem Zustand, unterschiedliche JSON-Key-Reihenfolge, journalfreie Test-/Preview-Kompatibilität.
+- **GETESTET:** Aktuelle Main- und PR-Dateipfade geprüft. Die unabhängigen offenen UI-/Regel-/Erinnerungs-PRs bearbeiten keine dieser Fach-/Testdateien. Tests als neue Quelldatei eingecheckt, aber neue CI zum Nachtragszeitpunkt noch nicht abgenommen.
+- **NICHT GETESTET:** Dart-Format/Analyzer, Flutter-Tests und Android-Build auf finalem HEAD; kein lokales SDK, kein Realgerät, kein produktiver Erzähler-End-to-End-Test.
+- **BLOCKIERT:** Vollständige CI, Review und konfliktfreie Integration der gemeinsam fortgeschriebenen README-/Checkpoint-Nachträge. Kein eigener Main-Merge und keine fremde Branchlöschung.
+- **NOCH NICHT IMPLEMENTIERT:** End-to-End-Abnahme eines externen KI-Anbieters am Android-Gerät sowie weitere unabhängige dynamische Erzählverbesserungen.
+- **Kompatibilität:** Keine JSON-/SQLite-Migration, keine Änderung an alten Spielständen, SRD-Werten, Quest-/XP-Autorität, App-Version oder Kosten. Die erlaubte Neufassung eines noch unbestätigten `narrative.turn` ist unverändert.
+- **NÄCHSTER SCHRITT:** GitHub-Actions-Ergebnisse für #712 auf letztem Branch-HEAD vollständig prüfen und Fehler vor Review in demselben Branch beheben.
