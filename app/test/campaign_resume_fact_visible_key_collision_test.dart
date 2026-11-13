@@ -65,7 +65,7 @@ void main() {
     expect(jsonEncode(campaign.toJson()), raw);
   });
 
-  test('collisions outside the display limit still exclude both identities', () {
+  test('hidden fact collisions never occupy the display limit', () {
     final longPrefix = List.filled(85, 'L').join();
     final campaign = _campaign({
       '$longPrefix-old': 'Ein alter widersprüchlicher Beleg.',
@@ -113,7 +113,7 @@ void main() {
     expect(changed.hero.toJson(), campaign.hero.toJson());
   });
 
-  test('JSON and SQLite restore raw keys without promoting ambiguous facts', () async {
+  test('JSON and SQLite preserve ambiguous fact sources on restart', () async {
     final longPrefix = List.filled(85, 'R').join();
     final source = _campaign({
       '$longPrefix-a': 'Ein fragwürdiger Befund.',
