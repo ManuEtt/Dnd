@@ -1380,3 +1380,16 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-13 – Sichtbare Faktenschlüssel eindeutig halten (PR #724)
+
+- **Ausgangs-main:** `41fcae3697f3e95c749498a2ec70318858e8dd8c`; **Branch:** `fix/chat-b/resume-fact-visible-key-collision-20261113`; **PR:** [#724](https://github.com/ManuEtt/Dnd/pull/724) (Draft). Die SHA des Dokumentations-Finalcommits ist dem PR zu entnehmen; **Version:** `0.8.52+102`.
+- **Problem:** Lange oder mit unsichtbaren Unicode-/Whitespace-Zeichen versehene, unterschiedliche `Campaign.facts`-Schlüssel erscheinen im Wiederaufnahmerückblick mit demselben sichtbaren Namen. Es drohten widersprüchliche, scheinbar bestätigte Fakten.
+- **IMPLEMENTIERT:** `CampaignResumeReader` zählt über die vollständige Faktensammlung den tatsächlich gerenderten, bereinigten und begrenzten Schlüssel. Bei mehreren gespeicherten Quellen mit identischem sichtbarem Namen werden alle zugehörigen Projektionen aus `confirmedFacts` ausgeschlossen; die übrigen Fakten folgen weiterhin der bisherigen Reihenfolge und Maximalzahl. Gespeicherte Rohwerte und Regelautorität bleiben unverändert.
+- **Fach- und Testdateien:** `app/lib/story/campaign_resume_context.dart`; neue `app/test/campaign_resume_fact_visible_key_collision_test.dart` mit 5 Gruppen zu langen Präfixen, Formatmarken, sichtbaren Limits, Quellenänderung trotz gleicher Anzeige und JSON-/SQLite-Wiederaufnahme. README und zentrale/persönliche Checkpoints nur hinten ergänzt.
+- **GETESTET:** Sichtprüfung der aktuellen Quelle, existierender Wiederaufnahme-/SQLite-Tests und offenen PR-Dateipfade; dieser Chat hat **keine** Tests ausgeführt. Früher grüne CI-Läufe anderer PRs gelten nicht als Abnahme.
+- **NICHT GETESTET:** Dart-Format/-Analyse, neue und vollständige Flutter-Tests, Backend/Android und SQLite auf dem neuen Branch; keine Geräte-/Provider-Abnahme.
+- **BLOCKIERT:** Unabhängige Test-/CI-Freigabe und konfliktfreie Integration durch den separat beauftragten Chat. Gemeinsame Dokumentationsdateien können Additionskonflikte besitzen; fremde Nachträge bewahren.
+- **NOCH NICHT IMPLEMENTIERT:** Automatische inhaltliche Disambiguierung kollidierender Fakten (bewusst unterlassen, um keine bestätigten Fakten zu erfinden).
+- **Kompatibilität:** Keine Migration, keine Änderung von JSON, SQLite, API, gespeicherten Kampagnen, Quellenrevisionsnummern, SRD-Werten oder Version; keine neuen KI-Kosten.
+- **NÄCHSTER SCHRITT:** Separater Qualitätssicherungs-Chat führt gezielte Tests und vollständige CI auf dem finalen Commit aus, korrigiert nach Rücksprache notwendige Fehler und integriert PR #724 koordiniert.
