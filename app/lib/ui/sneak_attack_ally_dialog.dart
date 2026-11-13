@@ -36,6 +36,18 @@ class _SneakAttackAllyDialogState extends State<SneakAttackAllyDialog> {
   bool get _canConfirm => _validName && _nearTarget && _notIncapacitated;
 
   @override
+  void didUpdateWidget(covariant SneakAttackAllyDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.targetName == widget.targetName) return;
+
+    // Ally proximity and readiness were confirmed for the previous target.
+    // A live target change needs a fresh ally identity and consent.
+    _name.clear();
+    _nearTarget = false;
+    _notIncapacitated = false;
+  }
+
+  @override
   void dispose() {
     _name.dispose();
     super.dispose();
