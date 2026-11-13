@@ -1192,3 +1192,18 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-13 – Säurespritzer-Dialog gegen veraltete Kugelziel-Snapshots absichern
+
+- **Ausgangs-main:** `269f5c1ed3301fd97990275e682388e1b34078a4`; **Branch:** `feat/chat-c/acid-splash-live-target-snapshot-20261113`; **PR:** [#715](https://github.com/ManuEtt/Dnd/pull/715).
+- **Code/Test-Commits:** `d7cefc34bf1c80cad0e6c5ba6bc02ef976fe8bbe`, `5077e0d700b7f7096287e0805604e6301d77acf6`.
+- **Problem:** Der Dialog merkte sich Hauptziel-GES, Deckung und weitere Bestätigungen auch bei Wechsel des Helden, Hauptgegners oder erfasster Kreaturen. Mehrere Ziele erforderten aktuell gehaltene Textfeld-Controller und überprüfte TP/IDs.
+- **IMPLEMENTIERT:** Mit `didUpdateWidget` die tatsächlichen Tracked-Creature-Werte statt bloßer Listenreferenz vergleichen; bei neuer Sachlage alle Haupt-/Zusatzwerte, -auswahlen und -checkboxen zurücksetzen, Zauberklassen neu berechnen, Dropdown neu schlüsseln, alte Textfeld-Controller nach Frameende sicher freigeben. Identischer fachlicher Snapshot bewahrt den Entwurf.
+- **Betroffene Dateien:** `app/lib/ui/acid_splash_dialog.dart`, `app/test/acid_splash_live_snapshot_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md`.
+- **Akzeptanz:** (1) Unveränderter Zustand bleibt bestehen und kann positiv bestätigt werden. (2) Neuer Held ohne vorbereiteten Zauber verweigert alten Entwurf. (3) Gegnerwechsel leert Hauptziel-Bonus und alle prüfpflichtigen Angaben. (4) Ausgetauschte Zielroster verwirft alte Zusatzbestätigung und zeigt neue Ziele. (5) Mutationen derselben Listeninstanz werden ebenfalls erkannt. Fünf Widgettests erstellt.
+- **GETESTET:** Quelltext-/Testanalyse, GitHub-Konfliktabgleich. CI-Ausführung noch offen.
+- **NICHT GETESTET:** Flutter/Dart-Format/Analyse/Tests, Android-Debug/optimierte APKs/native Tests, Realgerät/TalkBack/IME.
+- **BLOCKIERT:** Lokales Flutter/Dart nicht installiert; GitHub-CI verwenden. Dokumentationsnachträge anderer Entwicklungsbranches bei Merge bewahren.
+- **Migrationen:** Keine; kein Schreibzugriff auf Story, Regelengine, SQLite/JSON oder bisherige Spielstände, keine Versionsänderung.
+- **Nächster Schritt:** Finalen GitHub-CI-Lauf kontrollieren und eventuelle Fehler auf eigenem Branch beheben, danach Review durch Integration.
+
