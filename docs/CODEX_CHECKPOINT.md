@@ -3681,3 +3681,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+### 2026-11-13 – Verbündeten-Bestätigung beim Wechsel des Angriffsziels widerrufen
+
+- **Basis-main:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7`; **Branch:** `feat/chat-c/sneak-ally-live-target-20261113`. **Code:** `c7193eb648efeb094a351d57a3c3a4daebe28ba9`; **Tests:** `897906c42400b774f758453047ebdbb5e4875282`.
+- **IMPLEMENTIERT:** `SneakAttackAllyDialog.didUpdateWidget` verwirft bei geändertem `targetName` den unverifizierten Verbündetennamen und beide bestätigten Fakten; identischer Zielname behält Zustimmung. Rückwechsel zu einem früheren Ziel nutzt die alten Eingaben nicht erneut.
+- **GETESTET:** Bestehende Quellcode-/Widgetteststruktur geprüft und Testdatei versioniert, jedoch ausdrücklich keine Tests ausgeführt.
+- **NICHT GETESTET:** Drei neue Widgettests, Dart-Formatierung, Flutter-Analyse und vollständige Flutter-Suite, Android-Build, native Tests, echtes Gerät/TalkBack/IME.
+- **BLOCKIERT:** Keine fachliche Implementierungsblockade. Testausführung und koordinierte Integration sind auf Benutzerwunsch einem anderen Chat zugewiesen.
+- **NOCH NICHT IMPLEMENTIERT:** Weitere eigenständige Android-UI-Verbesserungen außerhalb dieses Pakets.
+- **Kompatibilität:** Nur UI-Entwurf; kein Eingriff in Rule-/Story-/Controller-/SQLite-/JSON-Pfade oder App-Version.
+- **Nächster Schritt:** Separater Testchat verifiziert `flutter test test/sneak_attack_ally_live_target_test.dart test/sneak_attack_ally_ui_test.dart`, Gesamt-CI und reale Gerätedarstellung; Integrationschat führt konfliktfrei zusammen.
+
