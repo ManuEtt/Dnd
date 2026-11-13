@@ -56,7 +56,7 @@ class SrdIndomitableMightRules {
       return rolledTotal;
     }
     final strength = hero.abilities['strength'];
-    if (strength == null) {
+    if (strength == null || strength < 1 || strength > 30) {
       throw StateError('Stärke muss für Unbezwingbare Stärke bestätigt sein.');
     }
     return rolledTotal < strength ? strength : rolledTotal;
