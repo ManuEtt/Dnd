@@ -65,11 +65,7 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> _enter(
-  WidgetTester tester,
-  Finder finder,
-  String value,
-) async {
+Future<void> _enter(WidgetTester tester, Finder finder, String value) async {
   await tester.ensureVisible(finder);
   await tester.enterText(finder, value);
   await tester.pumpAndSettle();
@@ -185,11 +181,13 @@ void main() {
       onResult: results.add,
     );
     await _confirmSingleTarget(tester);
-    rebuild!(() => hero = _mage(
-      id: 'new-sorcerer',
-      className: 'Zauberer',
-      spells: const [],
-    ));
+    rebuild!(
+      () => hero = _mage(
+        id: 'new-sorcerer',
+        className: 'Zauberer',
+        spells: const [],
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(_text(tester, _field('save-modifier')), isEmpty);
@@ -197,16 +195,14 @@ void main() {
     expect(_checked(tester, _field('only')), isFalse);
     expect(_checked(tester, _field('acid-defense')), isFalse);
     expect(
-      tester.widget<DropdownButtonFormField<String>>(_field('class'))
+      tester
+          .widget<DropdownButtonFormField<String>>(_field('class'))
           .initialValue,
       'Zauberer',
     );
     expect(find.text('Magier'), findsNothing);
     expect(find.text('Säurespritzer ist nicht vorbereitet.'), findsOneWidget);
-    expect(
-      tester.widget<FantasyTextButton>(_field('cast')).onPressed,
-      isNull,
-    );
+    expect(tester.widget<FantasyTextButton>(_field('cast')).onPressed, isNull);
     expect(results, isEmpty);
     await _tap(tester, find.text('Abbrechen'));
     expect(results, [null]);

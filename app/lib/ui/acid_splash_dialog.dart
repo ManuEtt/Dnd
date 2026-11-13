@@ -315,7 +315,9 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
               const Text('Säurespritzer ist nicht vorbereitet.'),
             if (_classes.isNotEmpty)
               KeyedSubtree(
-                key: ValueKey('acid-splash-class-revision-$_classFieldRevision'),
+                key: ValueKey(
+                  'acid-splash-class-revision-$_classFieldRevision',
+                ),
                 child: DropdownButtonFormField<String>(
                   key: const ValueKey('acid-splash-class'),
                   initialValue: _selectedClass,
