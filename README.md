@@ -2383,3 +2383,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+
+### 2026-11-13 – Doppelte JSON-Schlüssel bei Backend-Paketprüfungen ablehnen
+
+- **Problem:** Der Projekt-Upload-Check akzeptierte mehrdeutige JSON-Objekte in `backend/package.json` und `backend/package-lock.json`, weil Python bei doppelten Schlüsseln still den letzten Wert übernahm.
+- **Lösung:** Der bounded JSON-Parser verwirft jetzt doppelte Schlüssel auch in verschachtelten Objekten und nach Unicode-Dekodierung; identische Schlüsselnamen in verschiedenen Objekten bleiben zulässig. Bestehender Symlink-Schutz und neutrale Fehlermeldungen bleiben erhalten.
+- **Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`; zwei neue Regressionstests für gültige und ungültige Fälle.
+- **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
+- **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
+- **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
