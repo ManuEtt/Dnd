@@ -2317,3 +2317,14 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** CI-Abnahme und integrationssicherer Append-only-Abgleich der gemeinsam genutzten Dokumente.
 - **NOCH NICHT IMPLEMENTIERT:** Keine Änderungen an Spielstandimporten, SQLite, UI, Regelengine, Story oder Android-Prozess; keine Migration.
 - **NÄCHSTER SCHRITT:** Finale CI für #736 auswerten und gegebenenfalls im eigenen Branch reparieren; danach abgestimmt integrieren.
+
+### 2026-11-13 – Strikte JSON-Zahlen für Backend-Paket-Uploads (PR #745)
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `fix/chat-d/reject-nonfinite-backend-json-20261113`; **Code-Commit:** `08c9667cd21c406ce2cb0d32fd9008b56c18e640`; **PR:** [#745](https://github.com/ManuEtt/Dnd/pull/745).
+- **Problem:** Die Standard-Python-JSON-Dekodierung erlaubt die ungültigen JSON-Literale `NaN`, `Infinity` und `-Infinity`, was eine unvollständige oder widersprüchliche Backend-Paketübertragung maskieren konnte.
+- **IMPLEMENTIERT:** `parse_constant` verweigert die drei Sonderwerte rekursiv in den beiden Paketdateien. Bestehende `object_pairs_hook`-Ablehnung doppelter Schlüssel, begrenzte UTF-8-Lesezugriffe und sichere Fehlermeldungen bleiben unverändert.
+- **Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, README, zentraler und persönlicher Checkpoint (append-only).
+- **Tests ergänzt:** Nichtstandardisierte Literale direkt und innerhalb von Listen/Objekten; endliche numerische Werte bleiben gültig. Getrennte, reale Python-/Flutter-/Android-Tests auf abschließendem GitHub-CI-HEAD noch offen.
+- **GETESTET:** Main und offene PR-Dateipfade auf Überschneidung geprüft; Branch/Commit/PR vorhanden. **Nicht getestet:** vollständige CI, lokale Projektsuite, echtes Android-Gerät.
+- **Migration:** Keine. Bestehende Bestands-Spielstände/JSON-Exporte, SQLite, UI, Story, SRD und Backend-Laufzeit unverändert.
+- **NÄCHSTER SCHRITT:** Vollständige Actions-CI für #745 kontrollieren und gegebenenfalls im selben Branch beheben; danach getrennte konfliktfreie Integration.

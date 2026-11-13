@@ -3693,3 +3693,14 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+### 2026-11-13 – Uploadprüfung verweigert NaN und unendliche JSON-Werte
+
+- **Basis-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `fix/chat-d/reject-nonfinite-backend-json-20261113`; **PR:** [#745](https://github.com/ManuEtt/Dnd/pull/745) (Draft); **Code-Commit:** `08c9667cd21c406ce2cb0d32fd9008b56c18e640`.
+- **IMPLEMENTIERT:** `json.loads` mit `parse_constant` verbietet `NaN`, `Infinity` und `-Infinity` in beiden Backend-Paketdateien, auch in tief verschachtelten Strukturen. Die bereits integrierte Prüfung gegen doppelte Schlüssel, Größenbeschränkungen und Symlink-Schutz bleiben erhalten.
+- **Regressionen:** Zwei Testmethoden mit Negativfällen in `backend/package.json` und `backend/package-lock.json` sowie endlichen Positivfällen.
+- **GETESTET:** Aktuellen Hauptbranch und offene Dateipfade anderer Pull Requests geprüft, Quell-/Teständerung auf eigenem Branch committed.
+- **NICHT GETESTET:** Neue Python-Unittests, Backend-/Flutter-/Android- und Release-CI auf finalem HEAD, reale Geräteausführung. Kein lokaler vollständiger Repositorycheckout verfügbar.
+- **BLOCKIERT:** Vollständige neue Actions-CI und koordinierte Integration ohne Verlust fremder README-/Checkpoint-Nachträge.
+- **Migration:** Keine Änderung an SQLite, JSON-Spielständen, API, App-Version oder Gameplay.
+- **NÄCHSTER SCHRITT:** CI-Lauf für PR #745 vollständig auf finalem Commit abnehmen, Fehler korrigieren, dann sicheren Merge prüfen.

@@ -2393,3 +2393,11 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-13 – Nicht endliche Zahlen in Backend-Paketdateien zurückweisen
+
+- **Problem:** Die Upload-Prüfung konnte `NaN`, `Infinity` und `-Infinity` in `backend/package.json` oder `backend/package-lock.json` annehmen, obwohl diese Werte keine gültigen JSON-Zahlen sind.
+- **Lösung:** Der bounded JSON-Decoder verwirft diese nicht standardisierten Literale auch in verschachtelten Daten; gültige endliche Zahlen bleiben zulässig. Vorhandene Duplicate-Key-Prüfung, Symlink-Schutz und neutrale Fehler bleiben erhalten.
+- **Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`; zwei neue Python-Regressionstestmethoden.
+- **GitHub:** [PR #745](https://github.com/ManuEtt/Dnd/pull/745), Branch `fix/chat-d/reject-nonfinite-backend-json-20261113`, Code-Commit `08c9667cd21c406ce2cb0d32fd9008b56c18e640`. Neue vollständige CI auf finalem HEAD bei Erstellung des Nachtrags noch ausstehend.
+- **Kompatibilität:** Keine Migration oder Änderung an gespeicherten Kampagnen, JSON-Spielstandformat, SQLite, Backend-Anbietern, Regeln, UI oder App-Version. Keine echte Geräteabnahme.
