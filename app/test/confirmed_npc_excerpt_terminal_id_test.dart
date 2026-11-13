@@ -39,10 +39,7 @@ void main() {
       final before = jsonEncode(campaign.toJson());
 
       expect(
-        () => ConfirmedNpcContinuityExcerpt.read(
-          campaign,
-          npcId: invalidId,
-        ),
+        () => ConfirmedNpcContinuityExcerpt.read(campaign, npcId: invalidId),
         throwsFormatException,
         reason: 'Unsafe saved NPC ID must fail closed',
       );
@@ -78,10 +75,7 @@ void main() {
     final before = jsonEncode(campaign.toJson());
 
     expect(
-      () => ConfirmedNpcContinuityExcerpt.read(
-        campaign,
-        npcId: 'mira',
-      ),
+      () => ConfirmedNpcContinuityExcerpt.read(campaign, npcId: 'mira'),
       throwsFormatException,
     );
     expect(jsonEncode(campaign.toJson()), before);
