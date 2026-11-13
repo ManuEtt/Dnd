@@ -149,61 +149,63 @@ void main() {
   test(
     'valid long legacy data keeps full values after SQLite restart',
     () async {
-    final name = 'Mira ' + 'Hüterin ' * 20;
-    final relationship = 'freundlich ' * 20;
-    final note = '🐉' * 200;
-    final source = _campaign(
-      npcs: [
-        WorldNpc(
-          id: 'mira',
-          name: name,
-          relationship: relationship,
-        ),
-      ],
-      notes: [_note(note)],
-    );
-    final folder = await Directory.systemTemp.createTemp(
-      'npc-bounded-context-',
-    );
-    final path = paths.join(folder.path, 'campaign.sqlite');
-    var repository = await SqliteCampaignRepository.open(
-      factory: databaseFactoryFfi,
-      path: path,
-    );
-    try {
-      await repository.saveCampaign(source);
-      await repository.close();
-      repository = await SqliteCampaignRepository.open(
+      final name = 'Mira ' + 'Hüterin ' * 20;
+      final relationship = 'freundlich ' * 20;
+      final note = '🐉' * 200;
+      final source = _campaign(
+        npcs: [
+          WorldNpc(
+            id: 'mira',
+            name: name,
+            relationship: relationship,
+          ),
+        ],
+        notes: [_note(note)],
+      );
+      final folder = await Directory.systemTemp.createTemp(
+        'npc-bounded-context-',
+      );
+      final path = paths.join(folder.path, 'campaign.sqlite');
+      var repository = await SqliteCampaignRepository.open(
         factory: databaseFactoryFfi,
         path: path,
       );
-      final restored = (await repository.getCampaign(source.id))!;
-      final saved = jsonEncode(restored.toJson());
-      final snapshot = NpcContinuityReader.read(restored, npcId: 'mira');
+      try {
+        await repository.saveCampaign(source);
+        await repository.close();
+        repository = await SqliteCampaignRepository.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        final restored = (await repository.getCampaign(source.id))!;
+        final saved = jsonEncode(restored.toJson());
+        final snapshot = NpcContinuityReader.read(restored, npcId: 'mira');
 
-      expect(restored.npcs.single.name, name);
-      expect(restored.npcs.single.relationship, relationship);
-      expect(restored.npcRelationshipNotes.single.note, note);
-      expect(snapshot.name, name);
-      expect(snapshot.recentNotes.single.note, note);
-      expect(snapshot.confirmedContext.split('\n').first.length,
-          lessThanOrEqualTo(85));
-      expect(
-        _after(snapshot.confirmedContext, 'Aktuelle Beziehung: ').length,
-        lessThanOrEqualTo(80),
-      );
-      expect(snapshot.confirmedContext, contains(note));
-      expect(restored.hero.toJson(), source.hero.toJson());
-      expect(restored.revision, source.revision);
-      expect(jsonEncode(restored.toJson()), saved);
-      expect(
-        (await repository.reconstructCampaign(source.id))!.toJson(),
-        restored.toJson(),
-      );
-    } finally {
-      await repository.close();
-      await folder.delete(recursive: true);
-    }
+        expect(restored.npcs.single.name, name);
+        expect(restored.npcs.single.relationship, relationship);
+        expect(restored.npcRelationshipNotes.single.note, note);
+        expect(snapshot.name, name);
+        expect(snapshot.recentNotes.single.note, note);
+        expect(
+          snapshot.confirmedContext.split('\n').first.length,
+          lessThanOrEqualTo(85),
+        );
+        expect(
+          _after(snapshot.confirmedContext, 'Aktuelle Beziehung: ').length,
+          lessThanOrEqualTo(80),
+        );
+        expect(snapshot.confirmedContext, contains(note));
+        expect(restored.hero.toJson(), source.hero.toJson());
+        expect(restored.revision, source.revision);
+        expect(jsonEncode(restored.toJson()), saved);
+        expect(
+          (await repository.reconstructCampaign(source.id))!.toJson(),
+          restored.toJson(),
+        );
+      } finally {
+        await repository.close();
+        await folder.delete(recursive: true);
+      }
     },
   );
 }
