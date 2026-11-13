@@ -34,11 +34,29 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
   bool _pact = false;
   bool _concentration = false;
   String? _error;
+  int _formRevision = 0;
+  bool _heroUpdated = false;
 
   @override
   void initState() {
     super.initState();
     if (widget.hero.spells.isNotEmpty) _spell = widget.hero.spells.first;
+  }
+
+  @override
+  void didUpdateWidget(covariant SpellcastingDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (identical(oldWidget.hero, widget.hero)) return;
+
+    // A spell, slot grade and concentration choice are approvals of the
+    // previous hero snapshot. Rebuild both Flutter dropdown form states too.
+    _spell = widget.hero.spells.isEmpty ? null : widget.hero.spells.first;
+    _level = 0;
+    _pact = false;
+    _concentration = false;
+    _error = null;
+    _formRevision++;
+    _heroUpdated = true;
   }
 
   @override
@@ -70,6 +88,15 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(slotText),
+              if (_heroUpdated)
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    'Heldendaten wurden aktualisiert. '
+                    'Bitte Zauber, Grad und Konzentration erneut prüfen.',
+                    key: const ValueKey('spell-dialog-snapshot-notice'),
+                  ),
+                ),
               if (resourceError != null)
                 Semantics(
                   liveRegion: true,
@@ -95,50 +122,56 @@ class _SpellcastingDialogState extends State<SpellcastingDialog> {
                   'Zuerst im Charakterbogen bekannte Zauber eintragen.',
                 ),
               if (hero.spells.isNotEmpty)
-                DropdownButtonFormField<String>(
-                  key: const ValueKey('spell-dialog-name'),
-                  initialValue: _spell,
-                  isExpanded: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Bestätigter Zauber',
+                KeyedSubtree(
+                  key: ValueKey('spell-dialog-name-revision-$_formRevision'),
+                  child: DropdownButtonFormField<String>(
+                    key: const ValueKey('spell-dialog-name'),
+                    initialValue: _spell,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Bestätigter Zauber',
+                    ),
+                    items: hero.spells
+                        .toSet()
+                        .map(
+                          (name) => DropdownMenuItem(
+                            value: name,
+                            child: Text(name, overflow: TextOverflow.ellipsis),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) => setState(() {
+                      _spell = v;
+                      _error = null;
+                    }),
                   ),
-                  items: hero.spells
-                      .toSet()
-                      .map(
-                        (name) => DropdownMenuItem(
-                          value: name,
-                          child: Text(name, overflow: TextOverflow.ellipsis),
+                ),
+              const SizedBox(height: 12),
+              KeyedSubtree(
+                key: ValueKey('spell-dialog-level-revision-$_formRevision'),
+                child: DropdownButtonFormField<int>(
+                  key: const ValueKey('spell-dialog-level'),
+                  isExpanded: true,
+                  initialValue: _level,
+                  decoration: const InputDecoration(
+                    labelText: 'Zaubergrad / verwendeter Platz',
+                  ),
+                  items: [
+                    for (var i = 0; i <= 9; i++)
+                      DropdownMenuItem(
+                        value: i,
+                        child: Text(
+                          i == 0 ? 'Zaubertrick (kein Platz)' : 'Grad $i',
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      )
-                      .toList(),
+                      ),
+                  ],
                   onChanged: (v) => setState(() {
-                    _spell = v;
+                    _level = v ?? 0;
+                    if (_level == 0) _pact = false;
                     _error = null;
                   }),
                 ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<int>(
-                key: const ValueKey('spell-dialog-level'),
-                isExpanded: true,
-                initialValue: _level,
-                decoration: const InputDecoration(
-                  labelText: 'Zaubergrad / verwendeter Platz',
-                ),
-                items: [
-                  for (var i = 0; i <= 9; i++)
-                    DropdownMenuItem(
-                      value: i,
-                      child: Text(
-                        i == 0 ? 'Zaubertrick (kein Platz)' : 'Grad $i',
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                ],
-                onChanged: (v) => setState(() {
-                  _level = v ?? 0;
-                  if (_level == 0) _pact = false;
-                  _error = null;
-                }),
               ),
               if (_level > 0 && SpellcastingRules.pactSlotCount(hero) > 0)
                 SwitchListTile.adaptive(
