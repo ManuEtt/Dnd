@@ -2383,3 +2383,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+### 2026-11-13 – Säurespritzer: alte Zielbestätigungen bei Live-Wechsel verwerfen
+
+- **Problem:** Bei offengehaltenem Säurespritzer-Dialog blieben GES-Rettungswurfboni, Klassenwahl und Ziel-/Deckungsbestätigungen nach Helden-, Gegner- oder Zusatzkreaturenwechsel erhalten. Aktualisierte Kreaturen-TP oder hinzugefügte und entfernte Kugelziele wurden nicht sicher in den Formularzustand übernommen.
+- **Lösung:** Klassenwahl und sämtliche zielbezogenen Bestätigungen/Controllerwerte werden bei geänderten Snapshots erneuert. Die Zusatzkreaturenliste wird anhand der fachlichen Werte statt nur der Listenidentität verglichen; entfernte Textfeld-Controller werden nach dem Frame entsorgt. Bloße Parent-Neuaufbauten ohne Datensatzwechsel erhalten absichtlich den Entwurf.
+- **Dateien:** `app/lib/ui/acid_splash_dialog.dart`, `app/test/acid_splash_live_snapshot_test.dart`.
+- **Branch/PR:** `feat/chat-c/acid-splash-live-target-snapshot-20261113`, [#715](https://github.com/ManuEtt/Dnd/pull/715). Code-/Testcommits: `d7cefc34bf1c80cad0e6c5ba6bc02ef976fe8bbe`, `5077e0d700b7f7096287e0805604e6301d77acf6`.
+- **Prüfungen:** Fünf neue positive/negative Widgettests eingecheckt. Automatische Dart-/Flutter-/Android-Prüfungen des finalen Branches waren zum Zeitpunkt dieses Eintrags noch ausstehend; kein lokales Flutter-/Dart-SDK.
+- **Kompatibilität:** Keine Änderungen an Regelwerk, Erzählung, Controller, JSON/SQLite, Spielstandschema oder App-Version. Keine Migration. Android-Realgerät/TalkBack/IME offen.
+

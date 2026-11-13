@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'fantasy_buttons.dart';
 
@@ -54,6 +55,13 @@ class AcidSplashDialog extends StatefulWidget {
   State<AcidSplashDialog> createState() => _AcidSplashDialogState();
 }
 
+typedef _CreatureSnapshot = ({
+  String id,
+  String name,
+  int hitPoints,
+  int maxHitPoints,
+});
+
 class _AcidSplashDialogState extends State<AcidSplashDialog> {
   final _dexModifier = TextEditingController();
   List<String> _classes = const [];
@@ -70,15 +78,25 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
   final _extraOpposite = <String>{};
   final _extraAdvantage = <String>{};
   final _extraDisadvantage = <String>{};
+  List<_CreatureSnapshot> _trackedSnapshot = const [];
+  int _classFieldRevision = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    for (final creature in widget.trackedAreaCreatures) {
-      if (creature.hitPoints > 0) {
-        _extraModifiers[creature.id] = TextEditingController();
-      }
-    }
+  static List<_CreatureSnapshot> _snapshot(
+    List<TrackedAreaCreature> creatures,
+  ) => [
+    for (final creature in creatures)
+      (
+        id: creature.id,
+        name: creature.name,
+        hitPoints: creature.hitPoints,
+        maxHitPoints: creature.maxHitPoints,
+      ),
+  ];
+
+  void _loadClasses() {
+    _classes = const [];
+    _selectedClass = null;
+    _setupError = null;
     try {
       _classes = AcidSplashRules.castingClasses(widget.hero);
       if (_classes.isNotEmpty) _selectedClass = _classes.first;
@@ -87,6 +105,74 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
     } on StateError catch (error) {
       _setupError = error.message;
     }
+  }
+
+  void _resetExtraTargets() {
+    final alive = {
+      for (final creature in widget.trackedAreaCreatures)
+        if (creature.hitPoints > 0) creature.id,
+    };
+
+    for (final id in _extraModifiers.keys.toList()) {
+      if (!alive.contains(id)) {
+        final unused = _extraModifiers.remove(id)!;
+        // The previous TextField may still be mounted until this frame ends.
+        WidgetsBinding.instance.addPostFrameCallback((_) => unused.dispose());
+      } else {
+        _extraModifiers[id]!.clear();
+      }
+    }
+    for (final id in alive) {
+      _extraModifiers.putIfAbsent(id, TextEditingController.new);
+    }
+    _extraSelected.clear();
+    _extraCovers.clear();
+    _extraVerified.clear();
+    _extraOpposite.clear();
+    _extraAdvantage.clear();
+    _extraDisadvantage.clear();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _trackedSnapshot = _snapshot(widget.trackedAreaCreatures);
+    _resetExtraTargets();
+    _loadClasses();
+  }
+
+  @override
+  void didUpdateWidget(covariant AcidSplashDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final currentTargets = _snapshot(widget.trackedAreaCreatures);
+    if (identical(oldWidget.hero, widget.hero) &&
+        identical(oldWidget.encounter, widget.encounter) &&
+        listEquals(_trackedSnapshot, currentTargets)) {
+      return;
+    }
+
+    // Save bonuses and consent apply only to this hero, foe and area roster.
+    // Compare creature values, not just list identity: a mutable list may be
+    // updated in place by the parent while the dialog stays mounted.
+    _trackedSnapshot = currentTargets;
+    _dexModifier.clear();
+    _resetExtraTargets();
+    _loadClasses();
+    _classFieldRevision++;
+    _origin = false;
+    _only = false;
+    _verbal = false;
+    _somatic = false;
+    _dc = false;
+    _circumstances = false;
+    _coverConfirmed = false;
+    _effectPath = false;
+    _acidDefense = false;
+    _oppositeCover = false;
+    _advantage = false;
+    _disadvantage = false;
+    _allIncluded = false;
+    _error = null;
   }
 
   @override
@@ -228,17 +314,25 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
             if (AcidSplashRules.preparedName(widget.hero) == null)
               const Text('Säurespritzer ist nicht vorbereitet.'),
             if (_classes.isNotEmpty)
-              DropdownButtonFormField<String>(
-                key: const ValueKey('acid-splash-class'),
-                initialValue: _selectedClass,
-                decoration: const InputDecoration(
-                  labelText: 'Zaubernde Klasse',
+              KeyedSubtree(
+                key: ValueKey(
+                  'acid-splash-class-revision-$_classFieldRevision',
                 ),
-                items: [
-                  for (final name in _classes)
-                    DropdownMenuItem(value: name, child: Text(name)),
-                ],
-                onChanged: (value) => setState(() => _selectedClass = value),
+                child: DropdownButtonFormField<String>(
+                  key: const ValueKey('acid-splash-class'),
+                  initialValue: _selectedClass,
+                  decoration: const InputDecoration(
+                    labelText: 'Zaubernde Klasse',
+                  ),
+                  items: [
+                    for (final name in _classes)
+                      DropdownMenuItem(value: name, child: Text(name)),
+                  ],
+                  onChanged: (value) => setState(() {
+                    _selectedClass = value;
+                    _error = null;
+                  }),
+                ),
               ),
             const SizedBox(height: 8),
             TextField(
@@ -365,6 +459,7 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
                     DropdownButtonFormField<CoverLevel>(
                       key: ValueKey('acid-extra-cover-${creature.id}'),
                       initialValue: _extraCovers[creature.id],
+                      isExpanded: true,
                       decoration: const InputDecoration(
                         labelText: 'Deckung vom Kugel-Ursprung',
                       ),
@@ -372,7 +467,11 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
                         for (final cover in CoverLevel.values)
                           DropdownMenuItem(
                             value: cover,
-                            child: Text(CoverRules.label(cover)),
+                            child: Text(
+                              CoverRules.label(cover),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                       ],
                       onChanged: (v) =>

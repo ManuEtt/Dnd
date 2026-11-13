@@ -3681,3 +3681,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+### 2026-11-13 – Säurespritzer: Live-Ziele und formulargebundene Zustimmungen erneuern
+
+- **Ausgangs-main:** `269f5c1ed3301fd97990275e682388e1b34078a4`; **Branch:** `feat/chat-c/acid-splash-live-target-snapshot-20261113`; **PR:** [#715](https://github.com/ManuEtt/Dnd/pull/715) (Draft).
+- **Code/Test:** `d7cefc34bf1c80cad0e6c5ba6bc02ef976fe8bbe`, `5077e0d700b7f7096287e0805604e6301d77acf6`.
+- **IMPLEMENTIERT:** `AcidSplashDialog.didUpdateWidget` vergleicht Helden-/Encounter-Instanzen und tiefe Wert-Snapshots der zusätzlichen Kreaturen (ID/Name/TP/Max-TP). Bei Wechsel werden GES-Textfeld, Klassenliste/Auswahl, alle Hauptziel-Checkboxen, Zusatz-Ziele, Deckung, Zusatz-Rettungswurfwerte und alte Fehler zurückgesetzt; neue Zusatz-Controller erzeugt und alte nach dem Widgetframe entsorgt. Unveränderte Eingaben bleiben beim Parent-Rebuild bestehen.
+- **GETESTET:** Existierenden Säurespritzer-Code, Regeln und UI-Tests mit aktuellen Modellen abgeglichen; fünf neue Widgettests versioniert. Erfolgreiche Ausführung der neuen Tests noch nicht bestätigt.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, gezielte/vollständige Flutter-Tests, Android-Debug/ABI/APK/native Tests, Gerät/TalkBack/IME auf dem finalen PR-HEAD.
+- **BLOCKIERT:** Lokal kein Flutter-/Dart-SDK. Änderungen an gemeinsamen README-/Checkpoint-Dateien bei PR-Integration gegen parallele Nachträge abgleichen.
+- **NOCH NICHT IMPLEMENTIERT:** Echte Android-Geräteabnahme und weitere unabhängige UI-Dialoge.
+- **Migration:** Keine; Datenbank, JSON, Regelzustand, Story, Version unverändert.
+- **Nächster Schritt:** CI auf finalem PR-HEAD prüfen, eventuelle konkrete Fehler korrigieren, dann erst für Review freigeben.
+
