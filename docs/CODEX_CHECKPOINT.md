@@ -3693,3 +3693,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+### 2026-11-13 – NPC-Kurzrückblick gegen abschließende Zeilentrenner absichern (#743)
+
+- **Basis:** main `12c09fc1f41de095ed7d71ded45099faa7059194`; Branch `fix/chat-b/npc-excerpt-terminal-id-20261113`; [PR #743](https://github.com/ManuEtt/Dnd/pull/743) anfangs Draft, App `0.8.52+102`.
+- **IMPLEMENTIERT:** Vollständig kanonischer NPC-Identifier in der read-only Projektion `ConfirmedNpcContinuityExcerpt.read`; kein Teilmatch, das abschließendes CR/LF/Unicode als Identität akzeptiert.
+- **Regression:** `app/test/confirmed_npc_excerpt_terminal_id_test.dart` prüft positive und negative Identitäten einschließlich JSON-Wiederaufnahme und unverändertem Heldenzustand.
+- **GETESTET:** Live-GitHub-main, bestehende Testverträge und offene Story-PR-Dateipfade; isolierte Fachdateien versioniert. Vollständig grüne CI von älteren PRs ist kein Nachweis für #743.
+- **NICHT GETESTET:** Finale Python-/Backend-/Flutter-/Dart-/Android-CI für #743, reale Android-Nutzung und produktiver KI-Anbieter stehen noch aus.
+- **BLOCKIERT:** CI-/Integrationsreview, verlustfreie Koordination gemeinsam genutzter Dokumentationsdateien.
+- **NOCH NICHT IMPLEMENTIERT:** Eine eigenständige UI-Anbindung des gewählten NPC-Rückblicks.
+- **Migration:** Keine; bestätigte Geschichte, JSON/SQLite, SRD-/Regelwerte, Versionsnummer und API-Verträge bleiben unverändert.
+- **Nächster Schritt:** GitHub-Workflow auf finalem PR-HEAD abnehmen, konkrete Fehler korrigieren und danach zur Review freigeben; kein direkter Merge in main.
