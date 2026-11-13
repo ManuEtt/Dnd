@@ -2383,3 +2383,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+### 2026-11-13 – EP-Bestätigung nach Aktualisierung des Kampagnenstands erneuern
+
+- **Problem:** Ein bereits geöffnetes Formular zur EP-Belohnung konnte ältere Kennung, Punktezahl und Zustimmung in einer neuen Kampagnenrevision weiterverwenden.
+- **Lösung:** Bei Austausch des Kampagnensnapshots werden die beiden Eingaben und die ausdrückliche Zustimmung widerrufen. Eine barrierearme Statusmeldung fordert zur erneuten Prüfung auf; bloßes Neuaufbauen mit demselben Kampagnenobjekt erhält den bewussten Entwurf.
+- **Dateien:** `app/lib/ui/experience_reward_dialog.dart`, `app/test/experience_reward_live_snapshot_test.dart`.
+- **Branch/PR:** `feat/chat-c/xp-reward-live-campaign-consent-20261113`, [#723](https://github.com/ManuEtt/Dnd/pull/723) (Draft). Code-/Testcommits: `6607947d88ad53847d9475c4caab9a073a376e04`, `86cd7f8e682f854d9cc92a44c08c444bb5aa32ed`.
+- **Prüfungen:** Vier Widget-Regressionsfälle für unveränderten Snapshot, neue Revision, unbestätigte Helden-EP und zwischenzeitlich bereits gebuchte Belohnung hinzugefügt. **Nicht ausgeführt**; Test- und CI-Abnahme sowie koordinierte Integration sind einem separaten Chat übertragen.
+- **Kompatibilität:** Keine Änderungen an EP-Buchungsregeln, Controller, Story, JSON/SQLite, Spielstandformat, Backend oder App-Version; keine Migration. Realgerät und Barrierefreiheitsabnahme offen.
+

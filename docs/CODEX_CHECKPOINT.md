@@ -3681,3 +3681,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+### 2026-11-13 – EP-Dialog: Zustimmung an den aktuellen Kampagnensnapshot binden
+
+- **Ausgangs-main:** `41fcae3697f3e95c749498a2ec70318858e8dd8c`; **Branch:** `feat/chat-c/xp-reward-live-campaign-consent-20261113`; **PR:** [#723](https://github.com/ManuEtt/Dnd/pull/723), Draft.
+- **Fachcode-/Testcommits:** `6607947d88ad53847d9475c4caab9a073a376e04`, `86cd7f8e682f854d9cc92a44c08c444bb5aa32ed`.
+- **IMPLEMENTIERT:** `ExperienceRewardDialog.didUpdateWidget` verwirft bei neuer Campaign-Instanz Belohnungskennung, EP-Betrag und ausdrückliche Zustimmung. `Semantics(liveRegion: true)` zeigt die notwendige Neubestätigung an; identische Campaign-Instanz behält Eingaben.
+- **GETESTET:** Aktuellen Main-/PR-Stand und Fach-/Widgetcode auf Dateikollisionen untersucht; vier neue Regressionen als Quellcode versioniert. **Kein Testlauf** durch diesen Entwicklungs-Chat.
+- **NICHT GETESTET:** Dart-Formatierung, Flutter-Analyse, gezielte und vollständige Flutter-Tests, Android-Debug-APK, natives Android, ARM32/64/X86-APKs sowie Gerät/TalkBack/IME.
+- **BLOCKIERT/DELEGIERT:** Der Auftraggeber hat Testausführung, CI-Abnahme und koordinierte Integration ausdrücklich einem anderen Chat zugewiesen. Kein eigener Merge oder automatisches Review-Ready. Gemeinsame README-/Checkpoint-Nachträge verlustfrei zusammenführen.
+- **NOCH NICHT IMPLEMENTIERT:** Geräteabnahme und weitere unabhängige UI-Verbesserungen.
+- **Kompatibilität:** Kein Regel-/Story-/Controller-/Persistenz- oder Versionswechsel; keine Migration.
+- **Nächster Schritt für die Testzuständigkeit:** `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test test/experience_reward_live_snapshot_test.dart test/experience_reward_dialog_test.dart`, `flutter test` und Android-/CI-Gates auf dem finalen PR-HEAD ausführen, auftretende Fehler im PR beheben, erst danach Review-/Integration abnehmen.
+

@@ -1192,3 +1192,18 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-13 – EP-Belohnungsformular: aktualisierte Kampagne erfordert neue Zustimmung
+
+- **Basis-main:** `41fcae3697f3e95c749498a2ec70318858e8dd8c`; **Branch:** `feat/chat-c/xp-reward-live-campaign-consent-20261113`; **PR:** [#723](https://github.com/ManuEtt/Dnd/pull/723) (Draft).
+- **Fachcode-/Testcommits:** `6607947d88ad53847d9475c4caab9a073a376e04`, `86cd7f8e682f854d9cc92a44c08c444bb5aa32ed`.
+- **Problem:** Der bestehende EP-Dialog zeigte einen aktualisierten Kampagnenstand an, behielt aber die frühere manuelle Kennung, Punktezahl und bereits erteilte Zustimmung bis zur nächsten Änderung der Formularfelder.
+- **IMPLEMENTIERT:** Bei neuer `Campaign`-Instanz werden alte Werte und Freigabe gelöscht. Eine live angesagte Hinweiszeile mit `xp-reward-snapshot-notice` informiert über die notwendige erneute Eingabe; bei identischem Campaign-Objekt bleibt der Entwurf bestehen.
+- **Akzeptanztests vorbereitet:** (1) identischer Snapshot bewahrt Eingaben und Zustimmung; (2) erhöhte Revision widerruft den Entwurf, erneute manuelle Prüfung erlaubt neuen Request; (3) neuer Held mit unbestätigtem EP-Stand bleibt gesperrt; (4) nachträglich bereits gebuchter Beleg kann nicht ohne neue explizite Zustimmung bestätigt werden.
+- **Betroffene Dateien:** `app/lib/ui/experience_reward_dialog.dart`, `app/test/experience_reward_live_snapshot_test.dart`; Append-only-Dokumentation in `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md`.
+- **GETESTET:** Prüfung auf Überschneidungen mit offenen PR-Dateien und bestehender UI-/Domänenschnittstelle; **keine Testausführung**.
+- **NICHT GETESTET:** Flutter/Dart-Format und Analyse, Widgettests, gesamte Flutter-Suite, Android/native/ABI-APKs, Geräte-/TalkBack-/IME-Abnahme.
+- **BLOCKIERT/DELEGIERT:** Testausführung, CI-Abnahme und koordinierter Merge liegen gemäß Benutzervorgabe bei einem anderen Chat. Keine selbstständige Integration, kein Freigabestatus ohne Prüfergebnis.
+- **Migrationen:** Keine. EP-Domain, Story, SQLite/JSON, persistierte Spielstände und App-Version unverändert.
+- **Nächster Schritt:** Die separat zuständige Test-/Integrationssitzung prüft PR #723 mit Flutter- und Android-Gates; Chat C kann danach eine neue, unabhängige UI-Funktion aus dem aktuellen Main auswählen.
+
