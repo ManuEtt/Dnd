@@ -2393,3 +2393,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-13 – Vollständig geprüfte NPC-Kennungen in bestätigten Kurzrückblicken
+
+- **Problem:** Eine angeforderte NPC-Kennung mit abschließendem Zeilenende konnte bei einer reinen Regex-`hasMatch`-Prüfung einen gültigen Anfang vortäuschen.
+- **Lösung:** `ConfirmedNpcContinuityExcerpt.read` verlangt nun, dass der vollständige gespeicherte Identifier exakt dem kanonischen ASCII-Muster entspricht, bevor er in einen bestätigten Rückblick gelangt.
+- **Tests:** Neue positive und negative Regressionen in `app/test/confirmed_npc_excerpt_terminal_id_test.dart` für CR/LF/Unicode-Zeilenenden, Zero-Width-Zeichen, vollständige 64-Zeichen-IDs und JSON-Neustart.
+- **Branch/PR:** `fix/chat-b/npc-excerpt-terminal-id-20261113`, [PR #743](https://github.com/ManuEtt/Dnd/pull/743) (zunächst Draft); Fach-/Testcommits `f430a5b`, `9ff57e6`, `daf3e9f`; finalen Dokumentations-HEAD gesondert prüfen.
+- **Prüfung:** Fachcode und bestehende Testverträge geprüft; Dart-/Flutter-Format/Analyse/Tests, Backend/Python/Android-CI auf dem endgültigen Commit noch nicht abgenommen.
+- **Kompatibilität:** Keine Daten-/Schema-/API-Migration und keine Veränderung an gespeicherten Kampagnen, Regeln, Ressourcen oder KI-Freigaben.
+- **Grenzen:** Integrationsreview und finale CI ausstehend; ältere Dokumentationsnachträge bei der Integration erhalten.
