@@ -34,11 +34,11 @@ class NpcContinuitySnapshot {
     final lines = <String>[
       heading,
       'Status: ${alive ? 'lebendig' : 'tot'}',
-      'Aktuelle Beziehung: ${_singleLine(currentRelationship)}',
+      'Aktuelle Beziehung: ${_boundedLine(currentRelationship, 80)}',
       if (recentNotes.isEmpty) 'Keine bestätigten Beziehungsnotizen.',
       for (final note in recentNotes)
         'Beziehungsnotiz ${note.recordedAt.toUtc().toIso8601String()} '
-            '(${_singleLine(note.relationship)}): ${_singleLine(note.note)}',
+            '(${_boundedLine(note.relationship, 80)}): ${_boundedLine(note.note, 500)}',
     ];
     return lines.join('\n');
   }
@@ -120,7 +120,7 @@ final RegExp _invisibleNameMarks = RegExp(
 );
 
 String _visibleName(String value) =>
-    _singleLine(value.replaceAll(_invisibleNameMarks, ''));
+    _boundedLine(value.replaceAll(_invisibleNameMarks, ''), 80);
 
 // Saved relationships/notes may also carry legacy format controls.
 // Render a bounded *read-only* one-line projection, never mutate saved text.
@@ -134,6 +134,24 @@ String _singleLine(String value) => value
     )
     .replaceAll(RegExp(r'\s+'), ' ')
     .trim();
+
+// Long names and legacy imported memories must not consume the entire
+// narrator context. Limit only their read-only projection, never saved data.
+// Iterate Unicode scalar values so a truncated emoji stays intact.
+String _boundedLine(String value, int maxUnits) {
+  final cleaned = _singleLine(value);
+  if (cleaned.length <= maxUnits) return cleaned;
+
+  final output = StringBuffer();
+  var length = 0;
+  for (final rune in cleaned.runes) {
+    final units = rune > 0xffff ? 2 : 1;
+    if (length + units > maxUnits - 1) break;
+    output.writeCharCode(rune);
+    length += units;
+  }
+  return '${output.toString().trimRight()}…';
+}
 
 // Compare the same visible name that confirmedContext actually renders.
 // Ordinary letters, genuine spaces, punctuation and German umlauts remain.
