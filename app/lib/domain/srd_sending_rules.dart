@@ -95,6 +95,7 @@ class SrdSendingRules {
     }
     final id = recipientId.trim();
     if (id.isEmpty ||
+        // A confirmed target identifier must not be silently normalized.
         recipientId != id ||
         id.length > 160 ||
         _unsafeControls.hasMatch(recipientId) ||
