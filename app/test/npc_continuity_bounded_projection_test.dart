@@ -42,7 +42,7 @@ void main() {
   sqfliteFfiInit();
 
   test('oversized old memory is bounded only in its visible projection', () {
-    final name = 'Mira ' + 'Hüterin ' * 100;
+    final name = 'Mira ${'Hüterin ' * 100}';
     final relationship = 'verbündet ' * 200;
     final note = '🐉' * 700;
     final campaign = _campaign(
@@ -72,7 +72,7 @@ void main() {
   });
 
   test('colliding shortened names must show safe confirmed NPC IDs', () {
-    final prefix = 'Mira ' + '🐉' * 50;
+    final prefix = 'Mira ${'🐉' * 50}';
     final campaign = _campaign(
       npcs: [
         WorldNpc(id: 'mira', name: '${prefix}Nord'),
@@ -94,7 +94,7 @@ void main() {
   });
 
   test('unsafe identity cannot be used to disambiguate shortened names', () {
-    final prefix = 'Mira ' + '🐉' * 50;
+    final prefix = 'Mira ${'🐉' * 50}';
     final campaign = _campaign(
       npcs: [
         WorldNpc(id: 'unsafe id', name: '${prefix}Nord'),
@@ -137,7 +137,7 @@ void main() {
   test(
     'valid long legacy data keeps full values after SQLite restart',
     () async {
-      final name = 'Mira ' + 'Hüterin ' * 20;
+      final name = 'Mira ${'Hüterin ' * 20}';
       final relationship = 'freundlich ' * 20;
       final note = '🐉' * 200;
       final source = _campaign(
