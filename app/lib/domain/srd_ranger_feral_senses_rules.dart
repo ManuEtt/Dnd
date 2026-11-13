@@ -40,6 +40,25 @@ class SrdRangerFeralSensesRules {
         : null;
   }
 
+  /// Grid-distance counterpart for encounters using decimeter coordinates.
+  /// Zero is a valid confirmed distance (same position); unknown or
+  /// unconfirmed distances never establish range. This does not establish
+  /// line of sight, target identity, or actual creature detection.
+  static bool? withinConfirmedRangeDecimeters(
+    HeroCharacter hero, {
+    required int? distanceDecimeters,
+    required bool distanceConfirmed,
+  }) {
+    if (blindsightRangeFeet(hero) == null ||
+        !distanceConfirmed ||
+        distanceDecimeters == null ||
+        distanceDecimeters < 0 ||
+        distanceDecimeters > 3000000) {
+      return null;
+    }
+    return distanceDecimeters <= grantedRangeDecimeters;
+  }
+
   /// Only answers whether a *confirmed distance* falls within this sense's
   /// range. It never asserts detection through cover, darkness or hiding.
   /// null denotes insufficient/unavailable evidence, not a false detection.
