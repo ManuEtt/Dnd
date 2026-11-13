@@ -2303,3 +2303,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - Übernahme des eigenständigen Wortgrenzen-Fixes aus PR #684 mit positivem Gegenbeispiel für Kapellenuntersuchung. Quellbranch-HEAD `b9836aecd8507cf0af96685643cc6e28801d988f` als zweiter Commit-Elternknoten erhalten.
 - Konfliktfreie Konsolidierung der README ausschließlich am Dateiende; alle früheren Main-Nachträge und Story-Checkpoints bleiben erhalten.
 - **Teststand:** Vorgänger-CI #42957164227 bestand 3.353 Flutter-Tests und scheiterte an einem inzwischen korrigierten Regressionstest. Finale CI auf Integrationsstand noch offen; keine Behauptung eines grünen APK-Builds, keine Speicher- oder Schemaänderung.
+
+
+### 2026-11-13 – Strikte Backend-Paket-JSON-Prüfung (PR #736)
+
+- **Main-Basis:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7` und aktueller Branch `fix/chat-d/verify-backend-json-duplicate-keys-20261113`; **Code-Commit:** `c7d0f84f34d8845ab857b6e8609506ee2dd76413`; **PR:** [#736](https://github.com/ManuEtt/Dnd/pull/736).
+- **Problem:** `json.loads` akzeptierte doppelte Objektschlüssel und entschied still nach dem letzten Wert. Paketmanifest und Lockdatei konnten bei einer unvollständigen Repositoryübertragung mehrdeutig sein.
+- **IMPLEMENTIERT:** Der `object_pairs_hook` verwirft doppelte Schlüssel in jeder JSON-Objektebene. Vorhandene 16-MiB-Begrenzung und Symlink-Prüfung bleiben unverändert.
+- **Dateien:** `scripts/verify_project.py`, `scripts/tests/test_verify_project.py`, additive README und zentrale/persönliche Checkpoints.
+- **Positive/negative Tests ergänzt:** gültig gleiche Namen in unabhängigen Objekten; negativ doppelte Schlüssel auf oberster Ebene, tief verschachtelt und via Unicode-Escape in beiden Backend-Paketdateien. Fehlermeldungen verraten keine Metadaten.
+- **GETESTET:** GitHub-Quellen und Teststruktur analysiert; offene PRs auf alle Fachdateien abgeglichen und eigenständigen Branch/PR angelegt.
+- **NICHT GETESTET:** Lokale Python-, Backend-, Flutter- und Android-Prüfungen, da keine GitHub-DNS-Auflösung/kein Projektcheckout. Neue vollständige Actions-CI auf finalem Commit offen.
+- **BLOCKIERT:** CI-Abnahme und integrationssicherer Append-only-Abgleich der gemeinsam genutzten Dokumente.
+- **NOCH NICHT IMPLEMENTIERT:** Keine Änderungen an Spielstandimporten, SQLite, UI, Regelengine, Story oder Android-Prozess; keine Migration.
+- **NÄCHSTER SCHRITT:** Finale CI für #736 auswerten und gegebenenfalls im eigenen Branch reparieren; danach abgestimmt integrieren.

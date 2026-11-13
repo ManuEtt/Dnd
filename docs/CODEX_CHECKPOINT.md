@@ -3681,3 +3681,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+
+### 2026-11-13 – Paket-Metadaten ohne doppelte JSON-Schlüssel validieren
+
+- **Ausgangs-main:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7`; **Branch:** `fix/chat-d/verify-backend-json-duplicate-keys-20261113`; **PR:** [#736](https://github.com/ManuEtt/Dnd/pull/736) (Draft bis abschließende CI); **Code-Commit:** `c7d0f84f34d8845ab857b6e8609506ee2dd76413`.
+- **IMPLEMENTIERT:** Python-Uploadprüfung verwendet `object_pairs_hook` und verweigert doppelte Backend-JSON-Objektschlüssel rekursiv. Die bestehenden begrenzten UTF-8-Lesezugriffe und neutralen Fehlertexte werden erhalten.
+- **Tests ergänzt:** Zwei neue Python-Testmethoden mit doppelten Top-Level-, verschachtelten und Unicode-escaped Schlüsseln in beiden Paketdateien sowie gültigen gleichen Schlüsseln in getrennten Objekten.
+- **GETESTET:** Aktuellen Main-HEAD, alle offenen PR-Dateipfade, tatsächlichen Uploadprüfer und bestehende Testfälle geprüft; kein Fachdateipfadkonflikt.
+- **NICHT GETESTET:** Neue Python-Tests, komplette Backend-/Flutter-/Android-/APK- und Release-CI auf finalem HEAD; kein lokaler Checkout, da github.com hier nicht auflösbar war. Keine reale Geräteabnahme.
+- **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
+- **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
+- **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
