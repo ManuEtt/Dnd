@@ -1192,3 +1192,17 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-13 – Manuelle Zusatzkreaturenangriffe: Bestätigungen nach Kampagnenwechsel erneuern
+
+- **Ausgangs-main:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7`; **Branch:** `feat/chat-c/manual-attack-live-campaign-20261113`.
+- **Implementierung:** `app/lib/ui/manual_extra_creature_attack_dialog.dart` erhält `didUpdateWidget` zum Widerruf alter Angreifer-/Zielauswahl, Angriffsbonus, Würfelausdruck, Ziel-RK, Schadenstyp, Deckung, 10 Checkboxzuständen und Fehlertexten beim Wechsel der Kampagneninstanz. Die generationsbasierte Formular-Key-Erneuerung verwirft alte interne Dropdown-Zustände; der gleiche Snapshot bewahrt die Eingabe.
+- **Tests bereitgestellt:** `app/test/manual_extra_creature_attack_live_snapshot_test.dart` mit drei Fällen (unverändertes Kampagnenobjekt; neuer aktiver Angreifer/neue Runde; neue Kampagne mit verbrauchter Aktion).
+- **Code-/Testcommits:** `6db8ad2acf52e6430575056db96945ba1005494d`, `380285d30ef01a2e4a3b3ee3b005e43ee0f0d4d2`, `ec6100f529a7eb45f6bb5bc2c7a2d51db1c188e8`.
+- **IMPLEMENTIERT:** Flutter-Formularreset bei geändertem Kampagnen-Snapshot ohne Regel- oder Speicheränderung.
+- **GETESTET:** Nur GitHub-Bestandsabgleich; keine Testausführung in dieser Sitzung.
+- **NICHT GETESTET:** Dart-/Flutter-/Android-CI und drei neue Widgettests, Test auf physischem Gerät.
+- **BLOCKIERT:** Kein Ausführungsblocker behauptet. Der Benutzer hat CI/Test und koordinierten Merge ausdrücklich einem anderen Chat zugeordnet.
+- **Migration:** Keine; bestehende JSON-/SQLite-Spielstände, APIs und App-Version unverändert.
+- **Nächster Schritt:** Separater Test-/Integrationschat führt gezielte und komplette Flutter-Tests, Android-Builds und Review/Merge aus; bei Befund gezielten Fix-Commit anfordern.
+

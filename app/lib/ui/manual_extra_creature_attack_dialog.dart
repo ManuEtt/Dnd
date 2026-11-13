@@ -39,6 +39,34 @@ class _ManualExtraCreatureAttackDialogState
   bool _reach = false, _actorCanAct = false, _targetAvailable = false;
   bool _modifiers = false, _defenses = false, _reactions = false;
   bool _noEffects = false, _advantage = false, _disadvantage = false;
+  int _formRevision = 0;
+
+  @override
+  void didUpdateWidget(covariant ManualExtraCreatureAttackDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (identical(oldWidget.campaign, widget.campaign)) return;
+
+    // A submitted attack must describe the current combat turn and target.
+    // Never carry a previous campaign's attacker, stats or consent forward.
+    _bonus.clear();
+    _damage.clear();
+    _ac.clear();
+    _targetId = null;
+    _damageType = null;
+    _cover = null;
+    _opposite = false;
+    _reach = false;
+    _actorCanAct = false;
+    _targetAvailable = false;
+    _modifiers = false;
+    _defenses = false;
+    _reactions = false;
+    _noEffects = false;
+    _advantage = false;
+    _disadvantage = false;
+    _error = null;
+    _formRevision++;
+  }
 
   @override
   void dispose() {
@@ -175,6 +203,7 @@ class _ManualExtraCreatureAttackDialogState
       insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       title: const Text('Zusätzlicher Kreaturenangriff'),
       content: SizedBox(
+        key: ValueKey('manual-attack-form-$_formRevision'),
         width: 500,
         child: Column(
           mainAxisSize: MainAxisSize.min,

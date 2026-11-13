@@ -2383,3 +2383,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+### 2026-11-13 – Zusätzlicher Kreaturenangriff: Live-Kampagnenwechsel sicher behandeln
+
+- **Problem:** In einem geöffneten Angriffsdialog blieben das zuvor gewählte Zusatzkreaturen-Ziel, manuell bestätigte Kampfwerte und die Zustimmung zu Angriffsvoraussetzungen erhalten, wenn ein neues Kampagnen-Snapshot eintraf, etwa nach einem Zugwechsel oder Verbrauch der Aktion.
+- **Lösung:** Der Dialog verwirft beim Kampagnen-Instanzwechsel alle ungesendeten Angriffs-, Ziel-, Schadens- und Zustimmungseingaben. Ein neu geschlüsselter Formularunterbaum verhindert, dass Dropdowns den alten Gegner trotz geänderter Optionen behalten. Ein Neuaufbau mit identischem Snapshot erhält die Eingaben.
+- **Dateien:** `app/lib/ui/manual_extra_creature_attack_dialog.dart` und `app/test/manual_extra_creature_attack_live_snapshot_test.dart`.
+- **Branch:** `feat/chat-c/manual-attack-live-campaign-20261113`. Drei Widgettests für identischen Snapshot, Wechsel des aktiven Angreifers und verbrauchte Aktion eingecheckt.
+- **Prüfstatus:** Tests wurden auf ausdrücklichen Wunsch nicht ausgeführt; Dart-Format, Analyse, Flutter-Tests, Android-APK und CI-Abnahme sowie die koordinierte Integration sind einem getrennten Test-/Integrationschat überlassen.
+- **Kompatibilität:** Nur Flutter-Formularzustand, keine Änderungen an Regeln, Story, gespeicherten Kampagnen, SQLite/JSON oder App-Version; keine Migration.
+
