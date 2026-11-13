@@ -1380,3 +1380,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-13 – Explizite Wiederaufnahme eines gespeicherten NPCs (PR #739)
+
+- **Ausgangs-main:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7`; **Branch:** `feat/chat-b/explicit-npc-resume-20261113`; **Pull Request:** [#739](https://github.com/ManuEtt/Dnd/pull/739) (anfangs Draft), Version unverändert `0.8.52+102`. Fachcommit `23429e3d73c339c4a730bc64f7da17e24905a11e`; Testcommit `b194a54717ee3ebc908596506eba7c5c1e79467d`; finalen Dokumentations-Head auf GitHub prüfen.
+- **Ausgangsproblem:** Der read-only NPC-Rückblick wählt maximal drei Personen mit jüngsten Notizen. Ältere, ausdrücklich gewählte NPCs außerhalb dieses Fensters und bereits gespeicherte NPCs ohne Notizhistorie hatten keine ID-basierte Auswahl.
+- **IMPLEMENTIERT:** Neue `ConfirmedNpcResumeSelector.readSelected` für genau eine, eindeutig gespeicherte und vollständig kanonische NPC-ID. Die Auswahl benötigt eine gültige Kampagne, nichtleere Sitzung, exakte Revision, 1–3 Notizen als Obergrenze; sie erfindet bei leerer Historie keine Fakten, entfernt uneindeutige Notizidentitäten aus dem Kontext, sortiert bestätigte Notizen deterministisch und nutzt den unveränderten vollständigen Rohstempel über NPCs/Notizen zur Revalidierung.
+- **Dateien:** `app/lib/story/confirmed_npc_resume_selection.dart`, neuer `app/test/confirmed_npc_resume_explicit_selection_test.dart`, README und beide append-only Checkpoints.
+- **Akzeptanztests:** Sechs Testgruppen zu älteren gleichnamigen NPCs außerhalb des Top-drei-Fensters, gespeicherten NPCs ohne Notizen, ungültigen/doppelten Identitäten, kollidierenden Notiz-IDs und Unicode, veralteten Revisionen/Sitzungen/Historien sowie JSON-/SQLite-Roundtrip.
+- **GETESTET:** Haupt-HEAD, bisherige Fachtests und 28 offene PR-Metadaten auf eigene Story-Fileüberschneidung geprüft; keine offene Fachänderung an diesen neuen Dateipfaden festgestellt. Änderungen auf eigenem Branch gepusht.
+- **NICHT GETESTET:** Neue Dart-/Flutter-Tests, Dart-Formatierung, Analyzer, Python-/Backend-Checks und Android-Build/APK auf finalem Branch-HEAD sind vor der GitHub-CI-Auswertung noch nicht bestätigt. Lokales Dart-/Flutter-SDK fehlt.
+- **BLOCKIERT:** CI auf finalem Commit, anschließendes Review und verlustfreie Zusammenführung der gemeinsam verwendeten README-/Checkpoint-Dateien durch den Integrationstrack.
+- **Kompatibilität/Migration:** Nur lesende NPC-Projektion; unveränderte JSON-/SQLite-Schemata, keine Migrationsarbeiten, keine Regelzustands-/Kostenfreigabe-Änderungen, keine Speicherwrites.
+- **NOCH NICHT IMPLEMENTIERT:** Direkte Android-UI-Auswahl historischer NPCs und ID-basierter Erzählertransport; getrennte künftige Funktionspakete.
+- **NÄCHSTER SCHRITT:** CI/Flutter-Tests für PR #739 auf exaktem finalen HEAD prüfen, konkrete Fehler auf demselben Branch beheben und erst nach vollständiger grüner CI zur koordinierten Integration freigeben.
