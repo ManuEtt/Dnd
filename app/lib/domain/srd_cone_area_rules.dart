@@ -51,6 +51,26 @@ class SrdConeAreaPreview {
   final SrdConeDirection direction;
   final List<SrdConeCellCandidate> candidates;
 
+  /// Number of candidate squares whose center ray requires cover review.
+  /// A blocked center ray is not proof of Total Cover.
+  int get coverReviewCount => candidates
+      .where(
+        (candidate) =>
+            candidate.centerRay == SrdSphereCenterRay.requiresCoverReview,
+      )
+      .length;
+
+  /// Geometrically centered cells with a clear center ray. These are only
+  /// candidates, never confirmed affected creatures or spell targets.
+  /// Origin inclusion remains subject to explicit confirmation.
+  Iterable<SrdGridCell> get clearCenterCells => candidates
+      .where(
+        (candidate) =>
+            candidate.centerWithinCone &&
+            candidate.centerRay == SrdSphereCenterRay.clear,
+      )
+      .map((candidate) => candidate.cell);
+
   SrdConeCellCandidate? at(SrdGridCell cell) {
     for (final candidate in candidates) {
       if (candidate.cell == cell) return candidate;
