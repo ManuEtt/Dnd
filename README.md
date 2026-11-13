@@ -2383,3 +2383,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+### 2026-11-13 – Zauberressourcen bei Heldenwechsel neu auswählen
+
+- **Problem:** Ein offen gebliebener Dialog zur Zauberressourcenverwaltung konnte beim Wechsel des Helden die bisherige Zauberauswahl, Platzstufe oder Konzentrationsentscheidung weiterverwenden.
+- **Lösung:** Bei neuer Heldeninstanz werden Zauber, Grad, Paktmagie, Konzentration und alte Validierungsfehler zurückgesetzt. Beide Dropdown-Formzustände werden neu aufgebaut; ein barrierearmer Hinweis fordert zur erneuten Prüfung auf. Ein unveränderter Parent-Rebuild behält die bewussten Eingaben.
+- **Dateien:** `app/lib/ui/spellcasting_dialog.dart`, `app/test/spellcasting_live_hero_test.dart`.
+- **Branch/PR:** `feat/chat-c/spellcasting-live-hero-selection-20261113`, [#725](https://github.com/ManuEtt/Dnd/pull/725) (Draft). Code/Test: `44e6e8da1fc3c79171605b29d70737abb0ec69dc`, `ef7112c948a6752f4a5864d7e96c7eb4b10bb254`.
+- **Prüfungen:** Vier neue Widget-Regressionsfälle vorbereitet (unveränderter Held, Klassen-/Zauberwechsel, kein bekannter Zauber, ungültige Zauberplätze). **Nicht ausgeführt**; Testausführung, CI-Auswertung und Integration sind ausdrücklich an einen separaten Chat delegiert.
+- **Kompatibilität:** Keine Regel-/Story-/Controlleränderungen, keine SQLite-/JSON- oder Versionsänderung, keine Migration. Realgerät, TalkBack und IME offen.
+
