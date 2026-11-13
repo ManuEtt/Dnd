@@ -3693,3 +3693,39 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+### 2026-11-13 – Bestätigter NPC-Kontext nur mit gültiger Sitzung (PR #734)
+
+- **Status:** Implementiert auf `fix/chat-b/npc-identity-session-guard-20261113`, Draft-PR https://github.com/ManuEtt/Dnd/pull/734 gegen main. **Ausgangs-main-SHA:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7`; Quell-/Test-SHA vor Dokumentation `81f6396705c21675157bc3ba073a72404af588db`, endgültigen PR-HEAD nach diesem Checkpoint prüfen. **Version:** `0.8.52+102` unverändert.
+- **IMPLEMENTIERT:** `NpcIdentityMemory.read` prüft zusätzlich, dass die Kampagnensitzungskennung nicht leer/Whitespace-only ist und die Revision innerhalb 0–2147483647 liegt; die bisherige ID-, Notiz- und Revisionsprüfung bleibt bestehen. Keine Änderung an der bestehenden `toContextMap`-Struktur, keine Bestätigung KI-generierter Regelfakten.
+- **Betroffene Dateien:** `app/lib/story/npc_identity_memory.dart`, neuer `app/test/npc_identity_session_bounds_test.dart`, reine README-/Checkpoint-Nachträge.
+- **Akzeptanzfälle:** Leere, Whitespace-Session und übergroße/negative Revision ablehnen; gültiger NPC-Kontext nach JSON-Roundtrip und erneute Sessionprüfung bei `requireCurrent`; Grenzwertrevision gültig, Heldenwerte/Quellen unverändert.
+- **GETESTET:** Masterprompt und Repository-Metadaten live gelesen, PR-Änderungslisten verglichen, API- und `Campaign`-Modellvertrag manuell kontrolliert, Testcode vor PR an tatsächlichen `Campaign.fromJson`-Vertrag angepasst. Letzter gesichteter Main-Workflow auf `184d93c` noch **in_progress**, nicht als grün gewertet.
+- **NICHT GETESTET:** Neue Flutter-Tests, Dart-Format, Flutter-Analyzer, Projekt-/Python-/Backend-Prüfungen, Android-APK und Gerät. Dart-/Flutter-SDK lokal nicht vorhanden; GitHub-CI auf finalem PR-HEAD noch gesondert nachweisen.
+- **BLOCKIERT:** Keine verifizierten Ergebnisse für den finalen Commit und keine Android-Geräteprüfung; andere PRs haben parallel gemeinsame Dokumentationsdateien geändert. Integration ausschließlich koordiniert.
+- **NOCH NICHT IMPLEMENTIERT:** Separate Prüfung verbleibender Story-Sitzungsgrenzen in anderen Lesern (eigenes Paket).
+- **Schema/Migration:** Keine; `schemaVersion=1`, SQLite-Schema, gespeicherte Campaigns, SRD-Regelwerte, Providerkosten und App-Version unverändert.
+- **Nächster konkreter Schritt:** Finalen PR-Head von #734 durch vollständige CI inkl. Flutter-Tests abnehmen, Fehler im selben Branch beheben; anschließend reviewen und nach koordinierter Zusammenführung integrieren.
+
+### 2026-11-13 – Gespeicherte NPCs gezielt für Kampagnenfortsetzung auswählen (#739)
+
+- **Ausgangs-main/Version:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7` / `0.8.52+102`. Branch `feat/chat-b/explicit-npc-resume-20261113`, [PR #739](https://github.com/ManuEtt/Dnd/pull/739), Fachcommit `23429e3d`, Testcommit `b194a547` (endgültigen GitHub-PR-HEAD separat prüfen).
+- **IMPLEMENTIERT:** Lesende `ConfirmedNpcResumeSelector.readSelected` für einen vom Spieler ausdrücklich gewählten eindeutig gespeicherten NPC, auch außerhalb der drei zuletzt relevanten Figuren. Gültige kanonische IDs, gespeicherter Kampagnen-/Session-/Revisionsstempel, eindeutige Notiz-IDs, deterministische Notizreihenfolge, begrenzte und sanitisierte Projektion. Keine erfundenen Erinnerungen bei NPCs ohne Notizen.
+- **Neue Regression:** `app/test/confirmed_npc_resume_explicit_selection_test.dart` mit sechs Gruppen für positive/negative Auswahl, Historie, Datenintegrität, Stale-Guard, JSON- und SQLite-Neustart.
+- **GETESTET:** GitHub-Hauptstand, 28 offene PRs, Fachmodul und existierende Testverträge vor der Änderung gesichtet. Open PRs #734/#724/#716/#712/#708 verändern nicht die neuen Fach-/Testdateien.
+- **NICHT GETESTET:** Neue Dart-/Flutter-Tests, Format, Analyse, Python-/Backend-CI und Android-Build auf finalem PR-Commit noch nicht abgeschlossen. Kein lokales Dart-/Flutter-SDK und kein Realgerät. Ältere grüne CI gehört zu früheren PRs, nicht zu #739.
+- **BLOCKIERT:** Finale CI-Auswertung und koordinierte Dokumentationsintegration. PR bleibt bis zur CI-Prüfung im Draft.
+- **NOCH NICHT IMPLEMENTIERT:** UI-/Erzählertransport dieser ausdrücklichen Auswahl; eigener künftiger Auftrag.
+- **Migration/Grenzen:** Keine. Read-only, keine Schema-/API-/Versionsänderung, keine Spielstands- oder Regelmutationen und keine neuen KI-Kosten.
+- **Nächster Schritt:** Finalen GitHub-Workflow von PR #739 auswerten, Fehler anhand seiner Logs korrigieren, danach zur Review freigeben; Integration erfolgt separat.
+
+### 2026-11-13 – Koordinierte Integration bestätigter NPC-Sitzungen und ID-Auswahl
+
+- **Basis-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Integrationsbranch:** `fix/chat-d/integrate-npc-session-resume-20261113`; **Quell-PRs:** [#734](https://github.com/ManuEtt/Dnd/pull/734) und [#739](https://github.com/ManuEtt/Dnd/pull/739).
+- **IMPLEMENTIERT:** Verbindliche Session-/Revisionsgrenzen vor Ausgabe bestätigter NPC-Notizen; gezielte, identitätsgebundene gespeicherte NPC-Auswahl ohne erfundene Erinnerungen. Vier Fach-/Testpfade konfliktfrei kombiniert.
+- **Dokumentation:** Alle früheren Main-Einträge und beide unabhängigen Append-only-Nachträge jeweils vollständig erhalten; keine fremden Einträge ersetzt oder gekürzt.
+- **GETESTET:** Separate vollständige GitHub-Actions-CI von #734 [#43391441614](https://github.com/ManuEtt/Dnd/actions/runs/43391441614) und #739 [#43396270122](https://github.com/ManuEtt/Dnd/actions/runs/43396270122), jeweils sechs grüne Jobs auf den exakten Quell-HEADs. Fachpfade gegenüber Ausgangs-main unverändert und gegenseitig disjunkt.
+- **NICHT GETESTET:** Kombinierte neue Integration, Flutter-Regressionen und Android-/ABI-/Release-CI auf finalem Integrations-HEAD; keine reale Android- oder Anbieterabnahme.
+- **BLOCKIERT:** Integration in `main` erst nach eigener vollständig grüner CI und neuer Merge-Prüfung.
+- **Migration:** Keine. JSON-/SQLite-Export und bestehende bestätigte Kampagnen unverändert.
+- **NÄCHSTER SCHRITT:** Kombinierten Actions-Lauf auf finalem Branch-HEAD kontrollieren, bei Fehlern korrigieren und erst danach geregelten Merge durchführen.
