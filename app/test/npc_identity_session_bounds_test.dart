@@ -15,9 +15,7 @@ Campaign _campaign({
   revision: revision,
   hero: HeroCharacter(id: 'hero', name: 'Aria', hitPoints: 17),
   scene: 'Ein unbestätigter Erzählerbericht.',
-  npcs: const [
-    WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich'),
-  ],
+  npcs: const [WorldNpc(id: 'mira', name: 'Mira', relationship: 'freundlich')],
   npcRelationshipNotes: [
     NpcRelationshipNote(
       id: 'note-1',
@@ -47,29 +45,32 @@ void main() {
     }
   });
 
-  test('valid session still supports JSON restart and a stale-session guard', () {
-    final original = _campaign();
-    final originalJson = jsonEncode(original.toJson());
-    final restored = Campaign.fromJson(
-      jsonDecode(originalJson) as Map<String, dynamic>,
-    );
-    final snapshot = _read(restored);
-    final context = snapshot.toContextMap();
+  test(
+    'valid session still supports JSON restart and a stale-session guard',
+    () {
+      final original = _campaign();
+      final originalJson = jsonEncode(original.toJson());
+      final restored = Campaign.fromJson(
+        jsonDecode(originalJson) as Map<String, dynamic>,
+      );
+      final snapshot = _read(restored);
+      final context = snapshot.toContextMap();
 
-    expect(snapshot.sessionId, 'session-verified');
-    expect(context['npcId'], 'mira');
-    expect(context['notes'], hasLength(1));
-    expect(context.toString(), contains('Weg zum Turm'));
-    NpcIdentityMemory.requireCurrent(restored, snapshot);
-    expect(
-      () => NpcIdentityMemory.requireCurrent(
-        Campaign.fromJson({...restored.toJson(), 'sessionId': 'session-new'}),
-        snapshot,
-      ),
-      throwsFormatException,
-    );
-    expect(jsonEncode(restored.toJson()), originalJson);
-  });
+      expect(snapshot.sessionId, 'session-verified');
+      expect(context['npcId'], 'mira');
+      expect(context['notes'], hasLength(1));
+      expect(context.toString(), contains('Weg zum Turm'));
+      NpcIdentityMemory.requireCurrent(restored, snapshot);
+      expect(
+        () => NpcIdentityMemory.requireCurrent(
+          Campaign.fromJson({...restored.toJson(), 'sessionId': 'session-new'}),
+          snapshot,
+        ),
+        throwsFormatException,
+      );
+      expect(jsonEncode(restored.toJson()), originalJson);
+    },
+  );
 
   test('unbounded revisions never create confirmed NPC identity contexts', () {
     for (final invalidRevision in [-1, 2147483648]) {
