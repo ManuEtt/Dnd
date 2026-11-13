@@ -5,7 +5,7 @@ import 'package:lebendiger_spielleiter/domain/srd_sending_rules.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('Sending recipient identity must match confirmed input exactly', () async {
+  test('Sending recipient identity must match input', () async {
     final catalog = await SrdSpellCatalogLoader.load();
     final sending = catalog.find('Sending')!;
 
