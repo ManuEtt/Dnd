@@ -3681,3 +3681,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+### 2026-11-13 – Bestätigter NPC-Kontext nur mit gültiger Sitzung (PR #734)
+
+- **Status:** Implementiert auf `fix/chat-b/npc-identity-session-guard-20261113`, Draft-PR https://github.com/ManuEtt/Dnd/pull/734 gegen main. **Ausgangs-main-SHA:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7`; Quell-/Test-SHA vor Dokumentation `81f6396705c21675157bc3ba073a72404af588db`, endgültigen PR-HEAD nach diesem Checkpoint prüfen. **Version:** `0.8.52+102` unverändert.
+- **IMPLEMENTIERT:** `NpcIdentityMemory.read` prüft zusätzlich, dass die Kampagnensitzungskennung nicht leer/Whitespace-only ist und die Revision innerhalb 0–2147483647 liegt; die bisherige ID-, Notiz- und Revisionsprüfung bleibt bestehen. Keine Änderung an der bestehenden `toContextMap`-Struktur, keine Bestätigung KI-generierter Regelfakten.
+- **Betroffene Dateien:** `app/lib/story/npc_identity_memory.dart`, neuer `app/test/npc_identity_session_bounds_test.dart`, reine README-/Checkpoint-Nachträge.
+- **Akzeptanzfälle:** Leere, Whitespace-Session und übergroße/negative Revision ablehnen; gültiger NPC-Kontext nach JSON-Roundtrip und erneute Sessionprüfung bei `requireCurrent`; Grenzwertrevision gültig, Heldenwerte/Quellen unverändert.
+- **GETESTET:** Masterprompt und Repository-Metadaten live gelesen, PR-Änderungslisten verglichen, API- und `Campaign`-Modellvertrag manuell kontrolliert, Testcode vor PR an tatsächlichen `Campaign.fromJson`-Vertrag angepasst. Letzter gesichteter Main-Workflow auf `184d93c` noch **in_progress**, nicht als grün gewertet.
+- **NICHT GETESTET:** Neue Flutter-Tests, Dart-Format, Flutter-Analyzer, Projekt-/Python-/Backend-Prüfungen, Android-APK und Gerät. Dart-/Flutter-SDK lokal nicht vorhanden; GitHub-CI auf finalem PR-HEAD noch gesondert nachweisen.
+- **BLOCKIERT:** Keine verifizierten Ergebnisse für den finalen Commit und keine Android-Geräteprüfung; andere PRs haben parallel gemeinsame Dokumentationsdateien geändert. Integration ausschließlich koordiniert.
+- **NOCH NICHT IMPLEMENTIERT:** Separate Prüfung verbleibender Story-Sitzungsgrenzen in anderen Lesern (eigenes Paket).
+- **Schema/Migration:** Keine; `schemaVersion=1`, SQLite-Schema, gespeicherte Campaigns, SRD-Regelwerte, Providerkosten und App-Version unverändert.
+- **Nächster konkreter Schritt:** Finalen PR-Head von #734 durch vollständige CI inkl. Flutter-Tests abnehmen, Fehler im selben Branch beheben; anschließend reviewen und nach koordinierter Zusammenführung integrieren.
