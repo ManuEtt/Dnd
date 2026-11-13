@@ -3681,3 +3681,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+### 2026-11-13 – Zauberressourcen-Dialog: alte Wahl beim Live-Heldenwechsel widerrufen
+
+- **Ausgangs-main:** `41fcae3697f3e95c749498a2ec70318858e8dd8c`; **Branch:** `feat/chat-c/spellcasting-live-hero-selection-20261113`; **PR:** [#725](https://github.com/ManuEtt/Dnd/pull/725), Draft.
+- **Implementierung/Test:** `44e6e8da1fc3c79171605b29d70737abb0ec69dc`, `ef7112c948a6752f4a5864d7e96c7eb4b10bb254`.
+- **IMPLEMENTIERT:** `SpellcastingDialog.didUpdateWidget` erneuert bei neuer Held-Instanz Zauberauswahl, Zaubergrad, Paktmagie, Konzentrationszustimmung und Fehlerzustand. Die zwei Dropdown-FormFields bekommen generationengebundene Subtree-Keys; ein `Semantics`-Hinweis fordert zu neuer Prüfung auf. Bei identischem Held bleiben bewusste Eingaben erhalten.
+- **GETESTET:** Code-/Domain-Schnittstellen und konkurrierende PR-Dateien analysiert; vier Widgettests zum Testen hinterlegt. **Keine Testausführung dieses Arbeitschats.**
+- **NICHT GETESTET:** Dart-Formatcheck, Flutter-Analyse, gezielte und vollständige Flutter-Suite, Android-Debug-/Native-/ABI-Builds und Geräte-/TalkBack-/IME-Abnahme.
+- **BLOCKIERT/DELEGIERT:** Testausführung, CI-Auswertung und koordinierte Integration ausdrücklich anderem Chat überlassen; dieser PR bleibt Draft und wird nicht eigenmächtig zusammengeführt. README-/Checkpoint-Nachträge bei parallelen PRs verlustfrei zusammenführen.
+- **NOCH NICHT IMPLEMENTIERT:** Realgerät-Prüfung und weitere unabhängige UI-Anforderungen.
+- **Kompatibilität:** Kein Eingriff in Zauberregeln, Story, Controller, JSON/SQLite oder Spielstände; keine App-Versionsänderung, keine Migration.
+- **Nächster Schritt:** Testchat prüft `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test test/spellcasting_live_hero_test.dart test/spellcasting_dialog_test.dart` und vollständige Flutter-/Android-CI auf dem finalen PR-HEAD; erst danach Review und Integration koordinieren.
+

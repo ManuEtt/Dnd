@@ -1192,3 +1192,18 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-13 – Zauberressourcen: Live-Heldenwechsel erneuert Zauber, Grad und Konzentration
+
+- **Main-Basis:** `41fcae3697f3e95c749498a2ec70318858e8dd8c`; **Branch:** `feat/chat-c/spellcasting-live-hero-selection-20261113`; **PR:** [#725](https://github.com/ManuEtt/Dnd/pull/725) (Draft).
+- **Code-/Testcommits:** `44e6e8da1fc3c79171605b29d70737abb0ec69dc`, `ef7112c948a6752f4a5864d7e96c7eb4b10bb254`.
+- **Problem:** `SpellcastingDialog` initialisierte den bekannten Zauber nur einmal. Alte FormField-Auswahl, Grad und Konzentration konnten bei neuem Held oder aktualisierten Ressourcendaten im offen gebliebenen Dialog stehen bleiben.
+- **IMPLEMENTIERT:** `didUpdateWidget` setzt bei neuem `HeroCharacter`-Snapshot den ersten bekannten Zauber, Grad 0, Paktmagie false, Konzentration false und Fehlerzustand neu. Die beiden `DropdownButtonFormField`-Widgets werden per `KeyedSubtree` erneuert. Barrierearmer Hinweis `spell-dialog-snapshot-notice` informiert über die erforderliche Neubewertung.
+- **Tests vorbereitet:** Vier Widgetfälle zu unverändertem Helden, neuer Zauberliste, fehlenden Zaubern und inkonsistenten Zauberplätzen. Bestehende `spellcasting_dialog_test.dart` unangetastet.
+- **Dateien:** `app/lib/ui/spellcasting_dialog.dart`, `app/test/spellcasting_live_hero_test.dart`; Dokumentationsnachtrag an `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_C_CHECKPOINT.md`.
+- **GETESTET:** Repository-/Überschneidungsanalyse durchgeführt, kein automatischer Testlauf.
+- **NICHT GETESTET:** Dart-Format/Flutter-Analyse, Widget-/Gesamttests, Android/native und APKs, Realgerät/TalkBack/IME.
+- **BLOCKIERT/DELEGIERT:** Tests und koordinierte Integration liegen nach ausdrücklichem Nutzerauftrag beim separaten Chat; keine CI-Freigabe und kein Merge hier.
+- **Migrationen:** Keine; keine Änderungen an Story, Regeln, SQLite, JSON, Controller oder Version.
+- **Nächster Schritt:** Anderer Test-/Integrationschat prüft Format, Widgettests, Flutter-/Android-Builds auf finalem PR-Commit und bereitet anschließend die koordinierte Integration vor.
+
