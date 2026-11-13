@@ -127,6 +127,46 @@ class VerifyProjectTests(unittest.TestCase):
         self.assertTrue(any('Ungültige JSON-Datei' in error for error in errors))
         self.assertNotIn(marker, '\n'.join(errors))
 
+    def test_duplicate_backend_json_keys_are_rejected_at_all_depths(self):
+        # Python's default json.loads silently keeps the last duplicate key.
+        # Package metadata and dependency locks must not be ambiguous.
+        cases = (
+            '{"name": "first", "name": "second"}',
+            '{"dependencies": {"example": {"version": "1", "version": "2"}}}',
+            '{"name": "first", "\\u006eame": "second"}',
+        )
+        for name in ('backend/package.json', 'backend/package-lock.json'):
+            path = self.root / name
+            original = path.read_bytes()
+            try:
+                for content in cases:
+                    with self.subTest(path=name, content=content):
+                        path.write_text(content, encoding='utf-8')
+                        errors = verify_project(self.root)
+                        self.assertTrue(any(
+                            'Ungültige JSON-Datei: ' + name in error
+                            for error in errors
+                        ))
+                        self.assertNotIn('first', '\n'.join(errors))
+                        self.assertNotIn('second', '\n'.join(errors))
+            finally:
+                path.write_bytes(original)
+        self.assertEqual([], verify_project(self.root))
+
+    def test_equal_keys_in_separate_json_objects_remain_valid(self):
+        # The duplicate-key check is local to each JSON object.
+        path = self.root / 'backend/package.json'
+        original = path.read_bytes()
+        try:
+            path.write_text(
+                '{"first": {"version": "1"}, "second": {"version": "2"}}',
+                encoding='utf-8',
+            )
+            self.assertEqual([], verify_project(self.root))
+        finally:
+            path.write_bytes(original)
+        self.assertEqual([], verify_project(self.root))
+
     def test_oversized_backend_json_is_rejected_without_loading_whole_file(self):
         for name in ('backend/package.json', 'backend/package-lock.json'):
             with self.subTest(path=name):

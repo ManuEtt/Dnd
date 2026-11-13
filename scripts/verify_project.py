@@ -39,6 +39,16 @@ MAX_GRADLE_PROPERTIES_BYTES = 64 * 1024
 MAX_GRADLE_SHEBANG_BYTES = 4096
 
 
+def _reject_duplicate_json_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    """Reject ambiguous package metadata keys at every nested object level."""
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError('duplicate JSON object key')
+        result[key] = value
+    return result
+
+
 def _read_bounded_utf8(path: Path, maximum_bytes: int) -> str:
     """Decode a bounded upload; check the actual read, not just stat size."""
     with path.open('rb') as source:
@@ -190,7 +200,8 @@ def verify_project(root: Path) -> list[str]:
         if (not _has_symlink_component(root, name)
                 and path.is_file() and path.stat().st_size):
             try:
-                if not isinstance(json.loads(_read_bounded_utf8(path, MAX_METADATA_JSON_BYTES)), dict):
+                if not isinstance(json.loads(_read_bounded_utf8(path, MAX_METADATA_JSON_BYTES),
+                                             object_pairs_hook=_reject_duplicate_json_keys), dict):
                     raise ValueError('object expected')
             except (OSError, UnicodeError, ValueError):
                 errors.append(f'Ungültige JSON-Datei: {name}. Originaldatei aus dem Quell-ZIP übernehmen.')
