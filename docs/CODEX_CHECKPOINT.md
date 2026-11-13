@@ -3681,3 +3681,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+### 2026-11-13 – Live-Kampagnen-Snapshot für manuelle Zusatzkreaturenangriffe
+
+- **Basis-`main`:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7`. **Branch:** `feat/chat-c/manual-attack-live-campaign-20261113`. **Commits:** `6db8ad2acf52e6430575056db96945ba1005494d`, `380285d30ef01a2e4a3b3ee3b005e43ee0f0d4d2`, `ec6100f529a7eb45f6bb5bc2c7a2d51db1c188e8`.
+- **IMPLEMENTIERT:** `ManualExtraCreatureAttackDialog.didUpdateWidget` setzt bei neuem Kampagnen-Objekt das Ziel, alle drei Zahl-/Textfelder, Schadenstyp, Deckungsgrad, 10 situative Bestätigungen, ältere Fehler und den Dropdown-Formzustand zurück. Identisches Objekt behält die begonnene Eingabe.
+- **GETESTET:** Nur aktueller GitHub-Main-/PR-Dateipfadabgleich und Quellcodeprüfung; es wurden keine automatisierten oder manuellen Tests ausgeführt.
+- **NICHT GETESTET:** Drei neue Widgetfälle, Dart-Formatierung, Flutter-Analyse, vollständige Flutter-Suite, native Android-Tests, APKs, Gerät/IME/TalkBack.
+- **BLOCKIERT:** Nicht technisch blockiert; **Testausführung und koordinierte Integration sind vom Benutzer ausdrücklich an einen anderen Chat vergeben**. Keine eigenmächtige CI-Abnahme/Merge.
+- **NOCH NICHT IMPLEMENTIERT:** Abnahme weiterer getrennter UI-Dialoge und physische Barrierefreiheitstests.
+- **Kompatibilität:** Kein Eingriff in Domain-/Regel-/Story-/Controller-/Speicherpfade. Kein Versionswechsel, keine Migration.
+- **Nächster Schritt:** Andere Instanz mit `flutter test test/manual_extra_creature_attack_live_snapshot_test.dart`, `flutter analyze`, kompletter Flutter-Test-/APK-CI und Integration nach konfliktfreier Review beauftragen.
+
