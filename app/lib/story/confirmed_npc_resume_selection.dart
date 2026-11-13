@@ -193,6 +193,96 @@ class ConfirmedNpcResumeSelector {
     return result;
   }
 
+  /// Read a specific saved NPC even when its last note is outside the
+  /// relevance-limited overview. Identity comes from the exact stored ID,
+  /// never a display name or an unconfirmed AI statement.
+  ///
+  /// An NPC without relationship notes can still be selected: its saved
+  /// relationship and life status are shown, but no notes are invented.
+  static ConfirmedNpcResumeSelection readSelected(
+    Campaign campaign, {
+    required int expectedRevision,
+    required String npcId,
+    int maxNotesPerNpc = 2,
+  }) {
+    if (campaign.id.trim().isEmpty ||
+        campaign.sessionId.trim().isEmpty ||
+        expectedRevision < 0 ||
+        expectedRevision > 2147483647 ||
+        campaign.revision != expectedRevision ||
+        _safeId.stringMatch(npcId) != npcId ||
+        maxNotesPerNpc < 1 ||
+        maxNotesPerNpc > 3) {
+      throw const FormatException('Ungültige bestätigte NPC-Auswahl.');
+    }
+
+    WorldNpc? chosen;
+    for (final npc in campaign.npcs) {
+      if (npc.id != npcId) continue;
+      if (chosen != null) {
+        throw const FormatException('Ausgewählte NPC-ID ist nicht eindeutig.');
+      }
+      chosen = npc;
+    }
+    if (chosen == null) {
+      throw const FormatException('Ausgewählter NPC ist nicht gespeichert.');
+    }
+
+    final name = _oneLine(chosen.name, 70, name: true);
+    if (name.isEmpty) {
+      throw const FormatException('Ausgewählter NPC hat keinen Anzeigenamen.');
+    }
+    final relationship = _oneLine(chosen.relationship, 70);
+
+    // Match the overview's full-campaign note-identity integrity rule.
+    // A duplicate note ID is never evidence, even when one copy is hidden
+    // beyond the selected note limit or belongs to another NPC.
+    final noteIdCounts = <String, int>{};
+    for (final note in campaign.npcRelationshipNotes) {
+      noteIdCounts[note.id] = (noteIdCounts[note.id] ?? 0) + 1;
+    }
+    final history = <({NpcRelationshipNote note, int order})>[];
+    for (var i = 0; i < campaign.npcRelationshipNotes.length; i++) {
+      final note = campaign.npcRelationshipNotes[i];
+      if (note.npcId != npcId ||
+          _safeId.stringMatch(note.id) != note.id ||
+          noteIdCounts[note.id] != 1 ||
+          _oneLine(note.note, 140).isEmpty) {
+        continue;
+      }
+      history.add((note: note, order: i));
+    }
+    history.sort((a, b) {
+      final byDate = b.note.recordedAt.compareTo(a.note.recordedAt);
+      return byDate != 0 ? byDate : b.order.compareTo(a.order);
+    });
+
+    final result = ConfirmedNpcResumeSelection._(
+      campaignId: campaign.id,
+      sessionId: campaign.sessionId,
+      revision: campaign.revision,
+      entries: [
+        ConfirmedNpcResumeEntry._(
+          npcId: chosen.id,
+          name: name,
+          alive: chosen.alive,
+          relationship: relationship.isEmpty ? 'unbekannt' : relationship,
+          recentNotes: [
+            for (final item in history.take(maxNotesPerNpc))
+              item.note.recordedAt.toUtc().toIso8601String() +
+                  ': ' +
+                  _oneLine(item.note.note, 140),
+          ],
+        ),
+      ],
+      sourceStamp: _npcSourceStamp(campaign),
+    );
+    if (result.playerOverview.length > 2400) {
+      throw const FormatException('NPC-Rückblick überschreitet sein Limit.');
+    }
+    return result;
+  }
+
   static String _oneLine(String text, int limit, {bool name = false}) {
     final clean = text
         .replaceAll(_formatMarks, name ? '' : ' ')
