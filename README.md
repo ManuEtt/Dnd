@@ -2383,3 +2383,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+### 2026-11-13 – Mehrdeutige bestätigte Fakten beim Kampagnen-Wiedereinstieg ausblenden
+
+- **Problem:** Unterschiedliche gespeicherte Faktenschlüssel konnten nach der auf 80 UTF-16-Einheiten begrenzten Textprojektion, nach dem Entfernen unsichtbarer Formatzeichen oder nach dem Zusammenfassen von Leerzeichen denselben sichtbaren Namen erhalten. Dadurch erschienen unvereinbare Behauptungen scheinbar zum selben bestätigten Fakt.
+- **Lösung:** `CampaignResumeReader` zählt sichtbare Schlüsselnamen in der vollständigen gespeicherten Faktenmenge, bevor die Anzeige auf die neuesten Einträge begrenzt wird. Alle Einträge mit einem mehrdeutigen angezeigten Namen bleiben in der bestätigten Leseprojektion verborgen; eindeutige neueste Fakten werden weiterhin in bisheriger Reihenfolge angezeigt. Alle Rohdaten bleiben erhalten.
+- **Dateien:** `app/lib/story/campaign_resume_context.dart` und `app/test/campaign_resume_fact_visible_key_collision_test.dart` (fünf Regressionstestgruppen einschließlich Unicode, verdeckter historischer Änderungen und SQLite-Wiederaufnahme).
+- **Branch und PR:** `fix/chat-b/resume-fact-visible-key-collision-20261113`, [#724](https://github.com/ManuEtt/Dnd/pull/724) (Draft, finalen HEAD im PR prüfen).
+- **Prüfstatus:** Tests geschrieben, aber gemäß vereinbarter Aufgabenteilung hier nicht ausgeführt; unabhängige Dart-/Flutter-/SQLite-/Android-/CI-Abnahme sowie koordinierte Integration erfolgen durch einen anderen Entwicklungs-Chat. Keine Test- oder Buildfreigabe behauptet.
+- **Kompatibilität:** Nur lesende Faktenprojektion; kein JSON-/SQLite-/API-/Versionswechsel, keine Migration, keine Änderung bestätigter Spielstände, Regelwerte, NPC-Daten oder KI-Kosten.
