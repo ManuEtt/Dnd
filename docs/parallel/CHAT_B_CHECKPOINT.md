@@ -1380,3 +1380,16 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-13 – Unicode-sicher begrenzte NPC-Kontinuität (PR #716)
+
+- **Ausgangs-main:** `269f5c1ed3301fd97990275e682388e1b34078a4`; **Branch:** `fix/chat-b/npc-continuity-bounded-projection-20261113`; **PR:** [#716](https://github.com/ManuEtt/Dnd/pull/716) (Draft); finalen SHA über PR prüfen; **Version:** `0.8.52+102`, unverändert.
+- **Ausgangsproblem:** Gespeicherte alte NPC-Namen, Beziehungen und Notizen waren als bestätigte Read-only-Kontexte nahezu unbegrenzt darstellbar. Unterschiedliche Langnamen konnten nach naivem Kürzen visuell identisch wirken.
+- **IMPLEMENTIERT:** `NpcContinuityReader` begrenzt allein die Darstellung (Name/Beziehung 80, Notiz 500 UTF-16-Einheiten, nach vollständigen Unicode-Codepoints und unsichtbaren Formatzeichen). Verkürzte gleiche sichtbare Namen lösen die bestehende sichere NPC-ID-Kennung aus; unsichere IDs werden abgewiesen. Gespeicherte Rohnotizen und Zustände unverändert.
+- **Dateien:** `app/lib/story/npc_continuity_reader.dart`, neu `app/test/npc_continuity_bounded_projection_test.dart`, additive README- und beide Checkpoint-Nachträge. Fünf Tests für Positiv/Negativ, Namenskollision, Legacy-In-Memory-Fälle, normale Texte und echten SQLite-Neustart.
+- **GETESTET:** Aktueller Repository-Stand, offene PRs und deren Dateipfade geprüft. Story-Commit-Audit #712 ist separat vollständig CI-grün und zur Review freigegeben; nicht mit diesem Paket gleichzusetzen.
+- **NICHT GETESTET:** Neue Flutter-Regressionen, vollständige Flutter-/Dart-/Backend-/Android-Gates auf finalem HEAD noch ausstehend. Kein lokales Dart-/Flutter-SDK vorhanden; kein Realgerät und keine externen Provider abgenommen.
+- **BLOCKIERT:** PR-CI und anschließendes Review/Integrationskoordination; konkurrierende Append-only-Dokumentation darf nicht überschrieben werden.
+- **NOCH NICHT IMPLEMENTIERT:** Weiterer Schutz für übrige unbestätigte KI-Ausgaben und nicht sichtbare Langzeitquellen.
+- **Kompatibilität:** Kein JSON-/SQLite-/Schema-/API-/Versionswechsel, keine Migration, keine Änderung an bestätigten Held-/Quest-/Regelwerten oder Rohdaten.
+- **NÄCHSTER SCHRITT:** GitHub-Actions-Ergebnis auf finalem PR-HEAD kontrollieren und bei Format-/Analyse-/Testfehlern korrigieren, danach Review freigeben.
