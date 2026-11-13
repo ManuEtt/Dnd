@@ -146,7 +146,9 @@ void main() {
     expect(context, isNot(contains('…')));
   });
 
-  test('valid long legacy data keeps full values after SQLite restart', () async {
+  test(
+    'valid long legacy data keeps full values after SQLite restart',
+    () async {
     final name = 'Mira ' + 'Hüterin ' * 20;
     final relationship = 'freundlich ' * 20;
     final note = '🐉' * 200;
@@ -186,8 +188,10 @@ void main() {
       expect(snapshot.recentNotes.single.note, note);
       expect(snapshot.confirmedContext.split('\n').first.length,
           lessThanOrEqualTo(85));
-      expect(_after(snapshot.confirmedContext, 'Aktuelle Beziehung: ').length,
-          lessThanOrEqualTo(80));
+      expect(
+        _after(snapshot.confirmedContext, 'Aktuelle Beziehung: ').length,
+        lessThanOrEqualTo(80),
+      );
       expect(snapshot.confirmedContext, contains(note));
       expect(restored.hero.toJson(), source.hero.toJson());
       expect(restored.revision, source.revision);
@@ -200,5 +204,6 @@ void main() {
       await repository.close();
       await folder.delete(recursive: true);
     }
-  });
+    },
+  );
 }
