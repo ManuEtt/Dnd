@@ -1192,3 +1192,15 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-13 – Hinterhältiger Angriff: Live-Zielwechsel im Verbündeten-Dialog
+
+- **Ausgangs-main:** `184d93c2139b35cfbd4943da201ecef2f7e20dc7`; **Branch:** `feat/chat-c/sneak-ally-live-target-20261113`; **Code/Testcommits:** `c7193eb648efeb094a351d57a3c3a4daebe28ba9`, `897906c42400b774f758453047ebdbb5e4875282`.
+- **IMPLEMENTIERT:** `app/lib/ui/sneak_attack_ally_dialog.dart` setzt bei `didUpdateWidget` und geändertem `targetName` die manuell bestätigte Verbündeten-Identität, 5-Fuß-Nähe zum Ziel und fehlende Handlungsunfähigkeit zurück. Unveränderte Zielnamen erhalten die begonnenen Eingaben.
+- **Regressionen bereitgestellt:** `app/test/sneak_attack_ally_live_target_test.dart` mit drei Widgetfällen: Parent-Rebuild ohne Zielwechsel, tatsächlicher Zielwechsel, erneuter Rückwechsel zum zuvor bestätigten Ziel.
+- **GETESTET:** Quellcode und bestehende Integrations-/UI-Teststruktur untersucht; keine Tests ausgeführt.
+- **NICHT GETESTET:** Dart-/Flutter-/Android-CI, neues Widgettestpaket, Realgerät und TalkBack/IME.
+- **BLOCKIERT:** Keine Quellcodeblockade; Tests und Integration sind ausdrücklich an einen anderen Chat delegiert.
+- **Migration:** Keine; persistierte Kampagnen und Regelengine unverändert.
+- **Nächster Schritt:** Separater Test-/Integrationschat führt gezielte und vollständige Widgettests sowie reguläre Android-CI und Review/Merge aus; fehlerhafte Prüfungen als konkreten Befund zurückmelden.
+

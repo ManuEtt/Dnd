@@ -2383,3 +2383,13 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+### 2026-11-13 – Hinterhältiger Angriff: Verbündeten bei Zielwechsel erneut bestätigen
+
+- **Problem:** In der geöffneten Verbündeten-Bestätigung zum hinterhältigen Angriff blieben Name, Nähe und Handlungsfähigkeit einer Person beim Wechsel des angezeigten Angriffsziels erhalten.
+- **Lösung:** Bei verändertem Zielnamen werden Name und beide Zustimmungen verworfen; identische Ziele behalten absichtlich den begonnenen Entwurf. Eine Rückkehr zum alten Ziel übernimmt keine frühere Freigabe.
+- **Dateien:** `app/lib/ui/sneak_attack_ally_dialog.dart`, `app/test/sneak_attack_ally_live_target_test.dart`.
+- **Branch:** `feat/chat-c/sneak-ally-live-target-20261113`. Drei positive und negative Widgettests angelegt.
+- **Prüfung/Integration:** Auf ausdrücklichen Wunsch keine Testausführung oder koordinierte Zusammenführung in dieser Entwicklungssitzung. Die neue Widget-Suite, Flutter-Analyse, Builds und GitHub-CI werden von einem separaten Test-/Integrationschat übernommen.
+- **Kompatibilität:** Keine Regel-, Story-, Datenbank-, JSON- oder Versionsänderung, keine Migration, keine Änderung an vorhandenen Spielständen.
+
