@@ -63,7 +63,7 @@ void main() {
     NpcIdentityMemory.requireCurrent(restored, snapshot);
     expect(
       () => NpcIdentityMemory.requireCurrent(
-        restored.copyWith(sessionId: 'session-new'),
+        Campaign.fromJson({...restored.toJson(), 'sessionId': 'session-new'}),
         snapshot,
       ),
       throwsFormatException,
