@@ -17,7 +17,8 @@ class SrdBardSuperiorInspirationRules {
         ClassResourceRules.level(hero, 'Barde') < 18) {
       return SrdBardSuperiorInspirationResult(hero: hero, recovered: 0);
     }
-    if (hero.abilities['charisma'] == null) {
+    final charisma = hero.abilities['charisma'];
+    if (charisma == null || charisma < 1 || charisma > 30) {
       throw StateError(
         'Charisma muss für Überlegene Inspiration bestätigt sein.',
       );
