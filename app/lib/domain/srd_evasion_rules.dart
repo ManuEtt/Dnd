@@ -63,6 +63,35 @@ class SrdEvasionRules {
       hero.hitPoints != null &&
       hero.hitPoints! > 0;
 
+  /// Compares the confirmed Evasion outcome with the ordinary Dexterity
+  /// save-for-half outcome, without applying either result to hit points.
+  /// The same evidence gate is used for both calculations, so narration
+  /// cannot claim a benefit from an unconfirmed saving throw.
+  static SrdEvasionDamageComparison compareConfirmedDexteritySave(
+    HeroCharacter hero, {
+    required int? incomingDamage,
+    required bool incomingDamageConfirmed,
+    required bool dexteritySaveForHalfConfirmed,
+    required bool? saveSucceeded,
+  }) {
+    final evasion = previewConfirmedDexteritySave(
+      hero,
+      incomingDamage: incomingDamage,
+      incomingDamageConfirmed: incomingDamageConfirmed,
+      dexteritySaveForHalfConfirmed: dexteritySaveForHalfConfirmed,
+      saveSucceeded: saveSucceeded,
+    );
+    final ordinaryDamage = evasion.saveSucceeded
+        ? evasion.incomingDamage ~/ 2
+        : evasion.incomingDamage;
+    return SrdEvasionDamageComparison(
+      evasion: evasion,
+      ordinaryDamage: ordinaryDamage,
+      additionalPreventedDamage:
+          ordinaryDamage - evasion.damageAfterEvasion,
+    );
+  }
+
   /// [incomingDamage] is the explicitly verified *pre-save* damage before
   /// resistance, vulnerability and other separately applied modifiers.
   /// The caller must not pass a value already halved by an ordinary save.
@@ -101,4 +130,17 @@ class SrdEvasionRules {
       saveSucceeded: saveSucceeded,
     );
   }
+}
+
+/// Auditable comparison against a regular successful/failed Dexterity save.
+class SrdEvasionDamageComparison {
+  const SrdEvasionDamageComparison({
+    required this.evasion,
+    required this.ordinaryDamage,
+    required this.additionalPreventedDamage,
+  });
+
+  final SrdEvasionResult evasion;
+  final int ordinaryDamage;
+  final int additionalPreventedDamage;
 }
