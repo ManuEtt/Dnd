@@ -459,6 +459,7 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
                     DropdownButtonFormField<CoverLevel>(
                       key: ValueKey('acid-extra-cover-${creature.id}'),
                       initialValue: _extraCovers[creature.id],
+                      isExpanded: true,
                       decoration: const InputDecoration(
                         labelText: 'Deckung vom Kugel-Ursprung',
                       ),
@@ -466,7 +467,11 @@ class _AcidSplashDialogState extends State<AcidSplashDialog> {
                         for (final cover in CoverLevel.values)
                           DropdownMenuItem(
                             value: cover,
-                            child: Text(CoverRules.label(cover)),
+                            child: Text(
+                              CoverRules.label(cover),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                       ],
                       onChanged: (v) =>
