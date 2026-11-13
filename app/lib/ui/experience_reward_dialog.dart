@@ -32,6 +32,21 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
   final _rewardId = TextEditingController();
   final _amount = TextEditingController();
   bool _approved = false;
+  bool _campaignUpdated = false;
+
+  @override
+  void didUpdateWidget(covariant ExperienceRewardDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (identical(oldWidget.campaign, widget.campaign)) return;
+
+    // The amount and explicit consent belong to the campaign snapshot that
+    // was shown to the player. A refreshed revision or another campaign must
+    // never inherit an approved draft or an old reward receipt.
+    _rewardId.clear();
+    _amount.clear();
+    _approved = false;
+    _campaignUpdated = true;
+  }
 
   @override
   void dispose() {
@@ -87,6 +102,18 @@ class _ExperienceRewardDialogState extends State<ExperienceRewardDialog> {
               'Nur tatsächlich vereinbarte Belohnungen eintragen. '
               'Eine KI-Erzählung vergibt niemals eigenständig EP.',
             ),
+            if (_campaignUpdated)
+              Semantics(
+                liveRegion: true,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 4),
+                  child: Text(
+                    'Der Kampagnenstand hat sich geändert. '
+                    'Bitte EP-Belohnung erneut eingeben und bestätigen.',
+                    key: const ValueKey('xp-reward-snapshot-notice'),
+                  ),
+                ),
+              ),
             const SizedBox(height: 12),
             TextField(
               key: const ValueKey('xp-reward-id'),
