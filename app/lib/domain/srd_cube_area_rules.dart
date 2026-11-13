@@ -17,6 +17,29 @@ class SrdCubeAreaPreview {
   final SrdGridCell origin;
   final int sideFeet;
   final List<SrdCubeCellCandidate> candidates;
+
+  /// Candidate squares requiring a separate cover ruling.
+  /// A blocked center ray does not establish Total Cover.
+  int get coverReviewCount => candidates
+      .where(
+        (candidate) =>
+            candidate.centerRay == SrdSphereCenterRay.requiresCoverReview,
+      )
+      .length;
+
+  /// Candidate squares with a clear center ray, not confirmed spell targets.
+  Iterable<SrdGridCell> get clearCenterCells => candidates
+      .where((candidate) => candidate.centerRay == SrdSphereCenterRay.clear)
+      .map((candidate) => candidate.cell);
+
+  /// Looks up a projected candidate without inferring creature occupancy.
+  SrdCubeCellCandidate? at(SrdGridCell cell) {
+    for (final candidate in candidates) {
+      if (candidate.cell == cell) return candidate;
+    }
+    return null;
+  }
+
 }
 
 class SrdCubeCellCandidate {
