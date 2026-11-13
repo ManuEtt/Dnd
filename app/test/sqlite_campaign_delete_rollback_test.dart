@@ -19,6 +19,11 @@ void main() {
     try {
       final campaign = GameEngine().createDemo();
       await repository.saveCampaign(campaign, events: campaign.events);
+      await repository.stagePendingAction(
+        campaignId: campaign.id,
+        requestId: 'delete-rollback-request',
+        text: 'Ich öffne die Tür.',
+      );
       await repository.saveSettings({
         'lastCampaignId': campaign.id,
         'theme': 'dark',
@@ -40,6 +45,11 @@ END
           (await repository.getCampaign(campaign.id))!.toJson(),
           campaign.toJson(),
         );
+        expect(await repository.pendingActionFor(campaign.id), {
+          'campaignId': campaign.id,
+          'requestId': 'delete-rollback-request',
+          'text': 'Ich öffne die Tür.',
+        });
         expect(await repository.loadSettings(), {
           'lastCampaignId': campaign.id,
           'theme': 'dark',
@@ -69,12 +79,18 @@ END
     try {
       final campaign = GameEngine().createDemo();
       await repository.saveCampaign(campaign, events: campaign.events);
+      await repository.stagePendingAction(
+        campaignId: campaign.id,
+        requestId: 'delete-success-request',
+        text: 'Ich gehe weiter.',
+      );
       await repository.saveSettings({
         'lastCampaignId': 'another-campaign',
         'theme': 'dark',
       });
       await repository.deleteCampaignAndReconcileSelection(campaign.id);
       expect(await repository.getCampaign(campaign.id), isNull);
+      expect(await repository.pendingActionFor(campaign.id), isNull);
       expect(await repository.loadSettings(), {
         'lastCampaignId': 'another-campaign',
         'theme': 'dark',
