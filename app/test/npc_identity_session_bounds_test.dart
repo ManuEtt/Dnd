@@ -61,11 +61,12 @@ void main() {
       expect(context['notes'], hasLength(1));
       expect(context.toString(), contains('Weg zum Turm'));
       NpcIdentityMemory.requireCurrent(restored, snapshot);
+      final changedSession = Campaign.fromJson({
+        ...restored.toJson(),
+        'sessionId': 'session-new',
+      });
       expect(
-        () => NpcIdentityMemory.requireCurrent(
-          Campaign.fromJson({...restored.toJson(), 'sessionId': 'session-new'}),
-          snapshot,
-        ),
+        () => NpcIdentityMemory.requireCurrent(changedSession, snapshot),
         throwsFormatException,
       );
       expect(jsonEncode(restored.toJson()), originalJson);
