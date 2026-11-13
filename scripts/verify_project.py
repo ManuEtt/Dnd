@@ -49,6 +49,11 @@ def _reject_duplicate_json_keys(pairs: list[tuple[str, object]]) -> dict[str, ob
     return result
 
 
+def _reject_nonfinite_json_constant(_literal: str) -> object:
+    """JSON does not permit NaN or Infinity, even inside nested package data."""
+    raise ValueError('non-finite numeric constant is not valid JSON')
+
+
 def _read_bounded_utf8(path: Path, maximum_bytes: int) -> str:
     """Decode a bounded upload; check the actual read, not just stat size."""
     with path.open('rb') as source:
@@ -201,7 +206,8 @@ def verify_project(root: Path) -> list[str]:
                 and path.is_file() and path.stat().st_size):
             try:
                 if not isinstance(json.loads(_read_bounded_utf8(path, MAX_METADATA_JSON_BYTES),
-                                             object_pairs_hook=_reject_duplicate_json_keys), dict):
+                                             object_pairs_hook=_reject_duplicate_json_keys,
+                                             parse_constant=_reject_nonfinite_json_constant), dict):
                     raise ValueError('object expected')
             except (OSError, UnicodeError, ValueError):
                 errors.append(f'Ungültige JSON-Datei: {name}. Originaldatei aus dem Quell-ZIP übernehmen.')

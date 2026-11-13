@@ -167,6 +167,46 @@ class VerifyProjectTests(unittest.TestCase):
             path.write_bytes(original)
         self.assertEqual([], verify_project(self.root))
 
+    def test_nonfinite_backend_json_constants_are_rejected_recursively(self):
+        # Python json.loads accepts these extensions by default, but npm
+        # package manifests and lockfiles must use strict JSON.
+        invalid = (
+            '{"value": NaN}',
+            '{"value": Infinity}',
+            '{"value": -Infinity}',
+            '{"dependencies": {"nested": [0, NaN]}}',
+        )
+        for name in ('backend/package.json', 'backend/package-lock.json'):
+            path = self.root / name
+            original = path.read_bytes()
+            try:
+                for content in invalid:
+                    with self.subTest(path=name, content=content):
+                        path.write_text(content, encoding='utf-8')
+                        errors = verify_project(self.root)
+                        self.assertTrue(any(
+                            'Ungültige JSON-Datei: ' + name in error
+                            for error in errors
+                        ))
+                        self.assertNotIn(content, '\\n'.join(errors))
+            finally:
+                path.write_bytes(original)
+        self.assertEqual([], verify_project(self.root))
+
+    def test_finite_backend_json_numbers_remain_accepted(self):
+        path = self.root / 'backend/package.json'
+        original = path.read_bytes()
+        try:
+            path.write_text(
+                '{"integer": -12, "fraction": 0.25, "exponent": 1e3, '
+                '"nested": {"value": null}}',
+                encoding='utf-8',
+            )
+            self.assertEqual([], verify_project(self.root))
+        finally:
+            path.write_bytes(original)
+        self.assertEqual([], verify_project(self.root))
+
     def test_oversized_backend_json_is_rejected_without_loading_whole_file(self):
         for name in ('backend/package.json', 'backend/package-lock.json'):
             with self.subTest(path=name):
