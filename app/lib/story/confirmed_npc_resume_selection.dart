@@ -269,9 +269,8 @@ class ConfirmedNpcResumeSelector {
           relationship: relationship.isEmpty ? 'unbekannt' : relationship,
           recentNotes: [
             for (final item in history.take(maxNotesPerNpc))
-              item.note.recordedAt.toUtc().toIso8601String() +
-                  ': ' +
-                  _oneLine(item.note.note, 140),
+              '${item.note.recordedAt.toUtc().toIso8601String()}: '
+              '${_oneLine(item.note.note, 140)}',
           ],
         ),
       ],
