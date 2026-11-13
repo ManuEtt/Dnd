@@ -3681,3 +3681,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Separater Integritätsnachweis für andere KI-/Story-Schreibpfade außerhalb des `_commitStory`-Callbacks.
 - **Migration:** Keine; JSON/SQLite, Story-API, SRD-Werte und App-Version `0.8.52+102` bleiben unverändert. Vorhandene bestätigte Daten werden nicht verändert.
 - **Nächster Schritt:** Finalen GitHub-CI-Workflow vollständig prüfen und bei Fehlern auf eigenem Branch beheben; erst danach PR zur Review freigeben.
+
+### 2026-11-13 – NPC-Langtexte in der schreibgeschützten Kontinuität begrenzen
+
+- **Main-Basis:** `269f5c1ed3301fd97990275e682388e1b34078a4`; **Branch:** `fix/chat-b/npc-continuity-bounded-projection-20261113`; **PR:** [#716](https://github.com/ManuEtt/Dnd/pull/716), Draft; finaler SHA nach GitHub-Commit prüfen. App `0.8.52+102`.
+- **IMPLEMENTIERT:** NPC-Namen und Beziehungen werden nur in `NpcContinuitySnapshot.confirmedContext` auf 80 UTF-16-Einheiten und einzelne Notiztexte auf 500 Einheiten begrenzt. Kürzung nach bereinigten Unicode-Codepoints mit Ellipse; mehrdeutige gleiche sichtbare Namen verwenden nur zulässige gespeicherte NPC-IDs zur Unterscheidung.
+- **Dateien:** `app/lib/story/npc_continuity_reader.dart`, `app/test/npc_continuity_bounded_projection_test.dart`; README und beide Checkpoints ausschließlich angehängt. Fünf positive/negative Regressionstests zu Langtexten, ID-Kollisionen, unsicheren IDs, normalen Texten und SQLite-Restart.
+- **GETESTET:** Aktuelle Quelle, Checkpoints, `main`, konkurrierende PR-Dateien und vorhandene NPC-Regressionen analysiert. Frühere vollständige CI #43257177394 auf #712 ist grün (Commit `4bfd837ab0903d9497774ea2089e7024bc187a5c`), **kein** CI-Nachweis für #716.
+- **NICHT GETESTET:** Tests, Dart-Formatierung, Flutter-Analyse, Android-Builds und Backend/Strukturchecks für #716 bis zur vollständigen eigenen CI. Keine lokale Flutter-/Dart-SDK-Ausführung, kein Realgerät oder kostenpflichtiger Provider.
+- **BLOCKIERT:** Finale GitHub-CI und Review-/Integrationskontrolle; konkurrierende README-/Checkpoint-Anhänge anderer PRs vor Merge verlustfrei erhalten.
+- **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutztests für KI-Schreibpfade und Langzeitkontinuität außerhalb der lesbaren NPC-Projektion.
+- **Migration:** Keine. Persistierte Rohdaten, NPC-IDs, Spielstände, SQLite/JSON, bestätigte Regelwerte, Story-API, SRD und Version bleiben unverändert.
+- **Nächster Schritt:** Vollständige PR-CI auf finalem HEAD auswerten, Fehler auf demselben Branch beheben und erst nach grüner Gesamt-CI zur Review freigeben.
