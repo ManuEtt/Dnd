@@ -2383,3 +2383,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** `fix/chat-b/story-message-history-append-only-20261112`, [#706](https://github.com/ManuEtt/Dnd/pull/706) (Draft). Neue Flutter-/Backend-/Android-CI dieses PRs ist bei Veröffentlichung des Nachtrags noch ausstehend; der Vorgänger #703 und main sind separat vollständig grün.
 - **Kompatibilität:** Keine JSON-/SQLite-/API-/Versionsänderung, keine Migration, keine Änderung an Regel- oder Heldenwerten, bestehende unbestätigte Freeturn-Rewrites bleiben erlaubt. Keine neuen externen KI-Kosten.
 - **Grenzen:** Abschließende CI und Review erforderlich; kein Realgerät-/Provider-Nachweis dieses Pakets.
+
+### 2026-11-13 – Begrenzter, eindeutiger NPC-Wiederaufnahmekontext
+
+- **Problem:** Sehr lange NPC-Namen, Beziehungsangaben oder Notizen aus alten Spielständen konnten die reine Textprojektion der NPC-Chronik überfluten. Nach einer bloßen Kürzung wären zwei unterschiedliche Namen mit identischem sichtbarem Präfix nicht mehr sicher unterscheidbar.
+- **Lösung:** `NpcContinuityReader` kürzt ausschließlich die bereinigte Anzeige Unicode-sicher: Namen und Beziehungen auf 80, Notizen auf 500 UTF-16-Einheiten. Der Vergleich auf Namensgleichheit nutzt dieselbe sichtbare Form; bei Kollisionen wird eine sichere gespeicherte NPC-ID angezeigt, nicht geraten.
+- **Dateien:** `app/lib/story/npc_continuity_reader.dart`, neue Regressionstests in `app/test/npc_continuity_bounded_projection_test.dart` (Langtexte, Unicode, gleich aussehende Namen, ungültige IDs, SQLite-Wiederaufnahme).
+- **Branch/PR:** `fix/chat-b/npc-continuity-bounded-projection-20261113`, [#716](https://github.com/ManuEtt/Dnd/pull/716) (Draft). Endgültigen Commit und Actions-Status über PR prüfen. Vorgänger #712 ist separat CI-grün und reviewbereit, aber nicht Teil dieses Pakets.
+- **Tests:** Quellcode und konkurrierende PR-Dateien geprüft, Regressionstests erstellt; vollständige Dart-/Flutter-/Backend-/Android-CI auf dem finalen Commit zum Zeitpunkt dieses Nachtrags noch offen. Lokal kein Flutter-/Dart-SDK verfügbar.
+- **Kompatibilität:** Keine Änderung gespeicherter NPC-Texte, Beziehungschronik, Datenformate, JSON/SQLite, APIs, Regeln oder App-Version `0.8.52+102`; keine Migration und keine neuen KI-Kosten. Keine reale Geräteabnahme.
