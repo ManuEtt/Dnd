@@ -19,7 +19,9 @@ class ConfirmedNpcContinuityExcerpt {
     required String npcId,
     int maxNotes = 3,
   }) {
-    if (!_validId.hasMatch(npcId) || maxNotes < 1 || maxNotes > 3) {
+    if (_validId.stringMatch(npcId) != npcId ||
+        maxNotes < 1 ||
+        maxNotes > 3) {
       throw const FormatException('Ungültige NPC-Kurzfassung.');
     }
     final snapshot = NpcContinuityReader.read(campaign, npcId: npcId, limit: 1);
