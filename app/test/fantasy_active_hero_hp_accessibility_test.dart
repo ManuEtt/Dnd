@@ -72,7 +72,7 @@ void main() {
         );
         expect(hero.toJson(), original);
         expect(tester.takeException(), isNull);
-    semantics.dispose();
+        semantics.dispose();
       },
     );
   }
