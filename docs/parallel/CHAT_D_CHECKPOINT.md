@@ -2317,3 +2317,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** CI-Abnahme und integrationssicherer Append-only-Abgleich der gemeinsam genutzten Dokumente.
 - **NOCH NICHT IMPLEMENTIERT:** Keine Änderungen an Spielstandimporten, SQLite, UI, Regelengine, Story oder Android-Prozess; keine Migration.
 - **NÄCHSTER SCHRITT:** Finale CI für #736 auswerten und gegebenenfalls im eigenen Branch reparieren; danach abgestimmt integrieren.
+
+### 2026-11-14 – Schutz-/HEAD-Revalidierung beim erlaubten Branch-Aufräumen (PR #754)
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Arbeitsbranch:** `fix/chat-d/branch-retirement-revalidation-20261114`; **Code-/Testcommit:** `38a6d8a9eb440a6dfbc3fa6c13ea946cbe145389`; **PR:** [#754](https://github.com/ManuEtt/Dnd/pull/754) (Draft). Dokumentations-HEAD auf PR-Seite prüfen.
+- **Problem:** Die letzte Löschfreigabe verwendete nach dem abschließenden Merge-Vergleich den früheren Schutzstatus und HEAD der Branch-Abfrage. Dadurch blieben Änderungen zwischen den beiden API-Zugriffen unerkannt.
+- **IMPLEMENTIERT:** Nach der wiederholten Prüfung eines Zielbranches werden neu geschützte Branches schon im Dry-Run blockiert. Im `--execute`-Pfad werden nach Main- und Mergeprüfung der aktuelle Branch-HEAD und `protected` erneut geladen; nur unverändert ungeschützte, enthaltene Branches erreichen DELETE. Die bestehende feste Allowlist bleibt unverändert. Keine automatischen Löschungen durchgeführt.
+- **Geänderte Dateien:** `scripts/retire_merged_branches.py`, `scripts/tests/test_retire_merged_branches.py`, append-only `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanztests ergänzt:** Positiv genau eine simulierte DELETE-Anfrage beim unveränderten, integrierten, ungeschützten Branch; negativ verspäteter neuer Schutz, neuer HEAD nach finalem Vergleich sowie neuer Schutz bereits beim Zwischencheck.
+- **GETESTET:** Aktueller GitHub-main, 41 andere offene PRs und Fachdateiüberschneidungen analysiert; Vorgänger-Main-CI [#43448981760](https://github.com/ManuEtt/Dnd/actions/runs/43448981760) war erfolgreich auf `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`, ist aber keine Abnahme des neuen Branches.
+- **NICHT GETESTET:** Neue Python-Tests nicht lokal ausgeführt (GitHub-Checkout scheitert an DNS), kompletter Python-/Backend-/Flutter-/Android-/Release-Workflow auf finalem PR-HEAD offen, kein Realgerät.
+- **BLOCKIERT:** Finale CI und sichere Docs-Integration; GitHub-API bietet kein atomisches bedingtes DELETE, ein Restzeitfenster verbleibt.
+- **NOCH NICHT IMPLEMENTIERT:** Keine tatsächlichen Branchlöschungen und keine PR-Merges; **Migration:** keine; App `0.8.52+102`, SQLite-/JSON-Spielstände, Regeln und UI unverändert.
+- **Nächster konkreter Schritt:** Aktionen für #754 auf dem finalen SHA prüfen, fehlerhafte Tests auf demselben Branch korrigieren und konfliktfreie Integration anhand eines neuen Main-/PR-Abgleichs entscheiden.
+
