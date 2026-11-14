@@ -239,8 +239,10 @@ class FantasyActiveHeroCard extends StatelessWidget {
                   ),
                 ] else ...[
                   const SizedBox(height: 10),
-                  Semantics(
-                    label: 'Trefferpunkte: ${hero.hitPoints} von $maxHp',
+                  // The HP metric above already announces the confirmed
+                  // value. The colored progress bar is visual decoration;
+                  // do not make TalkBack repeat the same hit points.
+                  ExcludeSemantics(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(5),
                       child: LinearProgressIndicator(

@@ -2393,3 +2393,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-14 – Trefferpunkte der aktiven Heldenkarte nur einmal vorlesen
+
+- **Problem:** Die Heldenübersicht lieferte denselben bestätigten TP-Wert sowohl über die bereits beschriftete Metrikkachel als auch erneut über den dekorativen TP-Fortschrittsbalken an TalkBack.
+- **Lösung:** Der farbige Balken ist für Screenreader nun dekorativ (`ExcludeSemantics`); die vorhandene, vollständige Ansage in der TP-Metrikkachel bleibt unverändert. Gültige null Trefferpunkte und unbekannte Werte bleiben korrekt unterscheidbar.
+- **Dateien:** `app/lib/ui/fantasy_campaign_dashboard.dart`, `app/test/fantasy_active_hero_hp_accessibility_test.dart`.
+- **Branch/Code-/Testcommits:** `feat/chat-c/hero-hp-screenreader-20261114`, `984fd9e03b9cd504d1d729c1cb85d2d53fb29bd1` und `99adeba2ee313748ca2aa9b5f0d5872bba75b6bd`. Pull-Request-Link und finalen CI-Stand im zugehörigen PR prüfen.
+- **Tests:** Drei neue Widgettestgruppen (davon zwei Bildschirmbreiten) für 320/360 dp, 200 % Schrift, simulierte Tastatur, unbestätigte TP, 0 TP, neue Snapshots, unveränderte JSON-Daten und eindeutige Screenreader-Ansage ergänzt. Flutter-Tests/Dart-Format/Android-Build **noch nicht ausgeführt**; GitHub-PR-CI gesondert prüfen.
+- **Kompatibilität:** Rein lesende Flutter-Darstellung, keine Regel-, Story-, Controller-, Datenbank-, JSON-, API- oder Versionsänderung, keine Migration. Echte TalkBack-Geräteabnahme noch offen.
