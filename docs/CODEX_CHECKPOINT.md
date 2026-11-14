@@ -3693,3 +3693,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+### 2026-11-14 – Eindeutige Trefferpunkte-Semantik in der aktiven Heldenkarte
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`.
+- **Branch:** `feat/chat-c/hero-hp-screenreader-20261114`; **Code-Commit:** `984fd9e03b9cd504d1d729c1cb85d2d53fb29bd1`; **Test-Commit:** `99adeba2ee313748ca2aa9b5f0d5872bba75b6bd`.
+- **IMPLEMENTIERT:** Der visuelle TP-Balken erzeugt keine zweite TalkBack-Ansage; die zuvor vorhandene TP-Kachel bleibt die alleinige verlässliche Ansage. Unbestätigte TP bleiben unbekannt, ohne Fortschrittsbalken.
+- **Fachdateien:** `app/lib/ui/fantasy_campaign_dashboard.dart`, `app/test/fantasy_active_hero_hp_accessibility_test.dart` (4 Widgetfälle in drei Gruppen).
+- **GETESTET:** Aktuelles main, offene UI-PR-Dateipfade sowie Quell- und Widgettest-Verträge per GitHub geprüft; separater Fachbranch und Commits bestätigt.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse/Widget- und Volltests, Backend-/Python-Checks, Android-/APK-Build, TalkBack-Hardware; lokale Flutter-/Dart-Tools fehlen. GitHub-CI nach PR-Erstellung gesondert auswerten.
+- **BLOCKIERT:** CI-/Geräteabnahme und koordinierte Dokumentationsintegration.
+- **Migration:** Keine, gespeicherter Regel-/Kampagnenzustand und Versionsnummer unverändert.
+- **NÄCHSTER SCHRITT:** Finale PR-CI auf Branch-HEAD auswerten und gegebenenfalls ausschließlich die UI-/Testdateien korrigieren.
