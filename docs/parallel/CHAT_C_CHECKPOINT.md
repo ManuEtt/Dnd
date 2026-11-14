@@ -1207,3 +1207,11 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **BLOCKIERT:** Gesamtabnahme per CI und Hardware; keine erkannten Fachdatei-Konflikte, gemeinsame README-/Checkpoint-Nachträge bei Integration durch den Integrationschat verlustfrei zusammenführen.
 - **Migration:** Keine; Schema/JSON, gespeicherte Spielstände, SRD, Story, Controller und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** CI des finalen Branch-HEAD prüfen, eventuelle Format-/Analyse-/Widgetfehler im selben Branch beheben und erst nach Grün Review/Integration koordinieren.
+
+
+### 2026-11-14 – PR-Zuordnung und Korrektur des Formatchecks
+
+- **Pull Request:** [#753](https://github.com/ManuEtt/Dnd/pull/753) (Draft; kein Merge).
+- **Erster CI-Lauf:** [#43575505793](https://github.com/ManuEtt/Dnd/actions/runs/43575505793) schlug ausschließlich beim Dart-Formatcheck der neuen Testdatei fehl; nachfolgende Flutter-/Android-Schritte wurden übersprungen. Python- und Backend-Schritte bestanden.
+- **Korrektur:** Exakten Flutter-3.35.7-Dart-Formatter-Diff aus einem temporären Diagnoseworkflow übernommen (Commit `1f599a61b329ae9620cd38a35b626e76cd115c5f`). Den Diagnoseworkflow anschließend wieder entfernt (Commit `f5d5c0c39eadadc0ae70d388c0781314e256f56f`). Keine dauerhaft neue Workflowdatei.
+- **Aktuell:** Neue vollständige PR-CI ist noch zu prüfen. Keine Flutter-/APK-Erfolge vor dem tatsächlichen Ergebnis behaupten.
