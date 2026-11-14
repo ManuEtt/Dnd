@@ -43,7 +43,6 @@ void main() {
         addTearDown(tester.view.resetDevicePixelRatio);
         addTearDown(tester.view.resetViewInsets);
         final semantics = tester.ensureSemantics();
-        addTearDown(semantics.dispose);
 
         final hero = HeroCharacter(
           id: 'hp-accessibility-confirmed',
@@ -73,6 +72,7 @@ void main() {
         );
         expect(hero.toJson(), original);
         expect(tester.takeException(), isNull);
+    semantics.dispose();
       },
     );
   }
@@ -81,7 +81,6 @@ void main() {
     tester,
   ) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     final hero = HeroCharacter(
       id: 'hp-accessibility-unknown',
       name: 'Unbekannte Heldin',
@@ -102,13 +101,13 @@ void main() {
     expect(find.byType(LinearProgressIndicator), findsNothing);
     expect(hero.toJson(), original);
     expect(tester.takeException(), isNull);
+    semantics.dispose();
   });
 
   testWidgets('Neuer Heldensnapshot aktualisiert die einzige TP-Ansage', (
     tester,
   ) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
     final heroBefore = HeroCharacter(
       id: 'hp-accessibility-rebuild',
       name: 'Arescan',
@@ -139,5 +138,6 @@ void main() {
     expect(heroBefore.toJson(), beforeJson);
     expect(heroAfter.toJson(), afterJson);
     expect(tester.takeException(), isNull);
+    semantics.dispose();
   });
 }
