@@ -1192,3 +1192,18 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-14 – Trefferpunkte-Screenreader-Ansage ohne Duplikat
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`.
+- **Eigener Branch:** `feat/chat-c/hero-hp-screenreader-20261114`; **Code-SHA:** `984fd9e03b9cd504d1d729c1cb85d2d53fb29bd1`; **Test-SHA:** `99adeba2ee313748ca2aa9b5f0d5872bba75b6bd`.
+- **PR:** Nach Anlage im GitHub-PR-Verzeichnis nachsehen; CI am finalen Commit gesondert verifizieren.
+- **Ausgangsproblem:** `FantasyActiveHeroCard` hatte zwei identische TalkBack-Ansagen für bestätigte HP, weil sowohl die beschriftete Metrikkachel als auch der farbige Balken `Semantics` mit den gleichen HP lieferten.
+- **IMPLEMENTIERT:** Dekorativen `LinearProgressIndicator` aus dem Screenreader-Baum ausgeschlossen; bestätigte 0 TP, lesbare Zähler, unbestätigte Werte und alle Aktionsknöpfe unverändert.
+- **Dateien:** `app/lib/ui/fantasy_campaign_dashboard.dart`, `app/test/fantasy_active_hero_hp_accessibility_test.dart`; append-only `README.md`, `docs/CODEX_CHECKPOINT.md`, dieser persönliche Checkpoint.
+- **Regression:** Zwei positive Fälle auf 320/360 dp bei 200 % Text und simulierter 220-dp-Tastatur; ein negativer Fall bei unvollständigen TP; ein Live-Snapshot-Fall mit 20 auf 0 TP ohne alte Semantik. Keine Änderungen an `hero.toJson()`.
+- **GETESTET:** Github-main und offene PRs/Dateipfade, tatsächlicher Flutter-Quellcode und vorhandene Widgettests gelesen, Code-/Testcommits auf eigenem Branch bestätigt.
+- **NICHT GETESTET:** Lokale Flutter-/Dart-/Android-/Backend-/Python-Ausführung wegen fehlendem lokalen Repository-Checkout/Flutter-Dart-SDK; GitHub Actions auf finalem PR-SHA und echtes Gerät/TalkBack stehen aus.
+- **BLOCKIERT:** Gesamtabnahme per CI und Hardware; keine erkannten Fachdatei-Konflikte, gemeinsame README-/Checkpoint-Nachträge bei Integration durch den Integrationschat verlustfrei zusammenführen.
+- **Migration:** Keine; Schema/JSON, gespeicherte Spielstände, SRD, Story, Controller und App-Version unverändert.
+- **NÄCHSTER SCHRITT:** CI des finalen Branch-HEAD prüfen, eventuelle Format-/Analyse-/Widgetfehler im selben Branch beheben und erst nach Grün Review/Integration koordinieren.
