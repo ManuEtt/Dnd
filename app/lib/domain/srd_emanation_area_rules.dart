@@ -55,6 +55,26 @@ class SrdEmanationAreaPreview {
   /// Possible ground squares only; no hit, immunity or save is established.
   final List<SrdEmanationCellCandidate> candidates;
 
+  /// Horizontal center rays requiring a separate cover ruling.
+  /// An obstructed ray does not prove three-dimensional Total Cover.
+  int get coverReviewCount => candidates
+      .where(
+        (candidate) =>
+            candidate.centerRay == SrdSphereCenterRay.requiresCoverReview,
+      )
+      .length;
+
+  /// Ground-cell centers inside the footprint with clear center rays.
+  /// The source creature/object is NOT filtered by this tile-based view:
+  /// its inclusion is decided separately by [includeSourceByChoice].
+  Iterable<SrdGridCell> get clearCenterCells => candidates
+      .where(
+        (candidate) =>
+            candidate.centerWithinDistance &&
+            candidate.centerRay == SrdSphereCenterRay.clear,
+      )
+      .map((candidate) => candidate.cell);
+
   SrdEmanationCellCandidate? at(SrdGridCell cell) {
     for (final candidate in candidates) {
       if (candidate.cell == cell) return candidate;
