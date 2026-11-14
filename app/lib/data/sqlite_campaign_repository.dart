@@ -711,9 +711,17 @@ CREATE TABLE settings (
       orderBy: 'revision DESC',
       limit: 1,
     );
-    return rows.isEmpty
-        ? null
-        : _decodeCampaign(rows.single['snapshot'] as String);
+    if (rows.isEmpty) return null;
+    final row = rows.single;
+    final restored = _decodeCampaign(row['snapshot'] as String);
+    // A damaged revision journal must not silently return a different
+    // campaign or revision than the caller requested.
+    if (restored.id != id || restored.revision != row['revision']) {
+      throw const InvalidSaveException(
+        'Das gespeicherte Revisionsprotokoll ist widersprüchlich.',
+      );
+    }
+    return restored;
   }
 
   @override
