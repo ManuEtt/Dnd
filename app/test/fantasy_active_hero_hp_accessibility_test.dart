@@ -68,10 +68,7 @@ void main() {
         final bar = find.byType(LinearProgressIndicator);
         expect(bar, findsOneWidget);
         expect(
-          find.ancestor(
-            of: bar,
-            matching: find.byType(ExcludeSemantics),
-          ),
+          find.ancestor(of: bar, matching: find.byType(ExcludeSemantics)),
           findsOneWidget,
         );
         expect(hero.toJson(), original);
@@ -130,22 +127,13 @@ void main() {
     final afterJson = heroAfter.toJson();
 
     await _showCard(tester, heroBefore);
-    expect(
-      find.bySemanticsLabel('Trefferpunkte: 20 von 20'),
-      findsOneWidget,
-    );
+    expect(find.bySemanticsLabel('Trefferpunkte: 20 von 20'), findsOneWidget);
 
     await _showCard(tester, heroAfter);
 
     expect(find.text('0 / 20'), findsOneWidget);
-    expect(
-      find.bySemanticsLabel('Trefferpunkte: 0 von 20'),
-      findsOneWidget,
-    );
-    expect(
-      find.bySemanticsLabel('Trefferpunkte: 20 von 20'),
-      findsNothing,
-    );
+    expect(find.bySemanticsLabel('Trefferpunkte: 0 von 20'), findsOneWidget);
+    expect(find.bySemanticsLabel('Trefferpunkte: 20 von 20'), findsNothing);
     expect(find.bySemanticsLabel(RegExp(r'^Trefferpunkte:')), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
     expect(heroBefore.toJson(), beforeJson);
