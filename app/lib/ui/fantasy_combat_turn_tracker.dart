@@ -4,7 +4,7 @@ import 'fantasy_ui.dart';
 
 /// Read-only turn order from a confirmed encounter. An initiative value of
 /// zero denotes an unrolled/unknown roll in the existing Encounter schema.
-/// Neither turn order nor the next action is advanced by this widget.
+/// Negative nonzero totals are valid. This widget never advances turns.
 class FantasyCombatTurnTracker extends StatelessWidget {
   const FantasyCombatTurnTracker({
     super.key,
@@ -26,8 +26,8 @@ class FantasyCombatTurnTracker extends StatelessWidget {
   final bool isFinished;
 
   bool get hasConfirmedOrder =>
-      heroInitiative > 0 &&
-      enemyInitiative > 0 &&
+      heroInitiative != 0 &&
+      enemyInitiative != 0 &&
       heroInitiative != enemyInitiative;
 
   bool get heroGoesFirst =>
@@ -53,7 +53,7 @@ class FantasyCombatTurnTracker extends StatelessWidget {
         children: [
           if (!hasConfirmedOrder) ...[
             Text(
-              heroInitiative <= 0 || enemyInitiative <= 0
+              heroInitiative == 0 || enemyInitiative == 0
                   ? 'Initiative noch nicht vollständig bestätigt'
                   : 'Initiative-Gleichstand: aktiver Zug ist maßgeblich',
               style: const TextStyle(color: FantasyPalette.muted, fontSize: 12),
@@ -121,7 +121,7 @@ class _TurnEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = hero ? FantasyPalette.gold : FantasyPalette.danger;
-    final initiativeLabel = initiative > 0 ? '$initiative' : '?';
+    final initiativeLabel = initiative != 0 ? '$initiative' : '?';
     final turnLabel = active ? 'Jetzt am Zug' : 'Nicht am Zug';
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.8;
 
@@ -168,7 +168,7 @@ class _TurnEntry extends StatelessWidget {
       container: true,
       label:
           '${hero ? 'Held' : 'Gegner'}: $name. Initiative '
-          '${initiative > 0 ? initiativeLabel : 'unbekannt'}. '
+          '${initiative != 0 ? initiativeLabel : 'unbekannt'}. '
           '${finished ? 'Begegnung beendet' : turnLabel}.',
       child: ExcludeSemantics(
         child: Container(
