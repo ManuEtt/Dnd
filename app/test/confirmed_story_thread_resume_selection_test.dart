@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lebendiger_spielleiter/data/sqlite_campaign_repository.dart';
 import 'package:lebendiger_spielleiter/domain/models.dart';
-import 'package:lebendiger_spielleiter/story/confirmed_story_thread_resume_selection.dart';
+import 'package:lebendiger_spielleiter/story/story_api.dart';
 import 'package:path/path.dart' as paths;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
