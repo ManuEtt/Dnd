@@ -75,7 +75,10 @@ void main() {
     expect(selected.status, 'resolved');
     expect(selected.statusLabel, 'abgeschlossen');
     expect(selected.playerOverview, contains('Das Siegel bleibt im Turm.'));
-    expect(selected.playerOverview, contains('kein'));
+    expect(
+      selected.playerOverview,
+      contains('Kein bestätigter Questabschluss'),
+    );
     expect(selected.playerOverview, isNot(contains('999 Gold')));
     expect(selected.playerOverview, isNot(contains('Aktuelle Spur')));
     selected.requireCurrent(campaign);
@@ -106,7 +109,10 @@ void main() {
 
       expect(selected.status, expected.$1);
       expect(selected.statusLabel, expected.$2);
-      expect(selected.playerOverview, contains('Handlungsstatus: ${expected.$2}'));
+      expect(
+        selected.playerOverview,
+        contains('Handlungsstatus: ${expected.$2}'),
+      );
       expect(
         selected.playerOverview,
         contains('Kein bestätigter Questabschluss oder Belohnungsnachweis.'),
@@ -115,7 +121,7 @@ void main() {
     }
   });
 
-  test('legacy formatting and huge emoji text remain line-safe and bounded', () {
+  test('unicode and emoji remain line-safe and bounded', () {
     final dragons = List.filled(260, '🐉').join();
     final campaign = _campaign(
       threads: [
@@ -272,7 +278,7 @@ void main() {
     expect(jsonEncode(campaign.toJson()), before);
   });
 
-  test('JSON and SQLite restart preserve the exact saved closed thread', () async {
+  test('JSON and SQLite restart preserve saved history', () async {
     final original = _campaign(
       threads: const [
         StoryThread(id: 'first', title: 'Frühe Spur', status: 'open'),
