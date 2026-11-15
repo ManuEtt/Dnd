@@ -2393,3 +2393,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-15 – Gespeicherte Handlungsstränge gezielt wiederaufnehmen
+
+- **Problem:** Der begrenzte Kampagnenrückblick zeigt nur aktuell offene Handlungsstränge; ältere, ausdrücklich abgeschlossene oder aufgegebene Einträge waren nicht gezielt als gespeicherte Erinnerung abrufbar.
+- **Funktion:** `ConfirmedStoryThreadResumeSelector.readSelected` liest einen eindeutig gespeicherten Handlungsstrang per kanonischer ID, prüft Sitzung und Revision und stellt Titel, Beschreibung und den vom Spieler gesetzten Status zeilensicher und auf 900 UTF-16-Einheiten begrenzt dar. `requireCurrent` erkennt auch Bearbeitungen außerhalb des sichtbaren Textes bei unveränderter Revision.
+- **Sicherheit:** Keine freien Erzählerbehauptungen, keine automatische Quest-/Belohnungsbuchung, keine Schreibzugriffe. Ungültige oder doppelte IDs sowie unbekannte Statuswerte werden zurückgewiesen. Export über die öffentliche Story-Schnittstelle.
+- **Nachweis:** [PR #758](https://github.com/ManuEtt/Dnd/pull/758) (Draft), Branch `feat/chat-b/explicit-thread-history-20261115`, initialer Code-/Test-HEAD `30d122c8d839de75c766005442101e58c04e72ac`; maßgeblicher finaler Dokumentations-HEAD steht im PR.
+- **Tests:** Sieben Regressionstestgruppen für positive/negative Identitätsfälle, Statuswerte, Unicode, veraltete Auswahl sowie JSON- und SQLite-Neustart wurden geschrieben, **nicht ausgeführt**. Formatanalyse, Gesamtprüfungen, GitHub-Actions-Abnahme und Integration erfolgen getrennt; keine grüne CI wird behauptet.
+- **Kompatibilität:** Keine Änderung an Spielständen, SQLite-/JSON-Schema, D&D-Regelzustand, API bestehender Funktionen, App-Version oder KI-Kosten. Gerätetest und produktiver KI-Einsatz nicht geprüft.
