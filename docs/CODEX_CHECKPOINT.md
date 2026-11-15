@@ -3693,3 +3693,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+### 2026-11-15 – Einzelne gespeicherte Handlungsstränge verlässlich wiederaufnehmen (PR #758)
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `feat/chat-b/explicit-thread-history-20261115`; **PR:** [#758](https://github.com/ManuEtt/Dnd/pull/758) (Draft); Fachcode-/Test-HEAD `30d122c8d839de75c766005442101e58c04e72ac`, späterer Dokumentations-HEAD im PR.
+- **IMPLEMENTIERT:** Eine neue, nur lesende Storyauswahl über die vollständige gespeicherte `StoryThread.id`, unabhängig davon, ob der Handlungsstrang `open`, `resolved` oder `abandoned` ist. Bereinigter, begrenzter Spielertext mit unverwechselbarer ID und Hinweis auf fehlenden Quest-/Belohnungsnachweis; revisions- und sitzungsgebundene `requireCurrent`-Prüfung aller rohen Handlungsstränge einschließlich unsichtbarer Änderungen. Export über `story_api.dart`.
+- **Dateien:** `app/lib/story/confirmed_story_thread_resume_selection.dart`, `app/lib/story/story_api.dart`, neuer `app/test/confirmed_story_thread_resume_selection_test.dart`; additive README und Checkpoints.
+- **GETESTET:** Statische Quell-/Schnittstellen- und PR-Pfadprüfung; keinerlei neue Laufzeittests eigenständig ausgeführt.
+- **NICHT GETESTET:** Sieben neue Flutter-Testgruppen nur implementiert. Dart-Formatter, Flutter-Analyse und -Tests, Python-/Backend-Gates, APK-Builds, Android-Realgerät, KI-Provider und kombinierte Integration nicht ausgeführt.
+- **BLOCKIERT:** Testausführung und CI-Abnahme sind ausdrücklich einem anderen Entwicklungsprozess zugeordnet; PR bleibt bis dahin Draft. Dokumentations-Nachträge bei Integration append-only und verlustfrei zusammenführen.
+- **NOCH NICHT IMPLEMENTIERT:** Aufruferseitiger Auswahlbildschirm und echte UI-Anbindung des gezielten historischen Rückblicks. Keine automatische Questabschluss- oder Belohnungsableitung aus dem Handlungsstatus.
+- **Migration:** Nicht erforderlich. SQLite/JSON, Version, Regelwerte, bestehende Campaign-API und gespeicherte Kampagnen unverändert.
+- **NÄCHSTER SCHRITT:** Neuer unabhängiger Story-Funktionsbereich ohne Dateien aus offenen PRs; Testabnahme und Merge von #758 durch die zugeordnete Integration übernehmen.
