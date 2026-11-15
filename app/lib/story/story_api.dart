@@ -12,3 +12,5 @@ export 'story_rule_port.dart'
     show StoryRulePort, StoryAbilityCheck, StoryMilestoneAward;
 export 'npc_continuity_reader.dart'
     show NpcContinuityReader, NpcContinuitySnapshot;
+export 'confirmed_story_thread_resume_selection.dart'
+    show ConfirmedStoryThreadResumeSelection, ConfirmedStoryThreadResumeSelector;
