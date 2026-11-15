@@ -2393,3 +2393,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-15 – Negative Initiativewerte in der Kampfzugfolge korrekt anzeigen
+
+- **Problem:** Die Kampfzugfolge zeigte gültige negative Gesamtinitiativwerte als unbekannt und konnte damit eine falsche Reihenfolge suggerieren. Im bisherigen Encounter-Legacyformat bedeutet dagegen ausschließlich die vorbelegte `0` eine nicht bestätigte Initiative.
+- **Lösung:** Negative ungleich null bestätigte Werte werden als `INI -N` samt vollständiger TalkBack-Ansage dargestellt und absteigend sortiert. Gleiche Gesamtwerte bleiben unaufgelöst; der aktive Kampfbeteiligte wird nicht verändert.
+- **Dateien:** `app/lib/ui/fantasy_combat_turn_tracker.dart` und neuer Widgettest `app/test/fantasy_combat_negative_initiative_display_test.dart`.
+- **GitHub:** [PR #756](https://github.com/ManuEtt/Dnd/pull/756), Branch `feat/chat-c/negative-initiative-display-20261115`, Fachcommit `a1b95ef91591c7d9a996ec09812feea014306645`, Testcommit `9a6b7e606efa3d24928bbe37480d8438a7a0d855`.
+- **Tests/CI:** Vier Widgettestgruppen mit fünf Fällen hinzugefügt (320/360 dp, 200 % Schrift, simulierte IME, negativer Gleichstand, umgekehrte Reihenfolge, historische Null und Screenreader-Ansagen). **Nicht ausgeführt**; Testausführung, CI und koordinierte Integration übernimmt ein separater Prüfchat. PR bis dahin Draft.
+- **Kompatibilität:** Nur lesende Flutter-UI geändert, kein Regel-/Story-/Speicherzugriff, keine JSON-/SQLite-Schema- oder Versionsänderung, keine Migration. Tatsächliche Geräteabnahme offen.
