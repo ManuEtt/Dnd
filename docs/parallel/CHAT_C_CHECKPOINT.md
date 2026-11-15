@@ -1192,3 +1192,19 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-15 – Negative Initiativen im Kampftracker sichtbar machen
+
+- **Ausgangs-main-SHA:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`.
+- **Eigener Branch:** `feat/chat-c/negative-initiative-display-20261115`.
+- **Fachcommit:** `a1b95ef91591c7d9a996ec09812feea014306645`; **Testcommit:** `9a6b7e606efa3d24928bbe37480d8438a7a0d855`; späteren Dokumentations-/finalen HEAD über PR nachlesen.
+- **Pull Request:** [#756](https://github.com/ManuEtt/Dnd/pull/756) (Draft; wird nicht durch diesen Chat integriert).
+- **Ausgangsproblem:** `FantasyCombatTurnTracker` behandelte alle Werte <=0 als unbekannt, obwohl die dokumentierte Legacy-`0` lediglich den nicht gewürfelten Haupt-Initiativewert markiert. Negative echte Gesamtwürfe wurden deshalb verborgen; die Anzeige orientierte sich fälschlich am aktiven Zug statt an der absteigenden Initiative.
+- **IMPLEMENTIERT:** `hasConfirmedOrder` prüft auf ungleich `0`; Warnung, sichtbarer `INI`-Wert und Semantik behandeln ausschließlich `0` als unbekannt. Negative verschiedene Werte werden sortiert, negative Gleichstände explizit ungelöst dargestellt. Keine Veränderung tatsächlicher aktiver Zugzustände.
+- **Geänderte Dateien:** `app/lib/ui/fantasy_combat_turn_tracker.dart`, neu `app/test/fantasy_combat_negative_initiative_display_test.dart`, additiv `README.md`, `docs/CODEX_CHECKPOINT.md` und dieser Checkpoint.
+- **Regression hinzugefügt:** Fünf Fälle in vier Widgettestgruppen: 320/360 dp bei 200 % und 220-dp-IME, korrekte negative Semantik/Sortierung, abweichender aktiver Zug, negativer Gleichstand, Legacy-`0` + negativer Gegner.
+- **GETESTET:** Kein ausführbarer Test in diesem Chat. Main, offene PR-Titel/Dateipfade, aktuelle UI-Quelle und Initiative-Vertrag sowie Branch-Diff bei Entwicklung geprüft.
+- **NICHT GETESTET:** Dart format, flutter analyze, gezielter/full flutter test, Backend/Python, Debug-Android-Build, APK, echtes Android-Gerät und TalkBack. Testausführung und koordinierte Integration ausdrücklich an anderen Chat delegiert; CI-Status nach finalem HEAD separat prüfen.
+- **BLOCKIERT:** Fehlende externe Test- und Integrationsabnahme; reine Fachänderungen liegen nicht in offenen anderen UI-PRs. Gemeinsame README-/Checkpoint-Nachträge nur verlustfrei mergen.
+- **Migration:** Keine; kein Eingriff in JSON/SQLite, Domain, Regelwerk, Story, Controller, Versionsnummer oder gespeicherte Spielstände.
+- **NÄCHSTER SCHRITT:** Separaten Testchat die fünf neuen Widgetfälle, Format/Analyse und vollständige GitHub-CI abnehmen lassen; danach Review/Integration koordinieren.
