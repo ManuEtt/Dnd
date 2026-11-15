@@ -32,13 +32,17 @@ class ConfirmedStoryThreadResumeSelection {
   /// Line-safe, bounded display of the saved thread, never free AI dialogue.
   String get playerOverview {
     final result = [
-      'Gespeicherter Handlungsstrang (ID: ${threadId}; Revision ${revision}): ${title}',
+      'Gespeicherter Handlungsstrang (ID: $threadId; '
+          'Revision $revision): $title',
       'Handlungsstatus: ${statusLabel}',
-      'Gespeicherte Beschreibung: ${description.isEmpty ? 'keine' : description}',
+      'Gespeicherte Beschreibung: '
+          '${description.isEmpty ? 'keine' : description}',
       'Kein bestätigter Questabschluss oder Belohnungsnachweis.',
     ].join('\n');
     if (result.length > 900) {
-      throw const FormatException('Handlungsrückblick überschreitet sein Limit.');
+      throw const FormatException(
+        'Handlungsrückblick überschreitet sein Limit.',
+      );
     }
     return result;
   }
@@ -51,8 +55,11 @@ class ConfirmedStoryThreadResumeSelection {
     if (campaign.id != campaignId ||
         campaign.sessionId != sessionId ||
         campaign.revision != revision ||
-        _sourceStamp != ConfirmedStoryThreadResumeSelector._sourceStamp(campaign)) {
-      throw const FormatException('Gespeicherter Handlungsrückblick ist veraltet.');
+        _sourceStamp !=
+            ConfirmedStoryThreadResumeSelector._sourceStamp(campaign)) {
+      throw const FormatException(
+        'Gespeicherter Handlungsrückblick ist veraltet.',
+      );
     }
   }
 }
@@ -119,7 +126,9 @@ class ConfirmedStoryThreadResumeSelector {
     );
     // Fail closed should future fields enlarge the presentation contract.
     if (result.playerOverview.length > 900) {
-      throw const FormatException('Handlungsrückblick überschreitet sein Limit.');
+      throw const FormatException(
+        'Handlungsrückblick überschreitet sein Limit.',
+      );
     }
     return result;
   }
