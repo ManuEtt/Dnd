@@ -1380,3 +1380,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-15 – Historischen Handlungsstrang per ID wählen (PR #758)
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `feat/chat-b/explicit-thread-history-20261115`; **PR:** [#758](https://github.com/ManuEtt/Dnd/pull/758) (Draft); Fach-/Test-Commit `30d122c8d839de75c766005442101e58c04e72ac`, finalen HEAD im PR prüfen.
+- **Ausgangsproblem:** Der vorhandene Kampagnenrückblick begrenzt aktuell offene Fäden; abgeschlossene und aufgegebene gespeicherte Handlungsstränge sind für eine gezielte spätere Fortsetzung nicht einzeln mit expliziter ID abrufbar.
+- **IMPLEMENTIERT:** `ConfirmedStoryThreadResumeSelector.readSelected` verlangt eine vollständig sichere eindeutige ID und zur gespeicherten Kampagne passende gültige Revision. Er liefert die eigene unveränderliche Projektion mit gespeicherter Titel-/Beschreibung-/Status-Kombination, deutschen Statusnamen und klarer Abgrenzung zu Questabschluss/Belohnung. `requireCurrent` verwirft kampagnen-, sitzungs-, revisions- und vollquellenveraltete Auswahl. Zeilen-/Unicode-Schutz, 900-Zeichen-Budget; keine Persistenz- oder Regelmutation.
+- **Dateien:** `app/lib/story/confirmed_story_thread_resume_selection.dart`, `app/lib/story/story_api.dart`, `app/test/confirmed_story_thread_resume_selection_test.dart`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_B_CHECKPOINT.md`.
+- **Tests hinzugefügt:** Sieben Gruppen: Wiederfinden alter geschlossener Fäden, alle drei erlaubten Statuswerte, Legacy-Steuerzeichen und UTF-16-Sicherheit, ungültige/doppelte IDs, ungültige Revision und Altinhalte, Same-Revision-Änderung und Sitzungswechsel, JSON-/SQLite-Neustart mit Replay.
+- **GETESTET:** Nur Quellvertrag, vorhandene Tests und andere offene PR-Dateipfade statisch geprüft. **Keine Ausführung** der neu geschriebenen Testfälle.
+- **NICHT GETESTET:** Flutter-Tests, Analyzer, Dart-Formatierung, alle Python-/Backend-Gates, APK-Builds, Android-Gerät sowie produktiver Erzähler. GitHub-Actions-Abnahme liegt bei einem anderen Entwicklungs-Chat; eigene CI-Freigabe nicht behauptet.
+- **BLOCKIERT:** Unabhängige Testausführung und koordinierte Review-/Merge-Abnahme. PR bleibt Draft; README-/Checkpoint-Änderungen nur verlustfrei mit parallelen Nachträgen integrieren.
+- **Kompatibilität/Migration:** Keine Änderung bestehender Spielstände, Schema, API-Methoden, Regelwerte, Kosten oder App-Version. Nur ergänzter öffentlicher Export.
+- **NOCH NICHT IMPLEMENTIERT:** Flutter-UI zum gezielten Wählen eines älteren Fadens sowie automatisierte Verknüpfung mit dem eigentlichen Fortsetzungsdialog; Status darf keinen Quest-/Reward-Effekt auslösen.
+- **NÄCHSTER SCHRITT:** Ein unabhängiges, ID-gebundenes Wiederaufnahmeangebot für andere ausdrücklich gespeicherte Kampagnendaten entwickeln, ohne den UI-/Controller- oder Integrationsbereich zu verändern.
