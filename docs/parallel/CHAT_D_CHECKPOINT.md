@@ -2317,3 +2317,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** CI-Abnahme und integrationssicherer Append-only-Abgleich der gemeinsam genutzten Dokumente.
 - **NOCH NICHT IMPLEMENTIERT:** Keine Änderungen an Spielstandimporten, SQLite, UI, Regelengine, Story oder Android-Prozess; keine Migration.
 - **NÄCHSTER SCHRITT:** Finale CI für #736 auswerten und gegebenenfalls im eigenen Branch reparieren; danach abgestimmt integrieren.
+
+### 2026-11-15 – Fehlgeschlagene Checkpoint-Veröffentlichungen verlustarm zurückrollen (PR #757)
+
+- **Basis-main-SHA:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`. **Branch:** `fix/chat-d/checkpoint-publication-rollback-20261115`. **Code-/Testcommit:** `6124989d9c821e7be8141bc700eb91c4a4f22413`. **PR:** [#757](https://github.com/ManuEtt/Dnd/pull/757), Draft; finalen Dokumentations-HEAD im PR verifizieren.
+- **Problem:** Die Veröffentlichung bestand aus mehreren unabhängigen `os.replace`-Schritten. Ein Fehler beim späten Alias-Austausch konnte neue versionierte Teilstände hinterlassen und stabile Aliasdateien in einem widersprüchlichen Zustand zurücklassen.
+- **IMPLEMENTIERT:** Alte `LATEST`- und Prüfsummen-Aliasse vor der Veröffentlichung über bestehende No-Follow-Dateikopie sichern; neue Aliasinhalte vorab erzeugen. Eigene publizierte Inodes während des Veröffentlichungsablaufs aufzeichnen. Bei Ausnahme/Unterbrechung die betroffenen eigenen Dateien rückgängig machen und alte Aliasse wiederherstellen; fremde, zwischenzeitlich ausgetauschte Inodes unangetastet lassen.
+- **Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanzkriterien / neue Regressionen:** Alter Checkpoint bei finalem Checksum-Aliasfehler vollständig erhalten; Teilfehler nach ZIP vor Patch entfernt neue Teilstände; bei erster Veröffentlichung keine Reste und Retry möglich; Austausch des `LATEST` durch externen Eigentümer verhindert dessen Löschung beim Rollback. Positiver früherer Normalfall unverändert.
+- **GETESTET:** Aktuellen main und offene PRs geprüft; Vorgänger-PR [#754](https://github.com/ManuEtt/Dnd/pull/754) besitzt komplett grüne [CI #43575982269](https://github.com/ManuEtt/Dnd/actions/runs/43575982269) und ist reviewbereit, aber nicht integriert. Kein Testnachweis dieser neuen Änderung.
+- **NICHT GETESTET:** Neue Python-Tests beim Commit noch nicht lokal ausgeführt; aktuelle CI, Backend, Flutter, Android, Alpha-Bundle, Realgerät für #757 offen.
+- **BLOCKIERT:** Netzwerkbedingter lokaler Checkout; letzte CI-Abnahme; verlustfreie Docs-Integration. Gleichzeitige Sichtbarkeit aller ZIP-/Prüfsummen-Dateinamen kann auf üblichen Dateisystemen nicht garantiert werden; best-effort-Rollback kann bei dauerhaftem I/O-Ausfall ebenfalls scheitern.
+- **Migration:** Keine; keine Versionserhöhung, keine Datenmodell-/Spielstands-/JSON-/SQLite-Änderung, keine fremden Branch-Löschungen/Merges.
+- **Nächster Schritt:** Actions von #757 auf finalem HEAD vollständig prüfen; bei Abweichungen im selben Branch korrigieren und nach Main-/PR-Abgleich koordinierte Integration vorbereiten.
+

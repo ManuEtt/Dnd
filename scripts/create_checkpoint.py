@@ -30,8 +30,9 @@ import unicodedata
 import zipfile
 
 from package_project import (REQUIRED_FILES, ROOT, WINDOWS_INVALID_CHARACTERS,
-                             WINDOWS_RESERVED_STEMS, create_archive, include,
-                             read_verified_source, source_paths)
+                             WINDOWS_RESERVED_STEMS, copy_previous_archive,
+                             create_archive, include, read_verified_source,
+                             source_paths)
 from prepare_alpha_release import read_version, sha256
 
 
@@ -237,6 +238,16 @@ def validate_patch(root: Path, base: str, patch: Path,
         raise ValueError('Applied patch does not reproduce the complete source manifest.')
 
 
+def _still_owned_checkpoint_file(path: Path, identity: tuple[int, int]) -> bool:
+    """A failed publication may remove only files it actually created."""
+    try:
+        current = path.lstat()
+    except FileNotFoundError:
+        return False
+    return (stat.S_ISREG(current.st_mode)
+            and (current.st_dev, current.st_ino) == identity)
+
+
 @contextlib.contextmanager
 def exclusive_checkpoint_output(output_dir: Path):
     """Keep versioned artifacts and stable aliases under one writer.
@@ -342,13 +353,45 @@ def create_checkpoint(root: Path, output_dir: Path, *, base: str, label: str,
                 f'{sha256_previous_checkpoint(output_dir, name, historical_files[name][1]) if name in historical_files else sha256(path)}  {name}\n'
                 for name, path in sorted(checksum_files.items())
             ), encoding='utf-8')
-            # All verification finishes before replacing either stable alias.
-            for key in ('archive', 'patch', 'manifest', 'checksums'):
-                os.replace(staging / names[key], output_dir / names[key])
-            os.replace(latest, output_dir / LATEST)
+            # Build both aliases before touching a published file. Back up
+            # the old aliases without following symlinks, so an interrupted
+            # publication can restore the previously verified pair.
             stable_sums = staging / 'SHA256SUMS.txt'
-            shutil.copyfile(output_dir / names['checksums'], stable_sums)
-            os.replace(stable_sums, output_dir / 'SHA256SUMS.txt')
+            shutil.copyfile(sums, stable_sums)
+            alias_sources = ((LATEST, latest), ('SHA256SUMS.txt', stable_sums))
+            old_aliases: dict[str, Path | None] = {}
+            for alias, _ in alias_sources:
+                backup = staging / ('.previous-' + alias)
+                copy_previous_archive(output_dir / alias, backup)
+                old_aliases[alias] = backup if backup.is_file() else None
+
+            # Track the original inode of every published artifact. Rollback
+            # must never unlink a different file placed here by another writer.
+            published: list[tuple[Path, tuple[int, int], Path | None]] = []
+            try:
+                for key in ('archive', 'patch', 'manifest', 'checksums'):
+                    source = staging / names[key]
+                    destination = output_dir / names[key]
+                    if destination.exists() or destination.is_symlink():
+                        raise ValueError('Checkpoint destination was occupied during publication.')
+                    info = source.stat()
+                    os.replace(source, destination)
+                    published.append((destination, (info.st_dev, info.st_ino), None))
+                for alias, source in alias_sources:
+                    info = source.stat()
+                    destination = output_dir / alias
+                    os.replace(source, destination)
+                    published.append((
+                        destination, (info.st_dev, info.st_ino), old_aliases[alias],
+                    ))
+            except BaseException:
+                for destination, identity, backup in reversed(published):
+                    if _still_owned_checkpoint_file(destination, identity):
+                        if backup is None:
+                            destination.unlink()
+                        else:
+                            os.replace(backup, destination)
+                raise
     return {**{key: str(output_dir / name) for key, name in names.items()},
             'latest_archive': str(output_dir / LATEST),
             'latest_checksums': str(output_dir / 'SHA256SUMS.txt'),
