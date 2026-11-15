@@ -3693,3 +3693,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+### 2026-11-15 – Negative Gesamtinitiative sichtbar und zugänglich halten
+
+- **Basis-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `feat/chat-c/negative-initiative-display-20261115`; **PR:** [#756](https://github.com/ManuEtt/Dnd/pull/756), Draft.
+- **Codecommit:** `a1b95ef91591c7d9a996ec09812feea014306645`; **Testcommit:** `9a6b7e606efa3d24928bbe37480d8438a7a0d855`. Finalen PR-HEAD nach Dokumentationscommits separat prüfen.
+- **IMPLEMENTIERT:** In `FantasyCombatTurnTracker` sind negative Nichtnull-Initiativen vollständige sichtbare/sprachliche Werte, wodurch bestätigte negative Ergebnisse korrekt absteigend dargestellt werden. Legacy-`0` bleibt unbekannt, Gleichstände bleiben ungelöst, aktive Kampfzugzuordnung bleibt unverändert.
+- **Dateien:** `app/lib/ui/fantasy_combat_turn_tracker.dart`, `app/test/fantasy_combat_negative_initiative_display_test.dart`; append-only Fortschrittsdokumentation in README, zentralem und persönlichem Checkpoint.
+- **Testfälle ergänzt, nicht ausgeführt:** 320/360 dp bei 200 % Text/IME, negative Reihenfolge unabhängig vom aktiven Zug, negativer Gleichstand, Legacy-Null, Semantik und Layout.
+- **GETESTET:** GitHub-main-SHA, offene PRs und Fachdateipfade, Initiative-Dokumentationsvertrag und Branch-Diff geprüft; kein Testlauf.
+- **NICHT GETESTET:** Neues Dart-Format/Flutter-Analyse/Flutter-Widget- und Gesamt-Tests, Python, Backend, Android-Build/APK, tatsächliches TalkBack/Gerät. Separater Chat übernimmt alle Prüfungen und Integration.
+- **BLOCKIERT:** Finale CI/Test-Abnahme und koordinierte verlustfreie Zusammenführung der konkurrierenden Dokumentationsnachträge; keine fachliche Dateipfadüberschneidung mit den bei Erstellung offenen UI-PRs festgestellt.
+- **Migration:** Keine; alle Spielstände/Regeln/Story/Backend bleiben unverändert.
+- **NÄCHSTER SCHRITT:** Der Testchat soll zunächst `app/test/fantasy_combat_negative_initiative_display_test.dart` einschließlich Format/Analyse ausführen und danach den vollständigen PR-HEAD in CI überprüfen.
