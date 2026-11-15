@@ -371,6 +371,109 @@ class CheckpointTests(unittest.TestCase):
                             old_latest)
         self.assertFalse((self.output / '.checkpoint.lock').exists())
 
+    def test_checksum_alias_publish_failure_restores_prior_verified_checkpoint(self):
+        first = self.create(label='original')
+        original = {path.name: path.read_bytes() for path in self.output.iterdir()}
+        self.write('app/lib/main.dart', 'An updated backup snapshot.\\n')
+        target = self.output / 'SHA256SUMS.txt'
+        replace = checkpoint.os.replace
+        failed = False
+
+        def fail_final_alias(source, destination):
+            nonlocal failed
+            if Path(destination) == target and not failed:
+                failed = True
+                raise OSError('simulated final checksum publication failure')
+            return replace(source, destination)
+
+        with mock.patch.object(checkpoint.os, 'replace', side_effect=fail_final_alias):
+            with self.assertRaisesRegex(OSError, 'final checksum publication failure'):
+                self.create(label='interrupted')
+        self.assertTrue(failed)
+        self.assertEqual(original, {
+            path.name: path.read_bytes() for path in self.output.iterdir()
+        })
+        self.assertEqual(Path(first['latest_archive']).read_bytes(),
+                         original[checkpoint.LATEST])
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+
+    def test_versioned_publish_failure_leaves_no_partial_checkpoint(self):
+        self.create(label='original')
+        original = {path.name: path.read_bytes() for path in self.output.iterdir()}
+        self.write('app/lib/main.dart', 'Another source revision.\\n')
+        replace = checkpoint.os.replace
+        failed = False
+
+        def fail_second_versioned_file(source, destination):
+            nonlocal failed
+            if (str(destination).endswith('_Aenderungen.patch') and not failed):
+                failed = True
+                raise OSError('simulated versioned patch publication failure')
+            return replace(source, destination)
+
+        with mock.patch.object(checkpoint.os, 'replace',
+                               side_effect=fail_second_versioned_file):
+            with self.assertRaisesRegex(OSError, 'patch publication failure'):
+                self.create(label='interrupted')
+        self.assertTrue(failed)
+        self.assertEqual(original, {
+            path.name: path.read_bytes() for path in self.output.iterdir()
+        })
+
+    def test_first_checkpoint_failure_cleans_all_partial_publications(self):
+        target = self.output / 'SHA256SUMS.txt'
+        replace = checkpoint.os.replace
+        failed = False
+
+        def fail_once(source, destination):
+            nonlocal failed
+            if Path(destination) == target and not failed:
+                failed = True
+                raise OSError('simulated first-checkpoint alias failure')
+            return replace(source, destination)
+
+        with mock.patch.object(checkpoint.os, 'replace', side_effect=fail_once):
+            with self.assertRaisesRegex(OSError, 'first-checkpoint alias failure'):
+                self.create(label='new')
+        self.assertTrue(failed)
+        self.assertEqual(list(self.output.iterdir()), [])
+        recovered = self.create(label='new')
+        self.assertEqual(
+            Path(recovered['latest_archive']).read_bytes(),
+            Path(recovered['archive']).read_bytes(),
+        )
+
+    def test_rollback_never_removes_an_external_alias_replacement(self):
+        self.create(label='original')
+        self.write('app/lib/main.dart', 'New project version.\\n')
+        target = self.output / 'SHA256SUMS.txt'
+        latest = self.output / checkpoint.LATEST
+        replacement = self.directory / 'external-writer.tmp'
+        replacement.write_bytes(b'external process owns this replacement')
+        external_bytes = replacement.read_bytes()
+        previous_checksums = target.read_bytes()
+        original_replace = checkpoint.os.replace
+        failed = False
+
+        def simulate_other_writer(source, destination):
+            nonlocal failed
+            if Path(destination) == target and not failed:
+                failed = True
+                original_replace(replacement, latest)
+                raise OSError('simulated external alias replacement')
+            return original_replace(source, destination)
+
+        with mock.patch.object(checkpoint.os, 'replace',
+                               side_effect=simulate_other_writer):
+            with self.assertRaisesRegex(OSError, 'external alias replacement'):
+                self.create(label='interrupted')
+        self.assertTrue(failed)
+        self.assertEqual(latest.read_bytes(), external_bytes)
+        self.assertEqual(target.read_bytes(), previous_checksums)
+        self.assertFalse(any('interrupted' in path.name
+                             for path in self.output.iterdir()))
+        self.assertFalse((self.output / '.checkpoint.lock').exists())
+
     def test_duplicate_checkpoint_does_not_overwrite_artifacts(self):
         self.create()
         with self.assertRaisesRegex(ValueError, 'already exists'):
