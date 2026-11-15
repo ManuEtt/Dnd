@@ -2393,3 +2393,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-15 – Checkpoint-Veröffentlichung bei Fehlern zurückrollen
+
+- **Problem:** Bei einem Fehler zwischen den einzelnen Veröffentlichungen eines bereits geprüften Quell-Checkpoints konnten neue versionierte Zwischenartefakte liegen bleiben oder `Wuerfelraunen_LATEST_Vollprojekt.zip` und `SHA256SUMS.txt` unterschiedliche Stände zeigen.
+- **Lösung:** Vor der Veröffentlichung beide Aliasse vorbereiten und alte Aliasdateien ohne symbolische Verweise sichern. Nur nachweislich selbst veröffentlichte Dateien werden bei Abbruch zurückgerollt; alte Aliasse werden wiederhergestellt, sofern sie nicht extern ausgetauscht wurden. Externe Ersetzungen bleiben unangetastet.
+- **Betroffene Funktionen:** `create_checkpoint` und `_still_owned_checkpoint_file` in `scripts/create_checkpoint.py`, neue Fehler-/Rollback-Tests in `scripts/tests/test_create_checkpoint.py`.
+- **PR und Branch:** [#757](https://github.com/ManuEtt/Dnd/pull/757), `fix/chat-d/checkpoint-publication-rollback-20261115`, Code-/Testcommit `6124989d9c821e7be8141bc700eb91c4a4f22413`. Hauptzweig-Ausgangsstand: `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`.
+- **Tests und CI:** Vier neue Python-Fälle ergänzt; bei Erstellung noch nicht lokal ausgeführt. Ein vollständiger GitHub-CI-Lauf auf dem finalen PR-Commit steht aus. Die vollständig grüne [CI #43575982269](https://github.com/ManuEtt/Dnd/actions/runs/43575982269) belegt ausschließlich den vorherigen PR #754.
+- **Kompatibilität:** Kein Spielstand-, SQLite-, JSON-, App-/Backend-API- oder Versionswechsel; keine Datenmigration. Keine Garantie atomarer gleichzeitiger Sichtbarkeit mehrerer Dateinamen für externe Leser oder Wiederherstellung bei dauerhaft defektem Dateisystem.
