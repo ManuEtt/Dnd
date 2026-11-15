@@ -3693,3 +3693,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+### 2026-11-15 – Rollback bei fehlgeschlagener Checkpoint-Veröffentlichung (PR #757)
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `fix/chat-d/checkpoint-publication-rollback-20261115`; **Code-/Testcommit:** `6124989d9c821e7be8141bc700eb91c4a4f22413`; **PR:** [#757](https://github.com/ManuEtt/Dnd/pull/757) (Draft bis vollständige Abnahme). Produkt `0.8.52+102` unverändert.
+- **IMPLEMENTIERT:** `scripts/create_checkpoint.py` legt beide stabilen Aliasdateien und Symlink-geschützte Kopien früherer Aliasse schon vor Publikation an, protokolliert die Eigentümeridentität der neu veröffentlichten Artefakte und rollt bei späten Fehlern ausschließlich eigene Dateien zurück. Bestehende Alias-Inhalte werden nach Möglichkeit wiederhergestellt; eine extern ersetzte Inode bleibt geschützt. Keine Schema-, JSON- oder App-Änderung.
+- **Betroffene Dateien:** `scripts/create_checkpoint.py`, `scripts/tests/test_create_checkpoint.py`; Dokumentation in `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** Vier neue Python-Testfälle für späte Alias-Fehler mit vorhandenem Checkpoint, Teilausgabeversion, Ausfall beim ersten Checkpoint und Schutz einer spät ausgetauschten Aliasdatei.
+- **GETESTET:** GitHub-main-HEAD und fachfremde offene PRs geprüft; zuvor integrierter Basisstand `e66e895...` hat erfolgreiche [Main-CI #43448981760](https://github.com/ManuEtt/Dnd/actions/runs/43448981760). Vorheriger [PR #754](https://github.com/ManuEtt/Dnd/pull/754) ist nach vollständig erfolgreicher [CI #43575982269](https://github.com/ManuEtt/Dnd/actions/runs/43575982269) „Ready for review“, aber nicht gemerged. Diese Erfolge belegen nicht #757.
+- **NICHT GETESTET:** Die neuen Regressionen sind beim Dokumentieren noch nicht lokal ausgeführt. Finale GitHub-CI für #757 einschließlich Python, Backend, Flutter, Android und Alpha-Artefakten offen; keine Geräte-/Release-Abnahme behauptet.
+- **BLOCKIERT:** Lokaler vollständiger Checkout/SDK-Lauf wegen Netzwerk-/GitHub-DNS-Zugriff nicht verfügbar. Koordinierte verlustfreie Zusammenführung konkurrierender README-/Checkpoint-Anhänge erforderlich. Mehrteilige Veröffentlichung ist gegenüber externen Lesern kein atomarer Dateisystem-Commit; bei permanentem Dateisystemfehler ist auch die Rückabwicklung nicht garantiert.
+- **NOCH NICHT IMPLEMENTIERT:** Keine fremden PRs integriert oder Branches gelöscht; keine Migration oder Änderung realer Spielstände, Story, SRD, UI, SQLite, Backend oder Version.
+- **NÄCHSTER SCHRITT:** Finale CI auf dem exakten PR-HEAD #757 auswerten, jeden konkreten Testfehler auf diesem Branch korrigieren und erst nach vollständiger Abnahme und neuem Datei-/Main-Abgleich zur Integration freigeben.
+
