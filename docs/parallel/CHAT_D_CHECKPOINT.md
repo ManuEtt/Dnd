@@ -2359,3 +2359,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität:** Keine App-, SQLite-, JSON-, Spielstands-, Regel-, Backend- oder Versionsänderung, keine Migration. Nicht-konsistente Release-Metadaten werden künftig vor der Dateierstellung abgewiesen.
 - **Koordination:** PR #761 ist auf dem alten Main grün, benötigt nach dem Merge von PR #754 jedoch eine verlustfreie Dokumentations-Reintegration; nicht ungeprüft mergen. PR #766 berührt nicht dessen Quellpaketdateien.
 - **Nächster Schritt:** Abschließende CI zu PR #766 prüfen und eventuelle Regressionen im eigenen Branch beheben; anschließend koordinierten Merge unter Erhalt aller README-Nachträge planen.
+
+---
+
+## 2026-11-17 – Quellpaket-Rollback respektiert zwischenzeitlich fremde Dateien
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; geprüft gegen 48 offene PRs. PR #757 bearbeitet `scripts/create_checkpoint.py`, nicht die hier betroffene ZIP-Veröffentlichung.
+- **Branch:** `fix/chat-d/archive-rollback-identity-20261117`; **Code-/Testcommits:** `40581a1ed962973a8d42848805766f4688d0371b`, `6ff9408f410d735a6478e9bfe08496b2c7412497`; **PR:** [#761](https://github.com/ManuEtt/Dnd/pull/761), Draft.
+- **Ausgangsproblem:** Fehlschlag beim zweiten `os.replace` konnte mit einem ungeschützten Rollback eine von einem anderen Prozess neu veröffentlichte reguläre Datei oder einen Symlink entfernen/überschreiben. Der Export-Lock schützt nur kooperierende Exportaufrufe.
+- **Implementiert:** `scripts/package_project.py` notiert vor dem ersten Rename die Dateigeräte-/Inode-Identität der eigenen Staging-ZIP. Im Fehlerpfad wird mit `lstat()` ohne Symlink-Follow geprüft, ob der Zielpfad noch diese eigene reguläre ZIP bezeichnet. Nur dann darf die alte ZIP zurückgeschrieben bzw. die neue entfernt werden.
+- **Regressionen:** `scripts/tests/test_package_project.py`: erfolgreicher Schutz bei fehlgeschlagener Erstausgabe mit sauberem eigenem Rollback; fremde reguläre Ersetzung bei bestehender ZIP; fremder Symlink bei Erstausgabe. Vorhandene intakte Rollback-/Positivtests unverändert.
+- **GETESTET:** Code und drei Regressionen als Commits an GitHub übergeben, offene PR-Pfade und `main` verglichen. Noch keine erfolgreichen Ausführungen der neuen Regressionen für diesen Commit nachgewiesen.
+- **NICHT GETESTET/BLOCKIERT:** Finale GitHub-CI auf dem Dokumentations-HEAD sowie Android-/Flutter-/Backend-/Python-Gesamtlauf, Realgerät und Upgrade; lokaler Checkout/Flutter-SDK nicht verfügbar. CI-Resultate gesondert nachtragen.
+- **Kompatibilität:** Keine SQLite-/JSON- oder Spielstandformatänderung, keine App-Version-/API-/Regeländerung, keine Datenmigration und keine Branchlöschungen. Kein CAS-atomarer Schutz gegen Austausch exakt zwischen letzter Identitätsprüfung und Rückschreiben.
+- **Nächster Schritt:** GitHub Actions auf dem finalen PR-#761-HEAD komplett abnehmen; nur bei grünem Lauf und konfliktfreiem Main-Stand für koordinierte Integration freigeben.

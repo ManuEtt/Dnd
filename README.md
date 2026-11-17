@@ -2419,3 +2419,11 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`; neue positive und negative Regressionen für sichere Metadaten, ungültige Links, Markdown-/Bidi-/Zeilenumbruch-Manipulation und Erhalt bereits veröffentlichter Artefakte.
 - **Nachweis:** [PR #766](https://github.com/ManuEtt/Dnd/pull/766), Branch `fix/chat-d/release-notes-provenance-20261117`, Code-Korrekturcommit `814afef6c9b68983494e3286a0ae0a376387b251`, letzter Testcommit `468fb80fb51f87b86cbfd7e89631cd2e71324953`. Vollständige GitHub-Actions-CI für den endgültigen Dokumentationscommit zum Zeitpunkt dieses Eintrags noch offen.
 - **Kompatibilität:** Keine Änderung an Android-/Flutter-/Backend-Funktionen, Spielständen, SQLite, JSON, Regeln, Versionsnummer oder Datenmigration. Unsichere Release-Nachweisfelder werden nun abgewiesen statt veröffentlicht.
+
+### 2026-11-17 – Rücknahme fehlerhafter Quellpaket-Ausgaben schützt fremde Dateien
+
+- **Problem:** Scheiterte die Prüfsummenveröffentlichung nach einem erfolgreichen ZIP-Dateiaustausch, konnte das Rollback eine in der Zwischenzeit fremd ersetzte ZIP-Datei ohne Identitätskontrolle überschreiben oder löschen.
+- **Lösung:** Die Paket-Erstellung merkt sich die Geräte-/Inode-Identität ihrer eigenen Staging-ZIP und rollt bei einem späteren Prüfsummenfehler nur zurück, wenn sich am Ziel noch exakt diese reguläre Datei befindet. Fremde Ersatzdateien und Symlinks bleiben unangetastet.
+- **Dateien:** `scripts/package_project.py` und `scripts/tests/test_package_project.py`; drei neue positive und negative Regressionstests für eigenen Erst-Rollback, fremde reguläre Ersetzung und fremden Symlink.
+- **Nachweis:** [PR #761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-/Testcommits `40581a1ed962973a8d42848805766f4688d0371b` und `6ff9408f410d735a6478e9bfe08496b2c7412497`. Die GitHub-CI des endgültigen Dokumentations-HEADs steht zum Zeitpunkt dieses Eintrags noch aus.
+- **Kompatibilität:** Keine Änderung an SQLite, JSON, Spielständen, App-Version, Android-/Backend-API oder Regeln, keine Migration. Der Schutz sichert einen beobachtbaren Fremdaustausch; ein vollständig atomares Compare-and-Swap über Dateipfade wird nicht behauptet.

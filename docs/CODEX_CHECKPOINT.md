@@ -3731,3 +3731,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NICHT GETESTET:** Vollständige PR-CI inkl. Android-Debug-/3 ABI-/Alpha-Pakete, Realgerät, APK-Upgrade und echte CI-Link-Gültigkeit.
 - **Kompatibilität:** Kein Wechsel an App-Version, Dateiformat, SQLite, JSON, Spielständen, Backend, Regeln oder APIs; kein Datenmigrationsschritt.
 - **Nächster Schritt:** Vollständige GitHub-CI für die finale SHA abnehmen, erst danach koordinierte Integration ohne Verlust paralleler README-/Checkpoint-Änderungen.
+
+---
+
+## 2026-11-17 – Schutz vor fremden Dateien beim Rollback der Quellpaket-Ausgabe
+
+- **PR:** [#761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-Commit `40581a1ed962973a8d42848805766f4688d0371b`, Test-Commit `6ff9408f410d735a6478e9bfe08496b2c7412497`, Ausgangs-`main` `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`.
+- **Problem:** Ein fehlgeschlagener zweiter Dateiaustausch der ZIP-/SHA256-Publikation konnte die erste ZIP-Datei ungeprüft zurücksetzen. Ein fremder Dateiaustausch vor dem Rollback ging so verloren.
+- **Lösung:** Nur dann zurückrollen, wenn `lstat()` am ZIP-Ziel dieselbe reguläre Datei mit derselben Geräte-/Inode-Identität wie die eigene ursprünglich bereitgestellte Staging-ZIP bestätigt. Fremde Ersetzung/Symlinks unangetastet lassen.
+- **Dateien:** `scripts/package_project.py`, `scripts/tests/test_package_project.py` (drei neue positive/negative Regressionsfälle).
+- **Prüfungen:** Code und Tests committed; automatischer Python-, Backend-, Flutter-, Android- und Release-Nachweis für den finalen Branch-HEAD bei Dokumentation noch offen. Kein lokaler SDK-/Realgeräte-Nachweis.
+- **Kompatibilität:** Keine Änderung an App, Regeln, SQLite, JSON, Speicherschema oder Version. Kein automatischer Merge und keine Branchlöschung. POSIX-Rename/Prüfung ist nicht atomar vergleichend.
+- **Koordination:** PR #757 für das Checkpoint-Tool ist eine getrennte Baustelle; der aktuelle Paket-Export-Pfad wird dort nicht verändert. Integration erst nach kompletter grüner CI und PR-Konfliktprüfung.

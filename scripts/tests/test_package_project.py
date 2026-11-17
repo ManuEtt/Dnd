@@ -570,6 +570,82 @@ class ProjectArchiveTests(unittest.TestCase):
         self.assertEqual((output.read_bytes(), checksum.read_bytes()), previous)
         self.assertEqual(set(self.base.iterdir()), before)
 
+    def test_failed_checksum_of_new_zip_removes_only_own_archive(self):
+        output = self.base / 'new-publication.zip'
+        checksum = output.with_suffix('.zip.sha256')
+        original_replace = packaging.os.replace
+
+        def fail_checksum_replacement(source, destination):
+            if Path(destination) == checksum:
+                raise OSError('simulated checksum publication failure')
+            return original_replace(source, destination)
+
+        with mock.patch.object(packaging.os, 'replace',
+                               side_effect=fail_checksum_replacement):
+            with self.assertRaisesRegex(OSError, 'checksum publication failure'):
+                packaging.create_archive(self.root, output, layout='root')
+        self.assertFalse(output.exists())
+        self.assertFalse(checksum.exists())
+        self.assertFalse((self.base / '.new-publication.zip.lock').exists())
+
+    def test_failed_checksum_preserves_foreign_replacement_of_existing_zip(self):
+        output = self.base / 'replace-owned.zip'
+        packaging.create_archive(self.root, output, layout='root')
+        checksum = output.with_suffix('.zip.sha256')
+        old_checksum = checksum.read_bytes()
+        self.root.joinpath('app/lib/main.dart').write_text(
+            'New source revision.\n', encoding='utf-8')
+        displaced = self.base / 'displaced-owned.zip'
+        foreign_contents = b'file published by an unrelated writer'
+        original_replace = packaging.os.replace
+
+        def foreign_writer_then_fail(source, destination):
+            if Path(destination) == checksum:
+                # This runs after staged_zip was moved to output. An unrelated
+                # publisher replaces it before this exporter can roll back.
+                output.rename(displaced)
+                output.write_bytes(foreign_contents)
+                raise OSError('simulated checksum publication failure')
+            return original_replace(source, destination)
+
+        with mock.patch.object(packaging.os, 'replace',
+                               side_effect=foreign_writer_then_fail):
+            with self.assertRaisesRegex(OSError, 'checksum publication failure'):
+                packaging.create_archive(self.root, output, layout='root')
+        self.assertEqual(output.read_bytes(), foreign_contents)
+        self.assertEqual(checksum.read_bytes(), old_checksum)
+        with zipfile.ZipFile(displaced) as archive:
+            self.assertEqual(archive.read('app/lib/main.dart'),
+                             b'New source revision.\n')
+        self.assertFalse((self.base / '.replace-owned.zip.lock').exists())
+
+    @unittest.skipUnless(os.name == 'posix', 'POSIX symlinks required')
+    def test_failed_checksum_does_not_unlink_foreign_symlink(self):
+        output = self.base / 'new-external.zip'
+        checksum = output.with_suffix('.zip.sha256')
+        external = self.base / 'unrelated-file.txt'
+        external.write_bytes(b'untouched external bytes')
+        displaced = self.base / 'published-before-swap.zip'
+        original_replace = packaging.os.replace
+
+        def foreign_symlink_then_fail(source, destination):
+            if Path(destination) == checksum:
+                output.rename(displaced)
+                output.symlink_to(external)
+                raise OSError('simulated checksum publication failure')
+            return original_replace(source, destination)
+
+        with mock.patch.object(packaging.os, 'replace',
+                               side_effect=foreign_symlink_then_fail):
+            with self.assertRaisesRegex(OSError, 'checksum publication failure'):
+                packaging.create_archive(self.root, output, layout='root')
+        self.assertTrue(output.is_symlink())
+        self.assertEqual(output.readlink(), external)
+        self.assertEqual(external.read_bytes(), b'untouched external bytes')
+        self.assertTrue(displaced.is_file())
+        self.assertFalse(checksum.exists())
+        self.assertFalse((self.base / '.new-external.zip.lock').exists())
+
     def test_successful_overwrite_replaces_zip_and_checksum_together(self):
         output = self.base / 'published.zip'
         packaging.create_archive(self.root, output, layout='root')
