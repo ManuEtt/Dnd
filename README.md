@@ -2427,3 +2427,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Dateien:** `scripts/package_project.py` und `scripts/tests/test_package_project.py`; drei neue positive und negative Regressionstests für eigenen Erst-Rollback, fremde reguläre Ersetzung und fremden Symlink.
 - **Nachweis:** [PR #761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-/Testcommits `40581a1ed962973a8d42848805766f4688d0371b` und `6ff9408f410d735a6478e9bfe08496b2c7412497`. Die GitHub-CI des endgültigen Dokumentations-HEADs steht zum Zeitpunkt dieses Eintrags noch aus.
 - **Kompatibilität:** Keine Änderung an SQLite, JSON, Spielständen, App-Version, Android-/Backend-API oder Regeln, keine Migration. Der Schutz sichert einen beobachtbaren Fremdaustausch; ein vollständig atomares Compare-and-Swap über Dateipfade wird nicht behauptet.
+
+### 2026-11-17 – Unbestätigte Prüfschritte der Charaktererstellung filtern
+
+- **Problem:** Der lesende SRD-Charaktererstellungs-Audit mischt bestätigte Entscheidungen mit fehlenden, ungültigen und noch nicht automatisierten Nachweisen. Auf kleinen Android-Displays erschwert das die gezielte Durchsicht.
+- **Lösung:** Neuer Umschalter `Alle / Unbestätigt` mit aktueller Anzahl offener Prüfschritte. Alle sechs Statusarten außer `confirmed` bleiben in der Filteransicht sichtbar, ausdrücklich einschließlich `notAutomated`, `houseRule` und `notInSrd`. Bei leerer Ansicht wird keine vollständige SRD-Zertifizierung behauptet. Bestehende Details und TalkBack-Beschriftungen bleiben erhalten.
+- **Dateien:** `app/lib/ui/srd_creation_audit_dialog.dart`, neue `app/test/srd_creation_audit_filter_test.dart`.
+- **GitHub:** [PR #774](https://github.com/ManuEtt/Dnd/pull/774) (Draft), Branch `feat/chat-c/creation-audit-status-filter-20261117`, Codecommit `e54b2075114ba2c3d5a723d96dd343416e8b6a47`, Testcommit `c46747e2a67b3cd4ee079c01026894ffd2bdd754`.
+- **Prüfstand:** Fünf positive und negative Flutter-Widgettests hinzugefügt (320/360 dp, 200 % Schrift, simulierte Tastatur, sämtliche Statuswerte, leere Trefferliste, neuer Audit-Snapshot); **nicht ausgeführt**, weil die Ausführung und Integration einem anderen Entwicklungschat zugewiesen sind. Flutter-Format, Analyse, vollständige Tests, Android-Build und tatsächliches TalkBack bleiben dort abzunehmen.
+- **Kompatibilität:** Keine Änderung an Spielregeln, bestätigten Charakterwerten, JSON/SQLite, API, App-Version oder Berechtigungen; keine Migration oder automatische Integration.
