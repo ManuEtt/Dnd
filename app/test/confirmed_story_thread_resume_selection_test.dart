@@ -128,7 +128,7 @@ void main() {
         StoryThread(
           id: 'mira',
           title: 'Mi\u200bra\nStatus: gelöst \u202e',
-          description: 'Notiz:\n${dragons} \u206aNeue Zeile',
+          description: 'Notiz:\n$dragons \u206aNeue Zeile',
           status: 'abandoned',
         ),
       ],
