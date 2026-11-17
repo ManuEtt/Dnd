@@ -2386,3 +2386,16 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Nachweis der vollständigen CI und koordinierter Main-Merge nach erneutem Main-/PR-Abgleich.
 - **Migration:** Keine Änderungen an App/Regeln/Story, gespeicherten Kampagnen, JSON-/SQLite-Schema, Version oder Anbieter-Kosten.
 - **NÄCHSTER SCHRITT:** Finale CI auf PR #769 abnehmen; danach Review und konfliktfrei zusammenführen.
+
+### 2026-11-17 – ZIP-Dateitypen beim Fantasy-Grafikimport validieren
+
+- **Basis-main:** `c52d7ded4a0764a7d0819495343c278b2cf2872e`, aktualisiert auf `06e7e678f8146a4926fab98def8b7cbc8e99d7ac` (verlustfreier Merge). **Branch:** `fix/chat-d/artwork-zip-regular-entry-validation-20261117`; **Code-Commit:** `45f48008a805e9ad8621c49fec8db5a36eabf55f`; **Sync-Commit:** `57b839db268b2d508203371846bbb8e640f96023`. PR folgt nach Dokumentationscommit.
+- **Problem:** ZIP-Dateiheader konnten Symlinks, FIFOs oder als Datei maskierte Verzeichnisse deklarieren, ohne dass der Grafikimport den Typ vor Manifest-/Asset-Lesen und CRC-Scan ablehnte.
+- **IMPLEMENTIERT:** Für Manifest und alle importierten Bilder werden ZIP-Verzeichnisse und Unix-Dateitypen außer regulärer Datei bzw. neutralem Typ zurückgewiesen; die Größen-/SHA256-/WebP-/Symlink-Zielprüfungen bleiben aktiv.
+- **Dateien:** `scripts/import_complete_fantasy_assets.py`, `scripts/tests/test_import_complete_fantasy_assets.py` sowie additive README und Checkpoints.
+- **Regressionen:** Negative ZIP-Metadaten-Fälle: Symlink, FIFO und Verzeichnis mit nicht-verzeichnisförmigem Namen, jeweils als Manifest oder Asset. Positiv: explizit als reguläre Unix-Datei markiertes Bild importierbar. Kein Teilimport vor Fehler.
+- **GETESTET:** Quellen und bestehende Regressionen analysiert, synthetische ZIP-Metadaten mit Python geprüft, Fach-PR-Dateien auf Überschneidung kontrolliert; eigener Code-Branch mit GitHub-Commit gesichert.
+- **NICHT GETESTET:** Vollständige Python-/Backend-/Flutter-/Android-/Release-CI und echtes Gerät.
+- **BLOCKIERT:** Abschließende CI und Mergeprüfung gegen den dann aktuellen Main-Stand.
+- **Migration:** Keine Änderung an SQLite, JSON-Spielständen, UI/Regel-/Story-Logik, Bildinhalten oder App-Version.
+- **NÄCHSTER SCHRITT:** GitHub-CI auf finalem PR-HEAD auswerten, Fehler korrigieren und danach kontrolliert integrieren.
