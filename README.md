@@ -2393,3 +2393,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-17 – Vollständige bestätigte Würfelfolgen in der Kampfchronik aufklappen
+
+- **Problem:** Bei mehr als acht bestätigten Würfeln zeigte die Chronik bislang nur acht Einzelwerte und einen Hinweis auf weitere Würfel. Die verbleibenden gespeicherten Werte waren über die Android-Oberfläche nicht lesbar.
+- **Lösung:** Neuer, mit TalkBack bedienbarer Aufklappknopf für maximal 100 bereits bestätigte Würfel. Kurzansicht, bestehende Ereignisansage und eine getrennte Volltextansage bleiben verfügbar. Bei Event-Snapshotwechsel wird die Aufklappauswahl zurückgesetzt. Noch unbestätigte Schadenswürfel bei offener Schildentscheidung bleiben auch in der Vollansicht verborgen.
+- **Fachdateien:** `app/lib/ui/fantasy_dice_breakdown.dart`, `app/lib/ui/fantasy_combat_chronicle.dart`, `app/test/fantasy_dice_expand_verified_faces_test.dart`.
+- **Nachweis:** [PR #763](https://github.com/ManuEtt/Dnd/pull/763), Branch `feat/chat-c/dice-face-expand-20261117`; Quell-/Testcommits `9fcdc0c01dbaa7320df021a233e9b7af538a444a`, `050333ee86a7c67c8150d562cbe0dc4d19d56b78`, `3c6ca3bd9efd6a2edd91af62f20ea05f7c2c1dc1`.
+- **Prüfungen:** Positive/negative Dart-/Widget-Regressionen ergänzt (12 Würfel, 320/360 dp, 200 % Text, simulierte IME, TalkBack-Semantik, fehlerhafte/leere bzw. zu große Würfelwürfe, offene Schildentscheidung, neuer Snapshot und Datenunveränderlichkeit), aber **nicht ausgeführt**. Testausführung und koordinierte Integration sind einem separaten Entwicklungschat übertragen; CI-Status des finalen Commits separat prüfen.
+- **Kompatibilität:** Rein lesende Flutter-UI, kein Regelzustand, keine JSON-/SQLite-/Backend-/Schnittstellen- oder Versionsänderung und keine Migration. Realgerät-/TalkBack-Abnahme offen.

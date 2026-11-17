@@ -3693,3 +3693,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+### 2026-11-17 – Geprüfte lange Würfelfolgen in der Android-Kampfchronik vollständig anzeigen
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`.
+- **Branch/PR:** `feat/chat-c/dice-face-expand-20261117`, [PR #763](https://github.com/ManuEtt/Dnd/pull/763) (Draft, ungeprüft, kein Merge).
+- **Fachcommits:** `9fcdc0c01dbaa7320df021a233e9b7af538a444a` (`fantasy_dice_breakdown.dart`), `050333ee86a7c67c8150d562cbe0dc4d19d56b78` (`fantasy_combat_chronicle.dart`), `3c6ca3bd9efd6a2edd91af62f20ea05f7c2c1dc1` (neue Testdatei).
+- **IMPLEMENTIERT:** Kurzansicht der ersten acht Würfel bleibt erhalten. Eine ausdrücklich gewählte Vollansicht bietet bis zu 100 validierte Einzelwerte; im TalkBack-Ereignisknoten bleibt die gekürzte Zusammenfassung, während Knopf und vollständige Werte getrennt zugänglich sind. Offene Schildentscheidungen bleiben gegen unbestätigte Würfel abgeschirmt. Neuer `GameEvent`-Snapshot setzt den UI-Entwurf zurück.
+- **Dateien:** `app/lib/ui/fantasy_dice_breakdown.dart`, `app/lib/ui/fantasy_combat_chronicle.dart`, `app/test/fantasy_dice_expand_verified_faces_test.dart`, append-only README und Checkpoints.
+- **GETESTET:** Kein automatischer Test in dieser Entwicklungssitzung; bestehende Code-/Testverträge, aktueller Main-Head, offene PRs und Git-Diff wurden über GitHub zur Aufgabenwahl überprüft.
+- **NICHT GETESTET:** Dart-Format/Analyse, Flutter-Widget- und Gesamttests, Python-/Backend-Checks, Android-APK-/native Tests, finaler PR-CI-Status, echtes TalkBack/Android-Gerät. Der separate Testchat führt die Prüfungen durch.
+- **BLOCKIERT:** Die Testergebnisse und koordinierte Dokumentations-/PR-Integration liegen ausdrücklich außerhalb dieses Entwicklungsschritts.
+- **Migration:** Keine; keine Regeländerung, kein Speicherformat-/Versionswechsel.
+- **NÄCHSTER SCHRITT:** Eigenständiges UI-Paket zur Begrenzung sehr langer Live-Kampfbezeichnungen auf kleinen Android-Displays nach erneuter Main-/PR-Prüfung auswählen.

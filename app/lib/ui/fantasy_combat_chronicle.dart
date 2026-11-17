@@ -93,58 +93,68 @@ class _ChronicleEntry extends StatelessWidget {
     final accent = attack ? FantasyPalette.danger : FantasyPalette.gold;
 
     return Semantics(
-      // Keep each persisted event as one independently reachable TalkBack node.
-      // Decorative icons and repeated die faces remain inside ExcludeSemantics.
+      // The event speaks its confirmed summary once. Only the optional
+      // full-dice control and expanded details have separate semantics.
       container: true,
+      explicitChildNodes: true,
       label:
           '$label, $when${details.isEmpty ? '' : ', ${details.join(', ')}'}${diceDetails.isEmpty ? '' : ', ${diceDetails.join(', ')}'}',
-      child: ExcludeSemantics(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-          decoration: BoxDecoration(
-            color: FantasyPalette.night.withValues(alpha: .64),
-            borderRadius: BorderRadius.circular(9),
-            border: Border.all(color: accent.withValues(alpha: .5), width: 1.3),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+        decoration: BoxDecoration(
+          color: FantasyPalette.night.withValues(alpha: .64),
+          borderRadius: BorderRadius.circular(9),
+          border: Border.all(color: accent.withValues(alpha: .5), width: 1.3),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ExcludeSemantics(
+              child: Icon(
                 attack
                     ? Icons.sports_martial_arts
                     : Icons.auto_stories_outlined,
                 color: accent,
                 size: 20,
               ),
-              const SizedBox(width: 9),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+            ),
+            const SizedBox(width: 9),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ExcludeSemantics(
+                    child: Text(
                       label,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text(
+                  ),
+                  ExcludeSemantics(
+                    child: Text(
                       when,
                       style: const TextStyle(
                         fontSize: 11,
                         color: FantasyPalette.muted,
                       ),
                     ),
-                    if (details.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(details.join(' · '), softWrap: true),
-                    ],
-                    if (diceDetails.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      FantasyDiceBreakdown(event: event),
-                    ],
+                  ),
+                  if (details.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    ExcludeSemantics(
+                      child: Text(details.join(' · '), softWrap: true),
+                    ),
                   ],
-                ),
+                  if (diceDetails.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    FantasyDiceBreakdown(
+                      event: event,
+                      parentAnnouncesSummary: true,
+                    ),
+                  ],
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
