@@ -2427,3 +2427,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Dateien:** `scripts/package_project.py` und `scripts/tests/test_package_project.py`; drei neue positive und negative Regressionstests für eigenen Erst-Rollback, fremde reguläre Ersetzung und fremden Symlink.
 - **Nachweis:** [PR #761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-/Testcommits `40581a1ed962973a8d42848805766f4688d0371b` und `6ff9408f410d735a6478e9bfe08496b2c7412497`. Die GitHub-CI des endgültigen Dokumentations-HEADs steht zum Zeitpunkt dieses Eintrags noch aus.
 - **Kompatibilität:** Keine Änderung an SQLite, JSON, Spielständen, App-Version, Android-/Backend-API oder Regeln, keine Migration. Der Schutz sichert einen beobachtbaren Fremdaustausch; ein vollständig atomares Compare-and-Swap über Dateipfade wird nicht behauptet.
+
+### 2026-11-17 – SRD-Inventarzahlen streng auf Ganzzahltypen prüfen
+
+- **Problem:** Python behandelt Wahrheitswerte wie Ganzzahlen. `true` und `false` sowie passende Fließkommazahlen konnten dadurch in SRD-Schema-Versionen, Klassenstufen und Zaubergraden als gültige numerische Werte erscheinen.
+- **Lösung:** Die Inventarprüfung akzeptiert jetzt ausschließlich echte Ganzzahlen (`type(...) is int`) und die bestehenden zulässigen Grenzen. Unveränderte Quellen und gültige Regelmetadaten bleiben kompatibel.
+- **Dateien:** `scripts/srd_coverage.py` und `scripts/tests/test_srd_requirements_matrix.py`. Drei neue Regressionstestmethoden mit positiven und negativen Grenzfällen.
+- **Nachweis:** [PR #769](https://github.com/ManuEtt/Dnd/pull/769), Code-Commit `9018c85567fd529c50c7445444a540809bc6902d`. CI für den finalen Dokumentations-HEAD steht zum Zeitpunkt dieses Nachtrags noch aus.
+- **Kompatibilität:** Keine Änderungen an Android-App, Spiellogik, JSON-/SQLite-Spielständen, Backend-APIs oder App-Version. Keine Migration.
+- **Grenzen:** Typprüfung des SRD-Audit-Inventars, keine Behauptung zusätzlicher implementierter SRD-Regelwirkung.
