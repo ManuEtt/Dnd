@@ -2373,3 +2373,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **NICHT GETESTET/BLOCKIERT:** Finale GitHub-CI auf dem Dokumentations-HEAD sowie Android-/Flutter-/Backend-/Python-Gesamtlauf, Realgerät und Upgrade; lokaler Checkout/Flutter-SDK nicht verfügbar. CI-Resultate gesondert nachtragen.
 - **Kompatibilität:** Keine SQLite-/JSON- oder Spielstandformatänderung, keine App-Version-/API-/Regeländerung, keine Datenmigration und keine Branchlöschungen. Kein CAS-atomarer Schutz gegen Austausch exakt zwischen letzter Identitätsprüfung und Rückschreiben.
 - **Nächster Schritt:** GitHub Actions auf dem finalen PR-#761-HEAD komplett abnehmen; nur bei grünem Lauf und konfliktfreiem Main-Stand für koordinierte Integration freigeben.
+
+---
+
+## 2026-11-17 – Story-/Regel-Direktiven auf derselben Zeile vollständig prüfen (PR #773)
+
+- **Ausgangs-main:** `c52d7ded4a0764a7d0819495343c278b2cf2872e`; **Branch:** `fix/chat-d/same-line-dart-import-guard-20261117`; **PR:** [#773](https://github.com/ManuEtt/Dnd/pull/773), zunächst Draft.
+- **Korrektur:** `scripts/check_domain_boundaries.py` erfasst `import`, `export` und `part` zusätzlich hinter einem Semikolon auf derselben Quellzeile. Vorher wurde nur der Import am physikalischen Zeilenanfang erkannt. Die Maskierung tatsächlicher Dart-Strings und Kommentare verhindert dabei Scheinfunde.
+- **Code-Commit:** `0d21d65f4eb74f0ec9fac799ea1c9e0e0e94a615`; **Test-Commit:** `7795dee39ab7911ac6f5df7b0eb67ee87904ea51`.
+- **Tests:** Fünf Regressionen unter `scripts/tests/test_domain_boundary_regressions.py` (gesperrter Story-Import; gesperrter Rule-Export; konfigurierte Export-Alternative; erlaubte Mehrfachdirektiven; ignorierte Strings und Kommentare).
+- **GETESTET:** Die Alt-RegEx-Lücke wurde mit einem isolierten Python-Beispiel reproduziert: Von zwei semikolongetrennten Direktiven wurde nur die erste gefunden. Änderungen und Tests sind auf dem eigenen Branch gesichert.
+- **NICHT GETESTET zum Zeitpunkt dieses Eintrags:** Kompletttests von Python, Backend, Flutter und Android auf dem endgültigen Dokumentations-HEAD, Realgerät und Upgrade. Maßgeblich ist die nachfolgende GitHub-PR-CI.
+- **Kompatibilität:** Nur Integrations-/Qualitätsprüfung; unveränderte Dart-Laufzeit, Spielstände, SQLite, JSON, Backend, App-Version, Regelberechnungen, keine Datenmigration.
+- **Konflikte:** Offene PRs nach Modul-/Testdateien geprüft; keiner greift auf `scripts/check_domain_boundaries.py` oder die zugehörigen Regressionsdatei zu. Gemeinsame README- und Checkpoint-Dateien nur verlustfrei, README ausschließlich append-only integrieren.
+- **Nächster Schritt:** Endgültige CI des PR abnehmen, gegebenenfalls Regressionen beheben und erst nach erneuter Prüfung von Main-HEAD und PR-Überschneidungen integrieren.
