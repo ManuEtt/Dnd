@@ -38,8 +38,7 @@ bool _validUtf16(String text) {
     if (code >= 0xd800 && code <= 0xdbff) {
       i++;
       if (i >= text.length) return false;
-      if (text.codeUnitAt(i) < 0xdc00 ||
-          text.codeUnitAt(i) > 0xdfff) {
+      if (text.codeUnitAt(i) < 0xdc00 || text.codeUnitAt(i) > 0xdfff) {
         return false;
       }
     } else if (code >= 0xdc00 && code <= 0xdfff) {
@@ -271,7 +270,7 @@ void main() {
     expect(jsonEncode(campaign.toJson()), before);
   });
 
-  test('JSON and SQLite restart retain old quest and read-only status', () async {
+  test('JSON and SQLite reopen preserve saved quest history', () async {
     final original = _campaign(revision: 0);
     final encoded = jsonEncode(original.toJson());
     final restoredJson = Campaign.fromJson(
