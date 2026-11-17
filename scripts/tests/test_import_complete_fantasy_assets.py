@@ -4,6 +4,7 @@ import importlib.util
 import json
 import os
 import pathlib
+import stat
 import sys
 import tempfile
 import unittest
@@ -306,6 +307,47 @@ class FantasyImportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "doppelte Dateinamen"):
                 MODULE.imported_assets(self.archive, self.root)
         self.assertFalse((self.root / MODULE.PREFIX).exists())
+
+    def _rewrite_archive_member_mode(self, selected: str, file_type: int) -> None:
+        with zipfile.ZipFile(self.archive) as archive:
+            entries = [
+                (entry.filename, archive.read(entry.filename))
+                for entry in archive.infolist()
+            ]
+        with zipfile.ZipFile(self.archive, "w") as archive:
+            for name, data in entries:
+                if name == selected:
+                    info = zipfile.ZipInfo(name)
+                    info.create_system = 3
+                    info.external_attr = (file_type | 0o644) << 16
+                    archive.writestr(info, data)
+                else:
+                    archive.writestr(name, data)
+
+    def test_source_zip_special_file_types_are_rejected_before_crc(self):
+        for selected in (MODULE.MANIFEST, MODULE.PREFIX + MODULE.ASSETS[0]):
+            for kind in (stat.S_IFLNK, stat.S_IFDIR, stat.S_IFIFO):
+                with self.subTest(selected=selected, kind=kind):
+                    self._make_archive()
+                    self._rewrite_archive_member_mode(selected, kind)
+                    with mock.patch.object(
+                        zipfile.ZipFile, "testzip",
+                        side_effect=AssertionError("CRC read before ZIP metadata check"),
+                    ):
+                        with self.assertRaisesRegex(
+                            ValueError, "kein Dateiinhalt|Groesse stimmt nicht"
+                        ):
+                            MODULE.imported_assets(self.archive, self.root)
+                    self.assertFalse((self.root / MODULE.PREFIX).exists())
+
+    def test_regular_unix_zip_member_remains_importable(self):
+        payload = self._make_archive()
+        self._rewrite_archive_member_mode(
+            MODULE.PREFIX + MODULE.ASSETS[0], stat.S_IFREG
+        )
+        images = MODULE.imported_assets(self.archive, self.root)
+        self.assertEqual(len(images), len(MODULE.ASSETS))
+        self.assertEqual(images[0][1], payload)
 
     def test_non_object_manifest_is_rejected_without_importing(self):
         with zipfile.ZipFile(self.archive, "w") as archive:
