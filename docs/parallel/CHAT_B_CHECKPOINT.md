@@ -1380,3 +1380,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-17 – Alte NPC-Beziehungsnotiz nach gespeicherter Kennung (PR #778)
+
+- **Ausgangs-main:** `06e7e678f8146a4926fab98def8b7cbc8e99d7ac`; **Branch:** `feat/chat-b/npc-note-history-20261117`; **PR:** [#778](https://github.com/ManuEtt/Dnd/pull/778) (Draft). Fach-/Testcode-Commit `dcd21d00b7ac3a935c52df79719fd01279cd7149`, finaler Dokumentations-HEAD im PR.
+- **Ausgangsproblem:** Bisherige begrenzte NPC-Auswahl lässt alte, bestätigte Beziehungsnotizen außerhalb jüngster Treffer nicht ausdrücklich per Notiz-ID wiederauffinden.
+- **IMPLEMENTIERT:** Exakt kanonische Notiz-ID, einzigartige Notiz über alle NPCs, bestätigte eindeutig vorhandene NPC-ID, revisions-/sitzungsgebundener historischer Rückblick mit Originalzeit und sicheren Ein-Zeilen-Texten. `requireCurrent` verwirft jede Änderung an rohen NPCs oder Notizen einschließlich fremder/abgeschnittener Quellen. Trennung von vergangener Notiz und aktuellem Status.
+- **Dateien:** Neue `app/lib/story/confirmed_npc_note_history_selection.dart`, neuer `app/test/confirmed_npc_note_history_selection_test.dart`, append-only README und Checkpoints. Sonst kein Bestandscode verändert.
+- **Akzeptanz- und Regressionstests:** Sehr alte Notiz, ID-Kollisionen, fehlende/duplizierte NPCs, ungültige Zeichen, Revisions-/Sessiongrenzen, Unicode/Bidi/Emoji, Stale-Snapshot anderer Notizen, JSON und SQLite-Reopen/Rekonstruktion, älteres JSON ohne Notizen.
+- **GETESTET:** Fachcode und Regressionen auf GitHub gespeichert; Quell-/PR-Überschneidungsprüfung. Keine Testausführung.
+- **NICHT GETESTET:** Flutter/Dart, Python/Backend, Android/APK, Gerät, produktive KI; vom separaten Test-Chat zu übernehmen.
+- **BLOCKIERT:** CI-Abnahme, Review, koordiniertes Zusammenführen und gegebenenfalls konfliktfreie README-/Checkpoint-Konsolidierung.
+- **NOCH NICHT IMPLEMENTIERT:** Integration in die öffentliche `story_api.dart`/UI; diese Datei wird durch offenen PR #758 parallel geändert.
+- **Kompatibilität:** Keine Migration, keine neuen Schemas, keine Änderung bestätigter Regelzustände oder Kosten.
+- **NÄCHSTER SCHRITT:** Codeformatierung und Testabnahme auf finalem PR-HEAD durch den anderen Chat, erst nach Grün und Review koordinierte Integration.
