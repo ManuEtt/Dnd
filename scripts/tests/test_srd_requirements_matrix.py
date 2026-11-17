@@ -104,6 +104,52 @@ class SrdRequirementsMatrixTests(unittest.TestCase):
         self.assertTrue(validate_entities([], self.matrix))
         self.assertTrue(validate_entities(self.entities, []))
 
+    def test_schema_versions_require_actual_integer_one(self):
+        for invalid in (True, 1.0, "1"):
+            with self.subTest(value=invalid):
+                matrix = copy.deepcopy(self.matrix)
+                matrix["schema_version"] = invalid
+                self.assertTrue(any(
+                    "Unerwartetes Matrixschema" in error
+                    for error in validate_matrix(matrix, self.catalogue)
+                ))
+                entities = copy.deepcopy(self.entities)
+                entities["schema_version"] = invalid
+                self.assertTrue(any(
+                    "Unbekanntes Entity-Inventarschema" in error
+                    for error in validate_entities(entities, self.matrix)
+                ))
+
+    def test_class_level_rejects_bool_and_float_coercion(self):
+        for invalid in (True, False, 1.0, 20.0, 1.5):
+            with self.subTest(level=invalid):
+                matrix = copy.deepcopy(self.matrix)
+                feature = next(
+                    row for row in matrix["requirements"]
+                    if row["kind"] == "level_feature"
+                )
+                feature["class_level"] = invalid
+                errors = validate_matrix(matrix, self.catalogue)
+                self.assertTrue(any(
+                    "Klassenstufe muss 1–20 sein" in error for error in errors
+                ))
+        self.assertEqual(validate_matrix(self.matrix, self.catalogue), [])
+
+    def test_spell_level_rejects_bool_and_float_coercion(self):
+        for invalid in (True, False, 0.0, 9.0, 1.5):
+            with self.subTest(level=invalid):
+                entities = copy.deepcopy(self.entities)
+                spell = next(
+                    row for row in entities["entries"]
+                    if row["kind"] == "spell_definition"
+                )
+                spell["spell_level"] = invalid
+                errors = validate_entities(entities, self.matrix)
+                self.assertTrue(any(
+                    "Zauberstufe 0 bis 9 erforderlich" in error for error in errors
+                ))
+        self.assertEqual(validate_entities(self.entities, self.matrix), [])
+
     def test_false_complete_flag_is_rejected(self):
         changed = copy.deepcopy(self.matrix)
         changed["scope_complete"] = True

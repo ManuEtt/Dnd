@@ -34,7 +34,9 @@ def validate_matrix(matrix: dict, catalogue: dict) -> list[str]:
     errors: list[str] = []
     if not isinstance(matrix, dict) or not isinstance(catalogue, dict):
         return ["Anforderungsmatrix und Klassenkatalog müssen JSON-Objekte sein."]
-    if matrix.get("schema_version") != 1 or matrix.get("srd_version") != "5.2.1":
+    if (type(matrix.get("schema_version")) is not int
+            or matrix["schema_version"] != 1
+            or matrix.get("srd_version") != "5.2.1"):
         errors.append("Unerwartetes Matrixschema oder falsche SRD-Version.")
     rows = matrix.get("requirements")
     gaps = matrix.get("inventory_gaps")
@@ -63,7 +65,8 @@ def validate_matrix(matrix: dict, catalogue: dict) -> list[str]:
         if not isinstance(row.get("kind"), str):
             errors.append(f"{rid}: ungültiger Anforderungstyp.")
         if row.get("kind") == "level_feature":
-            if row.get("class_level") not in range(1, 21):
+            if (type(row.get("class_level")) is not int
+                    or not 1 <= row["class_level"] <= 20):
                 errors.append(f"{rid}: Klassenstufe muss 1–20 sein.")
             if row.get("rule_implemented") == "tested" and not row.get("tests"):
                 errors.append(f"{rid}: voll getestet ohne konkrete Testreferenz.")
@@ -126,7 +129,7 @@ def validate_entities(entities: dict, matrix: dict) -> list[str]:
     errors: list[str] = []
     if not isinstance(entities, dict) or not isinstance(matrix, dict):
         return ["Entity-Inventar und Anforderungsmatrix müssen JSON-Objekte sein."]
-    if entities.get("schema_version") != 1:
+    if type(entities.get("schema_version")) is not int or entities["schema_version"] != 1:
         errors.append("Unbekanntes Entity-Inventarschema.")
     rows = entities.get("entries")
     if not isinstance(rows, list):
@@ -167,7 +170,9 @@ def validate_entities(entities: dict, matrix: dict) -> list[str]:
             errors.append(f"{rid}: Quellen- oder Provenienzverweis fehlt.")
         if row.get("rule_implemented") == "tested" and not row.get("tests"):
             errors.append(f"{rid}: getestet ohne konkreten Testnachweis.")
-        if row.get("kind") == "spell_definition" and row.get("spell_level") not in range(10):
+        if (row.get("kind") == "spell_definition"
+                and (type(row.get("spell_level")) is not int
+                     or not 0 <= row["spell_level"] <= 9)):
             errors.append(f"{rid}: Zauberstufe 0 bis 9 erforderlich.")
     if entities.get("verified_against_official_pdf") is True and matrix.get("inventory_gaps"):
         errors.append("Entitätskatalog kann bei ungeprüften Quellenlücken nicht als offiziell verifiziert gelten.")
