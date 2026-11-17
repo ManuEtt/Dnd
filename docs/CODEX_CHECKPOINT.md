@@ -3706,3 +3706,14 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge von #754 oder fremden PRs; keine Branch-Löschung durch diesen Entwicklungszyklus. Kein Eingriff in Domäne, KI, SRD, Datenbank, JSON, Version oder reale Spielstände; **Migration:** keine.
 - **NÄCHSTER SCHRITT:** Python-Regressionen und vollständige Actions-CI auf finalem PR-HEAD #754 prüfen, bei Fehlern gezielt auf demselben Branch korrigieren und erst nach erneuter Main-/PR-Dateikonfliktprüfung eine Integration erwägen.
 
+
+### 2026-11-17 – Android-SDK-Wiederholungsverzögerung fail-closed validieren
+
+- **Ausgangs-main:** `fe220104f836e146275f1753d327290633b52326`; **Branch:** `fix/chat-d/android-sdk-retry-delay-bounds-20261117`; **PR:** [#765](https://github.com/ManuEtt/Dnd/pull/765) (Draft bis finaler CI); **Code-Commit:** `6dcfe983147f36dbb1ed516bb2b58665a35f3a64`.
+- **IMPLEMENTIERT:** Retry-Konfiguration verweigert 31+ Sekunden, führende Nullen, Vorzeichen, Dezimalbrüche und überlange Ziffernfolgen vor jeder SDK-Operation; gültig sind dezimale 0–30 Sekunden. Standard und bisherige Retry-/Cache-/NDK-Logik bleiben bestehen.
+- **Tests ergänzt:** Zwei Offline-Python-Unittests: ungültige Angaben rufen `sdkmanager` nicht auf und liefern Fehlerstatus; gültiger Oberwert 30 erzeugt mit gemocktem `sleep` nacheinander 30 und 60 Sekunden lineare Wartezeit.
+- **GETESTET:** Aktuellen GitHub-Main-Stand, offene Fach-PRs, vorhandenen CI-Installer und Regressionstests analysiert; separate Code-/Test-Commits veröffentlicht. Vollständig grüne GitHub Actions für den separat integrierten Vorgänger PR #754 (CI #43575982269), nicht als Nachweis dieses neuen Pakets.
+- **NICHT GETESTET:** Lokale gesamte Python-/Backend-/Flutter-/Android-Tests, abschließende GitHub-CI auf neuem PR-HEAD und echtes Android-Gerät.
+- **BLOCKIERT:** CI-Abnahme und erneuter Konflikt-/Main-Abgleich vor Integration. Keine Änderungen an parallelen PRs.
+- **Migration:** Keine; keine Änderung an Spielständen, JSON/SQLite, APIs, Regeln, App-Version oder SDK-Paketliste.
+- **NÄCHSTER SCHRITT:** Finalen CI-Lauf von #765 prüfen, Fehler auf demselben Branch beheben und erst bei vollständig grüner CI und Konfliktfreiheit integrieren.
