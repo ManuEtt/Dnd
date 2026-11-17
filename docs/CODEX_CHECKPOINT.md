@@ -3743,3 +3743,14 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **Prüfungen:** Code und Tests committed; automatischer Python-, Backend-, Flutter-, Android- und Release-Nachweis für den finalen Branch-HEAD bei Dokumentation noch offen. Kein lokaler SDK-/Realgeräte-Nachweis.
 - **Kompatibilität:** Keine Änderung an App, Regeln, SQLite, JSON, Speicherschema oder Version. Kein automatischer Merge und keine Branchlöschung. POSIX-Rename/Prüfung ist nicht atomar vergleichend.
 - **Koordination:** PR #757 für das Checkpoint-Tool ist eine getrennte Baustelle; der aktuelle Paket-Export-Pfad wird dort nicht verändert. Integration erst nach kompletter grüner CI und PR-Konfliktprüfung.
+
+### 2026-11-17 – Read-only Questauswahl aus gespeicherter Kampagne (PR #772)
+
+- **Ausgangs-main:** `c52d7ded4a0764a7d0819495343c278b2cf2872e`; **Branch:** `feat/chat-b/saved-quest-resume-20261117`; **PR:** [#772](https://github.com/ManuEtt/Dnd/pull/772) (Draft); letzter reiner Fach-/Test-Commit `4bfa464433fac0b8403b1d5f4beb5478115587f8`, Dokumentations-HEAD im PR.
+- **IMPLEMENTIERT:** `SavedQuestResumeSelector.readSelected` liest exakt einen eindeutig gespeicherten Questdatensatz inklusive Status `active/completed/failed`, gestattet auch historische Einträge und markiert fehlende regeltechnische Belohnungsautorität. Eingabegrenzen und zeilensichere Textausgabe, `requireCurrent` über alle ursprünglichen Questdaten bei gleicher Revision.
+- **Dateien:** Neues `app/lib/story/saved_quest_resume_selection.dart` und `app/test/saved_quest_resume_selection_test.dart`, README sowie beide Checkpoints nur append-only. Die öffentliche `story_api.dart` bleibt wegen parallelem PR #758 unangetastet.
+- **Regressionen implementiert, noch nicht ausgeführt:** Sieben Gruppen zu Status, historischen/ungültigen/doppelten IDs, Legacy-/Unicode-Zeichen, Gleichrevisionskonflikten und JSON-/SQLite-Reopen/Replay.
+- **GETESTET:** Nur aktuelle GitHub-Code-/Modell-/Branch- und offene PR-Pfadprüfung; neue automatisierte Tests nicht im Entwicklungs-Chat ausgeführt.
+- **NICHT GETESTET/BLOCKIERT:** Formatierung, `flutter analyze`, Flutter-Suite, Python-/Backend-Checks, APK, Realgerät und produktiver KI-Einsatz. CI-/Integrationsabnahme durch anderen Chat gemäß Nutzervorgabe; erst nach koordinierter Freigabe mergen.
+- **Migration:** Keine Schema-, JSON-, Daten-, Regel-, UI- oder Versionsänderung. Keine Event-/Belohnungs- oder Persistenzmutation.
+- **NÄCHSTER SCHRITT:** Den nächsten unabhängigen Storylese-/Gedächtnisbereich gegen Main- und PR-Dateipfade auf Überschneidungen prüfen; Übergabe von #772 an Test-/Integrations-Chat.
