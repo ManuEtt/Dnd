@@ -1192,3 +1192,17 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-17 – Lesender Filter für offene SRD-Charaktererstellungsschritte
+
+- **Ausgangs-Main-SHA:** `c52d7ded4a0764a7d0819495343c278b2cf2872e`.
+- **Eigener Branch:** `feat/chat-c/creation-audit-status-filter-20261117`; **Code-Commit:** `e54b2075114ba2c3d5a723d96dd343416e8b6a47`; **Test-Commit:** `c46747e2a67b3cd4ee079c01026894ffd2bdd754`; **PR:** [#774](https://github.com/ManuEtt/Dnd/pull/774), Draft.
+- **Problem:** Fehlende und ungültige Schritte der teilautomatischen Charaktererstellung waren zwischen bestätigten, nicht automatisierten und Hausregel-Einträgen nur durch Scrollen auffindbar.
+- **IMPLEMENTIERT:** Auswahl `Alle / Unbestätigt` im bestehenden `SrdCreationAuditDialog`; aktuelle Anzahl offen/nicht bestätigt. Alle Status außer `confirmed` bleiben sichtbar; ausdrücklich auch `notAutomated`, `houseRule`, `notInSrd`. Leerer Filter zeigt eine qualifizierte Meldung und keine Gesamt-SRD-Abnahme. Änderung ist rein lesende, lokale UI.
+- **Fachdateien:** `app/lib/ui/srd_creation_audit_dialog.dart` und `app/test/srd_creation_audit_filter_test.dart`. Zusätzlich ausschließlich additive Nachträge in `README.md`, `docs/CODEX_CHECKPOINT.md` und hier.
+- **Akzeptanzkriterien:** Standardliste zeigt alle Schritte in Originalreihenfolge; Filter zeigt alle und ausschließlich nicht bestätigten Statusarten; Anzahl stimmt; leerer Filter hat keine falsche SRD-Zusage; neue Steps-Snapshots werden frisch ausgelesen; Touch-/Screenreader-Bedienung bei 320/360 dp, 200 % Text und 220-dp-IME; keinerlei Speicherung oder Regelmutation.
+- **GETESTET:** Existierenden Quellcode, Domain-Status-Enum, aktuelle PR-Aufgaben und vorhandene Audit-Testverträge gelesen; Code und fünf neue Widgettestfälle auf eigenem GitHub-Branch commitet. **Keine** automatisierte Ausführung.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, gezielter/neuer Audit- und kompletter Flutter-Testlauf, Python-/Backend-Tests, Android-Build, TalkBack/Hardware; nach Benutzerauftrag übernimmt ein anderer Chat die vollständige Testausführung und koordinierte Integration.
+- **BLOCKIERT:** Kein bekannter funktionaler Fachdatei-PR-Konflikt; Review, Prüfungen und Main-Merge bleiben ausdrücklich extern. Gemeinsame Dokumentationsnachträge verlustfrei koordinieren.
+- **MIGRATION:** Keine, Schema/JSON/SQLite, Spielstände, Regelwerte, Controller, Version und Berechtigungen unverändert.
+- **NÄCHSTER SCHRITT:** Integrationschat nimmt PR #774 einschließlich der neuen UI-Regressionen und bestehenden `character_creation_audit_ui_test.dart` ab und integriert nur nach konfliktsicherer Prüfung.
