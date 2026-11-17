@@ -17,6 +17,7 @@ import stat
 import tempfile
 import unicodedata
 import zipfile
+from urllib.parse import urlsplit
 
 from package_project import WINDOWS_INVALID_CHARACTERS, WINDOWS_RESERVED_STEMS, create_archive
 
@@ -34,6 +35,40 @@ MAX_ALPHA_APK_ENTRIES = 20000
 MAX_ALPHA_APK_UNCOMPRESSED_BYTES = 1024 * 1024 * 1024
 MAX_ALPHA_APK_EXPANSION_RATIO = 1000
 MIN_ALPHA_APK_RATIO_BYTES = 1024 * 1024
+
+
+# Release notes are an audit artifact: untrusted caller-provided values must
+# never be able to introduce new Markdown lines, links, or invisible controls.
+# Normal CI uses a Git SHA and an HTTPS GitHub Actions URL. Keep harmless
+# local labels and alternative HTTPS CI hosts usable.
+RELEASE_COMMIT = re.compile(r'[A-Za-z0-9][A-Za-z0-9._/-]{0,127}\Z')
+RELEASE_RUN_URL = re.compile(
+    r"https://[A-Za-z0-9._~:/?#@!$&'()*+,;=%-]{1,2040}\Z"
+)
+
+
+def validate_release_provenance(commit: str, run_url: str) -> None:
+    """Reject metadata that can counterfeit the release notes or CI origin."""
+    if not isinstance(commit, str) or not RELEASE_COMMIT.fullmatch(commit):
+        raise ValueError('Ungültige Release-Commitkennung.')
+    if not isinstance(run_url, str):
+        raise ValueError('Ungültiger CI-Nachweis-Link.')
+    if not run_url:
+        return  # Existing local release mode has no CI run.
+    if not RELEASE_RUN_URL.fullmatch(run_url):
+        raise ValueError('Ungültiger CI-Nachweis-Link.')
+    try:
+        parsed = urlsplit(run_url)
+        port = parsed.port  # Reject malformed or out-of-range ports.
+        # URL userinfo can make an attacker-controlled host look like the
+        # GitHub host when a human reads the original URL.
+        valid = (parsed.scheme == 'https' and bool(parsed.hostname)
+                 and not parsed.username and not parsed.password
+                 and (port is None or port > 0))
+    except ValueError:
+        valid = False
+    if not valid:
+        raise ValueError('Ungültiger CI-Nachweis-Link.')
 
 
 def read_version(root: Path) -> tuple[str, str]:
@@ -284,6 +319,9 @@ def sha256(path: Path) -> str:
 
 def prepare_release(root: Path, output: Path, *, commit: str = 'lokal',
                     run_url: str = '', apk: Path | None = None) -> list[Path]:
+    # Check input before touching an APK, creating an output directory or
+    # publishing a versioned release.
+    validate_release_provenance(commit, run_url)
     root = root.resolve()
     output = output.resolve()
     if output == root or output.is_relative_to(root):

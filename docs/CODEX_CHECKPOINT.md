@@ -3717,3 +3717,17 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** CI-Abnahme und erneuter Konflikt-/Main-Abgleich vor Integration. Keine Änderungen an parallelen PRs.
 - **Migration:** Keine; keine Änderung an Spielständen, JSON/SQLite, APIs, Regeln, App-Version oder SDK-Paketliste.
 - **NÄCHSTER SCHRITT:** Finalen CI-Lauf von #765 prüfen, Fehler auf demselben Branch beheben und erst bei vollständig grüner CI und Konfliktfreiheit integrieren.
+
+---
+
+## 2026-11-17 – Versionierte Alpha-Release-Notizen gegen Provenienz-Injektion schützen
+
+- **Ausgangs-main:** `fe220104f836e146275f1753d327290633b52326`; **Branch:** `fix/chat-d/release-notes-provenance-20261117`; **PR:** [#766](https://github.com/ManuEtt/Dnd/pull/766); **Code-Korrektur:** `814afef6c9b68983494e3286a0ae0a376387b251`; **Tests zuletzt:** `468fb80fb51f87b86cbfd7e89631cd2e71324953`.
+- **Problem:** Frei wählbare CLI-Parameter `--commit` und `--run-url` erlaubten täuschende Zeilen, Markdown und unsichtbare Steuerzeichen in ReleaseNotes.md.
+- **Lösung:** Vor APK-Validierung und Ausgabeverzeichnis-Anlage Commit-Kennung und optionalen HTTPS-CI-Link auf sichere einzeilige druckbare Werte prüfen; gültige CI-Ports und lokale Quellkennungen weiterhin zulassen.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** Ein zusätzlicher Positivfall und drei Tests mit negativen Unterfällen bzw. Erhalt einer vorhandenen Release-Dateigruppe. Bereits existierende vollständige Alpha-Build-, Sicherungs- und Integritätstests unverändert.
+- **GETESTET:** Isolierter Python-Check der verwendeten Regex-/URL-Parser-Bedingungen; keine vollständigen neuen Repository-Tests vor Veröffentlichung des finalen Commitstandes behauptet.
+- **NICHT GETESTET:** Vollständige PR-CI inkl. Android-Debug-/3 ABI-/Alpha-Pakete, Realgerät, APK-Upgrade und echte CI-Link-Gültigkeit.
+- **Kompatibilität:** Kein Wechsel an App-Version, Dateiformat, SQLite, JSON, Spielständen, Backend, Regeln oder APIs; kein Datenmigrationsschritt.
+- **Nächster Schritt:** Vollständige GitHub-CI für die finale SHA abnehmen, erst danach koordinierte Integration ohne Verlust paralleler README-/Checkpoint-Änderungen.

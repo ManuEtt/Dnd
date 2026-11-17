@@ -2411,3 +2411,11 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #765](https://github.com/ManuEtt/Dnd/pull/765), Code-Commit `6dcfe983147f36dbb1ed516bb2b58665a35f3a64`; vollständige CI des abschließenden Dokumentations-HEADs steht bei diesem Nachtrag noch aus.
 - **Kompatibilität:** Unveränderter Standardwert 5 Sekunden, akzeptierter Testwert 0 Sekunden, kein Schema-/JSON-/SQLite-/Versionswechsel und keine Änderung an Android-App oder Spielständen.
 - **Grenzen:** Schutz der Build-Retry-Eingabe, keine Änderung am SDK-Download oder am Arbeitsablauf anderer PRs.
+
+### 2026-11-17 – Herkunftsangaben in Alpha-Releases gegen manipulierte Eingaben absichern
+
+- **Problem:** Der Quellstand und die CI-Lauf-Adresse wurden bisher ungeprüft in die versionierten Release-Notizen übernommen. Zeilenumbrüche, unsichtbare Steuerzeichen oder Markdown-Sonderzeichen konnten die Angaben verfälschen.
+- **Lösung:** Die Release-Erstellung validiert vor dem Lesen der APK und vor jeder Dateiausgabe sichere, einzeilige Commit-/Ref-Bezeichner und begrenzte HTTPS-CI-Links ohne Benutzerinfo oder manipulierte Formatierung. Gültige alternative HTTPS-CI-Hosts mit Port sowie der lokale Standardwert bleiben möglich; die Existenz oder der Erfolg eines verlinkten CI-Laufs wird nicht extern behauptet.
+- **Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`; neue positive und negative Regressionen für sichere Metadaten, ungültige Links, Markdown-/Bidi-/Zeilenumbruch-Manipulation und Erhalt bereits veröffentlichter Artefakte.
+- **Nachweis:** [PR #766](https://github.com/ManuEtt/Dnd/pull/766), Branch `fix/chat-d/release-notes-provenance-20261117`, Code-Korrekturcommit `814afef6c9b68983494e3286a0ae0a376387b251`, letzter Testcommit `468fb80fb51f87b86cbfd7e89631cd2e71324953`. Vollständige GitHub-Actions-CI für den endgültigen Dokumentationscommit zum Zeitpunkt dieses Eintrags noch offen.
+- **Kompatibilität:** Keine Änderung an Android-/Flutter-/Backend-Funktionen, Spielständen, SQLite, JSON, Regeln, Versionsnummer oder Datenmigration. Unsichere Release-Nachweisfelder werden nun abgewiesen statt veröffentlicht.
