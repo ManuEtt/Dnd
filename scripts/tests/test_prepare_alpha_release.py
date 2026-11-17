@@ -68,6 +68,16 @@ class AlphaReleaseTests(unittest.TestCase):
         self.assertIn('Debug-Testschlüssel',
                       (self.out / 'Wuerfelraunen_v0.5.4_24_ReleaseNotes.md').read_text())
 
+    def test_release_notes_accept_safe_custom_https_ci_origin(self):
+        ci_link = 'https://ci.example.invalid:8443/build/42?ref=v0.5.4'
+        paths = release.prepare_release(
+            self.root, self.out, commit='refs/tags/v0.5.4', run_url=ci_link,
+        )
+        notes = next(path for path in paths if path.name.endswith('_ReleaseNotes.md'))
+        text = notes.read_text(encoding='utf-8')
+        self.assertIn('- Quellstand: `refs/tags/v0.5.4`', text)
+        self.assertIn(f'- CI-Lauf: {ci_link}\n', text)
+
     def test_release_notes_reject_forged_commit_before_any_output(self):
         # The commit is displayed in Markdown code spans. A line break or
         # inline Markdown delimiter must not rewrite the stated provenance.
