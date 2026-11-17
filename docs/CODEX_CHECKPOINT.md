@@ -3743,3 +3743,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **Prüfungen:** Code und Tests committed; automatischer Python-, Backend-, Flutter-, Android- und Release-Nachweis für den finalen Branch-HEAD bei Dokumentation noch offen. Kein lokaler SDK-/Realgeräte-Nachweis.
 - **Kompatibilität:** Keine Änderung an App, Regeln, SQLite, JSON, Speicherschema oder Version. Kein automatischer Merge und keine Branchlöschung. POSIX-Rename/Prüfung ist nicht atomar vergleichend.
 - **Koordination:** PR #757 für das Checkpoint-Tool ist eine getrennte Baustelle; der aktuelle Paket-Export-Pfad wird dort nicht verändert. Integration erst nach kompletter grüner CI und PR-Konfliktprüfung.
+
+### 2026-11-17 – Filter für unbestätigte Charaktererstellungs-Prüfschritte
+
+- **Ausgangs-main:** `c52d7ded4a0764a7d0819495343c278b2cf2872e`; **PR:** [#774](https://github.com/ManuEtt/Dnd/pull/774) (Draft).
+- **Branch:** `feat/chat-c/creation-audit-status-filter-20261117`; **Code:** `e54b2075114ba2c3d5a723d96dd343416e8b6a47`; **Tests:** `c46747e2a67b3cd4ee079c01026894ffd2bdd754`.
+- **IMPLEMENTIERT:** Im ausschließlich lesenden `SrdCreationAuditDialog` lassen sich nun alle oder nur nicht bestätigte Prüfschritte ansehen. Der Zähler aktualisiert sich aus dem aktuellen `steps`-Snapshot; `notAutomated`, `houseRule` und `notInSrd` werden nie als bestätigt verschwiegen; bei null offenen Schritten keine vollständige SRD-Zertifizierung.
+- **Neue Widgettests:** Fünf Fälle in `app/test/srd_creation_audit_filter_test.dart`, u. a. 320/360 dp, 200 % Text, simulierte 220-dp-IME, Filterwechsel, Statusvollständigkeit, Leerlauf und erneutes Eltern-Snapshot.
+- **GETESTET:** Aktueller main-HEAD, bestehende Audit-Verträge und offene UI-PRs auf Überschneidung analysiert; Code und Widgettests auf GitHub-Branch veröffentlicht. Keine Testausführung.
+- **NICHT GETESTET:** Dart-Format, Flutter-/Widget-Tests, Analyse, Python, Backend, Android-Debug-/Release-APKs und echtes Android/TalkBack; diese Arbeit übernimmt der separate Test- und Integrationschat.
+- **BLOCKIERT:** Freigabe und Main-Integration sind bewusst ausgelagert; parallele README-/Checkpoint-Nachträge beim Zusammenführen verlustfrei erhalten.
+- **KOMPATIBILITÄT:** Keine Mutation der aktuellen oder persistierten Charakterwerte, keine Änderung von Regeln, SQLite-/JSON-Formaten, Schema, APIs oder App-Version; keine Migration.
+- **NÄCHSTER SCHRITT:** Separater Test-/Integrationschat prüft PR #774 mit gezieltem Audit-Widgettest, bestehender Editor-Regression, Dart-Format, Flutter-Analyse und gesamter Android-CI, bevor er eine Integration erwägt.
