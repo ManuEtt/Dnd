@@ -1380,3 +1380,16 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-17 – Gespeicherten Queststatus eindeutig als Historie wählen (PR #772)
+
+- **Ausgangs-main:** `c52d7ded4a0764a7d0819495343c278b2cf2872e`; **Branch:** `feat/chat-b/saved-quest-resume-20261117`; **PR:** [#772](https://github.com/ManuEtt/Dnd/pull/772) (Draft). Quell-/Test-Commit vor Dokumentation: `4bfa464433fac0b8403b1d5f4beb5478115587f8`; maßgeblichen Gesamt-HEAD im PR ermitteln.
+- **Ausgangsproblem:** Für historisch abgeschlossene, aktive oder gescheiterte Quests fehlt die gezielte, eindeutig ID-gebundene, read-only Wiederaufnahme unabhängig von ihrer Listenposition. Ein gespeicherter `completed`-Status ist kein Nachweis einer regeltechnisch gebuchten Belohnung.
+- **IMPLEMENTIERT:** Neuer `SavedQuestResumeSelector.readSelected` mit vollständig kanonischer Quest-ID, Eindeutigkeit, gültiger Sitzung/Revision, drei sicheren Statuslabels, Text-/Unicode-/Längenbegrenzung und ausdrücklicher Abgrenzung von EP/Gold/Inventar. `requireCurrent` schützt die vollständige rohe Questliste einschließlich Gleichrevisionsänderungen.
+- **Dateien:** `app/lib/story/saved_quest_resume_selection.dart`, `app/test/saved_quest_resume_selection_test.dart`, README und beide Checkpoints append-only.
+- **GETESTET:** Live-Main, offene PR-Überschneidungen, tatsächliche Modellverträge und vorhandene Speicher-/Story-Testmuster geprüft. **Keine neuen Laufzeittests vom Entwicklungs-Chat ausgeführt.**
+- **NICHT GETESTET:** Sieben neue Regressionstestgruppen nur versioniert; Dart-Format, Analyzer, Flutter-, Python-/Backend- und Android-Buildprüfung sowie reales Android-Gerät liegen beim anderen Test-/Integrations-Chat.
+- **BLOCKIERT:** Externe Testabnahme, zentrale API-/UI-Anbindung erst nach koordinierter Integration, gemeinsame README-/Checkpoint-Konfliktauflösung. Kein Merge oder Branch-Löschen.
+- **NOCH NICHT IMPLEMENTIERT:** Benutzeroberfläche zur Auswahl alter Quests; kein automatischer Questabschluss, keine Belohnungsbuchung, keine Schreiboperation.
+- **Kompatibilität/Migration:** SQLite/JSON unverändert, keine neue Spielstandversion, keine Änderungen an Regeln, Queststatus oder aktuellen Kampagnen.
+- **NÄCHSTER SCHRITT:** Unabhängigen historischen Story-Rückblick für bestätigte Fakten/Orte prüfen; zunächst freie Dateipfade und geänderte PRs verifizieren.
