@@ -3743,3 +3743,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **Prüfungen:** Code und Tests committed; automatischer Python-, Backend-, Flutter-, Android- und Release-Nachweis für den finalen Branch-HEAD bei Dokumentation noch offen. Kein lokaler SDK-/Realgeräte-Nachweis.
 - **Kompatibilität:** Keine Änderung an App, Regeln, SQLite, JSON, Speicherschema oder Version. Kein automatischer Merge und keine Branchlöschung. POSIX-Rename/Prüfung ist nicht atomar vergleichend.
 - **Koordination:** PR #757 für das Checkpoint-Tool ist eine getrennte Baustelle; der aktuelle Paket-Export-Pfad wird dort nicht verändert. Integration erst nach kompletter grüner CI und PR-Konfliktprüfung.
+
+---
+
+## 2026-11-17 – Semikolongetrennte Dart-Direktiven durch Modulgrenzen prüfen
+
+- **Ausgangs-main:** `c52d7ded4a0764a7d0819495343c278b2cf2872e`; **Branch:** `fix/chat-d/same-line-dart-import-guard-20261117`; **PR:** [#773](https://github.com/ManuEtt/Dnd/pull/773).
+- **Grund:** Die Importanalyse von `scripts/check_domain_boundaries.py` erkannte `import`/`export`/`part` ausschließlich am Zeilenanfang. Erlaubter und verbotener Import auf einer Zeile konnten deshalb die Dependency-Barrier umgehen.
+- **Umsetzung:** Direktiven-Regex auch an Semikolon-Position verankert; Maskierung für Zeichenketten und Kommentare bleibt aktiv. `scripts/tests/test_domain_boundary_regressions.py` erweitert um fünf positive/negative Regressionsprüfungen.
+- **Commits:** Code `0d21d65f4eb74f0ec9fac799ea1c9e0e0e94a615`; Tests `7795dee39ab7911ac6f5df7b0eb67ee87904ea51`.
+- **Getestet:** Vorheriger Parserfehler mit isoliertem Python-Minimalbeispiel reproduziert.
+- **Noch nicht getestet:** Vollständige Repo-CI nach finalem Commit (Python, Backend, Flutter, Android-Debug-/ABI-APK, Alpha-Pakete), reale Geräte und Bestands-Upgrades. Kein Erfolg ohne GitHub-Nachweis behauptet.
+- **Kompatibilität/Migration:** Keine Laufzeitänderungen, kein Zugriff auf Spielstände, SQLite oder JSON; keine Migration. Nur der CI-Architekturwächter wird strenger.
+- **Nächster Schritt:** Finale GitHub-Actions abnehmen, Konflikte erneut prüfen und erst dann regulär integrieren.

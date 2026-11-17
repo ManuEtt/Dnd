@@ -17,6 +17,55 @@ SPEC.loader.exec_module(boundary)
 
 
 class DirectiveRegressionTests(unittest.TestCase):
+    def test_same_line_story_import_cannot_hide_rule_dependency(self):
+        source = "import 'dart:convert'; import '../domain/game_engine.dart';\n"
+        problems = boundary.check_imports("app/lib/story/sample.dart", source)
+        self.assertTrue(
+            any("game_engine.dart" in item and "must not import" in item
+                for item in problems), problems
+        )
+
+    def test_same_line_domain_export_cannot_hide_story_dependency(self):
+        source = (
+            "import '../domain/models.dart'; "
+            "/* harmless */ export '../story/story_memory_engine.dart';\n"
+        )
+        problems = boundary.check_imports("app/lib/domain/rules.dart", source)
+        self.assertTrue(
+            any("story_memory_engine.dart" in item
+                for item in problems), problems
+        )
+
+    def test_same_line_conditional_export_inspects_alternative(self):
+        source = (
+            "import 'rules_config.dart'; export 'rules_config.dart' "
+            "if (dart.library.io) '../story/story_memory_engine.dart';\n"
+        )
+        problems = boundary.check_imports("app/lib/domain/rules.dart", source)
+        self.assertTrue(
+            any("story_memory_engine.dart" in item
+                for item in problems), problems
+        )
+
+    def test_multiple_allowed_same_line_story_directives_remain_valid(self):
+        source = (
+            "import 'dart:convert'; /* trivia */ "
+            "export '../domain/models.dart'; import 'story_memory_engine.dart';\n"
+        )
+        self.assertEqual(
+            boundary.check_imports("app/lib/story/sample.dart", source), []
+        )
+
+    def test_semicolon_and_fake_import_in_string_stay_ignored(self):
+        source = (
+            "import 'dart:convert';\n"
+            "const example = \"; import '../domain/game_engine.dart';\";\n"
+            "// ; export '../domain/game_engine.dart';\n"
+        )
+        self.assertEqual(
+            boundary.check_imports("app/lib/story/sample.dart", source), []
+        )
+
     def test_allowed_story_dependencies(self):
         source = (
             "import 'dart:convert';\n"

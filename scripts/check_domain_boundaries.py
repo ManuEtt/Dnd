@@ -20,8 +20,11 @@ ROOT = Path(__file__).resolve().parents[1]
 # Keep quoted URIs intact; only tolerate whitespace and Dart comments at the
 # grammar's token boundaries, never extract strings from arbitrary code.
 _TRIVIA = r"(?:\s|/\*[\s\S]*?\*/|//[^\n]*\n)*"
+# Dart directives may share a physical line (import 'a'; import 'b';).
+# Check both line starts and the position after a semicolon; string masking
+# below prevents a literal '; import ...' inside Dart text from becoming code.
 IMPORT = re.compile(
-    r"^[ \t]*(?P<kind>import|export|part(?:" + _TRIVIA + r"of)?)" + _TRIVIA
+    r"(?:^|;)[ \t]*(?P<kind>import|export|part(?:" + _TRIVIA + r"of)?)" + _TRIVIA
     + r"[rR]?['\"](?P<primary>[^'\"]+)['\"]"
     + r"(?P<conditional>(?:" + _TRIVIA
     + r"if" + _TRIVIA + r"\([^)]*\)" + _TRIVIA
