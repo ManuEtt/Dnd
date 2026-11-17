@@ -34,7 +34,7 @@ class ConfirmedStoryThreadResumeSelection {
     final result = [
       'Gespeicherter Handlungsstrang (ID: $threadId; '
           'Revision $revision): $title',
-      'Handlungsstatus: ${statusLabel}',
+      'Handlungsstatus: $statusLabel',
       'Gespeicherte Beschreibung: '
           '${description.isEmpty ? 'keine' : description}',
       'Kein bestätigter Questabschluss oder Belohnungsnachweis.',
