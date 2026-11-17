@@ -2436,3 +2436,11 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #769](https://github.com/ManuEtt/Dnd/pull/769), Code-Commit `9018c85567fd529c50c7445444a540809bc6902d`. CI für den finalen Dokumentations-HEAD steht zum Zeitpunkt dieses Nachtrags noch aus.
 - **Kompatibilität:** Keine Änderungen an Android-App, Spiellogik, JSON-/SQLite-Spielständen, Backend-APIs oder App-Version. Keine Migration.
 - **Grenzen:** Typprüfung des SRD-Audit-Inventars, keine Behauptung zusätzlicher implementierter SRD-Regelwirkung.
+
+### 2026-11-17 – Historische NPC-Beziehungsnotizen gezielt auswählen
+
+- **Problem:** Begrenzte NPC-Kontinuitätsrückblicke konnten eine frühere, inzwischen weit zurückliegende Notiz nicht gezielt anhand ihrer gespeicherten Notiz-ID darstellen.
+- **Funktion:** `ConfirmedNpcNoteHistorySelector.readSelected` liest eine eindeutig gespeicherte Beziehungnotiz per vollständiger ID und zeigt ihren historischen NPC-Bezug, damalige Beziehung und Datum zeilensicher sowie auf 1.000 UTF-16-Einheiten begrenzt. `requireCurrent` verwirft geänderte Notiz-/NPC-Quellen auch bei gleicher Revision.
+- **Sicherheit:** Kein aktueller Regel-, Quest- oder Beziehungsstatus wird aus früheren Aussagen abgeleitet. Ungültige/duplizierte Notiz-/NPC-IDs werden abgewiesen; keinerlei Spielstands- oder Ressourcenmutation.
+- **Nachweis:** [PR #778](https://github.com/ManuEtt/Dnd/pull/778) (Draft), Branch `feat/chat-b/npc-note-history-20261117`, Fach-/Testcommit `dcd21d00b7ac3a935c52df79719fd01279cd7149`. Positive und negative Dart-Regressionen sind versioniert, **nicht ausgeführt**; Prüfung und Integration separat beauftragt.
+- **Kompatibilität:** Bestehendes JSON-/SQLite-Schema und App-Version unverändert; keine Migration. Neue Story-Datei direkt importierbar; zentrale öffentliche API/UI-Anbindung nach koordinierter Integration.
