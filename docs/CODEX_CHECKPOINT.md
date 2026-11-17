@@ -3693,3 +3693,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+---
+
+## 2026-11-17 – Schutz vor fremden Dateien beim Rollback der Quellpaket-Ausgabe
+
+- **PR:** [#761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-Commit `40581a1ed962973a8d42848805766f4688d0371b`, Test-Commit `6ff9408f410d735a6478e9bfe08496b2c7412497`, Ausgangs-`main` `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`.
+- **Problem:** Ein fehlgeschlagener zweiter Dateiaustausch der ZIP-/SHA256-Publikation konnte die erste ZIP-Datei ungeprüft zurücksetzen. Ein fremder Dateiaustausch vor dem Rollback ging so verloren.
+- **Lösung:** Nur dann zurückrollen, wenn `lstat()` am ZIP-Ziel dieselbe reguläre Datei mit derselben Geräte-/Inode-Identität wie die eigene ursprünglich bereitgestellte Staging-ZIP bestätigt. Fremde Ersetzung/Symlinks unangetastet lassen.
+- **Dateien:** `scripts/package_project.py`, `scripts/tests/test_package_project.py` (drei neue positive/negative Regressionsfälle).
+- **Prüfungen:** Code und Tests committed; automatischer Python-, Backend-, Flutter-, Android- und Release-Nachweis für den finalen Branch-HEAD bei Dokumentation noch offen. Kein lokaler SDK-/Realgeräte-Nachweis.
+- **Kompatibilität:** Keine Änderung an App, Regeln, SQLite, JSON, Speicherschema oder Version. Kein automatischer Merge und keine Branchlöschung. POSIX-Rename/Prüfung ist nicht atomar vergleichend.
+- **Koordination:** PR #757 für das Checkpoint-Tool ist eine getrennte Baustelle; der aktuelle Paket-Export-Pfad wird dort nicht verändert. Integration erst nach kompletter grüner CI und PR-Konfliktprüfung.
