@@ -2344,3 +2344,16 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Abschließende CI-Abnahme und konfliktfreie Integration.
 - **Migration:** Keine; keine Änderung an Android-/Backend-Laufzeit oder gespeicherten Kampagnen, JSON/SQLite, App-Version oder SDK-Paketliste.
 - **NÄCHSTER SCHRITT:** Finalen PR #765 CI-HEAD prüfen und auftretende Fehler in eigenem Branch beheben; danach Mergefähigkeit gegen aktualisiertes main prüfen.
+
+### 2026-11-17 – SRD-Inventartypen strikt prüfen (PR #769)
+
+- **Main-Basis:** `e8ef44ffddc169942eae1ac9d526bd69fafcf517`; **Branch:** `fix/chat-d/srd-inventory-integer-types-20261117`; **PR:** [#769](https://github.com/ManuEtt/Dnd/pull/769); **Code-Commit:** `9018c85567fd529c50c7445444a540809bc6902d`.
+- **Problem:** `range`-/Ganzzahlvergleiche akzeptierten Bool- und ganzzahlige Float-Werte als validierte SRD-Klassenstufen oder Zaubergrade; Schema-Version `true` wurde als 1 behandelt.
+- **IMPLEMENTIERT:** Explizit echte `int`-Typen und vorgegebene Wertebereiche in `validate_matrix`/`validate_entities`. Keine Änderung an den Inventarregistern.
+- **Dateien:** `scripts/srd_coverage.py`, `scripts/tests/test_srd_requirements_matrix.py`, append-only README und zentrale/persönliche Checkpoints.
+- **Regressionen:** Negativtests für bool/float/falsche Schema-Versionen, Klassenstufen und Zaubergrade; Positivtests für gültige SRD-Inventare.
+- **GETESTET:** Hauptbranch, 54 weitere offene PRs und alle betroffenen Fachdateipfade verglichen; keine Überschneidung. Code und Tests auf eigenem Branch mit PR veröffentlicht.
+- **NICHT GETESTET:** Lokale gesamte Python-/Backend-/Flutter-/Android-Suite und endgültige GitHub-CI/Release-APKs; echte Geräteprüfung.
+- **BLOCKIERT:** Nachweis der vollständigen CI und koordinierter Main-Merge nach erneutem Main-/PR-Abgleich.
+- **Migration:** Keine Änderungen an App/Regeln/Story, gespeicherten Kampagnen, JSON-/SQLite-Schema, Version oder Anbieter-Kosten.
+- **NÄCHSTER SCHRITT:** Finale CI auf PR #769 abnehmen; danach Review und konfliktfrei zusammenführen.

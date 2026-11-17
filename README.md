@@ -2411,3 +2411,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #765](https://github.com/ManuEtt/Dnd/pull/765), Code-Commit `6dcfe983147f36dbb1ed516bb2b58665a35f3a64`; vollständige CI des abschließenden Dokumentations-HEADs steht bei diesem Nachtrag noch aus.
 - **Kompatibilität:** Unveränderter Standardwert 5 Sekunden, akzeptierter Testwert 0 Sekunden, kein Schema-/JSON-/SQLite-/Versionswechsel und keine Änderung an Android-App oder Spielständen.
 - **Grenzen:** Schutz der Build-Retry-Eingabe, keine Änderung am SDK-Download oder am Arbeitsablauf anderer PRs.
+
+### 2026-11-17 – SRD-Inventarzahlen streng auf Ganzzahltypen prüfen
+
+- **Problem:** Python behandelt Wahrheitswerte wie Ganzzahlen. `true` und `false` sowie passende Fließkommazahlen konnten dadurch in SRD-Schema-Versionen, Klassenstufen und Zaubergraden als gültige numerische Werte erscheinen.
+- **Lösung:** Die Inventarprüfung akzeptiert jetzt ausschließlich echte Ganzzahlen (`type(...) is int`) und die bestehenden zulässigen Grenzen. Unveränderte Quellen und gültige Regelmetadaten bleiben kompatibel.
+- **Dateien:** `scripts/srd_coverage.py` und `scripts/tests/test_srd_requirements_matrix.py`. Drei neue Regressionstestmethoden mit positiven und negativen Grenzfällen.
+- **Nachweis:** [PR #769](https://github.com/ManuEtt/Dnd/pull/769), Code-Commit `9018c85567fd529c50c7445444a540809bc6902d`. CI für den finalen Dokumentations-HEAD steht zum Zeitpunkt dieses Nachtrags noch aus.
+- **Kompatibilität:** Keine Änderungen an Android-App, Spiellogik, JSON-/SQLite-Spielständen, Backend-APIs oder App-Version. Keine Migration.
+- **Grenzen:** Typprüfung des SRD-Audit-Inventars, keine Behauptung zusätzlicher implementierter SRD-Regelwirkung.

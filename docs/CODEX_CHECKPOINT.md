@@ -3717,3 +3717,14 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** CI-Abnahme und erneuter Konflikt-/Main-Abgleich vor Integration. Keine Änderungen an parallelen PRs.
 - **Migration:** Keine; keine Änderung an Spielständen, JSON/SQLite, APIs, Regeln, App-Version oder SDK-Paketliste.
 - **NÄCHSTER SCHRITT:** Finalen CI-Lauf von #765 prüfen, Fehler auf demselben Branch beheben und erst bei vollständig grüner CI und Konfliktfreiheit integrieren.
+
+### 2026-11-17 – SRD-Audit: Bool- und Floatwerte in Ganzzahlfeldern ablehnen
+
+- **Ausgangs-main:** `e8ef44ffddc169942eae1ac9d526bd69fafcf517`; **Branch:** `fix/chat-d/srd-inventory-integer-types-20261117`; **PR:** [#769](https://github.com/ManuEtt/Dnd/pull/769) (Draft bis finaler CI); **Code-Commit:** `9018c85567fd529c50c7445444a540809bc6902d`.
+- **IMPLEMENTIERT:** Matrix- und Entity-Schema-Versionen müssen echte Ganzzahlen mit Wert 1 sein. Klassenstufen müssen tatsächliche Integers von 1 bis 20, Zaubergrade tatsächliche Integers von 0 bis 9 sein. Bool- und Float-Koerzierung wird abgewiesen.
+- **Regressionen:** Drei neue Python-Testmethoden prüfen bool/float/statt int bei Schema-Version, Klassenstufe und Zaubergrad; gültige Bestandsinventare bleiben akzeptiert.
+- **GETESTET:** Aktuellen Main-HEAD, alle offenen Pull-Request-Fachpfade, SRD-Audit-Validator und vorhandene Testmethoden geprüft. Keine Fachdateiüberschneidung; eigener Branch und PR erstellt.
+- **NICHT GETESTET:** Neue Python-Regressionen und vollständige Backend-/Flutter-/Android-/Release-CI auf finalem Dokumentations-HEAD; kein echtes Android-Gerät.
+- **BLOCKIERT:** Finale CI-Abnahme und Verlustfreiheit der gemeinsamen README-/Checkpoint-Nachträge bei Integration.
+- **Migration:** Keine. SRD-Zählungen, Quellenkatalog, JSON-/SQLite-Spielstände, App-Version und Regellaufzeit unverändert.
+- **NÄCHSTER SCHRITT:** Vollständige GitHub Actions für PR #769 auswerten, Fehler im selben Branch beheben, dann konfliktfreie Integration gegen den neuesten Main-Stand prüfen.
