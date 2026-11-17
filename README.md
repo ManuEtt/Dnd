@@ -2427,3 +2427,11 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Dateien:** `scripts/package_project.py` und `scripts/tests/test_package_project.py`; drei neue positive und negative Regressionstests für eigenen Erst-Rollback, fremde reguläre Ersetzung und fremden Symlink.
 - **Nachweis:** [PR #761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-/Testcommits `40581a1ed962973a8d42848805766f4688d0371b` und `6ff9408f410d735a6478e9bfe08496b2c7412497`. Die GitHub-CI des endgültigen Dokumentations-HEADs steht zum Zeitpunkt dieses Eintrags noch aus.
 - **Kompatibilität:** Keine Änderung an SQLite, JSON, Spielständen, App-Version, Android-/Backend-API oder Regeln, keine Migration. Der Schutz sichert einen beobachtbaren Fremdaustausch; ein vollständig atomares Compare-and-Swap über Dateipfade wird nicht behauptet.
+
+### 2026-11-17 – Abhängigkeitsgrenzen für mehrere Dart-Direktiven pro Zeile absichern
+
+- **Problem:** Die statische Story-/Regel-Importprüfung erkannte nur die erste Direktive je physikalischer Zeile. Hinter einem Semikolon konnte ein weiterer `import` oder `export` die Modulgrenzen umgehen.
+- **Lösung:** `scripts/check_domain_boundaries.py` prüft jetzt auch semikolongetrennte Direktiven auf derselben Zeile. Zeichenketten, Kommentare und erlaubte Abhängigkeiten bleiben ausgenommen.
+- **Regressionen:** Fünf Tests für verbotene Story-/Regel-Imports und Exports, konditionale Alternativen, gültige Mehrfachdirektiven sowie Kommentar- und String-Literale unter `scripts/tests/test_domain_boundary_regressions.py`.
+- **Nachweis:** [PR #773](https://github.com/ManuEtt/Dnd/pull/773); Branch `fix/chat-d/same-line-dart-import-guard-20261117`; Code-Commit `0d21d65f4eb74f0ec9fac799ea1c9e0e0e94a615`, Test-Commit `7795dee39ab7911ac6f5df7b0eb67ee87904ea51`. Die Alt-Lücke wurde isoliert reproduziert; vollständige PR-CI auf finalem Dokumentationsstand bei Erstellung dieses Eintrags noch offen.
+- **Kompatibilität:** Keine Änderungen an Spiellogik, Oberfläche, API, SQLite, JSON, vorhandenen Spielständen oder Versionen; keine Migration. Ausschließlich strengere CI-Prüfung der Architekturabhängigkeiten.
