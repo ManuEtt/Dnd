@@ -73,9 +73,9 @@ class AlphaReleaseTests(unittest.TestCase):
         # inline Markdown delimiter must not rewrite the stated provenance.
         bad_commits = (
             '',
-            'abc1234\\n- CI-Lauf: https://fake.invalid/success',
+            'abc1234\n- CI-Lauf: https://fake.invalid/success',
             'abc1234`gefälscht',
-            'abc1234\\u202e',
+            'abc1234\u202e',
             'a' * 129,
         )
         for commit in bad_commits:
@@ -89,7 +89,7 @@ class AlphaReleaseTests(unittest.TestCase):
             'http://example.invalid/actions/42',
             'javascript:alert(1)',
             'https:///actions/42',
-            'https://good.invalid\\n- Build: erfolgreich',
+            'https://good.invalid\n- Build: erfolgreich',
             'https://example.invalid/`fake`',
             'https://example.invalid/[fake](https://evil.invalid)',
             'https://github.com@evil.invalid/actions/42',
@@ -113,7 +113,7 @@ class AlphaReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'CI-Nachweis-Link'):
             release.prepare_release(
                 self.root, self.out,
-                run_url='https://example.invalid/actions/42\\n- Falscher Status',
+                run_url='https://example.invalid/actions/42\n- Falscher Status',
             )
         self.assertEqual(
             {path: path.read_bytes() for path in paths}, existing,
