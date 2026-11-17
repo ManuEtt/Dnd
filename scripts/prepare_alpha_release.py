@@ -59,11 +59,12 @@ def validate_release_provenance(commit: str, run_url: str) -> None:
         raise ValueError('Ungültiger CI-Nachweis-Link.')
     try:
         parsed = urlsplit(run_url)
+        port = parsed.port  # Reject malformed or out-of-range ports.
         # URL userinfo can make an attacker-controlled host look like the
         # GitHub host when a human reads the original URL.
         valid = (parsed.scheme == 'https' and bool(parsed.hostname)
                  and not parsed.username and not parsed.password
-                 and parsed.port is None)
+                 and (port is None or port > 0))
     except ValueError:
         valid = False
     if not valid:
