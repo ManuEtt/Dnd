@@ -2403,6 +2403,15 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Tests:** Vier simulierte positive und negative Python-Regressionen ergänzt, jedoch lokal mangels GitHub-Checkout/DNS nicht ausgeführt. GitHub-Actions auf dem endgültigen PR-HEAD und vollständige Produkt-Builds zum Dokumentationszeitpunkt offen. Die erfolgreiche [Main-CI #43448981760](https://github.com/ManuEtt/Dnd/actions/runs/43448981760) gilt ausschließlich für den Vorgängerstand.
 - **Kompatibilität:** Keine Änderung an SQLite, Spielständen, JSON, App-Version, Flutter, Backend oder Regelzustand; keine Migration. REST-Zeitfenster zwischen abschließendem GET und DELETE bleiben ohne atomaren GitHub-Compare-and-delete-Endpunkt als Grenze bestehen.
 
+### 2026-11-17 – Android-SDK-Retry-Konfiguration sicher begrenzen
+
+- **Problem:** Eine unbegrenzte bzw. oktalartig geschriebene Verzögerung für Android-SDK-Installationsversuche konnte die CI lange blockieren oder zu Bash-Arithmetikfehlern führen.
+- **Lösung:** Der Installationshelfer akzeptiert nur eindeutige Dezimalwerte von 0 bis 30 Sekunden und bricht bei ungültigen Angaben vor dem ersten SDK-Aufruf ab. Bei maximal fünf Versuchen sind höchstens 300 Sekunden Wiederholungsverzögerung vorgesehen.
+- **Dateien:** `scripts/install_android_sdk_packages.sh` und `scripts/tests/test_install_android_sdk_packages.py`. Zwei neue Regressionstestmethoden mit ungültigen Werten und gemocktem linearem Backoff.
+- **Nachweis:** [PR #765](https://github.com/ManuEtt/Dnd/pull/765), Code-Commit `6dcfe983147f36dbb1ed516bb2b58665a35f3a64`; vollständige CI des abschließenden Dokumentations-HEADs steht bei diesem Nachtrag noch aus.
+- **Kompatibilität:** Unveränderter Standardwert 5 Sekunden, akzeptierter Testwert 0 Sekunden, kein Schema-/JSON-/SQLite-/Versionswechsel und keine Änderung an Android-App oder Spielständen.
+- **Grenzen:** Schutz der Build-Retry-Eingabe, keine Änderung am SDK-Download oder am Arbeitsablauf anderer PRs.
+
 ### 2026-11-17 – Herkunftsangaben in Alpha-Releases gegen manipulierte Eingaben absichern
 
 - **Problem:** Der Quellstand und die CI-Lauf-Adresse wurden bisher ungeprüft in die versionierten Release-Notizen übernommen. Zeilenumbrüche, unsichtbare Steuerzeichen oder Markdown-Sonderzeichen konnten die Angaben verfälschen.

@@ -80,6 +80,94 @@ class AndroidSdkPackageRetryTests(unittest.TestCase):
                 cache.exists(),
             )
 
+    def test_unsafe_retry_delays_fail_before_sdkmanager(self) -> None:
+        # CI must not wait arbitrarily long or parse an octal-looking number.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            sdk = root / "sdk"
+            sdk.mkdir()
+            home = root / "home"
+            home.mkdir()
+            bin_dir = root / "bin"
+            bin_dir.mkdir()
+            calls = root / "called"
+            manager = bin_dir / "sdkmanager"
+            manager.write_text(
+                '#!/usr/bin/env bash\n'
+                'echo invoked > "$SDK_TEST_CALLED"\n'
+                'exit 1\n',
+                encoding="utf-8",
+            )
+            manager.chmod(0o755)
+            env = os.environ.copy()
+            env.update({
+                "PATH": f"{bin_dir}{os.pathsep}{env.get('PATH', '')}",
+                "ANDROID_SDK_ROOT": str(sdk),
+                "ANDROID_SDK_INSTALL_ATTEMPTS": "2",
+                "HOME": str(home),
+                "SDK_TEST_CALLED": str(calls),
+            })
+            env.pop("ANDROID_HOME", None)
+            for delay in ("08", "030", "31", "999999999999999999999",
+                          "-1", "1.5", "+5", "5 ", "1e2"):
+                with self.subTest(delay=delay):
+                    env["ANDROID_SDK_RETRY_DELAY_SECONDS"] = delay
+                    result = subprocess.run(
+                        ["bash", str(SCRIPT)], env=env, capture_output=True,
+                        text=True, check=False,
+                    )
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn("Invalid Android SDK retry configuration",
+                                  result.stderr)
+                    self.assertFalse(calls.exists())
+
+    def test_bounded_decimal_retry_delay_uses_linear_backoff(self) -> None:
+        # Fake sleep to verify the actual waits without delaying unit tests.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            sdk = root / "sdk"
+            sdk.mkdir()
+            bin_dir = root / "bin"
+            bin_dir.mkdir()
+            counter = root / "counter"
+            waits = root / "waits"
+            manager = bin_dir / "sdkmanager"
+            manager.write_text(
+                '#!/usr/bin/env bash\n'
+                'count=$(cat "$SDK_TEST_COUNTER" 2>/dev/null || echo 0)\n'
+                'count=$(( count + 1 ))\n'
+                'echo "$count" > "$SDK_TEST_COUNTER"\n'
+                '(( count >= 3 ))\n',
+                encoding="utf-8",
+            )
+            manager.chmod(0o755)
+            sleeper = bin_dir / "sleep"
+            sleeper.write_text(
+                '#!/usr/bin/env bash\n'
+                'echo "$1" >> "$SDK_TEST_WAITS"\n',
+                encoding="utf-8",
+            )
+            sleeper.chmod(0o755)
+            env = os.environ.copy()
+            env.update({
+                "PATH": f"{bin_dir}{os.pathsep}{env.get('PATH', '')}",
+                "ANDROID_SDK_ROOT": str(sdk),
+                "ANDROID_SDK_INSTALL_ATTEMPTS": "3",
+                "ANDROID_SDK_RETRY_DELAY_SECONDS": "30",
+                "HOME": str(root),
+                "SDK_TEST_COUNTER": str(counter),
+                "SDK_TEST_WAITS": str(waits),
+            })
+            env.pop("ANDROID_HOME", None)
+            result = subprocess.run(
+                ["bash", str(SCRIPT)], env=env, capture_output=True,
+                text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(counter.read_text(encoding="utf-8").strip(), "3")
+            self.assertEqual(waits.read_text(encoding="utf-8").splitlines(),
+                             ["30", "60"])
+
     def test_transient_failure_retries_same_packages_and_cleans_cache(self) -> None:
         result, attempts, packages, ndk_remains, cache_remains = self._run_mock(failures=1)
         self.assertEqual(result.returncode, 0, result.stderr)

@@ -2332,6 +2332,19 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Nächster konkreter Schritt:** Aktionen für #754 auf dem finalen SHA prüfen, fehlerhafte Tests auf demselben Branch korrigieren und konfliktfreie Integration anhand eines neuen Main-/PR-Abgleichs entscheiden.
 
 
+### 2026-11-17 – Android-SDK-Retry-Begrenzung (PR #765)
+
+- **Main-Basis:** `fe220104f836e146275f1753d327290633b52326`; **Branch:** `fix/chat-d/android-sdk-retry-delay-bounds-20261117`; **PR:** [#765](https://github.com/ManuEtt/Dnd/pull/765); **Code-Commit:** `6dcfe983147f36dbb1ed516bb2b58665a35f3a64`.
+- **Problem:** `ANDROID_SDK_RETRY_DELAY_SECONDS` akzeptierte unbegrenzt lange Ziffernfolgen und oktalartige Schreibweisen. Das kann die CI bei fehlgeschlagenen SDK-Downloads blockieren bzw. Shell-Arithmetik scheitern lassen.
+- **IMPLEMENTIERT:** Gültig sind dezimale Sekundenwerte 0–30; ungültige Werte werden mit Exit 2 vor dem SDK-Aufruf verworfen. Bei fünf Versuchen bleiben maximal 300 Sekunden kumulierter Backoff. Bestehender Standard 5 bleibt gleich.
+- **Dateien:** `scripts/install_android_sdk_packages.sh`, `scripts/tests/test_install_android_sdk_packages.py`, additive README und Checkpoints.
+- **Regressionen:** Neun ungültige Schreibweisen ohne einzigen `sdkmanager`-Aufruf; Positivfall mit 30 Sekunden und Mock-`sleep` verifiziert zwei Wartezeiten und einen dritten erfolgreichen Versuch. Bestehende Tests zu SDK-/NDK-/Cache-Verzeichnis und Symlinks werden weiter ausgeführt.
+- **GETESTET:** Code/PR-Trennung und GitHub-Main-HEAD analysiert; eigener Branch, Tests und PR veröffentlicht.
+- **NICHT GETESTET:** Vollständiger lokaler Python-/Backend-/Flutter-/Android-Testlauf und finaler GitHub-Actions-Lauf auf dem Dokumentations-HEAD, reales Android-Gerät.
+- **BLOCKIERT:** Abschließende CI-Abnahme und konfliktfreie Integration.
+- **Migration:** Keine; keine Änderung an Android-/Backend-Laufzeit oder gespeicherten Kampagnen, JSON/SQLite, App-Version oder SDK-Paketliste.
+- **NÄCHSTER SCHRITT:** Finalen PR #765 CI-HEAD prüfen und auftretende Fehler in eigenem Branch beheben; danach Mergefähigkeit gegen aktualisiertes main prüfen.
+
 ---
 
 ## 2026-11-17 – Release-Nachweise gegen gefälschte Metadaten absichern (PR #766)
