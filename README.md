@@ -2427,3 +2427,11 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Dateien:** `scripts/package_project.py` und `scripts/tests/test_package_project.py`; drei neue positive und negative Regressionstests für eigenen Erst-Rollback, fremde reguläre Ersetzung und fremden Symlink.
 - **Nachweis:** [PR #761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-/Testcommits `40581a1ed962973a8d42848805766f4688d0371b` und `6ff9408f410d735a6478e9bfe08496b2c7412497`. Die GitHub-CI des endgültigen Dokumentations-HEADs steht zum Zeitpunkt dieses Eintrags noch aus.
 - **Kompatibilität:** Keine Änderung an SQLite, JSON, Spielständen, App-Version, Android-/Backend-API oder Regeln, keine Migration. Der Schutz sichert einen beobachtbaren Fremdaustausch; ein vollständig atomares Compare-and-Swap über Dateipfade wird nicht behauptet.
+
+### 2026-11-17 – Gespeicherte Quest-Historie gezielt per ID lesen
+
+- **Funktion:** `SavedQuestResumeSelector.readSelected` liefert für eine eindeutig gespeicherte Quest einen schreibgeschützten historischen Rückblick mit Status `active`, `completed` oder `failed`, unabhängig von der Position in der gespeicherten Questliste.
+- **Schutz:** Exakte kanonische ID, Revisions-/Sitzungsabgleich und `requireCurrent` über alle gespeicherten Quests. Der zeilensichere Text umfasst maximal 900 UTF-16-Einheiten und grenzt Queststatus ausdrücklich von EP, Gold, Gegenständen und Belohnungen ab.
+- **Dateien:** `app/lib/story/saved_quest_resume_selection.dart` und `app/test/saved_quest_resume_selection_test.dart`; keine Änderungen an Modell-/Speicherschema, Regeln, App-Version oder UI.
+- **Nachweis:** [PR #772](https://github.com/ManuEtt/Dnd/pull/772) (Draft), Branch `feat/chat-b/saved-quest-resume-20261117`. Positive/negative Regressionen für Status, doppelte IDs, Unicode, stale Revisionen und JSON-/SQLite-Neustart sind geschrieben, aber **noch nicht von diesem Entwicklungs-Chat ausgeführt**. Test- und Integrationsabnahme erfolgt separat.
+- **Grenzen:** Nur read-only Story-Funktion; keine UI-Anbindung, Regelbuchung, Migration oder automatische Integration.
