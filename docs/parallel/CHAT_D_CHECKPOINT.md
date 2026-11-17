@@ -2318,6 +2318,48 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **NOCH NICHT IMPLEMENTIERT:** Keine Änderungen an Spielstandimporten, SQLite, UI, Regelengine, Story oder Android-Prozess; keine Migration.
 - **NÄCHSTER SCHRITT:** Finale CI für #736 auswerten und gegebenenfalls im eigenen Branch reparieren; danach abgestimmt integrieren.
 
+### 2026-11-14 – Schutz-/HEAD-Revalidierung beim erlaubten Branch-Aufräumen (PR #754)
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Arbeitsbranch:** `fix/chat-d/branch-retirement-revalidation-20261114`; **Code-/Testcommit:** `38a6d8a9eb440a6dfbc3fa6c13ea946cbe145389`; **PR:** [#754](https://github.com/ManuEtt/Dnd/pull/754) (Draft). Dokumentations-HEAD auf PR-Seite prüfen.
+- **Problem:** Die letzte Löschfreigabe verwendete nach dem abschließenden Merge-Vergleich den früheren Schutzstatus und HEAD der Branch-Abfrage. Dadurch blieben Änderungen zwischen den beiden API-Zugriffen unerkannt.
+- **IMPLEMENTIERT:** Nach der wiederholten Prüfung eines Zielbranches werden neu geschützte Branches schon im Dry-Run blockiert. Im `--execute`-Pfad werden nach Main- und Mergeprüfung der aktuelle Branch-HEAD und `protected` erneut geladen; nur unverändert ungeschützte, enthaltene Branches erreichen DELETE. Die bestehende feste Allowlist bleibt unverändert. Keine automatischen Löschungen durchgeführt.
+- **Geänderte Dateien:** `scripts/retire_merged_branches.py`, `scripts/tests/test_retire_merged_branches.py`, append-only `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Akzeptanztests ergänzt:** Positiv genau eine simulierte DELETE-Anfrage beim unveränderten, integrierten, ungeschützten Branch; negativ verspäteter neuer Schutz, neuer HEAD nach finalem Vergleich sowie neuer Schutz bereits beim Zwischencheck.
+- **GETESTET:** Aktueller GitHub-main, 41 andere offene PRs und Fachdateiüberschneidungen analysiert; Vorgänger-Main-CI [#43448981760](https://github.com/ManuEtt/Dnd/actions/runs/43448981760) war erfolgreich auf `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`, ist aber keine Abnahme des neuen Branches.
+- **NICHT GETESTET:** Neue Python-Tests nicht lokal ausgeführt (GitHub-Checkout scheitert an DNS), kompletter Python-/Backend-/Flutter-/Android-/Release-Workflow auf finalem PR-HEAD offen, kein Realgerät.
+- **BLOCKIERT:** Finale CI und sichere Docs-Integration; GitHub-API bietet kein atomisches bedingtes DELETE, ein Restzeitfenster verbleibt.
+- **NOCH NICHT IMPLEMENTIERT:** Keine tatsächlichen Branchlöschungen und keine PR-Merges; **Migration:** keine; App `0.8.52+102`, SQLite-/JSON-Spielstände, Regeln und UI unverändert.
+- **Nächster konkreter Schritt:** Aktionen für #754 auf dem finalen SHA prüfen, fehlerhafte Tests auf demselben Branch korrigieren und konfliktfreie Integration anhand eines neuen Main-/PR-Abgleichs entscheiden.
+
+
+### 2026-11-17 – Android-SDK-Retry-Begrenzung (PR #765)
+
+- **Main-Basis:** `fe220104f836e146275f1753d327290633b52326`; **Branch:** `fix/chat-d/android-sdk-retry-delay-bounds-20261117`; **PR:** [#765](https://github.com/ManuEtt/Dnd/pull/765); **Code-Commit:** `6dcfe983147f36dbb1ed516bb2b58665a35f3a64`.
+- **Problem:** `ANDROID_SDK_RETRY_DELAY_SECONDS` akzeptierte unbegrenzt lange Ziffernfolgen und oktalartige Schreibweisen. Das kann die CI bei fehlgeschlagenen SDK-Downloads blockieren bzw. Shell-Arithmetik scheitern lassen.
+- **IMPLEMENTIERT:** Gültig sind dezimale Sekundenwerte 0–30; ungültige Werte werden mit Exit 2 vor dem SDK-Aufruf verworfen. Bei fünf Versuchen bleiben maximal 300 Sekunden kumulierter Backoff. Bestehender Standard 5 bleibt gleich.
+- **Dateien:** `scripts/install_android_sdk_packages.sh`, `scripts/tests/test_install_android_sdk_packages.py`, additive README und Checkpoints.
+- **Regressionen:** Neun ungültige Schreibweisen ohne einzigen `sdkmanager`-Aufruf; Positivfall mit 30 Sekunden und Mock-`sleep` verifiziert zwei Wartezeiten und einen dritten erfolgreichen Versuch. Bestehende Tests zu SDK-/NDK-/Cache-Verzeichnis und Symlinks werden weiter ausgeführt.
+- **GETESTET:** Code/PR-Trennung und GitHub-Main-HEAD analysiert; eigener Branch, Tests und PR veröffentlicht.
+- **NICHT GETESTET:** Vollständiger lokaler Python-/Backend-/Flutter-/Android-Testlauf und finaler GitHub-Actions-Lauf auf dem Dokumentations-HEAD, reales Android-Gerät.
+- **BLOCKIERT:** Abschließende CI-Abnahme und konfliktfreie Integration.
+- **Migration:** Keine; keine Änderung an Android-/Backend-Laufzeit oder gespeicherten Kampagnen, JSON/SQLite, App-Version oder SDK-Paketliste.
+- **NÄCHSTER SCHRITT:** Finalen PR #765 CI-HEAD prüfen und auftretende Fehler in eigenem Branch beheben; danach Mergefähigkeit gegen aktualisiertes main prüfen.
+
+---
+
+## 2026-11-17 – Release-Nachweise gegen gefälschte Metadaten absichern (PR #766)
+
+- **Ausgangs-main:** `fe220104f836e146275f1753d327290633b52326` nach integriertem PR #754. Die offenen PRs wurden nach geänderten Dateien geprüft; keine Überschneidung mit dem Release-Notiz-Modul.
+- **Branch:** `fix/chat-d/release-notes-provenance-20261117`; **Code-/Testcommits:** `69a000b485277328e4ed66a83a7d9b1852acaf3a`, `14dca5c14653587fd2a5327807919d39421f78e9`, `5b0a3fb6d49421b35f6be04c8412f56db5b5679f4`, `9d8b2f4c65b465fc7a1ce08a7156ee30f5dd7b47`, `1b04ecb75df3277fe7bf1dc1f3a8ebafc7862376`, `468fb80fb51f87b86cbfd7e89631cd2e71324953`, `814afef6c9b68983494e3286a0ae0a376387b251`; **PR:** [#766](https://github.com/ManuEtt/Dnd/pull/766), Draft.
+- **Ausgangsproblem:** Ungeprüfte `commit`- und `run_url`-Argumente konnten in versionierten Release-Notizen neue Zeilen, täuschende CI-URLs, unsichtbare Formatierungszeichen oder Markdown-Elemente einschleusen.
+- **Implementiert:** `validate_release_provenance` sperrt mehrzeilige/zu lange/nicht druckbare Commit-Kennungen und akzeptiert nur begrenzte, einzeilige HTTPS-CI-URLs ohne Benutzerinfo/Passwort und mit gültigem optionalem Port. Prüfung erfolgt vor jeder Release-Dateiausgabe; `lokal`/leere CI-URL bleiben gültig.
+- **Tests:** `scripts/tests/test_prepare_alpha_release.py` erhält positive Probe für ein alternatives HTTPS-CI-System mit Port und drei negative/Bestandsintegritäts-Regressionsmethoden mit mehreren Unterfällen (Bidi, Newlines, Markdown, falsches Schema, Userinfo, kaputter Port und vorhandener unveränderter Release-Dateisatz). Existierende Release-/APK-Regressionen bleiben erhalten.
+- **GETESTET:** Python-Regex und URL-Parser anhand der relevanten sicheren und unsicheren Werte isoliert geprüft; Code/Testdateien auf GitHub gesichert. **Kein vollständiger Python-/Backend-/Flutter-/Android-Testlauf für dieses Paket lokal oder auf dem finalen HEAD nachgewiesen.**
+- **NICHT GETESTET:** PR-CI auf dem finalen README-/Checkpoint-Commit, reale Geräte, Upgrades, externe CI-URL-Verifikation.
+- **Kompatibilität:** Keine App-, SQLite-, JSON-, Spielstands-, Regel-, Backend- oder Versionsänderung, keine Migration. Nicht-konsistente Release-Metadaten werden künftig vor der Dateierstellung abgewiesen.
+- **Koordination:** PR #761 ist auf dem alten Main grün, benötigt nach dem Merge von PR #754 jedoch eine verlustfreie Dokumentations-Reintegration; nicht ungeprüft mergen. PR #766 berührt nicht dessen Quellpaketdateien.
+- **Nächster Schritt:** Abschließende CI zu PR #766 prüfen und eventuelle Regressionen im eigenen Branch beheben; anschließend koordinierten Merge unter Erhalt aller README-Nachträge planen.
+
 ---
 
 ## 2026-11-17 – Quellpaket-Rollback respektiert zwischenzeitlich fremde Dateien

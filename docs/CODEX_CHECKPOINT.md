@@ -3694,6 +3694,44 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
 
+### 2026-11-14 – Wartungsbranch-Löschung mit abschließender Schutz- und HEAD-Prüfung (PR #754)
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `fix/chat-d/branch-retirement-revalidation-20261114`; **Code-/Testcommit:** `38a6d8a9eb440a6dfbc3fa6c13ea946cbe145389`; **PR:** [#754](https://github.com/ManuEtt/Dnd/pull/754), Draft bis finaler CI.
+- **Produkt:** Würfelraunen – Der lebendige Spielleiter, `app/pubspec.yaml` unverändert `0.8.52+102`.
+- **IMPLEMENTIERT:** Das explizit freigegebene `scripts/retire_merged_branches.py` berücksichtigt bei der zweiten Branch-Abfrage einen inzwischen aktiven Schutzstatus. Vor tatsächlichem DELETE werden nach Main-/Merge-Abgleich der HEAD und Schutzstatus nochmals live aus der Branch-API gelesen. Keine automatische Löschung, keine Änderung der Allowlist oder `--execute`-Bedingung.
+- **Dateien:** `scripts/retire_merged_branches.py`, `scripts/tests/test_retire_merged_branches.py`; Dokumentationsnachtrag in `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** GitHub-main-HEAD, 41 andere offene PRs und deren betroffene Fachdateien kontrolliert; aktuelle Branchdateien sowie vorhandene Tests überprüft. Vorheriger vollständiger erfolgreicher Main-Lauf [#43448981760](https://github.com/ManuEtt/Dnd/actions/runs/43448981760) auf `e66e895175c72220aa4df56a8cbd3f449f7ccbd5` ist **kein** Nachweis für #754.
+- **NICHT GETESTET:** Vier neue Python-Regressionen (zulässiger Löschlauf; verspätete HEAD-Änderung; neuer Schutz nach erster Abfrage; neuer Schutz nach finalem Vergleich) sind committed, aber nicht lokal ausgeführt: Repository-Checkout wegen GitHub-DNS-Auflösung unmöglich. Finale PR-CI einschließlich Python-, Backend-, Flutter- und Android-Gates steht aus; keine Geräte-/APK-Abnahme.
+- **BLOCKIERT:** Vollständige CI-Abnahme und koordinierte Zusammenführung konkurrierender README-/zentraler Checkpoint-Nachträge. GitHub-REST bietet für diesen Ablauf kein atomisches Compare-and-delete; ein verbleibendes Zeitfenster zwischen letztem GET und DELETE ist nicht vollständig vermeidbar.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge von #754 oder fremden PRs; keine Branch-Löschung durch diesen Entwicklungszyklus. Kein Eingriff in Domäne, KI, SRD, Datenbank, JSON, Version oder reale Spielstände; **Migration:** keine.
+- **NÄCHSTER SCHRITT:** Python-Regressionen und vollständige Actions-CI auf finalem PR-HEAD #754 prüfen, bei Fehlern gezielt auf demselben Branch korrigieren und erst nach erneuter Main-/PR-Dateikonfliktprüfung eine Integration erwägen.
+
+
+### 2026-11-17 – Android-SDK-Wiederholungsverzögerung fail-closed validieren
+
+- **Ausgangs-main:** `fe220104f836e146275f1753d327290633b52326`; **Branch:** `fix/chat-d/android-sdk-retry-delay-bounds-20261117`; **PR:** [#765](https://github.com/ManuEtt/Dnd/pull/765) (Draft bis finaler CI); **Code-Commit:** `6dcfe983147f36dbb1ed516bb2b58665a35f3a64`.
+- **IMPLEMENTIERT:** Retry-Konfiguration verweigert 31+ Sekunden, führende Nullen, Vorzeichen, Dezimalbrüche und überlange Ziffernfolgen vor jeder SDK-Operation; gültig sind dezimale 0–30 Sekunden. Standard und bisherige Retry-/Cache-/NDK-Logik bleiben bestehen.
+- **Tests ergänzt:** Zwei Offline-Python-Unittests: ungültige Angaben rufen `sdkmanager` nicht auf und liefern Fehlerstatus; gültiger Oberwert 30 erzeugt mit gemocktem `sleep` nacheinander 30 und 60 Sekunden lineare Wartezeit.
+- **GETESTET:** Aktuellen GitHub-Main-Stand, offene Fach-PRs, vorhandenen CI-Installer und Regressionstests analysiert; separate Code-/Test-Commits veröffentlicht. Vollständig grüne GitHub Actions für den separat integrierten Vorgänger PR #754 (CI #43575982269), nicht als Nachweis dieses neuen Pakets.
+- **NICHT GETESTET:** Lokale gesamte Python-/Backend-/Flutter-/Android-Tests, abschließende GitHub-CI auf neuem PR-HEAD und echtes Android-Gerät.
+- **BLOCKIERT:** CI-Abnahme und erneuter Konflikt-/Main-Abgleich vor Integration. Keine Änderungen an parallelen PRs.
+- **Migration:** Keine; keine Änderung an Spielständen, JSON/SQLite, APIs, Regeln, App-Version oder SDK-Paketliste.
+- **NÄCHSTER SCHRITT:** Finalen CI-Lauf von #765 prüfen, Fehler auf demselben Branch beheben und erst bei vollständig grüner CI und Konfliktfreiheit integrieren.
+
+---
+
+## 2026-11-17 – Versionierte Alpha-Release-Notizen gegen Provenienz-Injektion schützen
+
+- **Ausgangs-main:** `fe220104f836e146275f1753d327290633b52326`; **Branch:** `fix/chat-d/release-notes-provenance-20261117`; **PR:** [#766](https://github.com/ManuEtt/Dnd/pull/766); **Code-Korrektur:** `814afef6c9b68983494e3286a0ae0a376387b251`; **Tests zuletzt:** `468fb80fb51f87b86cbfd7e89631cd2e71324953`.
+- **Problem:** Frei wählbare CLI-Parameter `--commit` und `--run-url` erlaubten täuschende Zeilen, Markdown und unsichtbare Steuerzeichen in ReleaseNotes.md.
+- **Lösung:** Vor APK-Validierung und Ausgabeverzeichnis-Anlage Commit-Kennung und optionalen HTTPS-CI-Link auf sichere einzeilige druckbare Werte prüfen; gültige CI-Ports und lokale Quellkennungen weiterhin zulassen.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** Ein zusätzlicher Positivfall und drei Tests mit negativen Unterfällen bzw. Erhalt einer vorhandenen Release-Dateigruppe. Bereits existierende vollständige Alpha-Build-, Sicherungs- und Integritätstests unverändert.
+- **GETESTET:** Isolierter Python-Check der verwendeten Regex-/URL-Parser-Bedingungen; keine vollständigen neuen Repository-Tests vor Veröffentlichung des finalen Commitstandes behauptet.
+- **NICHT GETESTET:** Vollständige PR-CI inkl. Android-Debug-/3 ABI-/Alpha-Pakete, Realgerät, APK-Upgrade und echte CI-Link-Gültigkeit.
+- **Kompatibilität:** Kein Wechsel an App-Version, Dateiformat, SQLite, JSON, Spielständen, Backend, Regeln oder APIs; kein Datenmigrationsschritt.
+- **Nächster Schritt:** Vollständige GitHub-CI für die finale SHA abnehmen, erst danach koordinierte Integration ohne Verlust paralleler README-/Checkpoint-Änderungen.
+
 ---
 
 ## 2026-11-17 – Schutz vor fremden Dateien beim Rollback der Quellpaket-Ausgabe

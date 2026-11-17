@@ -18,8 +18,10 @@ sdk_root="$resolved_sdk_root"
 
 attempts="${ANDROID_SDK_INSTALL_ATTEMPTS:-3}"
 retry_delay="${ANDROID_SDK_RETRY_DELAY_SECONDS:-5}"
-if [[ ! "$attempts" =~ ^[1-5]$ || ! "$retry_delay" =~ ^[0-9]+$ ]]; then
-  echo "::error::Invalid Android SDK retry configuration." >&2
+# Bound the total CI backoff and reject leading-zero octal-like input.
+# At five attempts, a 30-second base delay waits at most 300 seconds.
+if [[ ! "$attempts" =~ ^[1-5]$ || ! "$retry_delay" =~ ^(0|[1-9]|[12][0-9]|30)$ ]]; then
+  echo "::error::Invalid Android SDK retry configuration (delay must be 0..30 seconds in decimal)." >&2
   exit 2
 fi
 
