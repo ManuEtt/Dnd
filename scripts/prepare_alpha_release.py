@@ -43,7 +43,7 @@ MIN_ALPHA_APK_RATIO_BYTES = 1024 * 1024
 # local labels and alternative HTTPS CI hosts usable.
 RELEASE_COMMIT = re.compile(r'[A-Za-z0-9][A-Za-z0-9._/-]{0,127}\Z')
 RELEASE_RUN_URL = re.compile(
-    r"https://[A-Za-z0-9._~:/?#@!def read_version(root: Path) -> tuple[str, str]:'()*+,;=%-]{1,2040}\Z"
+    r"https://[A-Za-z0-9._~:/?#@!$&'()*+,;=%-]{1,2040}\Z"
 )
 
 
