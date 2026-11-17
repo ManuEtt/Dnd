@@ -3693,3 +3693,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+### 2026-11-17 – Historische Sitzungsrückblicke per gespeicherter ID lesen (PR #762)
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `feat/chat-b/explicit-session-recap-20261117`; **PR:** [#762](https://github.com/ManuEtt/Dnd/pull/762) (Draft); Quellcode-/Test-Commit `c52d0cbcca902936062450d98d6d0b94c26e0be2`. Finalen Dokumentations-HEAD im PR prüfen.
+- **IMPLEMENTIERT:** Neuer direkt importierbarer Story-Selektor für frühere gespeicherte `SessionRecap`-Objekte anhand einer vollständig kanonischen ID. Duplicate-/Legacy-/Revisions- und Sitzungsgrenzen, Historienkennzeichnung, Unicode-sichere 1.200-UTF-16-Projektion und vollständige gleichrevisionale `requireCurrent`-Prüfung.
+- **Dateien:** `app/lib/story/confirmed_session_recap_selection.dart`, `app/test/confirmed_session_recap_selection_test.dart`, additive README-/Checkpoint-Berichte. Kein konkurrierender Story-Fachpfad geändert.
+- **Regressionen implementiert:** Ältere statt neueste gespeicherte Rückblicke; unbekannte/manipulierte/doppelte IDs und unlesbare Inhalte; Unicode/Emoji/Zeilenfälschung; gleiche Revision mit versteckten Änderungen; JSON-/SQLite-Neustart und Replay.
+- **GETESTET:** Repository-Main, offene PR-Fachpfade und bestehende `SessionRecap`-/`Campaign`-Schnittstellen eingesehen. Keine automatisierten Tests vom Entwicklungsbereich ausgeführt.
+- **NICHT GETESTET:** Neu geschriebene Flutter-Tests, Dart-Format, Analyzer, Backend-/Python-Prüfungen, GitHub-Actions-Abnahme, Android-Build und Gerätetest; Testausführung laut Nutzer bei anderem Chat.
+- **BLOCKIERT:** Getrennte Test- und Integrationsabnahme; `story_api.dart`-Export erst nach Koordination mit offenem PR #758. Kein Merge.
+- **Kompatibilität:** Keine Migration, keine Schreibzugriffe, kein Regel-/Quest-Statuswechsel, keine Kosten, keine Versionsanhebung.
+- **NÄCHSTER SCHRITT:** PR #762 auf exaktem finalem HEAD durch Test-Chat prüfen, Fehler isoliert auf Branch korrigieren und die API-/UI-Anbindung sowie Dokumentationsnachträge verlustfrei koordinieren.
+

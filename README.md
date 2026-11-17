@@ -2393,3 +2393,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-17 – Frühere Sitzungsrückblicke gezielt lesen
+
+- **Problem:** Die normale Kampagnenwiederaufnahme zeigt nur den jüngsten gespeicherten Rückblick; ältere historische Einträge waren nicht gezielt anhand einer eindeutigen ID auswählbar.
+- **Lösung:** `ConfirmedSessionRecapSelector.readSelected` ermöglicht den rein lesenden Zugriff auf genau einen gespeicherten Sitzungsrückblick inklusive Zeitstempel, gesichertem ID-Bezug, Revisionsprüfung, zeilensicherer Darstellung und klarer Kennzeichnung als historischer Text. `requireCurrent` erkennt Änderungen der vollständigen Rohdaten selbst ohne Revisionswechsel.
+- **Nachweis:** [PR #762](https://github.com/ManuEtt/Dnd/pull/762) (Draft), Branch `feat/chat-b/explicit-session-recap-20261117`; Quelldateien `app/lib/story/confirmed_session_recap_selection.dart` und `app/test/confirmed_session_recap_selection_test.dart`. Tests sind nur implementiert, **nicht ausgeführt**; Testabnahme und Integration liegen beim separaten Entwicklungs-Chat.
+- **Kompatibilität:** Keine Änderung bestehender Regeln, Heldenwerte, JSON-/SQLite-Schemata, KI-Kosten oder Spielstände. Die öffentliche `story_api.dart` bleibt wegen des gleichzeitig offenen PR #758 unverändert; zentraler Export und UI-Anbindung sind getrennte Integrationsschritte.
+- **Grenzen:** Rückblickinhalt ist ausdrücklich keine Bestätigung eines aktuellen Quest-, Regel- oder Belohnungszustands. Keine reale Android-/Produktiv-KI-Prüfung.
+

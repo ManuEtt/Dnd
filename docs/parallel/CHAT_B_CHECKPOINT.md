@@ -1380,3 +1380,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-17 – Rückblick aus früherer Sitzung per ID wiederaufnehmen (PR #762)
+
+- **Basis-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `feat/chat-b/explicit-session-recap-20261117`; **PR:** [#762](https://github.com/ManuEtt/Dnd/pull/762) (Draft); Fach- und Test-HEAD `c52d0cbcca902936062450d98d6d0b94c26e0be2`; endgültigen Branch-HEAD im PR nachsehen.
+- **Ausgangsproblem:** Die vorhandene `CampaignResumeReader`-Projektion nimmt nur den letzten gespeicherten Rückblick auf und ist für die gezielte Auswahl früherer Sitzungen nicht geeignet.
+- **IMPLEMENTIERT:** `ConfirmedSessionRecapSelector.readSelected` gibt exakt einen gespeicherten historischen Rückblick über seine sichere ID wieder. Duplikate, unbekannte Kennungen und ungültige Revisions- und Sitzungsgrenzen werden abgelehnt. Titel und Zusammenfassung bleiben einzeilig, Unicode-/Emoji-konform, in 1.200 UTF-16-Einheiten begrenzt und von aktuellem Regel-/Questzustand getrennt. `requireCurrent` prüft vollständige Quell-Rückblicke auch ohne Revisionserhöhung.
+- **Dateien:** `app/lib/story/confirmed_session_recap_selection.dart`, `app/test/confirmed_session_recap_selection_test.dart`, nur additive README-, zentrale und persönliche Checkpoint-Einträge. Keine Änderung gemeinsam genutzter Modelle, Repository-, Regel- oder UI-Dateien.
+- **Regressionstests ergänzt, NICHT ausgeführt:** Sechs Testgruppen für frühere Rückblicke, korrumpierte/mehrdeutige Identitäten, defekte Inhalte, Unicode und Budget, veraltete Auswahl und JSON-/SQLite-Neustart mit Replay.
+- **GETESTET:** Tatsächliche Schnittstellen und offene Story-PR-Dateipfade untersucht; keine Testausführung beauftragt, automatisierte Tests nicht als bestanden bezeichnet.
+- **BLOCKIERT:** Testabnahme und koordinierte Integration bei anderem Chat; potenzieller API-Exportkonflikt mit PR #758 wird durch Nichtänderung von `story_api.dart` vermieden.
+- **Migration:** Nicht erforderlich; alte Spielstände bleiben unverändert und kein KI-Provider wird aufgerufen.
+- **NOCH NICHT IMPLEMENTIERT:** Zentrale Story-API- und UI-Anbindung nach PR #758 sowie produktiver End-to-End-Nachweis.
+- **NÄCHSTER SCHRITT:** Review der vollständigen Tests durch den Test-Chat und anschließend kontrollierter API-/UI-Anschluss ohne Verlust paralleler Fortschritte.
+
