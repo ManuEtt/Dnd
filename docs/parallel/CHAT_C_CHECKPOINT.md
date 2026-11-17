@@ -1192,3 +1192,17 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-17 – Bestätigte Würfelfolgen vollständig und zugänglich aufklappen
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `feat/chat-c/dice-face-expand-20261117`; **PR:** [#763](https://github.com/ManuEtt/Dnd/pull/763) (Draft, kein Merge).
+- **Fach-/Testcommits:** `9fcdc0c01dbaa7320df021a233e9b7af538a444a`, `050333ee86a7c67c8150d562cbe0dc4d19d56b78`, `3c6ca3bd9efd6a2edd91af62f20ea05f7c2c1dc1`. Finaler Dokumentations-HEAD gesondert über PR verifizieren.
+- **Problem:** Chronik kürzte jede bestätigte Würfelfolge ab neun Einzelwerten auf die ersten acht; die restlichen real gespeicherten Würfel waren nicht zugänglich.
+- **IMPLEMENTIERT:** Gekennzeichnetes, rein lokales Aufklappen aller verifizierten Einzelwürfel (bis 100); ausdruckbarer, eigenständiger TalkBack-Knoten für Volltext mit separat erreichbar bleibendem Schalter. Im Chronik-Ereignisknoten keine doppelten Texte; an nicht bestätigten Schadens-/Schildentscheidungen bleibt die Vorschau unverändert gesperrt. Entwurf bei geänderter Ereignisinstanz zurücksetzen.
+- **Fachdateien:** `app/lib/ui/fantasy_dice_breakdown.dart`, `app/lib/ui/fantasy_combat_chronicle.dart`, neue `app/test/fantasy_dice_expand_verified_faces_test.dart`. README und beide Checkpoints ausschließlich additiv.
+- **Regressionen als Code ergänzt:** Kompakte und vollständige zwölf Würfel; 320/360 dp, 200 % Schrift, 220-dp-IME und TalkBack; weniger als neun, ungültige sowie 101 Einzelwerte; Schildentscheidungen mit unbestätigten Schadens-, kritischen und Hinterhältige-Angriffswürfeln; Snapshotwechsel bei gleicher ID; JSON-Unveränderlichkeit. Positive und negative Fälle enthalten.
+- **GETESTET:** GitHub-Repository, Masterprompt, Architektur-/Testdokumente, vorhandene Widgettests, aktuelle PR-Titel und relevante UI-Quellen geprüft; Branch, die drei Fach-/Testcommits und Draft-PR erstellt. **Keine ausführende Testabnahme.**
+- **NICHT GETESTET:** Python, Backend, Dart-Format, Flutter analyze/test, Android-/APK-/native Build, CI des finalen PR-Headers, reales Android und TalkBack. Diese gesamte Testausführung und Integration übernimmt ausdrücklich ein anderer Chat.
+- **BLOCKIERT:** Nur durch noch ausstehende separate Prüf-/Integrationsabnahme. Gemeinsame README-/Checkpoint-Notizen anderer PRs bei Merge vollständig erhalten.
+- **Migration:** Keine, keine Veränderung von gespeicherten Kampagnen, Regelzustand, SQLite/JSON, Backend, Controller, App-Version oder Berechtigungen.
+- **NÄCHSTER SCHRITT:** Unabhängige kleine UI-Korrektur für lange Kampfteilnehmerbezeichnungen auf 320/360 dp auswählen, nachdem offene Fachdateipfade erneut abgeglichen wurden.
