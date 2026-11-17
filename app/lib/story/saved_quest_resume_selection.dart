@@ -53,7 +53,9 @@ class SavedQuestResumeSelection {
         campaign.sessionId != sessionId ||
         campaign.revision != revision ||
         _sourceStamp != SavedQuestResumeSelector._sourceStamp(campaign)) {
-      throw const FormatException('Gespeicherter Quest-Rückblick ist veraltet.');
+      throw const FormatException(
+        'Gespeicherter Quest-Rückblick ist veraltet.',
+      );
     }
   }
 }
