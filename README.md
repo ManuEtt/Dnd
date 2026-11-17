@@ -2393,3 +2393,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-14 – Branch-Löschprüfung unmittelbar vor Veröffentlichung absichern
+
+- **Problem:** Im allowlistbasierten Wartungsskript für bereits integrierte Branches wurde unmittelbar vor der Löschanfrage der Schutzstatus aus einer älteren Abfrage verwendet. Eine Änderung am Branch-HEAD nach dem letzten Vergleich blieb ebenfalls ungeprüft.
+- **Lösung:** Nach erneuter Prüfung des aktuellen Hauptbranches und Merge-Status wird der Zielbranch vor dem DELETE noch einmal geladen. Schutzstatus und unveränderter HEAD sind erforderlich; ein inzwischen geschützter Branch wird auch bei der vorherigen Wiederholungsprüfung abgewiesen. Die ausdrückliche `--execute`-Freigabe bleibt Pflicht.
+- **Dateien:** `scripts/retire_merged_branches.py`, `scripts/tests/test_retire_merged_branches.py`.
+- **Branch/PR:** [Sicherheitsprüfung beim Branch-Aufräumen, PR #754](https://github.com/ManuEtt/Dnd/pull/754); Code-/Teststand `38a6d8a9eb440a6dfbc3fa6c13ea946cbe145389`.
+- **Tests:** Vier simulierte positive und negative Python-Regressionen ergänzt, jedoch lokal mangels GitHub-Checkout/DNS nicht ausgeführt. GitHub-Actions auf dem endgültigen PR-HEAD und vollständige Produkt-Builds zum Dokumentationszeitpunkt offen. Die erfolgreiche [Main-CI #43448981760](https://github.com/ManuEtt/Dnd/actions/runs/43448981760) gilt ausschließlich für den Vorgängerstand.
+- **Kompatibilität:** Keine Änderung an SQLite, Spielständen, JSON, App-Version, Flutter, Backend oder Regelzustand; keine Migration. REST-Zeitfenster zwischen abschließendem GET und DELETE bleiben ohne atomaren GitHub-Compare-and-delete-Endpunkt als Grenze bestehen.

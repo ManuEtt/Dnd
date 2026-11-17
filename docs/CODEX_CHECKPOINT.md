@@ -3693,3 +3693,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Vollständige CI-Abnahme und danach gegebenenfalls koordinierte, verlustfreie Integration mit parallelen Dokumentations-Nachträgen.
 - **Migration:** Keine. Spielstand-/SQLite-/JSON-Exportformate und App-Version unverändert.
 - **NÄCHSTER SCHRITT:** GitHub-Actions-Lauf von PR #736 am finalen HEAD überprüfen, Fehler im selben Branch beheben und dann PR-Integration koordinieren.
+
+### 2026-11-14 – Wartungsbranch-Löschung mit abschließender Schutz- und HEAD-Prüfung (PR #754)
+
+- **Ausgangs-main:** `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`; **Branch:** `fix/chat-d/branch-retirement-revalidation-20261114`; **Code-/Testcommit:** `38a6d8a9eb440a6dfbc3fa6c13ea946cbe145389`; **PR:** [#754](https://github.com/ManuEtt/Dnd/pull/754), Draft bis finaler CI.
+- **Produkt:** Würfelraunen – Der lebendige Spielleiter, `app/pubspec.yaml` unverändert `0.8.52+102`.
+- **IMPLEMENTIERT:** Das explizit freigegebene `scripts/retire_merged_branches.py` berücksichtigt bei der zweiten Branch-Abfrage einen inzwischen aktiven Schutzstatus. Vor tatsächlichem DELETE werden nach Main-/Merge-Abgleich der HEAD und Schutzstatus nochmals live aus der Branch-API gelesen. Keine automatische Löschung, keine Änderung der Allowlist oder `--execute`-Bedingung.
+- **Dateien:** `scripts/retire_merged_branches.py`, `scripts/tests/test_retire_merged_branches.py`; Dokumentationsnachtrag in `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **GETESTET:** GitHub-main-HEAD, 41 andere offene PRs und deren betroffene Fachdateien kontrolliert; aktuelle Branchdateien sowie vorhandene Tests überprüft. Vorheriger vollständiger erfolgreicher Main-Lauf [#43448981760](https://github.com/ManuEtt/Dnd/actions/runs/43448981760) auf `e66e895175c72220aa4df56a8cbd3f449f7ccbd5` ist **kein** Nachweis für #754.
+- **NICHT GETESTET:** Vier neue Python-Regressionen (zulässiger Löschlauf; verspätete HEAD-Änderung; neuer Schutz nach erster Abfrage; neuer Schutz nach finalem Vergleich) sind committed, aber nicht lokal ausgeführt: Repository-Checkout wegen GitHub-DNS-Auflösung unmöglich. Finale PR-CI einschließlich Python-, Backend-, Flutter- und Android-Gates steht aus; keine Geräte-/APK-Abnahme.
+- **BLOCKIERT:** Vollständige CI-Abnahme und koordinierte Zusammenführung konkurrierender README-/zentraler Checkpoint-Nachträge. GitHub-REST bietet für diesen Ablauf kein atomisches Compare-and-delete; ein verbleibendes Zeitfenster zwischen letztem GET und DELETE ist nicht vollständig vermeidbar.
+- **NOCH NICHT IMPLEMENTIERT:** Kein Merge von #754 oder fremden PRs; keine Branch-Löschung durch diesen Entwicklungszyklus. Kein Eingriff in Domäne, KI, SRD, Datenbank, JSON, Version oder reale Spielstände; **Migration:** keine.
+- **NÄCHSTER SCHRITT:** Python-Regressionen und vollständige Actions-CI auf finalem PR-HEAD #754 prüfen, bei Fehlern gezielt auf demselben Branch korrigieren und erst nach erneuter Main-/PR-Dateikonfliktprüfung eine Integration erwägen.
+

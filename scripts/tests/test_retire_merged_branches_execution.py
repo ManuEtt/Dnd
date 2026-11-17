@@ -69,7 +69,8 @@ class RetireMergedBranchesExecutionTests(unittest.TestCase):
         counts, deleted, failed, output, _ = self.run_cleanup()
         self.assertFalse(failed)
         self.assertEqual(len(deleted), 1)
-        self.assertEqual(counts, {"main": 2, "branch": 3, "compare": 2})
+        # Initial, intermediate, final pre-delete and post-delete reads.
+        self.assertEqual(counts, {"main": 2, "branch": 4, "compare": 2})
         self.assertIn("gelöscht:", output)
 
     def test_main_changes_between_initial_check_and_delete(self):

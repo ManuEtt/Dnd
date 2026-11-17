@@ -105,20 +105,29 @@ def main():
         if current["commit"]["sha"] != actual_sha:
             failures.append(name + ": Branch-HEAD während Prüfung geändert")
             continue
+        if current.get("protected", True):
+            failures.append(name + ": Branch während Prüfung geschützt")
+            continue
         if "--execute" in sys.argv:
             # The initial main check is not enough for a long-running cleanup:
             # a changed main may invalidate the previous ancestor comparison.
             latest_main = call("GET", "branches/main", token)
             if not latest_main or latest_main.get("commit", {}).get("sha") != expected_main_sha:
                 raise SystemExit("main während der Branch-Prüfung verändert: Abbruch.")
-            # A branch can also become protected or diverge after the first
-            # comparison. Revalidate both immediately before the DELETE.
+            # The merge comparison and the earlier branch snapshot are not a
+            # deletion lease. Check the branch again after comparing: its HEAD
+            # and protection may have changed while GitHub handled requests.
             latest_compare = call("GET", "compare/main..." + path_name, token)
+            latest_branch = call("GET", "branches/" + path_name, token)
+            if (latest_branch is None
+                    or latest_branch.get("commit", {}).get("sha") != actual_sha):
+                failures.append(name + ": Branch-HEAD kurz vor Löschung geändert")
+                continue
             if not latest_compare or not eligible(
                 name,
-                actual_sha=current["commit"]["sha"],
+                actual_sha=latest_branch["commit"]["sha"],
                 ahead_by=latest_compare.get("ahead_by"),
-                protected=current.get("protected", True),
+                protected=latest_branch.get("protected", True),
                 is_merged=latest_compare.get("status") in ("behind", "identical"),
             ):
                 failures.append(name + ": kurz vor Löschung nicht mehr sicher integriert")
