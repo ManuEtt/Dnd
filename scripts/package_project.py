@@ -291,6 +291,11 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
             # second replacement fails, restore the previous ZIP as well.
             previous_zip = temporary / 'previous.zip'
             copy_previous_archive(output, previous_zip)
+            # The lock excludes cooperating exporters, not unrelated writers.
+            # Remember the inode of OUR staged archive before publishing. If an
+            # external writer swaps out that path while the checksum operation
+            # fails, rollback must neither delete nor overwrite their file.
+            published_identity = staged_zip.stat()
             published_zip = False
             try:
                 os.replace(staged_zip, output)
@@ -298,10 +303,17 @@ def create_archive(root: Path, output: Path, *, layout: str = 'folder') -> tuple
                 os.replace(staged_sha, checksum)
             except BaseException:
                 if published_zip:
-                    if previous_zip.is_file():
-                        os.replace(previous_zip, output)
-                    else:
-                        output.unlink(missing_ok=True)
+                    try:
+                        current = output.lstat()
+                    except FileNotFoundError:
+                        current = None
+                    if (current is not None and stat.S_ISREG(current.st_mode)
+                            and (current.st_dev, current.st_ino) ==
+                            (published_identity.st_dev, published_identity.st_ino)):
+                        if previous_zip.is_file():
+                            os.replace(previous_zip, output)
+                        else:
+                            output.unlink(missing_ok=True)
                 raise
         return len(paths), digest
 

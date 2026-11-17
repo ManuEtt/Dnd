@@ -3718,6 +3718,32 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **Migration:** Keine; keine Änderung an Spielständen, JSON/SQLite, APIs, Regeln, App-Version oder SDK-Paketliste.
 - **NÄCHSTER SCHRITT:** Finalen CI-Lauf von #765 prüfen, Fehler auf demselben Branch beheben und erst bei vollständig grüner CI und Konfliktfreiheit integrieren.
 
+---
+
+## 2026-11-17 – Versionierte Alpha-Release-Notizen gegen Provenienz-Injektion schützen
+
+- **Ausgangs-main:** `fe220104f836e146275f1753d327290633b52326`; **Branch:** `fix/chat-d/release-notes-provenance-20261117`; **PR:** [#766](https://github.com/ManuEtt/Dnd/pull/766); **Code-Korrektur:** `814afef6c9b68983494e3286a0ae0a376387b251`; **Tests zuletzt:** `468fb80fb51f87b86cbfd7e89631cd2e71324953`.
+- **Problem:** Frei wählbare CLI-Parameter `--commit` und `--run-url` erlaubten täuschende Zeilen, Markdown und unsichtbare Steuerzeichen in ReleaseNotes.md.
+- **Lösung:** Vor APK-Validierung und Ausgabeverzeichnis-Anlage Commit-Kennung und optionalen HTTPS-CI-Link auf sichere einzeilige druckbare Werte prüfen; gültige CI-Ports und lokale Quellkennungen weiterhin zulassen.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** Ein zusätzlicher Positivfall und drei Tests mit negativen Unterfällen bzw. Erhalt einer vorhandenen Release-Dateigruppe. Bereits existierende vollständige Alpha-Build-, Sicherungs- und Integritätstests unverändert.
+- **GETESTET:** Isolierter Python-Check der verwendeten Regex-/URL-Parser-Bedingungen; keine vollständigen neuen Repository-Tests vor Veröffentlichung des finalen Commitstandes behauptet.
+- **NICHT GETESTET:** Vollständige PR-CI inkl. Android-Debug-/3 ABI-/Alpha-Pakete, Realgerät, APK-Upgrade und echte CI-Link-Gültigkeit.
+- **Kompatibilität:** Kein Wechsel an App-Version, Dateiformat, SQLite, JSON, Spielständen, Backend, Regeln oder APIs; kein Datenmigrationsschritt.
+- **Nächster Schritt:** Vollständige GitHub-CI für die finale SHA abnehmen, erst danach koordinierte Integration ohne Verlust paralleler README-/Checkpoint-Änderungen.
+
+---
+
+## 2026-11-17 – Schutz vor fremden Dateien beim Rollback der Quellpaket-Ausgabe
+
+- **PR:** [#761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-Commit `40581a1ed962973a8d42848805766f4688d0371b`, Test-Commit `6ff9408f410d735a6478e9bfe08496b2c7412497`, Ausgangs-`main` `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`.
+- **Problem:** Ein fehlgeschlagener zweiter Dateiaustausch der ZIP-/SHA256-Publikation konnte die erste ZIP-Datei ungeprüft zurücksetzen. Ein fremder Dateiaustausch vor dem Rollback ging so verloren.
+- **Lösung:** Nur dann zurückrollen, wenn `lstat()` am ZIP-Ziel dieselbe reguläre Datei mit derselben Geräte-/Inode-Identität wie die eigene ursprünglich bereitgestellte Staging-ZIP bestätigt. Fremde Ersetzung/Symlinks unangetastet lassen.
+- **Dateien:** `scripts/package_project.py`, `scripts/tests/test_package_project.py` (drei neue positive/negative Regressionsfälle).
+- **Prüfungen:** Code und Tests committed; automatischer Python-, Backend-, Flutter-, Android- und Release-Nachweis für den finalen Branch-HEAD bei Dokumentation noch offen. Kein lokaler SDK-/Realgeräte-Nachweis.
+- **Kompatibilität:** Keine Änderung an App, Regeln, SQLite, JSON, Speicherschema oder Version. Kein automatischer Merge und keine Branchlöschung. POSIX-Rename/Prüfung ist nicht atomar vergleichend.
+- **Koordination:** PR #757 für das Checkpoint-Tool ist eine getrennte Baustelle; der aktuelle Paket-Export-Pfad wird dort nicht verändert. Integration erst nach kompletter grüner CI und PR-Konfliktprüfung.
+
 ### 2026-11-17 – SRD-Audit: Bool- und Floatwerte in Ganzzahlfeldern ablehnen
 
 - **Ausgangs-main:** `e8ef44ffddc169942eae1ac9d526bd69fafcf517`; **Branch:** `fix/chat-d/srd-inventory-integer-types-20261117`; **PR:** [#769](https://github.com/ManuEtt/Dnd/pull/769) (Draft bis finaler CI); **Code-Commit:** `9018c85567fd529c50c7445444a540809bc6902d`.
