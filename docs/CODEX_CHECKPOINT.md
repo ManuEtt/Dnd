@@ -3754,3 +3754,14 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Finale CI-Abnahme und Verlustfreiheit der gemeinsamen README-/Checkpoint-Nachträge bei Integration.
 - **Migration:** Keine. SRD-Zählungen, Quellenkatalog, JSON-/SQLite-Spielstände, App-Version und Regellaufzeit unverändert.
 - **NÄCHSTER SCHRITT:** Vollständige GitHub Actions für PR #769 auswerten, Fehler im selben Branch beheben, dann konfliktfreie Integration gegen den neuesten Main-Stand prüfen.
+
+### 2026-11-17 – Historische NPC-Beziehungsnotiz per ID wiederaufnehmen (PR #778)
+
+- **Ausgangs-main:** `06e7e678f8146a4926fab98def8b7cbc8e99d7ac`; **Branch:** `feat/chat-b/npc-note-history-20261117`; **PR:** [#778](https://github.com/ManuEtt/Dnd/pull/778) (Draft); Fach-/Test-HEAD `dcd21d00b7ac3a935c52df79719fd01279cd7149`, späterer Dokumentations-HEAD im PR.
+- **IMPLEMENTIERT:** Neuer lesender `ConfirmedNpcNoteHistorySelector.readSelected` mit eindeutiger Notiz- und NPC-ID, gültiger Session/Revision, historischem Zeithinweis und maximal 1.000 UTF-16-Zeichen; `requireCurrent` bindet die komplette rohe NPC-/Notizliste gegen verdeckte Änderungen. Keine Belohnungs-/Regel- oder Schreibberechtigung.
+- **Dateien:** `app/lib/story/confirmed_npc_note_history_selection.dart`, `app/test/confirmed_npc_note_history_selection_test.dart` sowie additive README und zwei Checkpoints.
+- **GETESTET:** Kein eigener Laufzeittest; nur Quellprüfung, aktuelle Main-/PR-Dateipfad- und Diff-Sichtung.
+- **NICHT GETESTET:** Neue Flutter-Unit-/SQLite-Regressionstests, Dart-Format, Analyzer, Backend/Python, Android und echtes Gerät.
+- **BLOCKIERT:** Von einem anderen Entwicklungs-Chat übernommene Testausführung, CI-Auswertung, Review und koordinierte Integration; keine direkte Änderung von `main`.
+- **Migration:** Keine; Spielstände, Datenmodelle, Schema, API und App-Version bleiben unverändert. `story_api.dart` wegen parallel offenem PR #758 nicht verändert.
+- **NÄCHSTER SCHRITT:** Formatierung, gezielte Tests und vollständige PR-Abnahme auf dem finalen Branch-HEAD durch Test-/Integrations-Chat; Fachüberschneidungen und append-only Dokumentation verlustfrei integrieren.
