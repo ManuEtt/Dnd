@@ -258,10 +258,7 @@ void main() {
         ),
       ],
     );
-    expect(
-      () => selected.requireCurrent(changed),
-      throwsFormatException,
-    );
+    expect(() => selected.requireCurrent(changed), throwsFormatException);
     expect(
       () => selected.requireCurrent(campaign.copyWith(revision: 5)),
       throwsFormatException,
