@@ -2393,3 +2393,11 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #736](https://github.com/ManuEtt/Dnd/pull/736), Code-Commit `c7d0f84f34d8845ab857b6e8609506ee2dd76413`. Neue CI auf dem finalen Dokumentations-HEAD steht noch aus; lokale Gesamttests wegen fehlendem GitHub-DNS/Checkout nicht ausgeführt.
 - **Kompatibilität:** Kein Wechsel von SQLite/JSON-Spielständen, API, Regeln oder App-Version; keine Datenmigration oder Änderungen an bestätigten Spielständen.
 - **Grenzen:** Ausschließlich Paket-Metadaten des Quelluploads werden streng geprüft; Build-/Geräteabnahme über die PR-CI.
+
+### 2026-11-17 – Rücknahme fehlerhafter Quellpaket-Ausgaben schützt fremde Dateien
+
+- **Problem:** Scheiterte die Prüfsummenveröffentlichung nach einem erfolgreichen ZIP-Dateiaustausch, konnte das Rollback eine in der Zwischenzeit fremd ersetzte ZIP-Datei ohne Identitätskontrolle überschreiben oder löschen.
+- **Lösung:** Die Paket-Erstellung merkt sich die Geräte-/Inode-Identität ihrer eigenen Staging-ZIP und rollt bei einem späteren Prüfsummenfehler nur zurück, wenn sich am Ziel noch exakt diese reguläre Datei befindet. Fremde Ersatzdateien und Symlinks bleiben unangetastet.
+- **Dateien:** `scripts/package_project.py` und `scripts/tests/test_package_project.py`; drei neue positive und negative Regressionstests für eigenen Erst-Rollback, fremde reguläre Ersetzung und fremden Symlink.
+- **Nachweis:** [PR #761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-/Testcommits `40581a1ed962973a8d42848805766f4688d0371b` und `6ff9408f410d735a6478e9bfe08496b2c7412497`. Die GitHub-CI des endgültigen Dokumentations-HEADs steht zum Zeitpunkt dieses Eintrags noch aus.
+- **Kompatibilität:** Keine Änderung an SQLite, JSON, Spielständen, App-Version, Android-/Backend-API oder Regeln, keine Migration. Der Schutz sichert einen beobachtbaren Fremdaustausch; ein vollständig atomares Compare-and-Swap über Dateipfade wird nicht behauptet.
