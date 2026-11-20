@@ -528,6 +528,20 @@ CREATE TABLE settings (
       throw const FormatException('Ungültige gespeicherte NPC-Auswahl.');
     }
     await _database.transaction((transaction) async {
+      // A pending action must refer to an actual saved campaign. The outbox
+      // intentionally has no foreign key because migration and deletion are
+      // coordinated in application code, so validate this inside the write
+      // transaction to avoid persisting orphan commands.
+      final campaigns = await transaction.query(
+        'campaigns',
+        columns: ['id'],
+        where: 'id = ?',
+        whereArgs: [campaignId],
+        limit: 1,
+      );
+      if (campaigns.isEmpty) {
+        throw StateError('Die Kampagne für diese Handlung existiert nicht mehr.');
+      }
       final existing = await transaction.query(
         'pending_player_actions',
         where: 'campaign_id = ? OR request_id = ?',
