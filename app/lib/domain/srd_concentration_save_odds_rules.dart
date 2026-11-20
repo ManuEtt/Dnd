@@ -52,8 +52,8 @@ class SrdConcentrationSaveOddsRules {
         final natural = advantage && !disadvantage
             ? (first > second ? first : second)
             : disadvantage && !advantage
-                ? (first < second ? first : second)
-                : first;
+            ? (first < second ? first : second)
+            : first;
         if (natural + constitutionSaveModifier >= dc) successes++;
         total++;
       }
