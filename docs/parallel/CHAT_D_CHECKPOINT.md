@@ -2399,3 +2399,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **BLOCKIERT:** Abschließende CI und Mergeprüfung gegen den dann aktuellen Main-Stand.
 - **Migration:** Keine Änderung an SQLite, JSON-Spielständen, UI/Regel-/Story-Logik, Bildinhalten oder App-Version.
 - **NÄCHSTER SCHRITT:** GitHub-CI auf finalem PR-HEAD auswerten, Fehler korrigieren und danach kontrolliert integrieren.
+
+---
+
+## 2026-11-20 – Gezielte Gradle-Netzwerk-Retries für Android-ABI-Builds (PR #785)
+
+- **Ausgangs-main:** `06e7e678f8146a4926fab98def8b7cbc8e99d7ac`; zwischenzeitlich im Branch konfliktfrei mit Main `764d59feb978eb9b676b98d06a334d931388d623` kombiniert (Integrationscommit `01a7f2f84252d52f3993e0c88990d1a4b4e0e9d7`).
+- **Branch:** `fix/chat-d/gradle-network-retry-20261120`; **PR:** [#785](https://github.com/ManuEtt/Dnd/pull/785), Draft. **Code-Commit:** `78eabc445ecdcf73872c09f98119b3ec387d5a80`; finaler Codefix `cbc4551e65a3d8426312ea7bec7ea1b7236c64f6`; **Test-Commit:** `a3ad14dbe659a2d5a2551c2599d2d327d534cf10`; **Workflow-Commit:** `84732a51c77e16ff3bc83bbde282fa5c519130ab`.
+- **Reproduzierbarer CI-Fehler:** Main-GitHub-Actions [#44056627641](https://github.com/ManuEtt/Dnd/actions/runs/44056627641), ausschließlich ARM64-Release-APK-Job: Maven Central HTTP 429 beim Download von `org.jetbrains.kotlin`-Artefakten; alle Qualitäts-/Debug-Jobs erfolgreich. Ein Flutter-internes Retry mit 100 ms konnte die externe Rate-Limitierung nicht überwinden. Vorheriger/anderer Main-Workflow [#44029198222](https://github.com/ManuEtt/Dnd/actions/runs/44029198222) war vollständig erfolgreich.
+- **Implementiert:** Neuer `scripts/retry_flutter_android_apk.sh` für `flutter build apk --release --target-platform ...` in allen drei Release-ABI-Jobs. Wiederholt nur explizite 429-/502-/503-/504-, DNS-, Download-/Timeout-/Reset-Fehler, niemals allgemeine Compile- oder Signing-Fehler. Default drei Versuche, validierte Grenze 1–4 Versuche, Verzögerung 0–30 s mit linearer Pause. Fehlgeschlagener Finalversuch liefert ursprünglichen Status; `tee` hält Log live sichtbar, Tempdatei wird aufgeräumt.
+- **Dateien:** `.github/workflows/android-build.yml`, `scripts/retry_flutter_android_apk.sh`, `scripts/tests/test_retry_flutter_android_apk.py`; gemeinsame Checkpoints und ausschließlich README-Anhang.
+- **GETESTET:** `python3 -m unittest discover -s scripts/tests -p 'test_retry_flutter_android_apk.py' -v` lokal: 7/7 erfolgreich, inklusive Positiv-Erfolg, echtem 429-Log, persistentem 429, 503/DNS/Timeout, Compilerfehler ohne Retry, irreführendem Testtext und unzulässigen Retry-Werten. `bash -n scripts/retry_flutter_android_apk.sh` ebenfalls erfolgreich.
+- **NICHT GETESTET:** Vollständige Python-, Backend-, Flutter-, Android- und Alpha-Paket-CI des finalen Dokumentationscommits; keine echte reproduzierbare Maven-429-Umgebung und keine reale Geräte-/Upgrade-Abnahme. Github-Actions-Status bei dieser Dokumentation noch offen; die ältere grüne Main-CI gilt nicht als Nachweis für diesen PR.
+- **Kompatibilität:** Keine Änderung von Kotlin-/Gradle-/Android-SDK-Version, APK-Namen, Signierung, Spielständen, SQLite, JSON, Backend, Regeln oder Datenmigration.
+- **Nächster Schritt:** Finale GitHub-CI von PR #785 auf exakt der finalen Commit-SHA abnehmen, eventuelle Fehler im selben Branch beheben und bei erneut verschobenem `main` alle append-only Dokumentationsnachträge konfliktfrei integrieren.
