@@ -25,6 +25,17 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
     super.dispose();
   }
 
+  void _resetFilters() {
+    // A catalog search is only local UI state. Clearing it must never
+    // select equipment or modify the character's saved inventory.
+    _searchController.clear();
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _query = '';
+      _category = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final items = SrdEquipmentCatalog.search(_query, category: _category);
@@ -88,6 +99,27 @@ class _EquipmentCatalogDialogState extends State<EquipmentCatalogDialog> {
                     onChanged: (selected) =>
                         setState(() => _category = selected),
                   ),
+                  if (_query.isNotEmpty || _category != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: SizedBox(
+                        width: compact ? double.infinity : null,
+                        child: Tooltip(
+                          message: 'Suchtext und Kategorie zurücksetzen',
+                          child: TextButton.icon(
+                            key: const ValueKey(
+                              'equipment-catalog-reset-filters',
+                            ),
+                            style: TextButton.styleFrom(
+                              minimumSize: const Size(48, 48),
+                            ),
+                            icon: const Icon(Icons.clear_all),
+                            label: const Text('Filter löschen'),
+                            onPressed: _resetFilters,
+                          ),
+                        ),
+                      ),
+                    ),
                   Text(
                     '${items.length} Treffer',
                     style: Theme.of(context).textTheme.bodySmall,
