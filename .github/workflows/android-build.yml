@@ -176,7 +176,7 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x android/gradlew
-          flutter build apk --release --target-platform "${{ matrix.target }}"
+          bash ../scripts/retry_flutter_android_apk.sh --release --target-platform "${{ matrix.target }}"
           mkdir -p build/alpha
           cp build/app/outputs/flutter-apk/app-release.apk "build/alpha/${{ matrix.filename }}"
           test -s "build/alpha/${{ matrix.filename }}"

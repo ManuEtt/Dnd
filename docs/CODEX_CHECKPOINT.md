@@ -3765,3 +3765,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** CI-Abnahme auf finalem HEAD und erneute GitHub-Konfliktprüfung vor Merge.
 - **Migration:** Keine; keine Änderung an JSON-/SQLite-Kampagnen, WebP-Dateinamen, App-Version, Story oder Regeln.
 - **NÄCHSTER SCHRITT:** Finalen PR-CI-Lauf prüfen; bei Fehlern im eigenen Branch korrigieren und erst bei vollständig grüner CI konfliktfrei integrieren.
+
+---
+
+## 2026-11-20 – Android-Release-APKs bei HTTP-429-Downloadfehler gezielt erneut bauen (PR #785)
+
+- **Problem/Nachweis:** Main-Run [#44056627641](https://github.com/ManuEtt/Dnd/actions/runs/44056627641) verlor nur den ARM64-Release-Build, weil Maven Central Kotlin-/Gradle-Abhängigkeiten mit HTTP 429 ablehnte. Python-, Backend-, Flutter-, Debug- und die übrigen ABI-Jobs waren erfolgreich; kein App-Compilerfehler.
+- **Ausgangs-main:** `06e7e678f8146a4926fab98def8b7cbc8e99d7ac`; aktualisiert mit Main `764d59feb978eb9b676b98d06a334d931388d623` via `01a7f2f84252d52f3993e0c88990d1a4b4e0e9d7`.
+- **Branch/PR:** `fix/chat-d/gradle-network-retry-20261120`, [PR #785](https://github.com/ManuEtt/Dnd/pull/785), Draft; Source-Codefix `cbc4551e65a3d8426312ea7bec7ea1b7236c64f6`, Tests `a3ad14dbe659a2d5a2551c2599d2d327d534cf10`, Workflow `84732a51c77e16ff3bc83bbde282fa5c519130ab`.
+- **Implementiert:** Bounded network-only retries für alle drei `flutter build apk --release --target-platform`-Jobs; keine Wiederholung bei Compilerfehlern und keine Unterdrückung des finalen Exit-Codes. Validierte Versuchs-/Delay-Grenzen und temporäre Logbereinigung.
+- **GETESTET:** 7 lokale Mock-Flutter-Python-Regressionen erfolgreich; `bash -n` erfolgreich. **NICHT GETESTET:** gesamte neue PR-CI auf finaler SHA, echte Maven-429-Wiederholung in GitHub, Realgerät/Upgrade.
+- **Kompatibilität:** Keine Spielstands-, SQLite-, JSON-, Signatur-, Gradle-, Kotlin-, Android-SDK- oder App-Versionsmigration.
+- **Nächster Schritt:** PR-CI einschließlich aller drei ABI-Builds und Release-Packaging abnehmen; bei verändertem Main README- und Checkpoint-Nachträge verlustfrei erhalten.

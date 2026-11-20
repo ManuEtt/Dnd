@@ -2445,3 +2445,11 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** Branch `fix/chat-d/artwork-zip-regular-entry-validation-20261117`; Code-Commit `45f48008a805e9ad8621c49fec8db5a36eabf55f`. Vollständiger GitHub-CI-Nachweis auf dem finalen Dokumentations-HEAD steht noch aus.
 - **Kompatibilität:** Keine Änderungen an Spielständen, SQLite, JSON-Exportformat, Flutter, Android oder der App-Version. Bestehende vollständige Grafik-ZIPs mit gewöhnlichen Dateien bleiben importierbar.
 - **Grenzen:** Prüft ZIP-Quellmetadaten, keine allgemeine WebP-Bilddekodierung und keine revisionsfreie Mehrdatei-Transaktion.
+
+### 2026-11-20 – Wiederholbare Android-Alpha-Builds bei temporären Maven-Ausfällen
+
+- **Problem:** Ein Android-ARM64-Release-Build scheiterte in [GitHub-Actions-Lauf #44056627641](https://github.com/ManuEtt/Dnd/actions/runs/44056627641) am externen Maven-HTTP-429-Limit, obwohl die Qualitäts- und Debug-Prüfungen bestanden hatten.
+- **Lösung:** Die drei Architektur-Builds verwenden nun `scripts/retry_flutter_android_apk.sh`; nur eindeutig als vorübergehend klassifizierte 429-/Gateway-/Transport- und Downloadfehler dürfen begrenzt wiederholt werden. Compiler-/Signierungsfehler brechen unverändert ab, die endgültige Build-Fehlerkennung bleibt erhalten, und Logausgaben bleiben sichtbar.
+- **Änderungen/Tests:** `.github/workflows/android-build.yml`, `scripts/retry_flutter_android_apk.sh`, `scripts/tests/test_retry_flutter_android_apk.py`. Sieben lokale positive/negative Offline-Regressionen und Bash-Syntaxprüfung bestanden; finaler GitHub-Workflow mit Android-Release/APKs bei Veröffentlichung dieses Eintrags noch nicht abgeschlossen.
+- **GitHub:** [PR #785](https://github.com/ManuEtt/Dnd/pull/785), `fix/chat-d/gradle-network-retry-20261120`; Skriptfix `cbc4551e65a3d8426312ea7bec7ea1b7236c64f6`, Tests `a3ad14dbe659a2d5a2551c2599d2d327d534cf10`, Workflow-Commit `84732a51c77e16ff3bc83bbde282fa5c519130ab`.
+- **Kompatibilität/Grenzen:** Keine Änderung an APK-Format, Version, Signatur, Spielständen, Datenbank, JSON, Backend oder Regeln; keine Migration. Reproduzierter Maven-429-Erfolg in echter CI und Gerätetest offen.
