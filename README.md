@@ -2436,3 +2436,11 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #769](https://github.com/ManuEtt/Dnd/pull/769), Code-Commit `9018c85567fd529c50c7445444a540809bc6902d`. CI für den finalen Dokumentations-HEAD steht zum Zeitpunkt dieses Nachtrags noch aus.
 - **Kompatibilität:** Keine Änderungen an Android-App, Spiellogik, JSON-/SQLite-Spielständen, Backend-APIs oder App-Version. Keine Migration.
 - **Grenzen:** Typprüfung des SRD-Audit-Inventars, keine Behauptung zusätzlicher implementierter SRD-Regelwirkung.
+
+### 2026-11-20 – Gespeicherte Sitzungsrückblicke seitenweise auffindbar machen
+
+- **Problem:** Der normale Kampagnenrückblick zeigt nur den jüngsten gespeicherten Sitzungsrückblick; auch mit einem gezielten Abruf per ID fehlt eine sichere Übersicht älterer auswählbarer Rückblicke.
+- **Funktion:** `ConfirmedSessionRecapCatalog.read` bietet eine seitenweise, deterministisch zeitlich geordnete Liste gespeicherter IDs, Titel und UTC-Zeitstempel; maximal vier Rückblicke pro Seite, ausschließlich historische Metadaten. Nicht eindeutige oder unsichere IDs bleiben unsichtbar, Titel werden zeilensicher und Unicode-schonend begrenzt. `requireCurrent` verwirft geänderte Quellen selbst bei unveränderter Revision.
+- **Trennung:** Keine KI-Erzählungen oder Zusammenfassungstexte werden als aktuelle Fakten ausgegeben, keine Quest-/Belohnungsfreigabe. Keine Datenmutation, SQLite-/JSON-Migration, Regel- oder App-Versionsänderung (weiterhin `0.8.52+102`).
+- **Nachweis:** [PR #781](https://github.com/ManuEtt/Dnd/pull/781) (Draft), Branch `feat/chat-b/session-recap-catalog-20261120`, Fach-/Testcommit `a5f78ecfb62ad06a4300ed6fdbec09e623e060dc`. Acht Regressionstestgruppen wurden hinzugefügt, aber **nicht ausgeführt**; Testausführung, CI-Abnahme und Integration übernimmt der koordinierende Entwicklungs-Chat.
+- **Grenzen:** Noch keine UI- oder gemeinsame `story_api.dart`-Anbindung, weil dort parallele PRs offen sind. Keine Aussage über einen erfolgreichen Build oder Merge.
