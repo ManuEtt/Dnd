@@ -47,6 +47,33 @@ class SrdSorcerousRestorationRules {
   static int maximumRecoveredPoints(HeroCharacter hero) =>
       sorcererClassLevel(hero) >= 5 ? sorcererClassLevel(hero) ~/ 2 : 0;
 
+  /// Read-only planning value for a future confirmed Short Rest.
+  ///
+  /// Returns null for inconsistent class/resource/HP snapshots, zero when
+  /// the feature is unavailable or already used, and otherwise the number
+  /// of expended Sorcery Points that could be restored. This does not
+  /// authorize or complete a rest and never spends the once-per-rest use.
+  static int? previewRecoverablePoints(HeroCharacter hero) {
+    final level = _sorcererClassLevel(hero);
+    if (level == null) return null;
+    if (level < 5) return 0;
+    if (hero.isDead ||
+        hero.hitPoints == null ||
+        hero.hitPoints! <= 0 ||
+        hero.maxHitPoints == null ||
+        hero.maxHitPoints! < hero.hitPoints!) {
+      return null;
+    }
+    final spent = hero.spentClassResources['sorceryPoints'] ?? 0;
+    final used = hero.spentClassResources[resourceKey] ?? 0;
+    if (spent < 0 || spent > level || used < 0 || used > 1) {
+      return null;
+    }
+    if (used != 0 || spent == 0) return 0;
+    final cap = level ~/ 2;
+    return spent < cap ? spent : cap;
+  }
+
   /// Pure rule result. A failed request never consumes the one-time charge.
   static SrdSorcerousRestorationResult restoreAfterCompletedShortRest(
     HeroCharacter hero,
