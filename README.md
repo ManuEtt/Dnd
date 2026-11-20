@@ -2436,3 +2436,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #769](https://github.com/ManuEtt/Dnd/pull/769), Code-Commit `9018c85567fd529c50c7445444a540809bc6902d`. CI für den finalen Dokumentations-HEAD steht zum Zeitpunkt dieses Nachtrags noch aus.
 - **Kompatibilität:** Keine Änderungen an Android-App, Spiellogik, JSON-/SQLite-Spielständen, Backend-APIs oder App-Version. Keine Migration.
 - **Grenzen:** Typprüfung des SRD-Audit-Inventars, keine Behauptung zusätzlicher implementierter SRD-Regelwirkung.
+
+### 2026-11-20 – Ausrüstungskatalog: Suchtext und Kategorie gemeinsam zurücksetzen (Chat C)
+
+- **Problem:** Nach der Kombination aus deutscher/englischer Katalogsuche und Kategorieauswahl mussten beide Filter einzeln entfernt werden. Besonders bei null Treffern und eingeblendeter Tastatur erschwert das einen neuen Suchversuch.
+- **IMPLEMENTIERT:** Eine nur bei aktiver Filterung sichtbare, mindestens 48 dp hohe Aktion „Filter löschen“ setzt Suchfeld und ausgewählte Kategorie gemeinsam zurück. Der neue Ergebnisstand erscheint sofort; die Tastatur wird nach explizitem Zurücksetzen geschlossen. Bei 200 % Schrift erhält die Aktion die volle Breite. Keine unbeabsichtigte Auswahl, Goldbuchung oder Änderung am bestätigten Inventar.
+- **Dateien:** `app/lib/ui/equipment_catalog_dialog.dart`, `app/test/equipment_catalog_reset_filters_test.dart`.
+- **Branch:** `feat/chat-c/equipment-catalog-filter-reset-20261120` (Basis-Main `06e7e678f8146a4926fab98def8b7cbc8e99d7ac`); **Fachcommit:** `c8f049d2acccc3b75fc40762cd6cf5c2f6db9bf2`; **Testcommit:** `c0994154883b7fc57dfd2f4145b42acee7b2b414`.
+- **Tests ergänzt, nicht ausgeführt:** Vier Widgetfälle für kombinierte Filter, Kategorie-only, erneute Inventarauswahl und 320/360 dp mit 200 % Text und 220-dp-IME. Testausführung, Format/Analyse und koordinierte Integration übernimmt ein anderer Chat; kein CI-/Geräteerfolg beansprucht.
+- **Kompatibilität:** Keine Änderungen an SRD-Katalogdaten, Regeln, Charaktermodellen, SQLite-/JSON-Formaten, Controller, App-Version oder Backend; keine Migration.
