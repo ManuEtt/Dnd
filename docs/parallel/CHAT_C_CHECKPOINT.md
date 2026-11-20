@@ -1192,3 +1192,17 @@ Branch: `feat/chat-c/healing-spell-live-hero-refresh-20261109-final`. GitHub-CI 
 - **Migrationen:** Keine; keine Änderungen an Story-/SRD-Regeln, Datenbank, JSON, Spielstandsformat oder App-Version.
 - **Nächster Schritt:** PR öffnen, vollständige CI beobachten und eventuell fehlschlagenden Flutter-Test gezielt korrigieren.
 
+
+### 2026-11-20 – Ausrüstungskatalog: kombinierte Filter zurücksetzen
+
+- **Ausgangs-`main`:** `06e7e678f8146a4926fab98def8b7cbc8e99d7ac`.
+- **Branch:** `feat/chat-c/equipment-catalog-filter-reset-20261120`; Fachcommit `c8f049d2acccc3b75fc40762cd6cf5c2f6db9bf2`, Widgettestcommit `c0994154883b7fc57dfd2f4145b42acee7b2b414`. PR nach Erstellung im GitHub-Verzeichnis prüfen.
+- **Konfliktprüfung:** Offene PRs auf Fachfunktion geprüft; der Ausrüstungskatalog hat keinen gleichnamigen offenen Feature-PR. Gemeinsame Dokumentationsdateien ausschließlich ans absolute Ende ergänzt und bei Integration additiv übernehmen.
+- **IMPLEMENTIERT:** Der Suchdialog bietet einen sichtbaren „Filter löschen“-Button nur bei aktivem Suchtext oder gewählter Kategorie, mit 48-dp-Touchziel, Tooltip und 200-%-Breitendarstellung. Setzt lokal Text, Kategorie und Suchfokus zurück, ohne einen Gegenstand zu wählen oder Inventar/Gold zu verändern.
+- **Regressionstests ergänzt:** `app/test/equipment_catalog_reset_filters_test.dart` mit vier UI-Fällen: Suchtext plus Kategorie, Kategorie allein, erneute Auswahl nach Reset und 320/360-dp-IME/200-%-Text mit Abbruch.
+- **GETESTET:** GitHub-Main sowie vorhandene Ausstattungskatalog-/IME-Tests gelesen, Fach-/Testcommits bestätigt. **Testläufe bewusst nicht gestartet**, da Test und Integration von einem anderen Chat ausgeführt werden.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse, einzelne und vollständige Widgettests, Android/native/APK, Gerät/TalkBack, Backend-/Python-Checks.
+- **BLOCKIERT:** Abnahme auf finalem PR-HEAD, Fehlerbehebung und koordinierter Merge; keine bekannte fachliche Schnittstellenüberschneidung.
+- **NOCH NICHT IMPLEMENTIERT:** Keine persistente Suchhistorie oder automatische Kauf-/Ausrüstungslogik, nicht Bestandteil dieses Pakets.
+- **MIGRATION:** Keine; SRD-Katalog, Spielstandschema, JSON, Controller, Anwendungsversion und Rules/Story unverändert.
+- **NÄCHSTER SCHRITT:** Test-Chat führt gezielten Widgettest und vollständige CI aus; Integrationschat entscheidet nach Ergebnis und löst gemeinsame Dokumentationsnachträge verlustfrei auf.
