@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 import pathlib
+import stat
 import sys
 import tempfile
 import zipfile
@@ -30,10 +31,21 @@ MAX_MANIFEST_BYTES = 512 * 1024
 MAX_ASSET_BYTES = 8 * 1024 * 1024
 
 
+def _is_regular_zip_member(entry: zipfile.ZipInfo) -> bool:
+    """Allow ordinary ZIP files only; Unix links/devices are not artwork."""
+    if entry.is_dir():
+        return False
+    if entry.create_system == 3:
+        file_type = stat.S_IFMT(entry.external_attr >> 16)
+        return file_type in (0, stat.S_IFREG)
+    return True
+
+
 def read_bounded_zip_member(archive: zipfile.ZipFile, name: str, limit: int) -> bytes:
     """Read only a bounded regular ZIP member, even with malformed size metadata."""
     entry = archive.getinfo(name)
-    if entry.is_dir() or entry.file_size < 0 or entry.file_size > limit:
+    if (not _is_regular_zip_member(entry)
+            or entry.file_size < 0 or entry.file_size > limit):
         raise ValueError(f"Grafik-ZIP-Eintrag zu gross oder kein Dateiinhalt: {name}")
     with archive.open(entry) as source:
         data = source.read(limit + 1)
@@ -130,7 +142,7 @@ def imported_assets(zip_path: pathlib.Path, target_root: pathlib.Path):
             if not (0 < size <= MAX_ASSET_BYTES):
                 raise ValueError(f"Grafikmanifest-Groesse ausserhalb des Limits: {name}")
             entry = archive.getinfo(rel)
-            if entry.is_dir() or entry.file_size != size:
+            if not _is_regular_zip_member(entry) or entry.file_size != size:
                 raise ValueError(f"Grafik-ZIP-Groesse stimmt nicht: {name}")
 
         if archive.testzip():

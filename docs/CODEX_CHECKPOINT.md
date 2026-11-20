@@ -3754,3 +3754,14 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Finale CI-Abnahme und Verlustfreiheit der gemeinsamen README-/Checkpoint-Nachträge bei Integration.
 - **Migration:** Keine. SRD-Zählungen, Quellenkatalog, JSON-/SQLite-Spielstände, App-Version und Regellaufzeit unverändert.
 - **NÄCHSTER SCHRITT:** Vollständige GitHub Actions für PR #769 auswerten, Fehler im selben Branch beheben, dann konfliktfreie Integration gegen den neuesten Main-Stand prüfen.
+
+### 2026-11-17 – Originalgrafiken: ZIP-Quellmetadaten als reguläre Dateien prüfen
+
+- **Ausgangs-main:** `c52d7ded4a0764a7d0819495343c278b2cf2872e`, vor PR-Erstellung auf `06e7e678f8146a4926fab98def8b7cbc8e99d7ac` angeglichen; **Branch:** `fix/chat-d/artwork-zip-regular-entry-validation-20261117`; **Code-Commit:** `45f48008a805e9ad8621c49fec8db5a36eabf55f`, aktueller Sync-Commit `57b839db268b2d508203371846bbb8e640f96023`.
+- **IMPLEMENTIERT:** `_is_regular_zip_member` akzeptiert normale ZIP-Dateien mit üblichen Unix-Modi und verwirft ausdrücklich als Link, FIFO, Verzeichnis oder Spezialdatei deklarierte Einträge. Für Manifest und alle 13 Bilder erfolgt die Ablehnung vor dem ungebremsten `testzip()`-CRC-Scan.
+- **Tests ergänzt:** Zwei Regressionstestmethoden mit negativen Fällen für Unix-Symlink/-Verzeichnis/-FIFO als Manifest bzw. Asset und positivem Unix-`S_IFREG`-Bild. Keine Modifikation bestehender Importziele bei fehlgeschlagener Vorprüfung.
+- **GETESTET:** Tatsächlichen Importpfad und bestehende Python-Sicherheitsregressionen analysiert; Unix-ZIP-Modussemantik mit Python-`ZipInfo` isoliert überprüft. Offene PR-Dateipfade geprüft; eigenständiger Code-Branch aus aktuellem Main und verlustfreier Main-Abgleich.
+- **NICHT GETESTET:** Neue vollständige Python-/Backend-/Flutter-/Android-/Release-CI auf finalem Dokumentations-HEAD; kein echtes Gerät. Der isolierte ZIP-Metadatentest ist nicht die vollständige Regression.
+- **BLOCKIERT:** CI-Abnahme auf finalem HEAD und erneute GitHub-Konfliktprüfung vor Merge.
+- **Migration:** Keine; keine Änderung an JSON-/SQLite-Kampagnen, WebP-Dateinamen, App-Version, Story oder Regeln.
+- **NÄCHSTER SCHRITT:** Finalen PR-CI-Lauf prüfen; bei Fehlern im eigenen Branch korrigieren und erst bei vollständig grüner CI konfliktfrei integrieren.

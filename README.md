@@ -2436,3 +2436,12 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #769](https://github.com/ManuEtt/Dnd/pull/769), Code-Commit `9018c85567fd529c50c7445444a540809bc6902d`. CI für den finalen Dokumentations-HEAD steht zum Zeitpunkt dieses Nachtrags noch aus.
 - **Kompatibilität:** Keine Änderungen an Android-App, Spiellogik, JSON-/SQLite-Spielständen, Backend-APIs oder App-Version. Keine Migration.
 - **Grenzen:** Typprüfung des SRD-Audit-Inventars, keine Behauptung zusätzlicher implementierter SRD-Regelwirkung.
+
+### 2026-11-17 – Fantasy-Grafikimport sperrt als Spezialdatei markierte ZIP-Einträge
+
+- **Problem:** Der Import akzeptierte die Daten eines ZIP-Eintrags auch dann als gewöhnliche Grafikdatei, wenn dessen Unix-Dateimetadaten einen Symlink, eine FIFO oder ein Verzeichnis bezeichneten. Die Prüfung allein über den ZIP-Namen und die gemeldete Größe erfasste diesen Widerspruch nicht.
+- **Lösung:** Manifest und importierte WebP-Assets dürfen nur normale ZIP-Dateien sein. Unix-Einträge mit explizitem Sonderdateityp werden bereits vor der CRC-Prüfung und der Veröffentlichung zurückgewiesen; neutrale bzw. reguläre Archivmetadaten bleiben kompatibel.
+- **Tests:** Zwei Python-Regressionsmethoden prüfen Symlinks, FIFOs und falsch markierte Verzeichnisse sowohl als Manifest als auch als Bild sowie einen ausdrücklich regulären Unix-Dateieintrag.
+- **Nachweis:** Branch `fix/chat-d/artwork-zip-regular-entry-validation-20261117`; Code-Commit `45f48008a805e9ad8621c49fec8db5a36eabf55f`. Vollständiger GitHub-CI-Nachweis auf dem finalen Dokumentations-HEAD steht noch aus.
+- **Kompatibilität:** Keine Änderungen an Spielständen, SQLite, JSON-Exportformat, Flutter, Android oder der App-Version. Bestehende vollständige Grafik-ZIPs mit gewöhnlichen Dateien bleiben importierbar.
+- **Grenzen:** Prüft ZIP-Quellmetadaten, keine allgemeine WebP-Bilddekodierung und keine revisionsfreie Mehrdatei-Transaktion.
