@@ -56,11 +56,14 @@ class ConfirmedSessionRecapCatalogPage {
             '${entry.createdAt.toUtc().toIso8601String()}): ${entry.title}',
       if (entries.isEmpty) 'Keine Rückblicke auf dieser Seite.',
       if (hasMore) 'Weitere gespeicherte Rückblicke vorhanden.',
-      'Nur historische Einträge, kein aktueller Quest- oder Belohnungsnachweis.',
+      'Nur historische Einträge, kein aktueller Quest- '
+          'oder Belohnungsnachweis.'
     ];
     final text = lines.join('\n');
     if (text.length > 1500) {
-      throw const FormatException('Rückblickverzeichnis überschreitet das Limit.');
+      throw const FormatException(
+        'Rückblickverzeichnis überschreitet das Limit.',
+      );
     }
     return text;
   }
@@ -156,7 +159,9 @@ class ConfirmedSessionRecapCatalog {
       sourceStamp: _sourceStamp(campaign),
     );
     if (page.playerOverview.length > 1500) {
-      throw const FormatException('Rückblickverzeichnis überschreitet das Limit.');
+      throw const FormatException(
+        'Rückblickverzeichnis überschreitet das Limit.',
+      );
     }
     return page;
   }
