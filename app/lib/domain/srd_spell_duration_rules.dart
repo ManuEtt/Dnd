@@ -31,6 +31,23 @@ class SrdSpellDurationAssessment {
   final SrdSpellDurationUnit? unit;
 
   bool get hasTimeLimit => amount != null && unit != null;
+  /// Converts an audited duration into a nominal upper bound in seconds.
+  ///
+  /// One combat round is six seconds. For concentration and "up to" spells
+  /// this is only a maximum, never proof that the effect remains active.
+  /// Instantaneous, conditional and dispel-only effects have no timed bound.
+  /// This does not advance game time or automatically end any spell.
+  int? get maximumDurationSeconds {
+    if (!hasTimeLimit) return null;
+    final secondsPerUnit = switch (unit!) {
+      SrdSpellDurationUnit.round => 6,
+      SrdSpellDurationUnit.minute => 60,
+      SrdSpellDurationUnit.hour => 3600,
+      SrdSpellDurationUnit.day => 86400,
+    };
+    return amount! * secondsPerUnit;
+  }
+
   bool get requiresConcentration => kind == SrdSpellDurationKind.concentration;
 
   /// "Up to" is only a ceiling; the spell-specific ending rule is separate.
