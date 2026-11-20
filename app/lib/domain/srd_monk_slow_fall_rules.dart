@@ -55,6 +55,37 @@ class SrdMonkSlowFallRules {
     return monkLevel >= 4 ? monkLevel * 5 : null;
   }
 
+  /// Forecasts HP after a confirmed Slow Fall reaction without applying damage.
+  ///
+  /// Does not spend the reaction or alter the encounter. The caller must
+  /// separately authorize and atomically commit damage and reaction use.
+  static SrdMonkSlowFallHitPointPreview previewHitPointsAfterReaction(
+    HeroCharacter hero, {
+    required int? confirmedFallDamage,
+    required bool fallConfirmed,
+    required bool reactionAvailable,
+    required bool reactionConfirmed,
+    Encounter? encounter,
+  }) {
+    final result = previewConfirmedReaction(
+      hero,
+      confirmedFallDamage: confirmedFallDamage,
+      fallConfirmed: fallConfirmed,
+      reactionAvailable: reactionAvailable,
+      reactionConfirmed: reactionConfirmed,
+      encounter: encounter,
+    );
+    final hp = hero.hitPoints!;
+    return SrdMonkSlowFallHitPointPreview(
+      slowFall: result,
+      hitPointsBefore: hp,
+      hitPointsAfter: hp > result.remainingDamage
+          ? hp - result.remainingDamage
+          : 0,
+      wouldDropToZero: result.remainingDamage >= hp,
+    );
+  }
+
   /// Preview only: an authorized integration must revalidate the current
   /// encounter revision, spend the Reaction and commit HP/event atomically.
   ///
@@ -105,4 +136,19 @@ class SrdMonkSlowFallRules {
       remainingDamage: confirmedFallDamage - prevented,
     );
   }
+}
+
+/// Read-only HP consequence of a separately confirmed Slow Fall reaction.
+class SrdMonkSlowFallHitPointPreview {
+  const SrdMonkSlowFallHitPointPreview({
+    required this.slowFall,
+    required this.hitPointsBefore,
+    required this.hitPointsAfter,
+    required this.wouldDropToZero,
+  });
+
+  final SrdMonkSlowFallResult slowFall;
+  final int hitPointsBefore;
+  final int hitPointsAfter;
+  final bool wouldDropToZero;
 }
