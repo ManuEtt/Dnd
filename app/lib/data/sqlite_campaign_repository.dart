@@ -158,6 +158,14 @@ CREATE TABLE settings (
         );
       }
       eventById[eventId] = event;
+      // The campaign snapshot may contain up to 10,000 events, but callers
+      // can supply additional events separately. Enforce the same bound on
+      // the combined, deduplicated history before any SQLite transaction.
+      if (eventById.length > 10000) {
+        throw const InvalidSaveException(
+          'Das Ereignisprotokoll überschreitet 10000 Ereignisse.',
+        );
+      }
     }
     campaignData['events'] = eventById.values.toList();
     final snapshot = _canonical(campaignData);
