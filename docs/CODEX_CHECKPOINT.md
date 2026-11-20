@@ -3754,3 +3754,16 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Finale CI-Abnahme und Verlustfreiheit der gemeinsamen README-/Checkpoint-Nachträge bei Integration.
 - **Migration:** Keine. SRD-Zählungen, Quellenkatalog, JSON-/SQLite-Spielstände, App-Version und Regellaufzeit unverändert.
 - **NÄCHSTER SCHRITT:** Vollständige GitHub Actions für PR #769 auswerten, Fehler im selben Branch beheben, dann konfliktfreie Integration gegen den neuesten Main-Stand prüfen.
+
+### 2026-11-20 – Katalogfilter in der Android-Ausrüstungswahl schnell zurücksetzen (Chat C)
+
+- **Basis-`main`:** `06e7e678f8146a4926fab98def8b7cbc8e99d7ac`; **Branch:** `feat/chat-c/equipment-catalog-filter-reset-20261120`.
+- **IMPLEMENTIERT:** `EquipmentCatalogDialog` zeigt bei aktiver Suche/Kategorie die Aktion „Filter löschen“. Ein einzelner bestätigter Tap leert den `TextEditingController`, schließt den Suchfokus und setzt die Kategorie auf „Alle Kategorien“. Normales Öffnen ohne Filter ändert keine UI-Aktion. 48-dp-Touchziel und vollbreite Aktion bei 200 % Text.
+- **Fachdatei:** `app/lib/ui/equipment_catalog_dialog.dart`; **Commit:** `c8f049d2acccc3b75fc40762cd6cf5c2f6db9bf2`.
+- **Regressionen:** Neue `app/test/equipment_catalog_reset_filters_test.dart`; **Commit:** `c0994154883b7fc57dfd2f4145b42acee7b2b414`; vier Widgetfälle für beide Filter, nur Kategorie, 320/360 dp mit 200 % Schrift/IME, Abbruch und spätere explizite Auswahl.
+- **GETESTET:** Main-/PR-/Fachcode-/Testvertrag über GitHub gelesen; Branch- und Commiterstellung bestätigt. **Keine automatischen Tests ausgeführt**, da dies ausdrücklich vom anderen Testchat übernommen wird.
+- **NICHT GETESTET:** Dart-Format, Flutter-Analyse und Tests, Python-/Backend-Prüfungen, Android-Build, APK, Android-TalkBack und echtes Gerät. Kein Build-/CI-Ergebnis für den neuen Branch.
+- **BLOCKIERT:** Technische Abnahme und koordiniertes Merge beim Integrationschat. Bereits offene UI-PRs berühren andere Fachdateien; additive README-/Checkpoint-Einträge beim Merge erhalten.
+- **NOCH NICHT IMPLEMENTIERT:** Keine automatische Inventar-, Charakter- oder Kostenänderung durch den Reset vorgesehen.
+- **Kompatibilität:** Keine Regeln/SRD-Daten, persistierte Spielstände, API, Schema, Version oder KI-Anbindung verändert.
+- **NÄCHSTER SCHRITT:** Testchat führt `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze`, `flutter test test/equipment_catalog_reset_filters_test.dart` und vollständige Projekt-CI aus; Integrationschat prüft finalen PR-HEAD und merged nur nach Abnahme.
