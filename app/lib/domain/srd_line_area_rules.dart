@@ -53,6 +53,25 @@ class SrdLineAreaPreview {
   final SrdLineDirection direction;
   final List<SrdLineCellCandidate> candidates;
 
+  /// Number of candidate squares needing an independent cover ruling.
+  /// An obstructed center ray alone never proves Total Cover.
+  int get coverReviewCount => candidates
+      .where(
+        (candidate) =>
+            candidate.centerRay == SrdSphereCenterRay.requiresCoverReview,
+      )
+      .length;
+
+  /// Candidate centers within the line and with a clear center ray.
+  /// This does not establish creature occupancy or a spell hit.
+  Iterable<SrdGridCell> get clearCenterCells => candidates
+      .where(
+        (candidate) =>
+            candidate.centerWithinLine &&
+            candidate.centerRay == SrdSphereCenterRay.clear,
+      )
+      .map((candidate) => candidate.cell);
+
   SrdLineCellCandidate? at(SrdGridCell cell) {
     for (final candidate in candidates) {
       if (candidate.cell == cell) return candidate;
