@@ -389,3 +389,30 @@ Umfang: Paktmagie, vorbereitete Zauber, Klassenressourcen und -profile, Rettungs
 Einzel-PR-CI wurde geprüft, aber **die gemeinsame CI des Integrationsstands ist noch ausstehend**. Keine Aussage über erfolgreichen `main`-Merge, Branchlöschungen, Geräteabnahme oder Signierung.
 Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen und Cleanup-Sicherheitsregeln: `docs/parallel/ALL_BRANCHES_MIGRATION_20261105.md`.
 
+
+
+## 2026-11-20 – Taktischer Verstand: Funktionsstand zur Abnahme
+
+- **Implementiert:** ausführbare Domänenregel für Kämpfer 2; nach bestätigtem
+  Fehlschlag ausdrücklich 1W10 addieren, Zweiter-Wind-Verbrauch nur bei Erfolg.
+  Keine Heilung, Aktionswoge oder zusätzliche Bewegung. Öffentlicher Regel-API-
+  Export; Snapshot- und Versuchsnachweis gegen veraltete/erneute Auswertung.
+- **Git:** Branch `feat/chat-a/fighter-tactical-mind-20261117`, Code-HEAD
+  `f80877203c8f21bd714de9a98da0f81ee915b9de`, [PR #782](https://github.com/ManuEtt/Dnd/pull/782)
+  als Entwurf. Aktuelle Paketbasis Main `06e7e678f8146a4926fab98def8b7cbc8e99d7ac`;
+  ursprüngliche Entwicklungsbasis `fe220104f836e146275f1753d327290633b52326`.
+- **Nicht ausgeführt:** neue Regressionstests, Formatterprüfung, Analyzer,
+  Flutter-/Backend-/Android-Builds und manuelle CI. Der Nutzer hat Testausführung
+  und koordinierte Integration ausdrücklich einem anderen Chat zugeteilt.
+  Keine neue Test-, Release-, APK- oder Gerätefreigabe behauptet.
+- **Offen:** Controller/UI vor endgültigen Fehlschlagfolgen anhalten;
+  Zustimmung oder Ablehnung anbieten; Charakter, Ergebnis und Versuchsereignis
+  mit Identitäts-/Revisionsprüfung atomar speichern. Versuch auch bei weiterem
+  Fehlschlag protokollieren, sonst wäre ein kostenloser Wiederholungswurf möglich.
+- **Kompatibilität:** keine Migration, SQLite 3 / JSON 1 / Version 0.8.52+102.
+  SRD 5.2.1 S. 48 (CC BY 4.0), Requirement
+  `CLASS-K-MPFER-2-BASE-TACTICAL-MIND-1` bleibt `unverified`.
+- **Übernahme:** `docs/parallel/CHAT_A_TACTICAL_MIND_HANDOFF_20261120.md` im Code-PR
+  beschreibt die Schnittstelle und Abnahmefälle. Zuerst aktuelle PRs/HEAD prüfen,
+  neue Testdatei formatieren/analysieren/ausführen; anschließend Auswahlpfad,
+  Rollback, Neustart, Doppelbestätigung und veraltete Revision integrieren/testen.
