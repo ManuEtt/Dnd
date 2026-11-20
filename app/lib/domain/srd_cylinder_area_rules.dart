@@ -47,6 +47,25 @@ class SrdCylinderAreaPreview {
   int get maxVerticalOffsetFeet =>
       originFace == SrdCylinderOriginFace.bottom ? heightFeet : 0;
 
+  /// Horizontal center rays requiring an independent cover ruling.
+  /// This is not a conclusion about three-dimensional Total Cover.
+  int get coverReviewCount => candidates
+      .where(
+        (candidate) =>
+            candidate.centerRay == SrdSphereCenterRay.requiresCoverReview,
+      )
+      .length;
+
+  /// Centers within the base circle with a clear horizontal center ray.
+  /// Actual height, creature occupancy and spell effects remain unverified.
+  Iterable<SrdGridCell> get clearCenterCells => candidates
+      .where(
+        (candidate) =>
+            candidate.centerWithinBase &&
+            candidate.centerRay == SrdSphereCenterRay.clear,
+      )
+      .map((candidate) => candidate.cell);
+
   SrdCylinderCellCandidate? at(SrdGridCell cell) {
     for (final candidate in candidates) {
       if (candidate.cell == cell) return candidate;
