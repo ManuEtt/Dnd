@@ -1380,3 +1380,17 @@ Geteilte Historien und Dokumentationskonflikte werden im neutralen, append-only 
 - **Kompatibilität/Migration:** Keine JSON-/SQLite-Schemaänderung, keine API- oder Versionsanhebung, keine Modifikation gespeicherter Kampagnen oder Regelwerte, keine KI-Kostenänderung.
 - **NOCH NICHT IMPLEMENTIERT:** Weitere unabhängige Schutzregeln für freiformulierte KI-Turns außerhalb dieses Story-Commit-Callbacks sind getrennt zu prüfen.
 - **NÄCHSTER SCHRITT:** Finale CI #706 vollständig auf exaktem Commit abnehmen, Fehler im selben Branch korrigieren und erst nach Grün zur Review freigeben.
+
+### 2026-11-20 – Historische Sitzungsrückblicke vor Auswahl katalogisieren (PR #781)
+
+- **Ausgangs-main:** `06e7e678f8146a4926fab98def8b7cbc8e99d7ac`; **Branch:** `feat/chat-b/session-recap-catalog-20261120`; **PR:** [#781](https://github.com/ManuEtt/Dnd/pull/781) (Draft); Code-/Teststand `a5f78ecfb62ad06a4300ed6fdbec09e623e060dc`, finaler Branch-HEAD im PR. App `0.8.52+102`.
+- **Ausgangsproblem:** Der jüngste Sitzungsrückblick ist sichtbar und ältere IDs sind über PR #762 abrufbar, aber ohne eine historische Auflistung der gespeicherten IDs kann der Spieler nicht gezielt einen alten Eintrag finden.
+- **IMPLEMENTIERT:** Lesende `ConfirmedSessionRecapCatalog.read(campaign, expectedRevision, pageIndex, pageSize)` mit höchstens vier Zeitstempel-/Titel-/ID-Einträgen je Seite, deterministischem Tie-Break, sicherer vollständiger ASCII-ID, Ausschluss ambiger Legacy-Duplikate, zeilensicherer Unicode-Verkürzung, 1500-UTF-16-Budget und `hasMore`. `requireCurrent` bindet Session/Revision und den kompletten Rohkatalog ein, einschließlich unsichtbarer Änderungen außerhalb der Seite.
+- **Geänderte Dateien:** `app/lib/story/confirmed_session_recap_catalog.dart`, neuer `app/test/confirmed_session_recap_catalog_test.dart`, README, zentraler Checkpoint und dieser persönliche Checkpoint.
+- **Regressionen hinzugefügt:** Acht Testgruppen für Pagination, Zeitstempelgleichstand, doppelte/unsichere IDs, unsichtbare/Unicode-Titel, Grenzwerte, gleichrevisionale Stale-Fälle, Legacy-JSON und SQLite-Neustart samt Repository-Rekonstruktion.
+- **GETESTET:** Live-main und offene PR-Titel, Story-Verträge und kollisionsfreie Fachpfade statisch gesichtet; Code-/Testdateien eingecheckt. Keine Dart-, Flutter-, Backend-, Python- oder Android-Tests ausgeführt.
+- **NICHT GETESTET:** Sämtliche hinzugefügten Regressionen sowie Formatter/Analyzer, vollständige CI, APK, echtes Android-Gerät, Live-Provider.
+- **BLOCKIERT:** Testabnahme, spätere API-/UI-Anbindung und gemeinsame Dokumentationsintegration sind dem anderen Entwicklungs-Chat zugewiesen. Keine eigenständige Integration.
+- **NOCH NICHT IMPLEMENTIERT:** Direkte Android-Auswahloberfläche und Fassade `story_api.dart` (bewusst wegen PR #758 unverändert).
+- **Kompatibilität/Migration:** Keine Änderungen an bisherigen Spielständen, SQLite, JSON, Regeln, Werten, Quest-/Belohnungsbuchungen oder App-Version.
+- **NÄCHSTER SCHRITT:** Katalog nach erfolgreicher unabhängiger Testabnahme mit dem historischen Einzelabruf in einer koordinierten Android-/Story-API-Integration verbinden; Tests für stale Auswahl und ursprüngliche Daten nach Seitenwechsel vorsehen.
