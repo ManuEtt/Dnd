@@ -192,6 +192,23 @@ CREATE TABLE settings (
             'Diese Kampagne existiert bereits. Der Import überschreibt keine Spielstände.',
           );
         }
+        // A campaign's confirmed hero identity is immutable. A stale editor
+        // or malformed client must not attach another archived character to
+        // the same campaign and silently replace its progression.
+        final storedSnapshot = Map<String, dynamic>.from(
+          jsonDecode(existing['snapshot'] as String) as Map,
+        );
+        final storedHero = Map<String, dynamic>.from(
+          storedSnapshot['hero'] as Map,
+        );
+        final nextHero = Map<String, dynamic>.from(
+          campaignData['hero'] as Map,
+        );
+        if (storedHero['id'] != nextHero['id']) {
+          throw const InvalidSaveException(
+            'Die bestätigte Spielfigur einer Kampagne darf nicht ausgetauscht werden.',
+          );
+        }
         final storedRevision = existing['revision'] as int;
         if (storedRevision == campaign.revision &&
             existing['snapshot'] == snapshot) {
