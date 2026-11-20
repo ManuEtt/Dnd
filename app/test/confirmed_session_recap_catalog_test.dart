@@ -249,7 +249,11 @@ void main() {
     page.requireCurrent(campaign);
     final editedOld = campaign.copyWith(
       sessionRecaps: [
-        _recap('old', 'Erste Spur', summary: List.filled(899, 'a').join() + 'b'),
+        _recap(
+          'old',
+          'Erste Spur',
+          summary: List.filled(899, 'a').join() + 'b',
+        ),
         _recap('new', 'Jüngste Spur', at: _at.add(const Duration(days: 1))),
       ],
     );
