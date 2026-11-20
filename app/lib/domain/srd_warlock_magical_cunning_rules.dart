@@ -52,6 +52,39 @@ class SrdWarlockMagicalCunningRules {
     return level >= 20 ? pool : (pool + 1) ~/ 2;
   }
 
+  /// Read-only forecast before a separately confirmed one-minute rite.
+  ///
+  /// Returns null for invalid class, resource, or action snapshots; zero
+  /// when the feature is locked, used, or there are no expended Pact slots.
+  /// A positive value is only potential recovery, not ritual completion.
+  static int? previewRecoverablePactSlots(HeroCharacter hero) {
+    final level = _warlockClassLevel(hero);
+    if (level == null) return null;
+    if (level < 2) return 0;
+    if (hero.isDead ||
+        hero.hitPoints == null ||
+        hero.hitPoints! <= 0 ||
+        hero.maxHitPoints == null ||
+        hero.maxHitPoints! < hero.hitPoints! ||
+        !ConditionRules.canTakeActions(hero)) {
+      return null;
+    }
+    final used = hero.spentClassResources[resourceKey] ?? 0;
+    if (used < 0 || used > 1) return null;
+    try {
+      SpellcastingRules.availablePactSlots(hero);
+    } on FormatException {
+      return null;
+    } on StateError {
+      return null;
+    } on RangeError {
+      return null;
+    }
+    if (used != 0 || hero.spentPactSlots == 0) return 0;
+    final cap = maximumRecoveredSlots(hero);
+    return hero.spentPactSlots < cap ? hero.spentPactSlots : cap;
+  }
+
   /// Pure, immutable state transition after player-confirmed rite completion.
   /// Failed/invalid attempts never spend the once-per-Long-Rest use.
   static SrdWarlockMagicalCunningResult restoreAfterCompletedRite(
