@@ -60,12 +60,15 @@ void main() {
   test('genuine revision snapshot is restored unchanged', () async {
     final campaign = storageFixture();
     await repository.saveCampaign(campaign);
-    final restored = await repository.reconstructCampaign(campaign.id, revision: 0);
+    final restored = await repository.reconstructCampaign(
+      campaign.id,
+      revision: 0,
+    );
     expect(restored?.id, campaign.id);
     expect(restored?.revision, 0);
   });
 
-  test('revision journal refuses altered campaign identity or revision', () async {
+  test('tampered journal rejects wrong ID or revision', () async {
     final campaign = storageFixture();
     await repository.saveCampaign(campaign);
     final database = await databaseFactoryFfi.openDatabase(
