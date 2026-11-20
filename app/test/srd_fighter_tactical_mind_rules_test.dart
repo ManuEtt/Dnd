@@ -285,7 +285,7 @@ void main() {
     });
 
     for (final advantage in [true, false]) {
-      test('Beide Originalwürfe mit ${advantage ? 'Vorteil' : 'Nachteil'} bleiben', () {
+      test('Originalwürfe bleiben erhalten; Vorteil: $advantage', () {
         final hero = _fighter();
         final natural = advantage ? 8 : 3;
         final original = DiceResult(
@@ -329,7 +329,7 @@ void main() {
       expect(result.passed, true);
     });
 
-    test('Natürliche Zwanzig ist bei Attributsproben kein automatischer Erfolg', () {
+    test('Natürliche 20 ist kein automatischer Erfolg', () {
       final hero = _fighter();
       final result = SrdFighterTacticalMindRules.resolve(
         hero: hero,
@@ -347,7 +347,7 @@ void main() {
       expect(result.passed, true);
     });
 
-    test('Handlungsunfähigkeit allein führt keine zusätzliche Aktionsbarriere ein', () {
+    test('Handlungsunfähigkeit erzeugt keine neue Aktionsbarriere', () {
       final hero = _fighter().copyWith(conditions: ['handlungsunfähig']);
       final result = SrdFighterTacticalMindRules.resolve(
         hero: hero,
@@ -362,7 +362,7 @@ void main() {
   });
 
   group('Tactical Mind: Ablehnung ohne Würfel oder Charakteränderung', () {
-    test('Vorbereitung ist lesend; fehlende Zustimmung verbraucht keinen W10', () {
+    test('Vorbereitung und Ablehnung verbrauchen keinen W10', () {
       final hero = _fighter();
       final before = hero.toJson();
       final ledger = <String>{'prior-check'};
@@ -464,7 +464,7 @@ void main() {
       );
     });
 
-    test('Verlässliches Talent wird vor der Fehlschlagprüfung berücksichtigt', () {
+    test('Verlässliches Talent vor der Fehlschlagprüfung anwenden', () {
       final hero = _fighter(
         secondary: 'Schurke',
         secondaryLevel: 7,
@@ -538,7 +538,7 @@ void main() {
       );
     });
 
-    test('Veränderte Heldenwerte sperren eine alte Entscheidung vor dem W10', () {
+    test('Veraltete Entscheidung vor dem W10 sperren', () {
       final source = _fighter();
       final decision = _prepare(source);
       final stale = source.copyWith(hitPoints: 9);
@@ -614,7 +614,7 @@ void main() {
   });
 
   group('Tactical Mind: unveränderlicher und serialisierbarer Nachweis', () {
-    test('Eingabe-Ledger bleibt erhalten und Ausgabe ist nicht veränderbar', () {
+    test('Eingabe bleibt erhalten und Ausgabe ist unveränderlich', () {
       final hero = _fighter();
       final ledger = <String>{'older-check'};
       final decision = _prepare(hero, attempted: ledger);
@@ -627,13 +627,19 @@ void main() {
       );
       expect(ledger, {'older-check'});
       expect(result.attemptedCheckIds, {'older-check', 'tactical-check'});
-      expect(() => result.attemptedCheckIds.add('forged'), throwsUnsupportedError);
+      expect(
+        () => result.attemptedCheckIds.add('forged'),
+        throwsUnsupportedError,
+      );
       expect(() => result.originalRoll.rolls.add(20), throwsUnsupportedError);
       expect(() => result.bonusRoll.rolls.add(10), throwsUnsupportedError);
-      expect(() => result.hero.spentClassResources['rage'] = 1, throwsUnsupportedError);
+      expect(
+        () => result.hero.spentClassResources['rage'] = 1,
+        throwsUnsupportedError,
+      );
     });
 
-    test('JSON erhält Originalwurf, Bonuswurf, Verbrauch und Versuchskennung', () {
+    test('JSON erhält getrennte Würfel, Verbrauch und Versuchskennung', () {
       final hero = _fighter();
       final original = _roll();
       final decision = _prepare(hero, failedRoll: original);
@@ -644,7 +650,8 @@ void main() {
         playerConfirmed: true,
         previouslyAttemptedCheckIds: const {},
       );
-      final json = jsonDecode(jsonEncode(result.toJson())) as Map<String, dynamic>;
+      final json =
+          jsonDecode(jsonEncode(result.toJson())) as Map<String, dynamic>;
       expect(json['checkId'], 'tactical-check');
       expect(json['originalRoll'], original.toJson());
       expect(json['bonusRoll'], result.bonusRoll.toJson());
@@ -656,7 +663,10 @@ void main() {
       expect(json['feature'], 'Tactical Mind');
       expect(json.containsKey('attemptedCheckIds'), false);
       expect(json.containsKey('hero'), false);
-      expect(HeroCharacter.fromJson(result.hero.toJson()).toJson(), result.hero.toJson());
+      expect(
+        HeroCharacter.fromJson(result.hero.toJson()).toJson(),
+        result.hero.toJson(),
+      );
       expect(hero.spentSecondWind, 0);
     });
   });

@@ -51,7 +51,8 @@ class SrdFighterTacticalMindRules {
     // Ability checks have no automatic success/failure on natural 20/1.
     if (effective >= validated.difficulty) {
       throw const FormatException(
-        'Taktischer Verstand ist nur nach einer fehlgeschlagenen Probe möglich.',
+        'Taktischer Verstand ist nur nach einer fehlgeschlagenen '
+        'Probe möglich.',
       );
     }
     return SrdFighterTacticalMindDecision._(
@@ -125,7 +126,9 @@ class SrdFighterTacticalMindRules {
     // Tactical Mind is not the Second Wind Bonus Action: no action, reaction,
     // healing or Tactical Shift movement is consumed or granted here.
     if (ClassFeatureResources.remainingSecondWind(hero) < 1) {
-      throw StateError('Für Taktischen Verstand fehlt eine Nutzung Zweiter Wind.');
+      throw StateError(
+        'Für Taktischen Verstand fehlt eine Nutzung Zweiter Wind.',
+      );
     }
   }
 
@@ -177,7 +180,9 @@ class SrdFighterTacticalMindRules {
         ? max(roll.rolls[0], roll.rolls[1])
         : min(roll.rolls[0], roll.rolls[1]);
     if (chosen != natural) {
-      throw const FormatException('Vorteil oder Nachteil ist nicht korrekt belegt.');
+      throw const FormatException(
+        'Vorteil oder Nachteil ist nicht korrekt belegt.',
+      );
     }
   }
 }
