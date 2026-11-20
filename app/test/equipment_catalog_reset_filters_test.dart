@@ -8,6 +8,13 @@ const _searchKey = ValueKey('equipment-catalog-search');
 const _categoryKey = ValueKey('equipment-catalog-category');
 const _resetKey = ValueKey('equipment-catalog-reset-filters');
 
+Finder _allResults() =>
+    find.text('${SrdEquipmentCatalog.all.length} Treffer');
+
+EquipmentCategory? _selectedCategory(WidgetTester tester) => tester
+    .widget<DropdownButton<EquipmentCategory?>>(find.byKey(_categoryKey))
+    .value;
+
 Future<List<EquipmentEntry?>> _showCatalog(
   WidgetTester tester, {
   required double width,
@@ -71,7 +78,7 @@ void main() {
     final search = find.byKey(_searchKey);
 
     expect(find.byKey(_resetKey), findsNothing);
-    expect(find.text('${SrdEquipmentCatalog.all.length} Treffer'), findsOneWidget);
+    expect(_allResults(), findsOneWidget);
 
     await tester.enterText(search, 'Langschwert');
     await tester.pumpAndSettle();
@@ -80,13 +87,16 @@ void main() {
     await _chooseSimpleMelee(tester);
     expect(find.text('0 Treffer'), findsOneWidget);
     expect(
-      tester.widget<DropdownButton<EquipmentCategory?>>(find.byKey(_categoryKey)).value,
+      _selectedCategory(tester),
       EquipmentCategory.simpleMelee,
     );
 
     final reset = find.byKey(_resetKey);
     expect(reset, findsOneWidget);
-    expect(find.byTooltip('Suchtext und Kategorie zurücksetzen'), findsOneWidget);
+    expect(
+      find.byTooltip('Suchtext und Kategorie zurücksetzen'),
+      findsOneWidget,
+    );
     await tester.ensureVisible(reset);
     await tester.pumpAndSettle();
     expect(reset.hitTestable(), findsOneWidget);
@@ -95,10 +105,10 @@ void main() {
 
     expect(tester.widget<TextField>(search).controller!.text, isEmpty);
     expect(
-      tester.widget<DropdownButton<EquipmentCategory?>>(find.byKey(_categoryKey)).value,
+      _selectedCategory(tester),
       isNull,
     );
-    expect(find.text('${SrdEquipmentCatalog.all.length} Treffer'), findsOneWidget);
+    expect(_allResults(), findsOneWidget);
     expect(find.byKey(_resetKey), findsNothing);
     expect(selections, isEmpty);
 
@@ -139,7 +149,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.widget<TextField>(search).controller!.text, isEmpty);
-      expect(find.text('${SrdEquipmentCatalog.all.length} Treffer'), findsOneWidget);
+      expect(_allResults(), findsOneWidget);
       expect(find.byKey(_resetKey), findsNothing);
       expect(selections, isEmpty);
       expect(find.byType(EquipmentCatalogDialog), findsOneWidget);
@@ -157,22 +167,21 @@ void main() {
   ) async {
     final selections = await _showCatalog(tester, width: 360);
     await _chooseSimpleMelee(tester);
-    expect(
-      find.text(
-        '${SrdEquipmentCatalog.search('', category: EquipmentCategory.simpleMelee).length} Treffer',
-      ),
-      findsOneWidget,
-    );
+    final simpleMeleeCount = SrdEquipmentCatalog.search(
+      '',
+      category: EquipmentCategory.simpleMelee,
+    ).length;
+    expect(find.text('$simpleMeleeCount Treffer'), findsOneWidget);
     final reset = find.byKey(_resetKey);
     await tester.ensureVisible(reset);
     await tester.tap(reset);
     await tester.pumpAndSettle();
 
     expect(
-      tester.widget<DropdownButton<EquipmentCategory?>>(find.byKey(_categoryKey)).value,
+      _selectedCategory(tester),
       isNull,
     );
-    expect(find.text('${SrdEquipmentCatalog.all.length} Treffer'), findsOneWidget);
+    expect(_allResults(), findsOneWidget);
     expect(find.byKey(_resetKey), findsNothing);
     expect(selections, isEmpty);
     expect(tester.takeException(), isNull);
