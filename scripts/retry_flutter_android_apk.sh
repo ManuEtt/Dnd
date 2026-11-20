@@ -3,8 +3,8 @@
 # persistent compilation/signing error or an unsuccessful final build.
 set -euo pipefail
 
-attempts="\${ANDROID_GRADLE_BUILD_ATTEMPTS:-3}"
-retry_delay="\${ANDROID_GRADLE_RETRY_DELAY_SECONDS:-10}"
+attempts="${ANDROID_GRADLE_BUILD_ATTEMPTS:-3}"
+retry_delay="${ANDROID_GRADLE_RETRY_DELAY_SECONDS:-10}"
 if [[ ! "$attempts" =~ ^[1-4]$ || ! "$retry_delay" =~ ^(0|[1-9]|[12][0-9]|30)$ ]]; then
   echo "::error::Invalid Android Gradle build retry configuration." >&2
   exit 2
@@ -36,6 +36,6 @@ for (( attempt = 1; attempt <= attempts; attempt++ )); do
     exit "$status"
   fi
   delay=$(( attempt * retry_delay ))
-  echo "::warning::Transient Gradle download failure; retrying APK build after \${delay}s."
+  echo "::warning::Transient Gradle download failure; retrying APK build after ${delay}s."
   sleep "$delay"
 done
