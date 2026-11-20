@@ -38,3 +38,4 @@ export '../domain/srd_bard_superior_inspiration_rules.dart';
 export '../domain/srd_cube_area_rules.dart';
 export '../domain/srd_sending_rules.dart';
 export '../domain/srd_sending_cast_preflight_rules.dart';
+export '../domain/srd_fighter_tactical_mind_rules.dart';
