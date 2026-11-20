@@ -3754,3 +3754,15 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **BLOCKIERT:** Finale CI-Abnahme und Verlustfreiheit der gemeinsamen README-/Checkpoint-Nachträge bei Integration.
 - **Migration:** Keine. SRD-Zählungen, Quellenkatalog, JSON-/SQLite-Spielstände, App-Version und Regellaufzeit unverändert.
 - **NÄCHSTER SCHRITT:** Vollständige GitHub Actions für PR #769 auswerten, Fehler im selben Branch beheben, dann konfliktfreie Integration gegen den neuesten Main-Stand prüfen.
+
+### 2026-11-20 – Paginierter Katalog historischer Sitzungsrückblicke (PR #781)
+
+- **Ausgangs-main:** `06e7e678f8146a4926fab98def8b7cbc8e99d7ac`; **Branch:** `feat/chat-b/session-recap-catalog-20261120`; **PR:** [#781](https://github.com/ManuEtt/Dnd/pull/781) (Draft); Fach-/Testcommit `a5f78ecfb62ad06a4300ed6fdbec09e623e060dc`. Aktueller Dokumentations-HEAD steht im PR. Version `0.8.52+102` bleibt unverändert.
+- **IMPLEMENTIERT:** Neues Modul `app/lib/story/confirmed_session_recap_catalog.dart` liefert eine read-only, nach gesichertem UTC-Datum absteigend geordnete Seite von SessionRecap-IDs und bereinigten Titeln. Zeitgleich gespeicherte Rückblicke erhalten stabile positionsgebundene Ordnung. Maximal 4 Einträge und 1500 UTF-16-Einheiten, expliziter historischer Vertrauenshinweis, sichere eindeutige Kennungen, kein freier Rückblicktext, kein Modell-/Regel-/Speicherwrite. `requireCurrent` prüft Sitzung, Revision und vollständige rohe Quelle.
+- **Dateien:** Neues Modul und `app/test/confirmed_session_recap_catalog_test.dart`, README und beide Checkpoints; keine Änderungen an vorhandenen gemeinsamen Fachdateien oder `story_api.dart`.
+- **GETESTET:** Repo-HEAD, offene PRs und die bestehenden Story-/SessionRecap-Verträge auf Überschneidungen statisch geprüft; Quellcode und acht Testgruppen auf GitHub gesichert. **Keine neuen Tests ausgeführt.**
+- **NICHT GETESTET:** Neue Flutter-/SQLite-Testgruppen, Dart-Formatierung, Flutter-Analyse, Python-/Backend-Prüfungen, Android-APKs, reales Gerät und produktiver KI-Dienst.
+- **BLOCKIERT:** Unabhängige Testausführung, CI-Abnahme, UI-/Story-Fassadenanbindung und verlustfreie Integration gemeinsam genutzter README-/Checkpoint-Nachträge durch anderen Chat.
+- **NOCH NICHT IMPLEMENTIERT:** Aufruf aus der Android-Bedienoberfläche bzw. zentraler `story_api.dart` wegen parallelem Story-API-PR #758; ein altes Recap lässt sich separat über PR #762 anhand der gelisteten ID abfragen.
+- **Migration:** Keine; bisherige JSON-/SQLite-Spielstände, Regeln, Heldendaten, Providerkosten und App-Version bleiben unverändert.
+- **NÄCHSTER SCHRITT:** Nach unabhängiger Testabnahme den Katalog und den expliziten Einzelabruf aus PR #762 im Integrations-Chat konfliktfrei über die Story-API/UI anbinden; dabei gleiche Revision und Wechsel der Kampagne/Sitzung erneut absichern.
