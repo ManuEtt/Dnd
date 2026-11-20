@@ -2436,3 +2436,22 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Nachweis:** [PR #769](https://github.com/ManuEtt/Dnd/pull/769), Code-Commit `9018c85567fd529c50c7445444a540809bc6902d`. CI für den finalen Dokumentations-HEAD steht zum Zeitpunkt dieses Nachtrags noch aus.
 - **Kompatibilität:** Keine Änderungen an Android-App, Spiellogik, JSON-/SQLite-Spielständen, Backend-APIs oder App-Version. Keine Migration.
 - **Grenzen:** Typprüfung des SRD-Audit-Inventars, keine Behauptung zusätzlicher implementierter SRD-Regelwirkung.
+
+
+### 2026-11-20 – Taktischen Verstand regeltechnisch auswerten
+
+Der neue ausführbare Regelbaustein für Kämpfer ab Stufe 2 addiert nach einem
+bestätigten Fehlschlag und ausdrücklicher Wahl 1W10 zur Attributsprobe.
+Genau eine Nutzung Zweiter Wind wird nur bei anschließendem Erfolg verbraucht;
+Trefferpunkte, Aktionswoge und Aktionsökonomie bleiben erhalten. Originalwurf,
+Bonus und Ressourcenverbrauch sind getrennt nachvollziehbar.
+
+Codecommit `f80877203c8f21bd714de9a98da0f81ee915b9de`, Branch
+`feat/chat-a/fighter-tactical-mind-20261117`, [PR #782](https://github.com/ManuEtt/Dnd/pull/782).
+Regressionstests sind ergänzt, **nicht ausgeführt**. Testausführung, Builds,
+Abnahme und koordinierte Integration sind auf ausdrücklichen Nutzerwunsch an
+anderer Stelle übernommen; keine neue CI- oder APK-Erfolgsmeldung.
+Controller/UI und atomare Speicherung des Versuchs sind noch anzubinden.
+SRD 5.2.1 S. 48, CC BY 4.0; Requirement bleibt `unverified`.
+Version 0.8.52+102, SQLite 3 und JSON 1 unverändert, keine Migration.
+Die genaue Übernahme steht im [fachlichen Checkpoint](https://github.com/ManuEtt/Dnd/blob/f80877203c8f21bd714de9a98da0f81ee915b9de/docs/parallel/CHAT_A_TACTICAL_MIND_HANDOFF_20261120.md).

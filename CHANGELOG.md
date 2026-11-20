@@ -1855,3 +1855,14 @@ Vollständiger Herkunftsbericht mit allen PR-Nummern/HEADs, Überschneidungen un
 
 First-Party-Action-Majors in der Android-Pipeline, der manuellen Dart-Reparatur und beiden spezialisierten Regression-Workflows vereinheitlicht; bestehender Cleanup auf `github-script@v8` erhalten. Zwei `setup-android`-Aufrufe von v3/Node20 auf v4/Node24 migriert, ohne die bereits gesetzten Android-SDK-Versionen oder Pakete zu ändern. Positive/negative Python-Regressionen in `scripts/tests/test_android_actions_node24.py` und `scripts/tests/test_first_party_actions_node24.py` hinzugefügt. Integrations-PR #577, kombinierte CI noch offen.
 
+
+
+## 2026-11-20 – Taktischer Verstand als ausführbare Regel
+
+Kämpfer ab Klassenstufe 2 können nach bestätigtem fehlgeschlagenem Ability Check
+freiwillig 1W10 addieren; Zweiter Wind wird nur bei Erfolg ausgegeben. Bestehende
+Ressourcenfunktionen wiederverwendet, unveränderliche Ergebnisse und öffentlicher
+Regel-API-Export ergänzt. PR #782, Code `f80877203c8f`; Regressionen geschrieben,
+nicht ausgeführt. UI-/Controller-/Speicheranbindung und Abnahme sind noch offen
+und dem anderen Chat zur koordinierten Umsetzung übergeben. Keine Migration,
+kein Versionswechsel und keine vollständige Merkmalsfreigabe.
