@@ -68,6 +68,70 @@ class AlphaReleaseTests(unittest.TestCase):
         self.assertIn('Debug-Testschlüssel',
                       (self.out / 'Wuerfelraunen_v0.5.4_24_ReleaseNotes.md').read_text())
 
+    def test_release_notes_accept_safe_custom_https_ci_origin(self):
+        ci_link = 'https://ci.example.invalid:8443/build/42?ref=v0.5.4'
+        paths = release.prepare_release(
+            self.root, self.out, commit='refs/tags/v0.5.4', run_url=ci_link,
+        )
+        notes = next(path for path in paths if path.name.endswith('_ReleaseNotes.md'))
+        text = notes.read_text(encoding='utf-8')
+        self.assertIn('- Quellstand: `refs/tags/v0.5.4`', text)
+        self.assertIn(f'- CI-Lauf: {ci_link}\n', text)
+
+    def test_release_notes_reject_forged_commit_before_any_output(self):
+        # The commit is displayed in Markdown code spans. A line break or
+        # inline Markdown delimiter must not rewrite the stated provenance.
+        bad_commits = (
+            '',
+            'abc1234\n- CI-Lauf: https://fake.invalid/success',
+            'abc1234`gefälscht',
+            'abc1234\u202e',
+            'a' * 129,
+        )
+        for commit in bad_commits:
+            with self.subTest(commit=repr(commit)):
+                with self.assertRaisesRegex(ValueError, 'Release-Commitkennung'):
+                    release.prepare_release(self.root, self.out, commit=commit)
+                self.assertFalse(self.out.exists())
+
+    def test_release_notes_reject_forged_ci_url_before_any_output(self):
+        bad_urls = (
+            'http://example.invalid/actions/42',
+            'javascript:alert(1)',
+            'https:///actions/42',
+            'https://good.invalid\n- Build: erfolgreich',
+            'https://example.invalid/`fake`',
+            'https://example.invalid/[fake](https://evil.invalid)',
+            'https://github.com@evil.invalid/actions/42',
+            'https://good.invalid:invalid/actions/42',
+        )
+        for run_url in bad_urls:
+            with self.subTest(run_url=repr(run_url)):
+                with self.assertRaisesRegex(ValueError, 'CI-Nachweis-Link'):
+                    release.prepare_release(
+                        self.root, self.out, commit='abcdef0123456789',
+                        run_url=run_url,
+                    )
+                self.assertFalse(self.out.exists())
+
+    def test_bad_release_note_metadata_preserves_previous_release(self):
+        paths = release.prepare_release(
+            self.root, self.out, commit='abcdef0123456789',
+            run_url='https://github.com/ManuEtt/Dnd/actions/runs/42',
+        )
+        existing = {path: path.read_bytes() for path in paths}
+        with self.assertRaisesRegex(ValueError, 'CI-Nachweis-Link'):
+            release.prepare_release(
+                self.root, self.out,
+                run_url='https://example.invalid/actions/42\n- Falscher Status',
+            )
+        self.assertEqual(
+            {path: path.read_bytes() for path in paths}, existing,
+        )
+        self.assertEqual(
+            set(self.out.iterdir()), set(paths),
+        )
+
     @unittest.skipIf(sys.platform == 'win32', 'POSIX symlinks required')
     def test_symlinked_default_apk_is_rejected_before_release_publication(self):
         original = self.base / 'original-valid.apk'

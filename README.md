@@ -2402,3 +2402,37 @@ Die Regelvorschau weist wiederverwendete Würfelergebnisobjekte bei normalen und
 - **Branch/PR:** [Sicherheitsprüfung beim Branch-Aufräumen, PR #754](https://github.com/ManuEtt/Dnd/pull/754); Code-/Teststand `38a6d8a9eb440a6dfbc3fa6c13ea946cbe145389`.
 - **Tests:** Vier simulierte positive und negative Python-Regressionen ergänzt, jedoch lokal mangels GitHub-Checkout/DNS nicht ausgeführt. GitHub-Actions auf dem endgültigen PR-HEAD und vollständige Produkt-Builds zum Dokumentationszeitpunkt offen. Die erfolgreiche [Main-CI #43448981760](https://github.com/ManuEtt/Dnd/actions/runs/43448981760) gilt ausschließlich für den Vorgängerstand.
 - **Kompatibilität:** Keine Änderung an SQLite, Spielständen, JSON, App-Version, Flutter, Backend oder Regelzustand; keine Migration. REST-Zeitfenster zwischen abschließendem GET und DELETE bleiben ohne atomaren GitHub-Compare-and-delete-Endpunkt als Grenze bestehen.
+
+### 2026-11-17 – Android-SDK-Retry-Konfiguration sicher begrenzen
+
+- **Problem:** Eine unbegrenzte bzw. oktalartig geschriebene Verzögerung für Android-SDK-Installationsversuche konnte die CI lange blockieren oder zu Bash-Arithmetikfehlern führen.
+- **Lösung:** Der Installationshelfer akzeptiert nur eindeutige Dezimalwerte von 0 bis 30 Sekunden und bricht bei ungültigen Angaben vor dem ersten SDK-Aufruf ab. Bei maximal fünf Versuchen sind höchstens 300 Sekunden Wiederholungsverzögerung vorgesehen.
+- **Dateien:** `scripts/install_android_sdk_packages.sh` und `scripts/tests/test_install_android_sdk_packages.py`. Zwei neue Regressionstestmethoden mit ungültigen Werten und gemocktem linearem Backoff.
+- **Nachweis:** [PR #765](https://github.com/ManuEtt/Dnd/pull/765), Code-Commit `6dcfe983147f36dbb1ed516bb2b58665a35f3a64`; vollständige CI des abschließenden Dokumentations-HEADs steht bei diesem Nachtrag noch aus.
+- **Kompatibilität:** Unveränderter Standardwert 5 Sekunden, akzeptierter Testwert 0 Sekunden, kein Schema-/JSON-/SQLite-/Versionswechsel und keine Änderung an Android-App oder Spielständen.
+- **Grenzen:** Schutz der Build-Retry-Eingabe, keine Änderung am SDK-Download oder am Arbeitsablauf anderer PRs.
+
+### 2026-11-17 – Herkunftsangaben in Alpha-Releases gegen manipulierte Eingaben absichern
+
+- **Problem:** Der Quellstand und die CI-Lauf-Adresse wurden bisher ungeprüft in die versionierten Release-Notizen übernommen. Zeilenumbrüche, unsichtbare Steuerzeichen oder Markdown-Sonderzeichen konnten die Angaben verfälschen.
+- **Lösung:** Die Release-Erstellung validiert vor dem Lesen der APK und vor jeder Dateiausgabe sichere, einzeilige Commit-/Ref-Bezeichner und begrenzte HTTPS-CI-Links ohne Benutzerinfo oder manipulierte Formatierung. Gültige alternative HTTPS-CI-Hosts mit Port sowie der lokale Standardwert bleiben möglich; die Existenz oder der Erfolg eines verlinkten CI-Laufs wird nicht extern behauptet.
+- **Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`; neue positive und negative Regressionen für sichere Metadaten, ungültige Links, Markdown-/Bidi-/Zeilenumbruch-Manipulation und Erhalt bereits veröffentlichter Artefakte.
+- **Nachweis:** [PR #766](https://github.com/ManuEtt/Dnd/pull/766), Branch `fix/chat-d/release-notes-provenance-20261117`, Code-Korrekturcommit `814afef6c9b68983494e3286a0ae0a376387b251`, letzter Testcommit `468fb80fb51f87b86cbfd7e89631cd2e71324953`. Vollständige GitHub-Actions-CI für den endgültigen Dokumentationscommit zum Zeitpunkt dieses Eintrags noch offen.
+- **Kompatibilität:** Keine Änderung an Android-/Flutter-/Backend-Funktionen, Spielständen, SQLite, JSON, Regeln, Versionsnummer oder Datenmigration. Unsichere Release-Nachweisfelder werden nun abgewiesen statt veröffentlicht.
+
+### 2026-11-17 – Rücknahme fehlerhafter Quellpaket-Ausgaben schützt fremde Dateien
+
+- **Problem:** Scheiterte die Prüfsummenveröffentlichung nach einem erfolgreichen ZIP-Dateiaustausch, konnte das Rollback eine in der Zwischenzeit fremd ersetzte ZIP-Datei ohne Identitätskontrolle überschreiben oder löschen.
+- **Lösung:** Die Paket-Erstellung merkt sich die Geräte-/Inode-Identität ihrer eigenen Staging-ZIP und rollt bei einem späteren Prüfsummenfehler nur zurück, wenn sich am Ziel noch exakt diese reguläre Datei befindet. Fremde Ersatzdateien und Symlinks bleiben unangetastet.
+- **Dateien:** `scripts/package_project.py` und `scripts/tests/test_package_project.py`; drei neue positive und negative Regressionstests für eigenen Erst-Rollback, fremde reguläre Ersetzung und fremden Symlink.
+- **Nachweis:** [PR #761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-/Testcommits `40581a1ed962973a8d42848805766f4688d0371b` und `6ff9408f410d735a6478e9bfe08496b2c7412497`. Die GitHub-CI des endgültigen Dokumentations-HEADs steht zum Zeitpunkt dieses Eintrags noch aus.
+- **Kompatibilität:** Keine Änderung an SQLite, JSON, Spielständen, App-Version, Android-/Backend-API oder Regeln, keine Migration. Der Schutz sichert einen beobachtbaren Fremdaustausch; ein vollständig atomares Compare-and-Swap über Dateipfade wird nicht behauptet.
+
+### 2026-11-17 – SRD-Inventarzahlen streng auf Ganzzahltypen prüfen
+
+- **Problem:** Python behandelt Wahrheitswerte wie Ganzzahlen. `true` und `false` sowie passende Fließkommazahlen konnten dadurch in SRD-Schema-Versionen, Klassenstufen und Zaubergraden als gültige numerische Werte erscheinen.
+- **Lösung:** Die Inventarprüfung akzeptiert jetzt ausschließlich echte Ganzzahlen (`type(...) is int`) und die bestehenden zulässigen Grenzen. Unveränderte Quellen und gültige Regelmetadaten bleiben kompatibel.
+- **Dateien:** `scripts/srd_coverage.py` und `scripts/tests/test_srd_requirements_matrix.py`. Drei neue Regressionstestmethoden mit positiven und negativen Grenzfällen.
+- **Nachweis:** [PR #769](https://github.com/ManuEtt/Dnd/pull/769), Code-Commit `9018c85567fd529c50c7445444a540809bc6902d`. CI für den finalen Dokumentations-HEAD steht zum Zeitpunkt dieses Nachtrags noch aus.
+- **Kompatibilität:** Keine Änderungen an Android-App, Spiellogik, JSON-/SQLite-Spielständen, Backend-APIs oder App-Version. Keine Migration.
+- **Grenzen:** Typprüfung des SRD-Audit-Inventars, keine Behauptung zusätzlicher implementierter SRD-Regelwirkung.

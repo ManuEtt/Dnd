@@ -3706,3 +3706,51 @@ Zwei Widget-Regressionstests decken geänderte vorbereitete Zauber und Ressource
 - **NOCH NICHT IMPLEMENTIERT:** Kein Merge von #754 oder fremden PRs; keine Branch-Löschung durch diesen Entwicklungszyklus. Kein Eingriff in Domäne, KI, SRD, Datenbank, JSON, Version oder reale Spielstände; **Migration:** keine.
 - **NÄCHSTER SCHRITT:** Python-Regressionen und vollständige Actions-CI auf finalem PR-HEAD #754 prüfen, bei Fehlern gezielt auf demselben Branch korrigieren und erst nach erneuter Main-/PR-Dateikonfliktprüfung eine Integration erwägen.
 
+
+### 2026-11-17 – Android-SDK-Wiederholungsverzögerung fail-closed validieren
+
+- **Ausgangs-main:** `fe220104f836e146275f1753d327290633b52326`; **Branch:** `fix/chat-d/android-sdk-retry-delay-bounds-20261117`; **PR:** [#765](https://github.com/ManuEtt/Dnd/pull/765) (Draft bis finaler CI); **Code-Commit:** `6dcfe983147f36dbb1ed516bb2b58665a35f3a64`.
+- **IMPLEMENTIERT:** Retry-Konfiguration verweigert 31+ Sekunden, führende Nullen, Vorzeichen, Dezimalbrüche und überlange Ziffernfolgen vor jeder SDK-Operation; gültig sind dezimale 0–30 Sekunden. Standard und bisherige Retry-/Cache-/NDK-Logik bleiben bestehen.
+- **Tests ergänzt:** Zwei Offline-Python-Unittests: ungültige Angaben rufen `sdkmanager` nicht auf und liefern Fehlerstatus; gültiger Oberwert 30 erzeugt mit gemocktem `sleep` nacheinander 30 und 60 Sekunden lineare Wartezeit.
+- **GETESTET:** Aktuellen GitHub-Main-Stand, offene Fach-PRs, vorhandenen CI-Installer und Regressionstests analysiert; separate Code-/Test-Commits veröffentlicht. Vollständig grüne GitHub Actions für den separat integrierten Vorgänger PR #754 (CI #43575982269), nicht als Nachweis dieses neuen Pakets.
+- **NICHT GETESTET:** Lokale gesamte Python-/Backend-/Flutter-/Android-Tests, abschließende GitHub-CI auf neuem PR-HEAD und echtes Android-Gerät.
+- **BLOCKIERT:** CI-Abnahme und erneuter Konflikt-/Main-Abgleich vor Integration. Keine Änderungen an parallelen PRs.
+- **Migration:** Keine; keine Änderung an Spielständen, JSON/SQLite, APIs, Regeln, App-Version oder SDK-Paketliste.
+- **NÄCHSTER SCHRITT:** Finalen CI-Lauf von #765 prüfen, Fehler auf demselben Branch beheben und erst bei vollständig grüner CI und Konfliktfreiheit integrieren.
+
+---
+
+## 2026-11-17 – Versionierte Alpha-Release-Notizen gegen Provenienz-Injektion schützen
+
+- **Ausgangs-main:** `fe220104f836e146275f1753d327290633b52326`; **Branch:** `fix/chat-d/release-notes-provenance-20261117`; **PR:** [#766](https://github.com/ManuEtt/Dnd/pull/766); **Code-Korrektur:** `814afef6c9b68983494e3286a0ae0a376387b251`; **Tests zuletzt:** `468fb80fb51f87b86cbfd7e89631cd2e71324953`.
+- **Problem:** Frei wählbare CLI-Parameter `--commit` und `--run-url` erlaubten täuschende Zeilen, Markdown und unsichtbare Steuerzeichen in ReleaseNotes.md.
+- **Lösung:** Vor APK-Validierung und Ausgabeverzeichnis-Anlage Commit-Kennung und optionalen HTTPS-CI-Link auf sichere einzeilige druckbare Werte prüfen; gültige CI-Ports und lokale Quellkennungen weiterhin zulassen.
+- **Geänderte Dateien:** `scripts/prepare_alpha_release.py`, `scripts/tests/test_prepare_alpha_release.py`, `README.md`, `docs/CODEX_CHECKPOINT.md`, `docs/parallel/CHAT_D_CHECKPOINT.md`.
+- **Regressionen:** Ein zusätzlicher Positivfall und drei Tests mit negativen Unterfällen bzw. Erhalt einer vorhandenen Release-Dateigruppe. Bereits existierende vollständige Alpha-Build-, Sicherungs- und Integritätstests unverändert.
+- **GETESTET:** Isolierter Python-Check der verwendeten Regex-/URL-Parser-Bedingungen; keine vollständigen neuen Repository-Tests vor Veröffentlichung des finalen Commitstandes behauptet.
+- **NICHT GETESTET:** Vollständige PR-CI inkl. Android-Debug-/3 ABI-/Alpha-Pakete, Realgerät, APK-Upgrade und echte CI-Link-Gültigkeit.
+- **Kompatibilität:** Kein Wechsel an App-Version, Dateiformat, SQLite, JSON, Spielständen, Backend, Regeln oder APIs; kein Datenmigrationsschritt.
+- **Nächster Schritt:** Vollständige GitHub-CI für die finale SHA abnehmen, erst danach koordinierte Integration ohne Verlust paralleler README-/Checkpoint-Änderungen.
+
+---
+
+## 2026-11-17 – Schutz vor fremden Dateien beim Rollback der Quellpaket-Ausgabe
+
+- **PR:** [#761](https://github.com/ManuEtt/Dnd/pull/761), Branch `fix/chat-d/archive-rollback-identity-20261117`, Code-Commit `40581a1ed962973a8d42848805766f4688d0371b`, Test-Commit `6ff9408f410d735a6478e9bfe08496b2c7412497`, Ausgangs-`main` `e66e895175c72220aa4df56a8cbd3f449f7ccbd5`.
+- **Problem:** Ein fehlgeschlagener zweiter Dateiaustausch der ZIP-/SHA256-Publikation konnte die erste ZIP-Datei ungeprüft zurücksetzen. Ein fremder Dateiaustausch vor dem Rollback ging so verloren.
+- **Lösung:** Nur dann zurückrollen, wenn `lstat()` am ZIP-Ziel dieselbe reguläre Datei mit derselben Geräte-/Inode-Identität wie die eigene ursprünglich bereitgestellte Staging-ZIP bestätigt. Fremde Ersetzung/Symlinks unangetastet lassen.
+- **Dateien:** `scripts/package_project.py`, `scripts/tests/test_package_project.py` (drei neue positive/negative Regressionsfälle).
+- **Prüfungen:** Code und Tests committed; automatischer Python-, Backend-, Flutter-, Android- und Release-Nachweis für den finalen Branch-HEAD bei Dokumentation noch offen. Kein lokaler SDK-/Realgeräte-Nachweis.
+- **Kompatibilität:** Keine Änderung an App, Regeln, SQLite, JSON, Speicherschema oder Version. Kein automatischer Merge und keine Branchlöschung. POSIX-Rename/Prüfung ist nicht atomar vergleichend.
+- **Koordination:** PR #757 für das Checkpoint-Tool ist eine getrennte Baustelle; der aktuelle Paket-Export-Pfad wird dort nicht verändert. Integration erst nach kompletter grüner CI und PR-Konfliktprüfung.
+
+### 2026-11-17 – SRD-Audit: Bool- und Floatwerte in Ganzzahlfeldern ablehnen
+
+- **Ausgangs-main:** `e8ef44ffddc169942eae1ac9d526bd69fafcf517`; **Branch:** `fix/chat-d/srd-inventory-integer-types-20261117`; **PR:** [#769](https://github.com/ManuEtt/Dnd/pull/769) (Draft bis finaler CI); **Code-Commit:** `9018c85567fd529c50c7445444a540809bc6902d`.
+- **IMPLEMENTIERT:** Matrix- und Entity-Schema-Versionen müssen echte Ganzzahlen mit Wert 1 sein. Klassenstufen müssen tatsächliche Integers von 1 bis 20, Zaubergrade tatsächliche Integers von 0 bis 9 sein. Bool- und Float-Koerzierung wird abgewiesen.
+- **Regressionen:** Drei neue Python-Testmethoden prüfen bool/float/statt int bei Schema-Version, Klassenstufe und Zaubergrad; gültige Bestandsinventare bleiben akzeptiert.
+- **GETESTET:** Aktuellen Main-HEAD, alle offenen Pull-Request-Fachpfade, SRD-Audit-Validator und vorhandene Testmethoden geprüft. Keine Fachdateiüberschneidung; eigener Branch und PR erstellt.
+- **NICHT GETESTET:** Neue Python-Regressionen und vollständige Backend-/Flutter-/Android-/Release-CI auf finalem Dokumentations-HEAD; kein echtes Android-Gerät.
+- **BLOCKIERT:** Finale CI-Abnahme und Verlustfreiheit der gemeinsamen README-/Checkpoint-Nachträge bei Integration.
+- **Migration:** Keine. SRD-Zählungen, Quellenkatalog, JSON-/SQLite-Spielstände, App-Version und Regellaufzeit unverändert.
+- **NÄCHSTER SCHRITT:** Vollständige GitHub Actions für PR #769 auswerten, Fehler im selben Branch beheben, dann konfliktfreie Integration gegen den neuesten Main-Stand prüfen.
