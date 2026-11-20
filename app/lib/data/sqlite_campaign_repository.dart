@@ -773,14 +773,15 @@ Future<void> _migrateLegacyPendingActions(DatabaseExecutor database) async {
     final text = action['text'];
     if (campaignId is! String ||
         campaignId != entry.key ||
-        campaignId.isEmpty ||
+        campaignId.trim().isEmpty ||
         campaignId.length > 128 ||
+        campaignId.codeUnits.any((unit) => unit < 32) ||
         requestId is! String ||
         requestId.isEmpty ||
         requestId.length > 128 ||
         RegExp(r'[^A-Za-z0-9_-]').hasMatch(requestId) ||
         text is! String ||
-        text.isEmpty ||
+        text.trim().isEmpty ||
         text.length > 4000) {
       throw const FormatException('Ungültige ausstehende Handlung.');
     }
