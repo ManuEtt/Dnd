@@ -11,9 +11,12 @@ const _resetKey = ValueKey('equipment-catalog-reset-filters');
 Finder _allResults() =>
     find.text('${SrdEquipmentCatalog.all.length} Treffer');
 
-EquipmentCategory? _selectedCategory(WidgetTester tester) => tester
-    .widget<DropdownButton<EquipmentCategory?>>(find.byKey(_categoryKey))
-    .value;
+EquipmentCategory? _selectedCategory(WidgetTester tester) {
+  final dropdown = tester.widget<DropdownButton<EquipmentCategory?>>(
+    find.byKey(_categoryKey),
+  );
+  return dropdown.value;
+}
 
 Future<List<EquipmentEntry?>> _showCatalog(
   WidgetTester tester, {
