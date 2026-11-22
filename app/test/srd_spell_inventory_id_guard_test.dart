@@ -246,7 +246,7 @@ void main() {
     ];
     for (final codePoint in unsafeCodePoints) {
       final hidden = String.fromCharCode(codePoint);
-      for (final id in ['large${hidden}-chest', 'large-chest$hidden']) {
+      for (final id in ['large$hidden-chest', 'large-chest$hidden']) {
         expect(
           SrdSpellInventoryIdRules.isSafe(id),
           isFalse,
