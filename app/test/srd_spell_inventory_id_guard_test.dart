@@ -230,6 +230,96 @@ void main() {
     expect(jsonEncode(wizard.toJson()), original);
   });
 
+  test('invisible filler and variation-selector IDs fail closed', () {
+    const unsafeCodePoints = <int>[
+      0x115f, // Hangul Choseong filler
+      0x1160, // Hangul Jungseong filler
+      0x17b4, // Khmer inherent vowel signs
+      0x17b5,
+      0x2800, // Braille pattern blank
+      0x3164, // Hangul filler
+      0xfe0e, // Variation selector 15
+      0xfe0f, // Variation selector 16
+      0xffa0, // Halfwidth Hangul filler
+      0xe0100, // Supplementary variation selector 17
+      0xe01ef, // Supplementary variation selector 256
+    ];
+    for (final codePoint in unsafeCodePoints) {
+      final hidden = String.fromCharCode(codePoint);
+      for (final id in ['large${hidden}-chest', 'large-chest$hidden']) {
+        expect(
+          SrdSpellInventoryIdRules.isSafe(id),
+          isFalse,
+          reason: codePoint.toRadixString(16),
+        );
+      }
+    }
+    for (final id in ['large-chest', 'Diamant № 1', '材料-1', 'réplique-2']) {
+      expect(SrdSpellInventoryIdRules.isSafe(id), isTrue, reason: id);
+    }
+  });
+
+  test('invisible material binding cannot authorize an audited spell', () {
+    final spell = catalog.find('Secret Chest')!;
+    for (final codePoint in [0x3164, 0xfe0f, 0xe0100]) {
+      final forged = 'large${String.fromCharCode(codePoint)}-chest';
+      final hero = _wizard(
+        inventory: [
+          InventoryItem(id: forged, name: 'Bestätigte Truhe'),
+          const InventoryItem(id: 'tiny-replica', name: 'Bestätigte Replik'),
+        ],
+      );
+      final before = jsonEncode(hero.toJson());
+      expect(
+        () => SrdSpellAuditedInventoryRules.consumedQuantities(
+          hero,
+          spell,
+          bindings: _bindings(chest: forged),
+        ),
+        throwsFormatException,
+        reason: codePoint.toRadixString(16),
+      );
+      expect(
+        () => SrdSpellInventoryRules.commitConfirmedCast(
+          hero,
+          _plan(hero, spell),
+          spellEffectResolvedConfirmed: true,
+          materialIdentityAndQuantityConfirmed: true,
+          auditedBindings: _bindings(chest: forged),
+        ),
+        throwsFormatException,
+        reason: codePoint.toRadixString(16),
+      );
+      expect(jsonEncode(hero.toJson()), before);
+      expect(hero.spentSpellSlots, isEmpty);
+    }
+  });
+
+  test('unrelated invisible inventory ID blocks a normal spell commit', () {
+    final spell = catalog.find('Chromatic Orb')!;
+    final hero = _wizard(
+      inventory: [
+        const InventoryItem(id: 'diamond', name: 'Bestätigter Diamant'),
+        InventoryItem(
+          id: 'other${String.fromCharCode(0xe0100)}item',
+          name: 'Anderer Gegenstand',
+        ),
+      ],
+    );
+    final before = jsonEncode(hero.toJson());
+    expect(
+      () => SrdSpellInventoryRules.commitConfirmedCast(
+        hero,
+        _plan(hero, spell),
+        spellEffectResolvedConfirmed: true,
+        materialIdentityAndQuantityConfirmed: false,
+      ),
+      throwsFormatException,
+    );
+    expect(jsonEncode(hero.toJson()), before);
+    expect(hero.spentSpellSlots, isEmpty);
+  });
+
   test('safe single-material commit preserves nonconsumed inventory', () {
     final spell = catalog.find('Chromatic Orb')!;
     final wizard = _wizard();
