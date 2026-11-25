@@ -1870,17 +1870,22 @@
       "class_name": "Kämpfer",
       "subclass": null,
       "class_level": 2,
-      "source": "Classes: Kämpfer / level 2",
+      "source": "SRD 5.2.1, Fighter level 2: Tactical Mind, printed p. 48",
       "source_url": "https://www.dndbeyond.com/srd",
       "license": "CC-BY-4.0",
       "catalogue_reference": "docs/class_feature_coverage_0_6_8.json#k-mpfer_2_base_tactical-mind_1",
       "unlocks_catalogued": true,
       "rule_implemented": "unverified",
-      "tests": [],
-      "code": [
-        "app/lib/domain/srd_class_feature_catalog.dart"
+      "tests": [
+        "app/test/srd_fighter_tactical_mind_rules_test.dart"
       ],
-      "note": "Katalogeintrag/Level-Freischaltung belegt nicht die mechanische Wirkung; automatischen Status nicht aus 'execution' ableiten."
+      "code": [
+        "app/lib/domain/srd_class_feature_catalog.dart",
+        "app/lib/domain/srd_fighter_tactical_mind_rules.dart",
+        "app/lib/domain/class_feature_resources.dart",
+        "app/lib/rules/rules_api.dart"
+      ],
+      "note": "Ausführbare Domainregel mit 1W10 nach bestätigtem Fehlschlag; Second-Wind-Verbrauch nur bei Erfolg. Tests ergänzt, auf Nutzeranweisung nicht ausgeführt; Status bleibt unverified. Controller/UI, atomarer Ereignisnachweis und Integrationsabnahme offen. Übergabe: docs/parallel/CHAT_A_TACTICAL_MIND_HANDOFF_20261120.md."
     },
     {
       "id": "CLASS-K-MPFER-3-BASE-FIGHTER-SUBCLASS-0",
